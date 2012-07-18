@@ -1,6 +1,6 @@
 PLATFORM = linux
 BASE_DIR = src
-INCL = -I/usr/include -Iinclude
+INCL = -I/usr/include -Iinclude -Iinclude/dodge
 include src/Makefile.inc
 CC = g++
 FLAGS = -std=c++0x -g -Wall -DDEBUG

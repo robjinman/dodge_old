@@ -3,9 +3,9 @@
  * Date: 2012
  */
 
-#include "Texture.hpp"
-#include "Renderer.hpp"
-#include "PNG_CHECK.hpp"
+#include <Texture.hpp>
+#include <Renderer.hpp>
+#include <PNG_CHECK.hpp>
 
 
 namespace Dodge {

@@ -3,11 +3,11 @@
  * Date: 2012
  */
 
-#include "definitions.hpp"
-#include "Graphics2d.hpp"
-#include "Texture.hpp"
-#include "CompoundPoly.hpp"
-#include "Font.hpp"
+#include <definitions.hpp>
+#include <Graphics2d.hpp>
+#include <Texture.hpp>
+#include <CompoundPoly.hpp>
+#include <Font.hpp>
 
 
 using namespace cml;

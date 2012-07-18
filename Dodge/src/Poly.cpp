@@ -5,7 +5,7 @@
 
 #include <cstring>
 #include <sstream>
-#include "Poly.hpp"
+#include <Poly.hpp>
 
 
 using namespace std;

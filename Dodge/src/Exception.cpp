@@ -4,7 +4,7 @@
  */
 
 #include <sstream>
-#include "Exception.hpp"
+#include <Exception.hpp>
 
 
 namespace Dodge {

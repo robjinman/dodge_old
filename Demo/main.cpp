@@ -1,10 +1,7 @@
 #include <cstdio>
 #include <sys/time.h>
 #include <map>
-#include "Graphics2d.hpp"
-#include "WinIO.hpp"
-#include "Poly.hpp"
-#include "Font.hpp"
+#include <dodge/dodge.hpp>
 
 
 using namespace Dodge;

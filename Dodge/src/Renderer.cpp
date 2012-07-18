@@ -6,8 +6,8 @@
 #include <fstream>
 #include <cstdlib>
 #include <cassert>
-#include "Exception.hpp"
-#include "Renderer.hpp"
+#include <Exception.hpp>
+#include <Renderer.hpp>
 
 
 using namespace std;

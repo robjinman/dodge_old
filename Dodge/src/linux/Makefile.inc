@@ -1,0 +1,2 @@
+OBJS+=$(BASE_DIR)/$(PLATFORM)/Timer.o \
+	$(BASE_DIR)/$(PLATFORM)/WinIO.o

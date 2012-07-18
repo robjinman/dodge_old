@@ -4,7 +4,7 @@
  */
 
 #include <cstring>
-#include "CompoundPoly.hpp"
+#include <CompoundPoly.hpp>
 
 
 using namespace rapidxml;

@@ -5,8 +5,8 @@
 
 #include <cstring>
 #include <cstdio>
-#include "Exception.hpp"
-#include "Colour.hpp"
+#include <Exception.hpp>
+#include <Colour.hpp>
 
 
 using namespace rapidxml;
