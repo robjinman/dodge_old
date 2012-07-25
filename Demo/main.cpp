@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
    Texture img2("data/textures/smile.png");
 
    pTexture_t pImgFont1(new Texture("data/textures/font2.png"));
-   Dodge::Font font1(pImgFont1, Vec2f(0, 0), Vec2f(852, 792), 71, 98);
+   Dodge::Font font1(pImgFont1, 0, 0, 852, 792, 71, 98);
 
    Poly poly;
    poly.addVertex(Vec2f(0.09, 0.0));
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
       graphics2d.drawPlainAlphaPoly(poly, 0.7, 0.35, 2, -18.0, Colour(0.0, 0.9, 0.0, 1.0));
       graphics2d.drawImage(img2, 0.6, 0.3, 3, 0.4, 0.4, 0.0, 0.0, img2.getWidth(), img2.getHeight(), 0.0, Colour(0.9, 0.8, 0.4, 0.6));
       graphics2d.drawImage(img2, 0.3, 0.5, 4, 0.3, 0.3, 0.0, 0.0, img2.getWidth(), img2.getHeight(), 0.0, Colour(1.0, 1.0, 1.0, 1.0));
-      graphics2d.drawText(font1, "I'm a potato", 0.0, 0.4, 5, -14.0, Vec2f(0.5, 0.0), Vec2f(0.5, 0.5), Colour(0.0, 0.0, 1.0, 1.0));
+      graphics2d.drawText(font1, "OpenGL ES 2.0 Demo", 0.0, 0.4, 5, -14.0, Vec2f(0.5, 0.0), Vec2f(0.5, 0.5), Colour(0.0, 0.0, 1.0, 1.0));
 
       win.swapBuffers();
    }

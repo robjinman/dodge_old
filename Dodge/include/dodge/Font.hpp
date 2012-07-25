@@ -9,6 +9,7 @@
 
 #include "definitions.hpp"
 #include "Texture.hpp"
+#include "Rectangle.hpp"
 
 
 namespace Dodge {
@@ -16,19 +17,17 @@ namespace Dodge {
 
 class Font {
    public:
-      Font(pTexture_t texture, const Vec2f& position, const Vec2f& dimensions, int charW, int charH)
-         : m_texture(texture), m_pos(position), m_dim(dimensions), m_charW(charW), m_charH(charH) {}
+      Font(pTexture_t texture, float32_t texX, float32_t texY, float32_t texW, float32_t texH, int charW, int charH)
+         : m_texture(texture), m_texSection(texX, texY, texW, texH), m_charW(charW), m_charH(charH) {}
 
       inline const pTexture_t getTexture() const;
       inline int getCharWidth() const;
       inline int getCharHeight() const;
-      inline const Vec2f& getTextureSectionPosition() const;
-      inline const Vec2f& getTextureSectionDimensions() const;
+      inline const Rectangle& getTextureSection() const;
 
    private:
       pTexture_t m_texture;
-      Vec2f m_pos;
-      Vec2f m_dim;
+      Rectangle m_texSection;
       int m_charW;
       int m_charH;
 };
@@ -43,17 +42,10 @@ inline const pTexture_t Font::getTexture() const {
 }
 
 //===========================================
-// Font::getTextureSectionPosition
+// Font::getTextureSection
 //===========================================
-inline const Vec2f& Font::getTextureSectionPosition() const {
-   return m_pos;
-}
-
-//===========================================
-// Font::getTextureSectionDimensions
-//===========================================
-inline const Vec2f& Font::getTextureSectionDimensions() const {
-   return m_dim;
+inline const Rectangle& Font::getTextureSection() const {
+   return m_texSection;
 }
 
 //===========================================

@@ -253,9 +253,9 @@ void Graphics2d::drawPlainAlphaCompoundPoly(const CompoundPoly& poly, float32_t 
 void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x, float32_t y,
    int z, float32_t a, const Vec2f& pivot, const Vec2f& scale, const Colour& col) const {
 
-   float32_t texSectionX1 = font.getTextureSectionPosition().x;
-   float32_t texSectionY1 = font.getTextureSectionPosition().y;
-   float32_t texSectionX2 = font.getTextureSectionDimensions().x;
+   float32_t texSectionX1 = font.getTextureSection().getPosition().x;
+   float32_t texSectionY1 = font.getTextureSection().getPosition().y;
+   float32_t texSectionX2 = font.getTextureSection().getSize().x;
 
    float32_t pxChW = font.getCharWidth();    // Char dimensions in pixels (not scaled)
    float32_t pxChH = font.getCharHeight();
