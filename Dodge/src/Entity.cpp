@@ -52,7 +52,7 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 // Entity::Entity
 //===========================================
 Entity::Entity(long name, long type)
-   : m_name(name), m_type(type), m_scale(1.f, 1.f) {
+   : m_name(name), m_type(type), m_scale(1.f, 1.f, 1.f) {
 
    ++m_count;
 }
@@ -61,7 +61,7 @@ Entity::Entity(long name, long type)
 // Entity::Entity
 //===========================================
 Entity::Entity(long type)
-   : m_type(type), m_scale(1.f, 1.f) {
+   : m_type(type), m_scale(1.f, 1.f, 1.f) {
 
    m_name = generateName();
 

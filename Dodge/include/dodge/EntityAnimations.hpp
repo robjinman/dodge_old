@@ -23,9 +23,9 @@ namespace Dodge {
 
 class EntityAnimations {
    public:
-      EntityAnimations(Entity* entity)
+      EntityAnimations(Entity* entity, pTexture_t texture)
          : m_entity(entity),
-           m_texture(),
+           m_texture(texture),
            m_texSection(),
            m_activeAnim() {}
 
@@ -35,7 +35,7 @@ class EntityAnimations {
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
 
       // EntityAnimations takes ownership of Animation object
-      inline void addAnimation(Animation* anim);
+      void addAnimation(Animation* anim);
 
       inline const Rectangle& getTextureSection() const;
       inline const Colour& getColour() const;
@@ -53,7 +53,7 @@ class EntityAnimations {
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
-      virtual ~EntityAnimations() {}
+      virtual ~EntityAnimations() = 0;
 
    protected:
       inline pTexture_t getTexture() const;
@@ -102,13 +102,6 @@ inline void EntityAnimations::pauseAnimation() {
 //===========================================
 inline void EntityAnimations::stopAnimation() {
    if (m_activeAnim) m_activeAnim->stop();
-}
-
-//===========================================
-// EntityAnimations::addAnimation
-//===========================================
-inline void EntityAnimations::addAnimation(Animation* anim) {
-   m_animations[anim->getName()] = anim;
 }
 
 //===========================================

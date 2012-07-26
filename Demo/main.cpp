@@ -10,6 +10,7 @@ using namespace std;
 
 map<int, bool> keys;
 double frameRate;
+pSprite_t sprite0;
 
 
 void quit() {
@@ -25,7 +26,8 @@ void keyDown(int code) {
 
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
-      case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n";
+      case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n"; break;
+      case WinIO::KEY_SPACE: sprite0->playAnimation(internString("anim0"));
    }
 }
 
@@ -61,18 +63,22 @@ int main(int argc, char** argv) {
    Graphics2d graphics2d;
    graphics2d.init(640, 480);
 
-   Texture img1("data/textures/bricks.png");
-   Texture img2("data/textures/smile.png");
+   pTexture_t tex0(new Texture("data/textures/ss8x8squares128x128g.png"));
+   sprite0 = pSprite_t(new Sprite(internString("sprite0"), internString("type0"), tex0));
 
-   pTexture_t pImgFont1(new Texture("data/textures/font2.png"));
-   Dodge::Font font1(pImgFont1, 0, 0, 852, 792, 71, 98);
+   std::vector<AnimFrame> aFrames;
+   aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(16.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(32.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(48.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(64.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(80.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(96.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2f(112.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
+   Animation anim0(internString("anim0"), 25.f, aFrames);
 
-   Poly poly;
-   poly.addVertex(Vec2f(0.09, 0.0));
-   poly.addVertex(Vec2f(0.31, 0.0));
-   poly.addVertex(Vec2f(0.4, 0.23));
-   poly.addVertex(Vec2f(0.2, 0.4));
-   poly.addVertex(Vec2f(0.0, 0.23));
+   sprite0->addAnimation(&anim0);
+   sprite0->setPosition(0.5f, 0.5f, 1.f);
 
    while (1) {
       win.doEvents();
@@ -80,12 +86,9 @@ int main(int argc, char** argv) {
       computeFrameRate();
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      graphics2d.drawPlainAlphaQuad(0.4, 0.2, 0, 0.5, 0.5, 15.0, Colour(1.0, 0.0, 0.0, 1.0));
-      graphics2d.drawImage(img1, 0.38, 0.3, 1, 0.45, 0.45, 0.0, 0.0, img1.getWidth(), img1.getHeight(), 0.0, Colour(1.0, 1.0, 1.0, 1.0));
-      graphics2d.drawPlainAlphaPoly(poly, 0.7, 0.35, 2, -18.0, Colour(0.0, 0.9, 0.0, 1.0));
-      graphics2d.drawImage(img2, 0.6, 0.3, 3, 0.4, 0.4, 0.0, 0.0, img2.getWidth(), img2.getHeight(), 0.0, Colour(0.9, 0.8, 0.4, 0.6));
-      graphics2d.drawImage(img2, 0.3, 0.5, 4, 0.3, 0.3, 0.0, 0.0, img2.getWidth(), img2.getHeight(), 0.0, Colour(1.0, 1.0, 1.0, 1.0));
-      graphics2d.drawText(font1, "OpenGL ES 2.0 Demo", 0.0, 0.4, 5, -14.0, Vec2f(0.5, 0.0), Vec2f(0.5, 0.5), Colour(0.0, 0.0, 1.0, 1.0));
+
+      sprite0->update();
+      sprite0->draw(Vec2f(0.f, 0.f));
 
       win.swapBuffers();
    }

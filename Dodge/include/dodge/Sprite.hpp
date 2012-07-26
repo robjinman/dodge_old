@@ -25,11 +25,11 @@ class Sprite
      public EntityTransformations*/ {
 
    public:
-      Sprite(long type)
-         : Entity(type), EntityAnimations(this)/*, EntityTransformations(this)*/ {}
+      Sprite(long type, pTexture_t texture)
+         : Entity(type), EntityAnimations(this, texture)/*, EntityTransformations(this)*/ {}
 
-      Sprite(long name, long type)
-         : Entity(name, type), EntityAnimations(this)/*, EntityTransformations(this)*/ {}
+      Sprite(long name, long type, pTexture_t texture)
+         : Entity(name, type), EntityAnimations(this, texture)/*, EntityTransformations(this)*/ {}
 
       Sprite(const Sprite& sprite);
 

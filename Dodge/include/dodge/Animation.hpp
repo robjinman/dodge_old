@@ -40,6 +40,7 @@ class Animation {
       inline state_t getState() const;
       inline const AnimFrame* getCurrentFrame();
       inline uint_t getCurrentFrameIndex() const;
+      inline const AnimFrame* getFrame(uint_t idx) const;
       inline uint_t getNumFrames() const;
 
       inline void step();
@@ -116,6 +117,16 @@ inline uint_t Animation::getCurrentFrameIndex() const {
 }
 
 //===========================================
+// Animation::getFrame
+//===========================================
+inline const AnimFrame* Animation::getFrame(uint_t idx) const {
+   if (idx < m_frames.size())
+      return &m_frames[idx];
+   else
+      throw Exception("Error retrieving animFrame; index out of range", __FILE__, __LINE__);
+}
+
+//===========================================
 // Animation::getNumFrames
 //===========================================
 inline uint_t Animation::getNumFrames() const {
@@ -140,7 +151,7 @@ inline void Animation::setFrame(uint_t frame) {
    if (frame < m_frames.size())
       m_current = frame;
    else
-      throw Exception("Frame out of range", __FILE__, __LINE__);
+      throw Exception("Error setting animFrame; index out of range", __FILE__, __LINE__);
 }
 
 //===========================================

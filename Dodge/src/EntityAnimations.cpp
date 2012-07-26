@@ -7,6 +7,7 @@
 #include "Texture.hpp"
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
+#include "EAnimFinished.hpp"
 
 
 using namespace std;
@@ -108,15 +109,20 @@ void EntityAnimations::assignData(const xml_node<>* data) {
 // EntityAnimations::draw
 //===========================================
 void EntityAnimations::draw(const Vec2f& at) const {
-   float32_t x = m_entity->getMatrix()(0, 3) - at.x;
-   float32_t y = m_entity->getMatrix()(1, 3) - at.y;
-   float32_t z = m_entity->getMatrix()(2, 3);
-   float32_t w = m_texSection.getSize().x * m_entity->getScale().x;
-   float32_t h = m_texSection.getSize().y * m_entity->getScale().y;
+   Vec3f pos = m_entity->getPosition();
+
+   float32_t x = pos.x - at.x;
+   float32_t y = pos.y - at.y;
+   float32_t z = pos.z;
+
+   float32_t w = m_texSection.getSize().x * m_graphics2d.getPixelSize().x * m_entity->getScale().x;
+   float32_t h = m_texSection.getSize().y * m_graphics2d.getPixelSize().y * m_entity->getScale().y;
+
    float32_t tx = m_texSection.getPosition().x;
    float32_t ty = m_texSection.getPosition().y;
    float32_t tw = m_texSection.getSize().x;
    float32_t th = m_texSection.getSize().y;
+
    float32_t a = 0.f; // TODO
 
    m_graphics2d.drawImage(*m_texture, x, y, z, w, h, tx, ty, tw, th, a);
@@ -138,6 +144,20 @@ bool EntityAnimations::playAnimation(long name) {
 }
 
 //===========================================
+// EntityAnimations::addAnimation
+//===========================================
+void EntityAnimations::addAnimation(Animation* anim) {
+   m_animations[anim->getName()] = anim;
+
+   // If this is the first animation, set default texSection to first frame
+   if (m_animations.size() == 1) {
+      const AnimFrame* frame = anim->getFrame(0);
+
+      setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+   }
+}
+
+//===========================================
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
@@ -149,10 +169,10 @@ void EntityAnimations::update() {
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
          if (frame->hasPoly) m_entity->setBoundingPoly(frame->poly);
-/*
+
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {
-               pEAnimFinished_t event(new EAnimFinished(m_entity->getSharedPtr(), it->second));
+               EAnimFinished* event(new EAnimFinished(m_entity->getSharedPtr(), it->second));
                m_entity->onEvent(event);
             }
             catch (bad_alloc& e) {
@@ -161,12 +181,16 @@ void EntityAnimations::update() {
                throw ex;
             }
          }
-*/
       }
 
       ++it;
    }
 }
+
+//===========================================
+// EntityAnimations::~EntityAnimations
+//===========================================
+EntityAnimations::~EntityAnimations() {}
 
 
 }

@@ -18,4 +18,6 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/StringId.o \
 	$(BASE_DIR)/Texture.o \
 	$(BASE_DIR)/Vec2f.o \
-	$(BASE_DIR)/Vec2i.o
+	$(BASE_DIR)/Vec2i.o \
+	$(BASE_DIR)/Vec3f.o \
+	$(BASE_DIR)/Vec3i.o
