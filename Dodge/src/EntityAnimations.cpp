@@ -109,7 +109,7 @@ void EntityAnimations::assignData(const xml_node<>* data) {
 // EntityAnimations::draw
 //===========================================
 void EntityAnimations::draw(const Vec2f& at) const {
-   Vec3f pos = m_entity->getPosition();
+   Vec3f pos = m_entity->getTranslation_abs();
 
    float32_t x = pos.x - at.x;
    float32_t y = pos.y - at.y;
@@ -123,7 +123,7 @@ void EntityAnimations::draw(const Vec2f& at) const {
    float32_t tw = m_texSection.getSize().x;
    float32_t th = m_texSection.getSize().y;
 
-   float32_t a = 0.f; // TODO
+   float32_t a = m_entity->getRotation_abs();
 
    m_graphics2d.drawImage(*m_texture, x, y, z, w, h, tx, ty, tw, th, a);
 }

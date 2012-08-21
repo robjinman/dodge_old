@@ -12,7 +12,9 @@
 #endif
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <cml/cml.h>
+#include <set>
+#include <cmath>
+#include "definitions.hpp"
 #include "EEvent.hpp"
 #include "EventManager.hpp"
 #include "CompoundPoly.hpp"
@@ -23,6 +25,10 @@
 namespace Dodge {
 
 
+class Entity;
+typedef boost::shared_ptr<Entity> pEntity_t;
+
+
 class Entity : public boost::enable_shared_from_this<Entity> {
    public:
       Entity(long type);
@@ -30,24 +36,53 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);
 
-//      virtual void addToWorld() {}
-//      virtual void removeFromWorld() {}
+      // Derived classes may need these
+      virtual void addToWorld() {}
+      virtual void removeFromWorld() {}
 
       virtual void onEvent(const EEvent* event) {}
 
-      inline Vec3f getPosition() const;
+      inline void setParent(Entity* parent);
+      inline void addChild(pEntity_t child);
+      inline void removeChild(pEntity_t child);
+      inline Entity* getParent() const;
+      inline const std::set<pEntity_t>& getChildren() const;
+
+      inline void setTranslation(float32_t x, float32_t y, float32_t z);
+      inline void setTranslation_x(float32_t x);
+      inline void setTranslation_y(float32_t y);
+      inline void setTranslation_z(float32_t z);
+      inline void translate(float32_t x, float32_t y, float32_t z);
+      inline void translate_x(float32_t x);
+      inline void translate_y(float32_t y);
+      inline void translate_z(float32_t z);
+      inline void setRotation(float32_t deg);
+      inline void rotate(float32_t deg);
+      void rotate(float32_t deg, const Vec2f& pivot);
+
+      // Relative to parent (parent's model space)
+      inline Vec3f getTranslation() const;
+      inline float32_t getRotation() const;
+
+      // Relative to origin (world space)
+      inline float32_t getRotation_abs() const;
+      Vec3f getTranslation_abs() const;
+
+      inline void setScale(float32_t s);
+      inline void setScale(float32_t x, float32_t y);
+      inline void scale(float32_t s);
+      inline void scale(float32_t x, float32_t y);
+      inline void setBoundingPoly(const CompoundPoly& poly);
+
+      inline float32_t getWidth() const;
+      inline float32_t getHeight() const;
+
       inline const CompoundPoly& getBoundingPoly() const;
-      inline const cml::matrix44f_c& getMatrix() const;
       inline long getName() const;
       inline long getTypeName() const;
-      inline const Vec3f& getScale() const;
+      inline const Vec2f& getScale() const;
 
-      inline boost::shared_ptr<Entity> getSharedPtr();
-
-      inline void setPosition(float32_t x, float32_t y, float32_t z);
-      inline void setBoundingPoly(const CompoundPoly& poly);
-      inline void setMatrix(const cml::matrix44f_c& mat);
-      inline void setScale(const Vec3f& scale);
+      inline pEntity_t getSharedPtr();
 
       virtual void draw(const Vec2f& at) const = 0;
       virtual void update() {}
@@ -64,65 +99,245 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       static EventManager m_eventManager;
 
    private:
-      void recomputePoly();
+      void recomputePoly() const;
       void deepCopy(const Entity& copy);
 
       long m_name;
       long m_type;
-      Vec3f m_scale;
-      cml::matrix44f_c m_matrix;
-      CompoundPoly m_srcPoly;    // Bounding polygon
-      CompoundPoly m_transPoly;  // m_srcPoly after transformation by m_matrix
+      Vec2f m_scale;
+
+      Vec2f m_transl;
+      float32_t m_z;                      // Store z coord separately
+      float32_t m_rot;
+
+      CompoundPoly m_srcPoly;             // Bounding polygon
+      mutable CompoundPoly m_transPoly;   // m_srcPoly after rotation and scaling
+      mutable bool m_bTransPoly;          // True if m_transPoly has been computed
+
+      // These are computed from m_transPoly
+      mutable float32_t m_width;
+      mutable float32_t m_height;
+
+      Entity* m_parent;
+      std::set<pEntity_t> m_children;
 
       static int m_count;
       static long generateName();
 };
 
-typedef boost::shared_ptr<Entity> pEntity_t;
-
 
 //===========================================
 // Entity::getSharedPtr
 //===========================================
-inline boost::shared_ptr<Entity> Entity::getSharedPtr() {
+inline pEntity_t Entity::getSharedPtr() {
    return shared_from_this();
 }
 
 //===========================================
-// Entity::getPosition
+// Entity::setParent
 //===========================================
-inline Vec3f Entity::getPosition() const {
-   return Vec3f(m_matrix(0, 3), m_matrix(1, 3), m_matrix(2, 3));
+inline void Entity::setParent(Entity* parent) {
+   if (m_parent) m_parent->removeChild(shared_from_this());
+   m_parent = parent;
+   m_parent->m_children.insert(shared_from_this());
 }
 
 //===========================================
-// Entity::setPosition
+// Entity::addChild
 //===========================================
-inline void Entity::setPosition(float32_t x, float32_t y, float32_t z) {
-   m_matrix(0, 3) = x;
-   m_matrix(1, 3) = y;
-   m_matrix(2, 3) = z;
+inline void Entity::addChild(pEntity_t child) {
+   child->setParent(this);
+}
+
+//===========================================
+// Entity::removeChild
+//===========================================
+inline void Entity::removeChild(pEntity_t child) {
+   if (child->m_parent == this)
+      child->m_parent = NULL;
+
+   m_children.erase(child);
+}
+
+//===========================================
+// Entity::getParent
+//===========================================
+inline Entity* Entity::getParent() const {
+   return m_parent;
+}
+
+//===========================================
+// Entity::getChildren
+//===========================================
+inline const std::set<pEntity_t>& Entity::getChildren() const {
+   return m_children;
+}
+
+//===========================================
+// Entity::setTranslation
+//===========================================
+inline void Entity::setTranslation(float32_t x, float32_t y, float32_t z) {
+   m_transl = Vec2f(x, y);
+   m_z = z;
+}
+
+//===========================================
+// Entity::setTranslation_x
+//===========================================
+inline void Entity::setTranslation_x(float32_t x) {
+   m_transl.x = x;
+}
+
+//===========================================
+// Entity::setTranslation_y
+//===========================================
+inline void Entity::setTranslation_y(float32_t y) {
+   m_transl.y = y;
+}
+
+//===========================================
+// Entity::setTranslation_z
+//===========================================
+inline void Entity::setTranslation_z(float32_t z) {
+   m_z = z;
+}
+
+//===========================================
+// Entity::translate
+//===========================================
+inline void Entity::translate(float32_t x, float32_t y, float32_t z) {
+   m_transl = m_transl + Vec2f(x, y);
+   m_z += z;
+}
+
+//===========================================
+// Entity::translate_x
+//===========================================
+inline void Entity::translate_x(float32_t x) {
+   m_transl.x += x;
+}
+
+//===========================================
+// Entity::translate_y
+//===========================================
+inline void Entity::translate_y(float32_t y) {
+   m_transl.y += y;
+}
+
+//===========================================
+// Entity::translate_z
+//===========================================
+inline void Entity::translate_z(float32_t z) {
+   m_z += z;
+}
+
+//===========================================
+// Entity::setRotation
+//===========================================
+inline void Entity::setRotation(float32_t deg) {
+   m_rot = deg;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::rotate
+//===========================================
+inline void Entity::rotate(float32_t deg) {
+   m_rot += deg;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::getTranslation
+//===========================================
+inline Vec3f Entity::getTranslation() const {
+   return Vec3f(m_transl.x, m_transl.y, m_z);
+}
+
+//===========================================
+// Entity::getRotation
+//===========================================
+inline float32_t Entity::getRotation() const {
+   return m_rot;
+}
+
+//===========================================
+// Entity::getRotation_abs
+//===========================================
+inline float32_t Entity::getRotation_abs() const {
+   return m_parent ?
+      m_parent->getRotation_abs() + m_rot : m_rot;
+}
+
+//===========================================
+// Entity::setBoundingPoly
+//===========================================
+inline void Entity::setBoundingPoly(const CompoundPoly& poly) {
+   m_srcPoly = poly;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::setScale
+//===========================================
+inline void Entity::setScale(float32_t x, float32_t y) {
+   m_scale.x = x;
+   m_scale.y = y;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::setScale
+//===========================================
+inline void Entity::setScale(float32_t s) {
+   m_scale.x = s;
+   m_scale.y = s;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::scale
+//===========================================
+inline void Entity::scale(float32_t x, float32_t y) {
+   m_scale.x *= x;
+   m_scale.y *= y;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::scale
+//===========================================
+inline void Entity::scale(float32_t s) {
+   m_scale.x *= s;
+   m_scale.y *= s;
+   m_bTransPoly = false;
+}
+
+//===========================================
+// Entity::getWidth
+//===========================================
+inline float32_t Entity::getWidth() const {
+   if (!m_bTransPoly) recomputePoly();
+
+   return m_width;
+}
+
+//===========================================
+// Entity::getHeight
+//===========================================
+inline float32_t Entity::getHeight() const {
+   if (!m_bTransPoly) recomputePoly();
+
+   return m_height;
 }
 
 //===========================================
 // Entity::getBoundingPoly
 //===========================================
 inline const CompoundPoly& Entity::getBoundingPoly() const {
+   if (!m_bTransPoly) recomputePoly();
+
    return m_transPoly;
-}
-
-//===========================================
-// Entity::getMatrix
-//===========================================
-inline const cml::matrix44f_c& Entity::getMatrix() const {
-   return m_matrix;
-}
-
-//===========================================
-// Entity::getScale
-//===========================================
-inline const Vec3f& Entity::getScale() const {
-   return m_scale;
 }
 
 //===========================================
@@ -140,25 +355,10 @@ inline long Entity::getTypeName() const {
 }
 
 //===========================================
-// Entity::setBoundingPoly
+// Entity::getScale
 //===========================================
-inline void Entity::setBoundingPoly(const CompoundPoly& poly) {
-   m_srcPoly = poly;
-   recomputePoly();
-}
-
-//===========================================
-// Entity::setMatrix
-//===========================================
-inline void Entity::setMatrix(const cml::matrix44f_c& mat) {
-   m_matrix = mat;
-}
-
-//===========================================
-// Entity::setScale
-//===========================================
-inline void Entity::setScale(const Vec3f& scale) {
-   m_scale = scale;
+inline const Vec2f& Entity::getScale() const {
+   return m_scale;
 }
 
 
