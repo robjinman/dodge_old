@@ -18,13 +18,21 @@ namespace Dodge {
 
 
 // OpenGL ES 2.0 implementation of IRenderer interface
-class Renderer : public IRenderer {
+class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, unsigned char, unsigned int> {
    public:
+      typedef GLfloat float_t;
+      typedef GLfloat vertexElement_t;
+      typedef GLfloat matrixElement_t;
+      typedef GLfloat colourElement_t;
+      typedef GLfloat texCoordElement_t;
+      typedef unsigned char textureData_t;
+      typedef unsigned int textureId_t;
+
       virtual void init(const char* optsFile = NULL);
       virtual void setMode(mode_t mode);
       virtual textureId_t newTexture(const textureData_t* texture, int width, int height);
       virtual void setActiveTexture(textureId_t texId);
-      virtual void setGeometry(const vertexElement_t* verts, int count);
+      virtual void setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int count);
       virtual void setColours(const colourElement_t* colours, int count);
       virtual void setTextureCoords(const texCoordElement_t* texCoords, int count);
       virtual void render();
@@ -35,6 +43,8 @@ class Renderer : public IRenderer {
       void constructShaderProgs();
       void constructTexturedShaderProg();
       void constructNonTexturedShaderProg();
+      inline bool isSupportedPrimitive(primitive_t primitiveType) const;
+      inline GLint primitiveToGLType(primitive_t primitiveType) const;
 
       void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
 
@@ -55,7 +65,28 @@ class Renderer : public IRenderer {
       static int m_vertCount;
       static int m_colCount;
       static int m_texCoordCount;
+
+      static GLint m_primitiveType;
 };
+
+//===========================================
+// Renderer::isSupportedPrimitive
+//===========================================
+inline bool Renderer::isSupportedPrimitive(primitive_t primitiveType) const {
+   return primitiveType == TRIANGLES || primitiveType == LINES;
+}
+
+//===========================================
+// Renderer::primitiveToGLType
+//===========================================
+inline GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
+   switch (primitiveType) {
+      case TRIANGLES: return GL_TRIANGLES;
+      case LINES: return GL_LINES;
+      default:
+         throw Exception("Primitive not supported", __FILE__, __LINE__);
+   }
+}
 
 
 }

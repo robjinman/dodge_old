@@ -29,6 +29,7 @@ bool Renderer::m_texCoordsSet = false;
 int Renderer::m_vertCount = -1;
 int Renderer::m_colCount = -1;
 int Renderer::m_texCoordCount = -1;
+GLint Renderer::m_primitiveType = GL_TRIANGLES;
 
 
 //===========================================
@@ -53,6 +54,8 @@ void Renderer::init(const char* optsFile) {
 // Renderer::setMode
 //===========================================
 void Renderer::setMode(mode_t mode) {
+   if (mode == m_mode) return;
+
    switch (mode) {
       case TEXTURED_ALPHA: {
          map<mode_t, GLint>::iterator it = m_shaderProgIds.find(TEXTURED_ALPHA);
@@ -236,7 +239,12 @@ void Renderer::setActiveTexture(textureId_t texId) {
 //===========================================
 // Renderer::setGeometry
 //===========================================
-void Renderer::setGeometry(const vertexElement_t* verts, int count) {
+void Renderer::setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int count) {
+   if (isSupportedPrimitive(primitiveType))
+      m_primitiveType = primitiveToGLType(primitiveType);
+   else
+      throw Exception("Error setting renderable geometry; primitive not supported", __FILE__, __LINE__);
+
    GL_CHECK(glEnableVertexAttribArray(m_locPosition));
    GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, 0, verts));
 
@@ -282,7 +290,7 @@ void Renderer::render() {
    if (m_texCoordsSet && (m_texCoordCount != m_vertCount))
       throw Exception("Error rendering geometry; mismatch in array sizes", __FILE__, __LINE__);
 
-   GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, m_vertCount));
+   GL_CHECK(glDrawArrays(m_primitiveType, 0, m_vertCount));
 
    // Supplying colour information is optional in all shaders
    GL_CHECK(glDisableVertexAttribArray(m_locColour));

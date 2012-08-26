@@ -3,11 +3,7 @@
  * Date: 2011
  */
 
-#ifdef WIN32
-#include <windows/Timer.hpp>
-#else
 #include <linux/Timer.hpp>
-#endif
 
 
 namespace Dodge {

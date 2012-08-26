@@ -6,11 +6,7 @@
 #include <map>
 #include <string>
 #include <X11/XKBlib.h>
-#ifdef WIN32
-#include <windows/WinIO.hpp>
-#else
 #include <linux/WinIO.hpp>
-#endif
 
 
 using namespace std;

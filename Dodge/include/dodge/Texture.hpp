@@ -16,7 +16,7 @@ namespace Dodge {
 
 
 // PNG implementation of ITexture interface
-class Texture : public ITexture {
+class Texture : public ITexture<unsigned int> {
    public:
       Texture(const char* file);
 

@@ -7,55 +7,48 @@
 #define __I_TEXTURE_HPP__
 
 
-#include "IRenderer.hpp"
-
-
 namespace Dodge {
 
 
+template <typename T_ID>
 class ITexture { 
    public:
       ITexture(const char* file) {}
 
-      inline int getWidth() const;
-      inline int getHeight() const;
-      inline const unsigned char* getData() const;
-      inline const IRenderer::textureId_t& getId() const;
+      //===========================================
+      // ITexture::getWidth
+      //===========================================
+      int getWidth() const {
+         return m_width;
+      }
+
+      //===========================================
+      // ITexture::getHeight
+      //===========================================
+      int getHeight() const {
+         return m_height;
+      }
+
+      //===========================================
+      // ITexture::getData
+      //===========================================
+      const unsigned char* getData() const {
+         return m_data;
+      }
+
+      //===========================================
+      // ITexture::getId
+      //===========================================
+      const T_ID& getId() const {
+         return m_id;
+      }
 
    protected:
       unsigned char* m_data;
       int m_width;
       int m_height;
-      IRenderer::textureId_t m_id;
+      T_ID m_id;
 };
-
-//===========================================
-// ITexture::getWidth
-//===========================================
-inline int ITexture::getWidth() const {
-   return m_width;
-}
-
-//===========================================
-// ITexture::getHeight
-//===========================================
-inline int ITexture::getHeight() const {
-   return m_height;
-}
-
-//===========================================
-// ITexture::getData
-//===========================================
-inline const unsigned char* ITexture::getData() const {
-   return m_data;
-}
-
-//===========================================
-// ITexture::getId
-//===========================================
-inline const IRenderer::textureId_t& ITexture::getId() const {
-   return m_id;
-}
 
 
 }

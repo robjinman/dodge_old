@@ -14,11 +14,7 @@
 #include "rapidxml/rapidxml.hpp"
 #include "Exception.hpp"
 #include "AnimFrame.hpp"
-#ifdef WIN32
-#include "windows/Timer.hpp"
-#else
-#include "linux/Timer.hpp"
-#endif
+#include "Timer.hpp"
 
 
 namespace Dodge {

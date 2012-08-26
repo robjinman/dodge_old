@@ -14,7 +14,7 @@
 namespace Dodge {
 
 
-class Vec3i;
+class Vec3f;
 
 class Vec3i {
    public:

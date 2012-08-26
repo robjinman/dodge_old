@@ -11,23 +11,29 @@ namespace Dodge {
 
 
 // Interface class for cross-platform renderer
+template <
+   typename T_VERT_ELEM,
+   typename T_FLOAT,
+   typename T_MAT_ELEM,
+   typename T_COL_ELEM,
+   typename T_TEXCOORD_ELEM,
+   typename T_TEXDATA,
+   typename T_TEXID
+>
 class IRenderer {
    public:
-      // Must contain the following typedefs:
-      //    NAME                 SUGGESTED VALUE
-      //    vertexElement_t      float
-      //    matrixElement_t      float
-      //    colourElement_t      float
-      //    texCoordElement_t    float
-      //    textureData_t        unsigned char
-      //    textureId_t          unsigned int
-      #include "rendererTypes.hpp"
-
       enum mode_t {
          TEXTURED_ALPHA,
          NONTEXTURED_ALPHA,
          TEXTURED_NONALPHA,
          NONTEXTURED_NONALPHA
+      };
+
+      enum primitive_t {
+         TRIANGLES,
+         LINES,
+         QUADS,
+         TRIANGLE_STRIP
       };
 
       // A file may be specified containing implementation-specific options.
@@ -36,24 +42,23 @@ class IRenderer {
       virtual void setMode(mode_t mode) = 0;
 
       // Constructs a texture object from raw image data, and returns its id.
-      virtual textureId_t newTexture(const textureData_t* texture, int width, int height) = 0;
+      virtual T_TEXID newTexture(const T_TEXDATA* texture, int width, int height) = 0;
 
       // Set current matrix (given in column-major order)
-      virtual void setMatrix(const matrixElement_t* mat) = 0;
+      virtual void setMatrix(const T_MAT_ELEM* mat) = 0;
 
-      virtual void setActiveTexture(textureId_t texId) = 0;
+      virtual void setActiveTexture(T_TEXID texId) = 0;
 
-      // Specify geometry in triangles
-      virtual void setGeometry(const vertexElement_t* verts, int count) = 0;
+      virtual void setGeometry(const T_VERT_ELEM* verts, primitive_t primitiveType, int count) = 0;
 
-      virtual void setColours(const colourElement_t* colours, int count) = 0;
+      virtual void setColours(const T_COL_ELEM* colours, int count) = 0;
 
-      virtual void setTextureCoords(const texCoordElement_t* texCoords, int count) = 0;
+      virtual void setTextureCoords(const T_TEXCOORD_ELEM* texCoords, int count) = 0;
 
       virtual void render() = 0;
 
       // Clear surface (with optional colour)
-      virtual void clear(const colourElement_t* colour = 0) = 0;
+      virtual void clear(const T_COL_ELEM* colour = 0) = 0;
 };
 
 

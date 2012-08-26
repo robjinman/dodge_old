@@ -48,6 +48,30 @@ void Graphics2d::setViewPos(float32_t x, float32_t y) {
 }
 
 //===========================================
+// Graphics2d::drawLine
+//===========================================
+void Graphics2d::drawLine(const Vec2f& p1, const Vec2f& p2, int z, float32_t width, const Colour& col) const {
+   m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
+
+   glLineWidth(width);
+
+   Renderer::vertexElement_t verts[] = {
+      p1.x, p1.y, static_cast<float32_t>(z),
+      p2.x, p2.y, static_cast<float32_t>(z)
+   };
+
+   Renderer::colourElement_t colours[] = {
+      col.r, col.g, col.b, col.a,
+      col.r, col.g, col.b, col.a
+   };
+
+   m_renderer.setMatrix(m_orthographic.data());
+   m_renderer.setGeometry(verts, Renderer::LINES, 2);
+   m_renderer.setColours(colours, 2);
+   m_renderer.render();
+}
+
+//===========================================
 // Graphics2d::drawImage
 //===========================================
 void Graphics2d::drawImage(const Texture& image, float32_t x, float32_t y, int z, float32_t w, float32_t h,
@@ -108,7 +132,7 @@ void Graphics2d::drawImage(const Texture& image, float32_t x, float32_t y, int z
 
    m_renderer.setMatrix(mvp.data());
    m_renderer.setActiveTexture(image.getId());
-   m_renderer.setGeometry(verts, 6);
+   m_renderer.setGeometry(verts, Renderer::TRIANGLES, 6);
    m_renderer.setColours(colours, 6);
    m_renderer.setTextureCoords(texCoords, 6);
    m_renderer.render();
@@ -127,7 +151,7 @@ void Graphics2d::drawImage(const Texture& image, float32_t destX, float32_t dest
 // Graphics2d::drawPlainAlphaQuad
 //===========================================
 void Graphics2d::drawPlainAlphaQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h,
-   float32_t a, Colour col) const {
+   float32_t a, const Colour& col) const {
 
    m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
 
@@ -162,7 +186,7 @@ void Graphics2d::drawPlainAlphaQuad(float32_t x, float32_t y, int z, float32_t w
    matrix44f_c mvp = m_orthographic * modelView;
 
    m_renderer.setMatrix(mvp.data());
-   m_renderer.setGeometry(verts, 6);
+   m_renderer.setGeometry(verts, Renderer::TRIANGLES, 6);
    m_renderer.setColours(colours, 6);
    m_renderer.render();
 }
@@ -230,7 +254,7 @@ void Graphics2d::drawPlainAlphaPoly(const Poly& poly, float32_t x, float32_t y, 
    matrix44f_c mvp = m_orthographic * modelView;
 
    m_renderer.setMatrix(mvp.data());
-   m_renderer.setGeometry(verts, 3 * n - 6);
+   m_renderer.setGeometry(verts, Renderer::TRIANGLES, 3 * n - 6);
    m_renderer.setColours(colours, 3 * n - 6);
    m_renderer.render();
 }

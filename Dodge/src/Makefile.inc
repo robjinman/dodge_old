@@ -10,6 +10,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/IWinIO.o \
+	$(BASE_DIR)/Math.o \
 	$(BASE_DIR)/Poly.o \
 	$(BASE_DIR)/Rectangle.o \
 	$(BASE_DIR)/Renderer.o \
