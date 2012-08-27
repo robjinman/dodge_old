@@ -53,7 +53,7 @@ void Graphics2d::setViewPos(float32_t x, float32_t y) {
 void Graphics2d::drawLine(const Vec2f& p1, const Vec2f& p2, int z, float32_t width, const Colour& col) const {
    m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
 
-   glLineWidth(width);
+   glLineWidth(width); // TODO: REMOVE THIS!
 
    Renderer::vertexElement_t verts[] = {
       p1.x, p1.y, static_cast<float32_t>(z),
@@ -148,9 +148,9 @@ void Graphics2d::drawImage(const Texture& image, float32_t destX, float32_t dest
 }
 
 //===========================================
-// Graphics2d::drawPlainAlphaQuad
+// Graphics2d::drawSolidQuad
 //===========================================
-void Graphics2d::drawPlainAlphaQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h,
+void Graphics2d::drawSolidQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h,
    float32_t a, const Colour& col) const {
 
    m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
@@ -192,12 +192,18 @@ void Graphics2d::drawPlainAlphaQuad(float32_t x, float32_t y, int z, float32_t w
 }
 
 //===========================================
-// Graphics2d::drawPlainAlphaPoly
-//
-// Polygon must be convex
+// Graphics2d::drawHollowQuad
 //===========================================
-void Graphics2d::drawPlainAlphaPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a,
-   const Colour& colour) const {
+void Graphics2d::drawHollowQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h,
+   float32_t a, const Colour& col, int border) const {
+   // TODO
+}
+
+//===========================================
+// Graphics2d::drawSolidPoly
+//===========================================
+void Graphics2d::drawSolidPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a,
+   const Colour& col) const {
 
    m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
    int n = poly.getNumVertices();
@@ -217,28 +223,28 @@ void Graphics2d::drawPlainAlphaPoly(const Poly& poly, float32_t x, float32_t y, 
       verts[3 * i + 0] = poly.getVertex(0).x;
       verts[3 * i + 1] = poly.getVertex(0).y;
       verts[3 * i + 2] = fZ;
-      colours[4 * i + 0] = colour.r;
-      colours[4 * i + 1] = colour.g;
-      colours[4 * i + 2] = colour.b;
-      colours[4 * i + 3] = colour.a;
+      colours[4 * i + 0] = col.r;
+      colours[4 * i + 1] = col.g;
+      colours[4 * i + 2] = col.b;
+      colours[4 * i + 3] = col.a;
       i++;
 
       verts[3 * i + 0] = poly.getVertex(v).x;
       verts[3 * i + 1] = poly.getVertex(v).y;
       verts[3 * i + 2] = fZ;
-      colours[4 * i + 0] = colour.r;
-      colours[4 * i + 1] = colour.g;
-      colours[4 * i + 2] = colour.b;
-      colours[4 * i + 3] = colour.a;
+      colours[4 * i + 0] = col.r;
+      colours[4 * i + 1] = col.g;
+      colours[4 * i + 2] = col.b;
+      colours[4 * i + 3] = col.a;
       i++;
 
       verts[3 * i + 0] = poly.getVertex(v + 1).x;
       verts[3 * i + 1] = poly.getVertex(v + 1).y;
       verts[3 * i + 2] = fZ;
-      colours[4 * i + 0] = colour.r;
-      colours[4 * i + 1] = colour.g;
-      colours[4 * i + 2] = colour.b;
-      colours[4 * i + 3] = colour.a;
+      colours[4 * i + 0] = col.r;
+      colours[4 * i + 1] = col.g;
+      colours[4 * i + 2] = col.b;
+      colours[4 * i + 3] = col.a;
       i++;
    }
 
@@ -260,15 +266,71 @@ void Graphics2d::drawPlainAlphaPoly(const Poly& poly, float32_t x, float32_t y, 
 }
 
 //===========================================
-// Graphics2d::drawPlainAlphaCompoundPoly
-//
-// Comprising polygons must be convex
+// Graphics2d::drawHollowPoly
 //===========================================
-void Graphics2d::drawPlainAlphaCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y,
+void Graphics2d::drawHollowPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a,
+   const Colour& col, int border) const {
+
+   m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
+   int n = poly.getNumVertices();
+
+   matrix44f_c rotation;
+   matrix44f_c translation;
+   matrix44f_c modelView;
+
+   float32_t rads = DEG_TO_RAD(a);
+   matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
+   matrix_translation(translation, x, y, 0.f);
+   modelView = translation * rotation;
+
+   matrix44f_c mvp = m_orthographic * modelView;
+   m_renderer.setMatrix(mvp.data());
+
+   glLineWidth(border); // TODO: REMOVE THIS!
+
+   Renderer::vertexElement_t verts[6];
+   Renderer::colourElement_t colours[] = {
+      col.r, col.g, col.b, col.a,
+      col.r, col.g, col.b, col.a
+   };
+
+   for (int i = 0; i < n; ++i) {
+      const Vec2f& p1 = poly.getVertex(i);
+      const Vec2f& p2 = poly.getVertex((i + 1) % n);
+
+      verts[0] = p1.x;
+      verts[1] = p1.y;
+      verts[2] = static_cast<float32_t>(z);
+      verts[3] = p2.x;
+      verts[4] = p2.y;
+      verts[5] = static_cast<float32_t>(z);
+
+      m_renderer.setGeometry(verts, Renderer::LINES, 2);
+      m_renderer.setColours(colours, 2);
+      m_renderer.render();
+   }
+}
+
+//===========================================
+// Graphics2d::drawSolidCompoundPoly
+//===========================================
+void Graphics2d::drawSolidCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y,
    int z, float32_t a, const Colour& colour) const {
 
    for (int i = 0; i < poly.getNumPolys(); ++i)
-      drawPlainAlphaPoly(poly.getPoly(i), x, y, z, a, colour);
+      drawSolidPoly(poly.getPoly(i), x, y, z, a, colour);
+}
+
+//===========================================
+// Graphics2d::drawHollowCompoundPoly
+//===========================================
+void Graphics2d::drawHollowCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y,
+   int z, float32_t a, const Colour& colour, int border) const {
+
+   // TODO: omit inside edges
+
+   for (int i = 0; i < poly.getNumPolys(); ++i)
+      drawHollowPoly(poly.getPoly(i), x, y, z, a, colour, border);
 }
 
 //===========================================
@@ -326,9 +388,9 @@ void Graphics2d::clear() const {
 //===========================================
 // Graphics2d::clear
 //===========================================
-void Graphics2d::clear(const Colour& colour) const {
-   Renderer::colourElement_t col[] = { colour.r, colour.g, colour.b, colour.a };
-   m_renderer.clear(col);
+void Graphics2d::clear(const Colour& col) const {
+   Renderer::colourElement_t c[] = { col.r, col.g, col.b, col.a };
+   m_renderer.clear(c);
 }
 
 

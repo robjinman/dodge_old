@@ -38,11 +38,17 @@ class Graphics2d {
       void drawImage(const Texture& image, float32_t destX, float32_t destY, int destZ, float32_t srcX, float32_t srcY, float32_t w,
          float32_t h, float32_t a, const Colour& col = Colour(1.0, 1.0, 1.0, 1.0)) const;
 
-      void drawPlainAlphaQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h, float32_t a, const Colour& col) const;
+      void drawSolidQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h, float32_t a, const Colour& col) const;
 
-      void drawPlainAlphaPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col) const;
+      void drawHollowQuad(float32_t x, float32_t y, int z, float32_t w, float32_t h, float32_t a, const Colour& col, int border) const;
 
-      void drawPlainAlphaCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col) const;
+      void drawSolidPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col) const;
+
+      void drawHollowPoly(const Poly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col, int border) const;
+
+      void drawSolidCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col) const;
+
+      void drawHollowCompoundPoly(const CompoundPoly& poly, float32_t x, float32_t y, int z, float32_t a, const Colour& col, int border) const;
 
       void drawText(const Font& font, const std::string& text, float32_t x, float32_t y, int z, float32_t a,
          const Vec2f& pivot, const Vec2f& scale, const Colour& col) const;

@@ -18,7 +18,7 @@ namespace Dodge {
 
 
 // OpenGL ES 2.0 implementation of IRenderer interface
-class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, unsigned char, unsigned int> {
+class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, unsigned char, GLuint> {
    public:
       typedef GLfloat float_t;
       typedef GLfloat vertexElement_t;

@@ -1,3 +1,0 @@
-Dodge::Engine Developer Notes
-
-The Dodge Engine is 

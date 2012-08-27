@@ -1,0 +1,2 @@
+- Make CompoundPoly and Poly polymorphic.
+- 

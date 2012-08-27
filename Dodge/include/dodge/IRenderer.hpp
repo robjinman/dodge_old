@@ -12,8 +12,8 @@ namespace Dodge {
 
 // Interface class for cross-platform renderer
 template <
-   typename T_VERT_ELEM,
    typename T_FLOAT,
+   typename T_VERT_ELEM,
    typename T_MAT_ELEM,
    typename T_COL_ELEM,
    typename T_TEXCOORD_ELEM,

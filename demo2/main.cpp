@@ -114,13 +114,21 @@ int main(int argc, char** argv) {
       sprites[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)), 1.f);
    }
 
+   Poly poly;
+   poly.addVertex(Vec2f(0.09, 0.0));
+   poly.addVertex(Vec2f(0.31, 0.0));
+   poly.addVertex(Vec2f(0.4, 0.23));
+   poly.addVertex(Vec2f(0.2, 0.4));
+   poly.addVertex(Vec2f(0.0, 0.23));
+
    while (1) {
       win.doEvents();
       keyboard();
       computeFrameRate();
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      graphics2d.drawPlainAlphaQuad(0.f, 0.f, 0, 0.25f, 0.25f, 0.f, Colour(0.f, 1.f, 0.f, 1.f));
+      graphics2d.drawSolidQuad(0.f, 0.f, 0, 0.25f, 0.25f, 0.f, Colour(0.f, 1.f, 0.f, 1.f));
+      graphics2d.drawHollowPoly(poly, 0.5f, 0.3f, 3, 0.f, Colour(0.f, 0.f, 0.f, 1.f), 2);
       quadtree.dbg_draw(2, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < sprites.size(); ++i) {
