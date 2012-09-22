@@ -48,18 +48,18 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
    out << "rotation: " << m_rot << "\n";
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "bounding poly (src):\n";
-   m_srcPoly.dbg_print(out, tab + 1);
+   out << "shape (src):\n";
+   m_srcShape->dbg_print(out, tab + 1);
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "bounding poly (transformed) (up-to-date: " << (m_bTransPoly ? "true" : "false") << "):\n";
-   m_transPoly.dbg_print(out, tab + 1);
+   out << "shape (transformed) (up-to-date: " << (m_bTransShape ? "true" : "false") << "):\n";
+   m_transShape->dbg_print(out, tab + 1);
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "width (up-to-date: " << (m_bTransPoly ? "true" : "false") << "): " << m_width << "\n";
+   out << "width (up-to-date: " << (m_bTransShape ? "true" : "false") << "): " << m_width << "\n";
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "width (up-to-date: " << (m_bTransPoly ? "true" : "false") << "): " << m_height << "\n";
+   out << "width (up-to-date: " << (m_bTransShape ? "true" : "false") << "): " << m_height << "\n";
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
    out << "parent: " << (m_parent ? getInternedString(m_parent->getName()) : "NULL") << "\n";
@@ -68,9 +68,9 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
    out << "children: ";
    if (m_children.size() > 0) {
       out << "\n";
-      for (uint_t c = 0; c < m_children.size(); ++c) {
+      for (set<pEntity_t>::const_iterator c = m_children.begin(); c != m_children.end(); ++c) {
          for (int i = 0; i < tab + 2; i++) out << "\t";
-         out << getInternedString(m_children[c]->getName()) << "\n";
+         out << getInternedString((*c)->getName()) << "\n";
       }
    }
    else
@@ -84,7 +84,7 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 Entity::Entity(long name, long type)
    : m_name(name), m_type(type), m_scale(1.f, 1.f), m_transl(0.f, 0.f),
-      m_z(1.f), m_rot(0.f), m_bTransPoly(false), m_parent(NULL) {
+      m_z(1.f), m_rot(0.f), m_bTransShape(false), m_parent(NULL) {
 
    ++m_count;
 }
@@ -94,7 +94,7 @@ Entity::Entity(long name, long type)
 //===========================================
 Entity::Entity(long type)
    : m_type(type), m_scale(1.f, 1.f), m_transl(0.f, 0.f), m_z(1.f),
-      m_rot(0.f), m_bTransPoly(false), m_parent(NULL) {
+      m_rot(0.f), m_bTransShape(false), m_parent(NULL) {
 
    m_name = generateName();
 
@@ -142,9 +142,9 @@ void Entity::deepCopy(const Entity& copy) {
    m_z = copy.m_z;
    m_rot = copy.m_rot;
 
-   m_srcPoly = copy.m_srcPoly;
-   m_transPoly = copy.m_transPoly;
-   m_bTransPoly = copy.m_bTransPoly;
+   m_srcShape = copy.m_srcShape ? unique_ptr<Primitive>(copy.m_srcShape->clone()) : unique_ptr<Primitive>();
+   m_transShape = copy.m_transShape ? unique_ptr<Primitive>(copy.m_transShape->clone()) : unique_ptr<Primitive>();
+   m_bTransShape = copy.m_bTransShape;
 
    m_width = copy.m_width;
    m_height = copy.m_height;
@@ -193,10 +193,12 @@ void Entity::assignData(const rapidxml::xml_node<>* data) {
       if (child) m_scale.assignData(child);
       node = node->next_sibling();
    }
-   if (node && strcmp(node->name(), "boundingPoly") == 0) {
+   if (node && strcmp(node->name(), "shape") == 0) {
       const xml_node<>* child = node->first_node();
-      if (child) m_srcPoly.assignData(child);
-      recomputePoly();
+      if (child) {
+//         m_srcShape = unique_ptr<Primitive>(primitiveFactory.create(child));
+         recomputeShape();
+      }
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "children") == 0) {
@@ -261,22 +263,23 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 }
 
 //===========================================
-// Entity::recomputePoly
+// Entity::recomputeShape
 //
 // Computes the entity's bounding polygon after scaling and rotation
 //===========================================
-void Entity::recomputePoly() const {
-   m_transPoly = m_srcPoly;
-   m_transPoly.rotate(getRotation_abs());
-   m_transPoly.scale(m_scale);
+void Entity::recomputeShape() const {
+   m_transShape = unique_ptr<Primitive>(m_srcShape->clone());
+   m_transShape->rotate(getRotation_abs(), Vec2f(0.f, 0.f));
+   m_transShape->scale(m_scale);
 
-   Vec2f min = m_transPoly.computeMinimum();
-   Vec2f max = m_transPoly.computeMaximum();
+   // TODO
+//   Vec2f min = m_transShape->computeMinimum();
+//   Vec2f max = m_transShape->computeMaximum();
 
-   m_width = max.x - min.x;
-   m_height = max.y - min.y;
+//   m_width = max.x - min.x;
+//   m_height = max.y - min.y;
 
-   m_bTransPoly = true;
+   m_bTransShape = true;
 }
 
 

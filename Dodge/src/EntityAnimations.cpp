@@ -113,19 +113,15 @@ void EntityAnimations::draw(const Vec2f& at) const {
 
    float32_t x = pos.x - at.x;
    float32_t y = pos.y - at.y;
-   float32_t z = pos.z;
-
-   float32_t w = m_texSection.getSize().x * m_graphics2d.getPixelSize().x * m_entity->getScale().x;
-   float32_t h = m_texSection.getSize().y * m_graphics2d.getPixelSize().y * m_entity->getScale().y;
+   int z = static_cast<int>(pos.z);
 
    float32_t tx = m_texSection.getPosition().x;
    float32_t ty = m_texSection.getPosition().y;
    float32_t tw = m_texSection.getSize().x;
    float32_t th = m_texSection.getSize().y;
-
    float32_t a = m_entity->getRotation_abs();
 
-   m_graphics2d.drawImage(*m_texture, x, y, z, w, h, tx, ty, tw, th, a);
+   m_graphics2d.drawImage(*m_texture, tx, ty, tw, th, x, y, z, a, Vec2f(0.f, 0.f), m_entity->getScale());
 }
 
 //===========================================
@@ -168,7 +164,7 @@ void EntityAnimations::update() {
       const AnimFrame* frame = it->second->getCurrentFrame();
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
-         if (frame->hasPoly) m_entity->setBoundingPoly(frame->poly);
+         if (frame->shape) m_entity->setShape(unique_ptr<Primitive>(frame->shape->clone())); // TODO: PrimitiveDelta
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {

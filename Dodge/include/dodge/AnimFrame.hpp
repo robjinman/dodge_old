@@ -7,8 +7,9 @@
 #define __ANIM_FRAME_HPP__
 
 
+#include <memory>
 #include "Vec2i.hpp"
-#include "CompoundPoly.hpp"
+#include "Primitive.hpp"
 #include "Colour.hpp"
 #include "rapidxml/rapidxml.hpp"
 
@@ -19,18 +20,15 @@ namespace Dodge {
 class AnimFrame {
    public:
       Vec2i pos, dim;
-      CompoundPoly poly;
+      std::unique_ptr<Primitive> shape;   // TODO: Eventually change this to PrimitiveDelta
       Colour col;
-      bool hasPoly;
 
-      AnimFrame()
-         : pos(0, 0), dim(0, 0), poly(), col(), hasPoly(false) {}
+      AnimFrame();
+      AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Primitive> shape_, const Colour& col_);
+      AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_);
+      AnimFrame(const AnimFrame& copy);
 
-      AnimFrame(Vec2i pos_, Vec2i dim_, CompoundPoly poly_, const Colour& col_)
-         : pos(pos_), dim(dim_), poly(poly_), col(col_), hasPoly(true) {}
-
-      AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_)
-         : pos(pos_), dim(dim_), col(col_), hasPoly(false) {}
+      AnimFrame& operator=(const AnimFrame& rhs);
 
       virtual void assignData(const rapidxml::xml_node<>* data);
 };

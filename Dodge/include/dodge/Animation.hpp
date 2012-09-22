@@ -10,6 +10,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
+#include <vector>
 #include "definitions.hpp"
 #include "rapidxml/rapidxml.hpp"
 #include "Exception.hpp"
@@ -28,7 +29,7 @@ class Animation {
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 
       inline void addFrame(const AnimFrame& frame);
-      inline void addFrames(const std::vector<AnimFrame>& frame);
+//      inline void addFrames(const std::vector<AnimFrame>& frame);
       inline void setFrameRate(float32_t rate);
 
       inline long getName() const;
@@ -73,9 +74,9 @@ inline void Animation::addFrame(const AnimFrame& frame) {
 //===========================================
 // Animation::addFrames
 //===========================================
-inline void Animation::addFrames(const std::vector<AnimFrame>& frames) {
-   m_frames = frames;
-}
+//inline void Animation::addFrames(const std::vector<AnimFrame>& frames) {
+//   m_frames = frames;
+//}
 
 //===========================================
 // Animation::setFrameRate

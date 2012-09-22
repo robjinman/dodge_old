@@ -8,6 +8,7 @@
 
 
 #include <GLES2/gl2.h>
+#include <cml/cml.h>
 #include <set>
 #include <map>
 #include "GL_CHECK.hpp"
@@ -37,7 +38,7 @@ class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, u
       virtual void setTextureCoords(const texCoordElement_t* texCoords, int count);
       virtual void render();
       virtual void setMatrix(const matrixElement_t* mat);
-      virtual void clear(const colourElement_t* colour = NULL);
+      virtual void clear();
 
    private:
       void constructShaderProgs();
@@ -54,6 +55,8 @@ class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, u
       static GLint m_locColour;
       static GLint m_locTexCoord;
       static GLint m_locMVP;
+
+      static cml::matrix44f_c m_mv;
 
       static bool m_init;
       static mode_t m_mode;

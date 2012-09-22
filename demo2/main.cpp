@@ -35,10 +35,14 @@ void keyDown(int code) {
 void keyboard() {
    if (keys[WinIO::KEY_RIGHT]) {
       sprites[0]->playAnimation(internString("anim0"));
-      sprites[0]->translate_x(0.0005);
+      sprites[0]->translate_x(0.001);
+   }
+   if (keys[WinIO::KEY_LEFT]) {
+      sprites[0]->playAnimation(internString("anim0"));
+      sprites[0]->translate_x(-0.001);
    }
    if (keys[WinIO::KEY_SPACE]) {
-      sprites[0]->rotate(0.5f, graphics2d.getPixelSize() * 16.f);
+      sprites[0]->rotate(0.8f, graphics2d.getPixelSize() * 16.f);
    }
    if (keys[WinIO::KEY_UP]) {
       sprites[1]->scale(1.01);
@@ -68,16 +72,34 @@ void computeFrameRate() {
    }
 }
 
+void btn1Click(int x, int y) {
+   float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
+   float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
+
+   std::cout << "Mouse click at pixel coords (" << x << ", " << y << ")\n";
+   std::cout << "Mouse click at game coords (" << xx << ", " << yy << ")\n";
+}
+
+void btn1Release(int x, int y) {
+   float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
+   float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
+
+   std::cout << "Mouse release at pixel coords (" << x << ", " << y << ")\n";
+   std::cout << "Mouse release at game coords (" << xx << ", " << yy << ")\n";
+}
+
 int main(int argc, char** argv) {
    WinIO win;
    win.init("OpenGLES 2.0 Demo", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
+   win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
+   win.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(btn1Release));
 
    graphics2d.init(640, 480);
 
-   Quadtree<pEntity_t> quadtree(3, Rectangle(0.f, 0.f, 64.f / 48.f, 1.f));
+   Quadtree<pEntity_t> quadtree(3, Range(0.f, 0.f, 64.f / 48.f, 1.f));
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
 
@@ -103,7 +125,7 @@ int main(int argc, char** argv) {
    proto.addAnimation(&anim0);
 
    sprites.push_back(pSprite_t(new Sprite(proto, internString("mainDude"))));
-   sprites[0]->setTranslation(0.3, 0.3, 1.0);
+   sprites[0]->setTranslation(0.3f, 0.3f, 2.f);
 
    for (int i = 1; i < 6; ++i) {
       float32_t deg = (i - 1) * (360 / 5);
@@ -111,10 +133,10 @@ int main(int argc, char** argv) {
 
       sprites.push_back(pSprite_t(new Sprite(proto)));
       sprites[i]->setParent(sprites[0].get());
-      sprites[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)), 1.f);
+      sprites[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)), 2.f);
    }
 
-   Poly poly;
+   Polygon poly;
    poly.addVertex(Vec2f(0.09, 0.0));
    poly.addVertex(Vec2f(0.31, 0.0));
    poly.addVertex(Vec2f(0.4, 0.23));
@@ -127,9 +149,11 @@ int main(int argc, char** argv) {
       computeFrameRate();
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      graphics2d.drawSolidQuad(0.f, 0.f, 0, 0.25f, 0.25f, 0.f, Colour(0.f, 1.f, 0.f, 1.f));
-      graphics2d.drawHollowPoly(poly, 0.5f, 0.3f, 3, 0.f, Colour(0.f, 0.f, 0.f, 1.f), 2);
-      quadtree.dbg_draw(2, Colour(1.f, 0.f, 0.f, 1.f));
+      graphics2d.setFillColour(Colour(0.f, 1.f, 0.f, 1.f));
+      graphics2d.setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
+      graphics2d.setLineWidth(6);
+      graphics2d.drawPrimitive(poly, 0.5f, 0.4f, 1);
+      quadtree.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < sprites.size(); ++i) {
          sprites[i]->update();

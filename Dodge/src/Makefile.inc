@@ -1,18 +1,22 @@
 include $(BASE_DIR)/$(PLATFORM)/Makefile.inc
+include $(BASE_DIR)/math/Makefile.inc
 OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/AnimFrame.o \
+	$(BASE_DIR)/Box.o \
 	$(BASE_DIR)/Colour.o \
-	$(BASE_DIR)/CompoundPoly.o \
 	$(BASE_DIR)/EEvent.o \
+	$(BASE_DIR)/Ellipse.o \
 	$(BASE_DIR)/Entity.o \
 	$(BASE_DIR)/EntityAnimations.o \
 	$(BASE_DIR)/EventManager.o \
 	$(BASE_DIR)/Exception.o \
+	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/IWinIO.o \
-	$(BASE_DIR)/Math.o \
-	$(BASE_DIR)/Poly.o \
-	$(BASE_DIR)/Rectangle.o \
+	$(BASE_DIR)/LineSegment.o \
+	$(BASE_DIR)/Polygon.o \
+	$(BASE_DIR)/Quad.o \
+	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Renderer.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \

@@ -15,7 +15,7 @@
 #include "Entity.hpp"
 #include "Texture.hpp"
 #include "Graphics2d.hpp"
-#include "Rectangle.hpp"
+#include "Range.hpp"
 
 
 namespace Dodge {
@@ -37,7 +37,7 @@ class EntityAnimations {
       // EntityAnimations takes ownership of Animation object
       void addAnimation(Animation* anim);
 
-      inline const Rectangle& getTextureSection() const;
+      inline const Range& getTextureSection() const;
       inline const Colour& getColour() const;
       inline Animation::state_t getAnimState() const;
       inline long getAnimName() const;
@@ -62,7 +62,7 @@ class EntityAnimations {
    private:
       Entity* m_entity;
       pTexture_t m_texture;
-      Rectangle m_texSection;
+      Range m_texSection;
       std::map<long, Animation*> m_animations;
       Animation* m_activeAnim;
 
@@ -80,7 +80,7 @@ inline void EntityAnimations::setTexture(pTexture_t texture) {
 // EntityAnimations::setTextureSection
 //===========================================
 inline void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h) {
-   m_texSection = Rectangle(x, y, w, h);
+   m_texSection = Range(x, y, w, h);
 }
 
 //===========================================
@@ -114,7 +114,7 @@ inline pTexture_t EntityAnimations::getTexture() const {
 //===========================================
 // EntityAnimations::getTextureSection
 //===========================================
-inline const Rectangle& EntityAnimations::getTextureSection() const {
+inline const Range& EntityAnimations::getTextureSection() const {
    return m_texSection;
 }
 

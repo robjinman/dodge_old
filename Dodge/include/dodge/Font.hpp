@@ -9,7 +9,7 @@
 
 #include "definitions.hpp"
 #include "Texture.hpp"
-#include "Rectangle.hpp"
+#include "Range.hpp"
 
 
 namespace Dodge {
@@ -23,11 +23,11 @@ class Font {
       inline const pTexture_t getTexture() const;
       inline int getCharWidth() const;
       inline int getCharHeight() const;
-      inline const Rectangle& getTextureSection() const;
+      inline const Range& getTextureSection() const;
 
    private:
       pTexture_t m_texture;
-      Rectangle m_texSection;
+      Range m_texSection;
       int m_charW;
       int m_charH;
 };
@@ -44,7 +44,7 @@ inline const pTexture_t Font::getTexture() const {
 //===========================================
 // Font::getTextureSection
 //===========================================
-inline const Rectangle& Font::getTextureSection() const {
+inline const Range& Font::getTextureSection() const {
    return m_texSection;
 }
 

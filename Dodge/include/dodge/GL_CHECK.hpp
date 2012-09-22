@@ -17,7 +17,7 @@
       GLenum glError = glGetError(); \
       if(glError != GL_NO_ERROR) { \
          std::stringstream msg; \
-         msg << "Program received OpenGL error (code = " << glError << ")"; \
+         msg << "Program received OpenGL error (code = 0x" << std::hex << glError << ")"; \
          throw Exception(msg.str(), __FILE__, __LINE__); \
       } \
    }

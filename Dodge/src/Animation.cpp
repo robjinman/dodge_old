@@ -43,7 +43,7 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
       out << "col: (" << m_frames[f].col.r << ", " << m_frames[f].col.g
          << ", " << m_frames[f].col.b << ", " << m_frames[f].col.a << ")\n";
 
-      if (m_frames[f].hasPoly) m_frames[f].poly.dbg_print(out, tab + 2);
+      if (m_frames[f].shape) m_frames[f].shape->dbg_print(out, tab + 2);
    }
 }
 #endif

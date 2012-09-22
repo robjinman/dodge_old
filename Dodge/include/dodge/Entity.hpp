@@ -10,6 +10,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
+#include <memory>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <set>
@@ -17,7 +18,7 @@
 #include "definitions.hpp"
 #include "EEvent.hpp"
 #include "EventManager.hpp"
-#include "CompoundPoly.hpp"
+#include "Primitive.hpp"
 #include "rapidxml/rapidxml.hpp"
 #include "Vec3f.hpp"
 
@@ -72,12 +73,12 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       inline void setScale(float32_t x, float32_t y);
       inline void scale(float32_t s);
       inline void scale(float32_t x, float32_t y);
-      inline void setBoundingPoly(const CompoundPoly& poly);
+      inline void setShape(std::unique_ptr<Primitive> shape);
 
       inline float32_t getWidth() const;
       inline float32_t getHeight() const;
 
-      inline const CompoundPoly& getBoundingPoly() const;
+      inline const Primitive& getShape() const;
       inline long getName() const;
       inline long getTypeName() const;
       inline const Vec2f& getScale() const;
@@ -99,7 +100,7 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       static EventManager m_eventManager;
 
    private:
-      void recomputePoly() const;
+      void recomputeShape() const;
       void deepCopy(const Entity& copy);
 
       long m_name;
@@ -107,14 +108,14 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       Vec2f m_scale;
 
       Vec2f m_transl;
-      float32_t m_z;                      // Store z coord separately
+      float32_t m_z;    // Store z coord separately
       float32_t m_rot;
 
-      CompoundPoly m_srcPoly;             // Bounding polygon
-      mutable CompoundPoly m_transPoly;   // m_srcPoly after rotation and scaling
-      mutable bool m_bTransPoly;          // True if m_transPoly has been computed
+      std::unique_ptr<Primitive> m_srcShape;             // Bounding polygon/shape
+      mutable std::unique_ptr<Primitive> m_transShape;   // m_srcShape after rotation and scaling
+      mutable bool m_bTransShape;                        // True if m_transShape has been computed
 
-      // These are computed from m_transPoly
+      // These are computed from m_transShape
       mutable float32_t m_width;
       mutable float32_t m_height;
 
@@ -236,7 +237,7 @@ inline void Entity::translate_z(float32_t z) {
 //===========================================
 inline void Entity::setRotation(float32_t deg) {
    m_rot = deg;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -244,7 +245,7 @@ inline void Entity::setRotation(float32_t deg) {
 //===========================================
 inline void Entity::rotate(float32_t deg) {
    m_rot += deg;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -270,11 +271,11 @@ inline float32_t Entity::getRotation_abs() const {
 }
 
 //===========================================
-// Entity::setBoundingPoly
+// Entity::setShape
 //===========================================
-inline void Entity::setBoundingPoly(const CompoundPoly& poly) {
-   m_srcPoly = poly;
-   m_bTransPoly = false;
+inline void Entity::setShape(std::unique_ptr<Primitive> shape) {
+   m_srcShape = std::move(shape);
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -283,7 +284,7 @@ inline void Entity::setBoundingPoly(const CompoundPoly& poly) {
 inline void Entity::setScale(float32_t x, float32_t y) {
    m_scale.x = x;
    m_scale.y = y;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -292,7 +293,7 @@ inline void Entity::setScale(float32_t x, float32_t y) {
 inline void Entity::setScale(float32_t s) {
    m_scale.x = s;
    m_scale.y = s;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -301,7 +302,7 @@ inline void Entity::setScale(float32_t s) {
 inline void Entity::scale(float32_t x, float32_t y) {
    m_scale.x *= x;
    m_scale.y *= y;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
@@ -310,14 +311,14 @@ inline void Entity::scale(float32_t x, float32_t y) {
 inline void Entity::scale(float32_t s) {
    m_scale.x *= s;
    m_scale.y *= s;
-   m_bTransPoly = false;
+   m_bTransShape = false;
 }
 
 //===========================================
 // Entity::getWidth
 //===========================================
 inline float32_t Entity::getWidth() const {
-   if (!m_bTransPoly) recomputePoly();
+   if (!m_bTransShape) recomputeShape();
 
    return m_width;
 }
@@ -326,18 +327,18 @@ inline float32_t Entity::getWidth() const {
 // Entity::getHeight
 //===========================================
 inline float32_t Entity::getHeight() const {
-   if (!m_bTransPoly) recomputePoly();
+   if (!m_bTransShape) recomputeShape();
 
    return m_height;
 }
 
 //===========================================
-// Entity::getBoundingPoly
+// Entity::getShape
 //===========================================
-inline const CompoundPoly& Entity::getBoundingPoly() const {
-   if (!m_bTransPoly) recomputePoly();
+inline const Primitive& Entity::getShape() const {
+   if (!m_bTransShape) recomputeShape();
 
-   return m_transPoly;
+   return *m_transShape;
 }
 
 //===========================================
