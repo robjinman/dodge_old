@@ -3,9 +3,9 @@
 
 
 #include "Primitive.hpp"
-#include "definitions.hpp"
-#include "Vec2f.hpp"
-#include "Renderer.hpp"
+#include "../../definitions.hpp"
+#include "../Vec2f.hpp"
+#include "../../Renderer.hpp"
 
 
 namespace Dodge {
@@ -49,7 +49,6 @@ class LineSegment : public Primitive {
       Vec2f m_p2;
 
       static Renderer m_renderer;
-      static Renderer::Brush& m_renderBrush;
 };
 
 //===========================================

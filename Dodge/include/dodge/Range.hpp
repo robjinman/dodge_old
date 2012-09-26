@@ -8,7 +8,7 @@
 
 
 #include "rapidxml/rapidxml.hpp"
-#include "Vec2f.hpp"
+#include "math/Vec2f.hpp"
 
 
 namespace Dodge {
@@ -22,8 +22,16 @@ class Range {
       Range(float32_t x, float32_t y, float32_t w, float32_t h)
          : m_pos(x, y), m_size(w, h) {}
 
+      Range(const Vec2f& pos, const Vec2f& size)
+         : m_pos(pos), m_size(size) {}
+
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab) const;
+#endif
       virtual void assignData(const rapidxml::xml_node<>* data);
 
+      inline void setPosition(const Vec2f& pos);
+      inline void setSize(const Vec2f& size);
       inline const Vec2f& getPosition() const;
       inline const Vec2f& getSize() const;
 
@@ -33,6 +41,20 @@ class Range {
       Vec2f m_pos;
       Vec2f m_size;
 };
+
+//===========================================
+// Range::setPosition
+//===========================================
+inline void Range::setPosition(const Vec2f& pos) {
+   m_pos = pos;
+}
+
+//===========================================
+// Range::setSize
+//===========================================
+inline void Range::setSize(const Vec2f& size) {
+   m_size = size;
+}
 
 //===========================================
 // Range::getPosition

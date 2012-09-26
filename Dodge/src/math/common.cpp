@@ -1,4 +1,5 @@
 #include <math/common.hpp>
+#include <math/Vec2f.hpp>
 
 
 namespace Dodge {

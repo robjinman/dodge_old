@@ -109,11 +109,11 @@ void EntityAnimations::assignData(const xml_node<>* data) {
 // EntityAnimations::draw
 //===========================================
 void EntityAnimations::draw(const Vec2f& at) const {
-   Vec3f pos = m_entity->getTranslation_abs();
+   Vec2f pos = m_entity->getTranslation_abs();
 
    float32_t x = pos.x - at.x;
    float32_t y = pos.y - at.y;
-   int z = static_cast<int>(pos.z);
+   int z = m_entity->getZ();
 
    float32_t tx = m_texSection.getPosition().x;
    float32_t ty = m_texSection.getPosition().y;

@@ -19,9 +19,7 @@ bool Graphics2d::m_init = false;
 Renderer Graphics2d::m_renderer = Renderer();
 matrix44f_c Graphics2d::m_projectionMatrix = matrix44f_c();
 Vec2f Graphics2d::m_pixSz = Vec2f(0.f, 0.f);
-
-// Brush may not actually exist yet, so must be set again in init()
-Renderer::Brush& Graphics2d::m_renderBrush = m_renderer.getBrush();
+boost::shared_ptr<Renderer::Brush> Graphics2d::m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
 
 
 //===========================================
@@ -31,7 +29,6 @@ void Graphics2d::init(int w, int h) {
    m_init = true;
 
    m_renderer.init();
-   m_renderBrush = m_renderer.getBrush();
 
    float32_t ratio = static_cast<float32_t>(w) / static_cast<float32_t>(h);
    matrix_orthographic_RH(m_projectionMatrix, ratio, 1.f, 0.01f, 100.f, cml::z_clip_neg_one);
@@ -45,6 +42,9 @@ void Graphics2d::init(int w, int h) {
 // Graphics2d::setViewPos
 //===========================================
 void Graphics2d::setViewPos(float32_t x, float32_t y) {
+   if (!m_init)
+      throw Exception("Error setting view position; Graphics2d not initialised", __FILE__, __LINE__);
+
    m_projectionMatrix.data()[12] = x - 1.0;
    m_projectionMatrix.data()[13] = y - 1.0;
 
@@ -61,6 +61,9 @@ void Graphics2d::setViewPos(float32_t x, float32_t y) {
 //===========================================
 void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY, float32_t srcW, float32_t srcH,
    float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot, const Vec2f& scale) const {
+
+   if (!m_init)
+      throw Exception("Error drawing image; Graphics2d not initialised", __FILE__, __LINE__);
 
    float32_t w = srcW * m_pixSz.x * scale.x;
    float32_t h = srcH * m_pixSz.y * scale.y;
@@ -114,6 +117,7 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
    m_renderer.setTextureCoords(texCoords, 6);
 
    setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
+   m_renderer.attachBrush(m_renderBrush);
    m_renderer.render();
 }
 
@@ -122,6 +126,9 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
 //===========================================
 void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x, float32_t y, int z,
    float32_t angle, const Vec2f& pivot, const Vec2f& scale) const {
+
+   if (!m_init)
+      throw Exception("Error drawing text; Graphics2d not initialised", __FILE__, __LINE__);
 
    float32_t texSectionX1 = font.getTextureSection().getPosition().x;
    float32_t texSectionY1 = font.getTextureSection().getPosition().y;
@@ -157,7 +164,11 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
 // Graphics2d::clear
 //===========================================
 void Graphics2d::clear(const Colour& col) const {
+   if (!m_init)
+      throw Exception("Error clearing screen; Graphics2d not initialised", __FILE__, __LINE__);
+
    setFillColour(col);
+   m_renderer.attachBrush(m_renderBrush);
    m_renderer.clear();
 }
 

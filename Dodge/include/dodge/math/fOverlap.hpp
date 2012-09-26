@@ -7,11 +7,11 @@
 #define __F_OVERLAP_HPP__
 
 
-#include "Primitive.hpp"
-#include "Vec2f.hpp"
-
-
 namespace Dodge {
+
+class Primitive;
+class Vec2f;
+
 namespace Math {
 
 

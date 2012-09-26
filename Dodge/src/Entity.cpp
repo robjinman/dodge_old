@@ -49,17 +49,11 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
    out << "shape (src):\n";
-   m_srcShape->dbg_print(out, tab + 1);
+   m_shape->dbg_print(out, tab + 1);
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "shape (transformed) (up-to-date: " << (m_bTransShape ? "true" : "false") << "):\n";
-   m_transShape->dbg_print(out, tab + 1);
-
-   for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "width (up-to-date: " << (m_bTransShape ? "true" : "false") << "): " << m_width << "\n";
-
-   for (int i = 0; i < tab + 1; i++) out << "\t";
-   out << "width (up-to-date: " << (m_bTransShape ? "true" : "false") << "): " << m_height << "\n";
+   out << "boundary (up-to-date: " << (m_bBoundary ? "true" : "false") << "):\n";
+   m_boundary.dbg_print(out, tab + 1);
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
    out << "parent: " << (m_parent ? getInternedString(m_parent->getName()) : "NULL") << "\n";
@@ -84,7 +78,7 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 Entity::Entity(long name, long type)
    : m_name(name), m_type(type), m_scale(1.f, 1.f), m_transl(0.f, 0.f),
-      m_z(1.f), m_rot(0.f), m_bTransShape(false), m_parent(NULL) {
+      m_z(1), m_rot(0.f), m_bBoundary(false), m_parent(NULL) {
 
    ++m_count;
 }
@@ -93,8 +87,8 @@ Entity::Entity(long name, long type)
 // Entity::Entity
 //===========================================
 Entity::Entity(long type)
-   : m_type(type), m_scale(1.f, 1.f), m_transl(0.f, 0.f), m_z(1.f),
-      m_rot(0.f), m_bTransShape(false), m_parent(NULL) {
+   : m_type(type), m_scale(1.f, 1.f), m_transl(0.f, 0.f), m_z(1),
+      m_rot(0.f), m_bBoundary(false), m_parent(NULL) {
 
    m_name = generateName();
 
@@ -107,11 +101,7 @@ Entity::Entity(long type)
 // Construct deep copy.
 //===========================================
 Entity::Entity(const Entity& copy) : m_parent(NULL) {
-   m_type = copy.m_type;
-   m_scale = copy.m_scale;
-
    deepCopy(copy);
-
    m_name = generateName();
 
    ++m_count;
@@ -142,12 +132,10 @@ void Entity::deepCopy(const Entity& copy) {
    m_z = copy.m_z;
    m_rot = copy.m_rot;
 
-   m_srcShape = copy.m_srcShape ? unique_ptr<Primitive>(copy.m_srcShape->clone()) : unique_ptr<Primitive>();
-   m_transShape = copy.m_transShape ? unique_ptr<Primitive>(copy.m_transShape->clone()) : unique_ptr<Primitive>();
-   m_bTransShape = copy.m_bTransShape;
+   m_shape = copy.m_shape ? unique_ptr<Primitive>(copy.m_shape->clone()) : unique_ptr<Primitive>();
 
-   m_width = copy.m_width;
-   m_height = copy.m_height;
+   m_bBoundary = copy.m_bBoundary;
+   if (m_bBoundary) m_boundary = copy.m_boundary;
 }
 
 //===========================================
@@ -181,7 +169,7 @@ void Entity::assignData(const rapidxml::xml_node<>* data) {
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "z") == 0) {
-      sscanf(node->value(), "%f", &m_z);
+      sscanf(node->value(), "%d", &m_z);
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "rotation") == 0) {
@@ -196,8 +184,7 @@ void Entity::assignData(const rapidxml::xml_node<>* data) {
    if (node && strcmp(node->name(), "shape") == 0) {
       const xml_node<>* child = node->first_node();
       if (child) {
-//         m_srcShape = unique_ptr<Primitive>(primitiveFactory.create(child));
-         recomputeShape();
+//         m_shape = unique_ptr<Primitive>(primitiveFactory.create(child));
       }
       node = node->next_sibling();
    }
@@ -214,7 +201,7 @@ void Entity::assignData(const rapidxml::xml_node<>* data) {
 //===========================================
 // Entity::getTranslation_abs
 //===========================================
-Vec3f Entity::getTranslation_abs() const {
+Vec2f Entity::getTranslation_abs() const {
    if (m_parent) {
       float32_t x = m_transl.x * cos(DEG_TO_RAD(m_parent->getRotation_abs()))
          - m_transl.y * sin(DEG_TO_RAD(m_parent->getRotation_abs()));
@@ -222,10 +209,9 @@ Vec3f Entity::getTranslation_abs() const {
       float32_t y = m_transl.x * sin(DEG_TO_RAD(m_parent->getRotation_abs()))
          + m_transl.y * cos(DEG_TO_RAD(m_parent->getRotation_abs()));
 
-      Vec3f t = m_parent->getTranslation_abs();
-      t.z = 0.f;
+      Vec2f t = m_parent->getTranslation_abs();
 
-      return t + Vec3f(x, y, m_z);
+      return t + Vec2f(x, y);
    }
    else {
       return getTranslation();
@@ -263,24 +249,22 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 }
 
 //===========================================
-// Entity::recomputeShape
-//
-// Computes the entity's bounding polygon after scaling and rotation
+// Entity::recomputeBoundary
 //===========================================
-void Entity::recomputeShape() const {
-   m_transShape = unique_ptr<Primitive>(m_srcShape->clone());
-   m_transShape->rotate(getRotation_abs(), Vec2f(0.f, 0.f));
-   m_transShape->scale(m_scale);
+void Entity::recomputeBoundary() const {
+   Vec2f min = m_shape->getMinimum();
+   Vec2f max = m_shape->getMaximum();
 
-   // TODO
-//   Vec2f min = m_transShape->computeMinimum();
-//   Vec2f max = m_transShape->computeMaximum();
+   m_boundary.setPosition(m_transl + min);
+   m_boundary.setSize(max - min);
 
-//   m_width = max.x - min.x;
-//   m_height = max.y - min.y;
-
-   m_bTransShape = true;
+   m_bBoundary = true;
 }
+
+//===========================================
+// Entity::~Entity
+//===========================================
+Entity::~Entity() {}
 
 
 }

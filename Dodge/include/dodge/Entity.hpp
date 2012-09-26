@@ -18,9 +18,10 @@
 #include "definitions.hpp"
 #include "EEvent.hpp"
 #include "EventManager.hpp"
-#include "Primitive.hpp"
+#include "math/primitives/Primitive.hpp"
+#include "Range.hpp"
+#include "Renderer.hpp"
 #include "rapidxml/rapidxml.hpp"
-#include "Vec3f.hpp"
 
 
 namespace Dodge {
@@ -49,25 +50,30 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       inline Entity* getParent() const;
       inline const std::set<pEntity_t>& getChildren() const;
 
-      inline void setTranslation(float32_t x, float32_t y, float32_t z);
+      inline void setTranslation(float32_t x, float32_t y);
+      inline void setTranslation(const Vec2f& t);
       inline void setTranslation_x(float32_t x);
       inline void setTranslation_y(float32_t y);
-      inline void setTranslation_z(float32_t z);
-      inline void translate(float32_t x, float32_t y, float32_t z);
+      inline void translate(float32_t x, float32_t y);
+      inline void translate(const Vec2f& t);
       inline void translate_x(float32_t x);
       inline void translate_y(float32_t y);
-      inline void translate_z(float32_t z);
+      inline void setZ(int z);
       inline void setRotation(float32_t deg);
       inline void rotate(float32_t deg);
       void rotate(float32_t deg, const Vec2f& pivot);
 
+      inline void setRenderBrush(boost::shared_ptr<Renderer::Brush> brush);
+      inline boost::shared_ptr<Renderer::Brush> getRenderBrush() const;
+
       // Relative to parent (parent's model space)
-      inline Vec3f getTranslation() const;
+      inline Vec2f getTranslation() const;
+      inline int getZ() const;
       inline float32_t getRotation() const;
 
       // Relative to origin (world space)
       inline float32_t getRotation_abs() const;
-      Vec3f getTranslation_abs() const;
+      Vec2f getTranslation_abs() const;
 
       inline void setScale(float32_t s);
       inline void setScale(float32_t x, float32_t y);
@@ -75,17 +81,15 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       inline void scale(float32_t x, float32_t y);
       inline void setShape(std::unique_ptr<Primitive> shape);
 
-      inline float32_t getWidth() const;
-      inline float32_t getHeight() const;
-
       inline const Primitive& getShape() const;
       inline long getName() const;
       inline long getTypeName() const;
       inline const Vec2f& getScale() const;
+      inline const Range& getBoundary() const;
 
       inline pEntity_t getSharedPtr();
 
-      virtual void draw(const Vec2f& at) const = 0;
+      virtual void draw(const Vec2f& at) const {}
       virtual void update() {}
 
       virtual void assignData(const rapidxml::xml_node<>* data);
@@ -94,13 +98,13 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
-      virtual ~Entity() {}
+      virtual ~Entity() = 0;
 
    protected:
       static EventManager m_eventManager;
 
    private:
-      void recomputeShape() const;
+      void recomputeBoundary() const;
       void deepCopy(const Entity& copy);
 
       long m_name;
@@ -108,19 +112,18 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       Vec2f m_scale;
 
       Vec2f m_transl;
-      float32_t m_z;    // Store z coord separately
+      int m_z;
       float32_t m_rot;
 
-      std::unique_ptr<Primitive> m_srcShape;             // Bounding polygon/shape
-      mutable std::unique_ptr<Primitive> m_transShape;   // m_srcShape after rotation and scaling
-      mutable bool m_bTransShape;                        // True if m_transShape has been computed
+      std::unique_ptr<Primitive> m_shape; // Bounding polygon/shape
 
-      // These are computed from m_transShape
-      mutable float32_t m_width;
-      mutable float32_t m_height;
+      mutable Range m_boundary; // Computed lazily
+      mutable bool m_bBoundary;
 
       Entity* m_parent;
       std::set<pEntity_t> m_children;
+
+      mutable boost::shared_ptr<Renderer::Brush> m_renderBrush;
 
       static int m_count;
       static long generateName();
@@ -177,9 +180,15 @@ inline const std::set<pEntity_t>& Entity::getChildren() const {
 //===========================================
 // Entity::setTranslation
 //===========================================
-inline void Entity::setTranslation(float32_t x, float32_t y, float32_t z) {
+inline void Entity::setTranslation(float32_t x, float32_t y) {
    m_transl = Vec2f(x, y);
-   m_z = z;
+}
+
+//===========================================
+// Entity::setTranslation
+//===========================================
+inline void Entity::setTranslation(const Vec2f& t) {
+   m_transl = t;
 }
 
 //===========================================
@@ -197,18 +206,17 @@ inline void Entity::setTranslation_y(float32_t y) {
 }
 
 //===========================================
-// Entity::setTranslation_z
+// Entity::translate
 //===========================================
-inline void Entity::setTranslation_z(float32_t z) {
-   m_z = z;
+inline void Entity::translate(float32_t x, float32_t y) {
+   m_transl = m_transl + Vec2f(x, y);
 }
 
 //===========================================
 // Entity::translate
 //===========================================
-inline void Entity::translate(float32_t x, float32_t y, float32_t z) {
-   m_transl = m_transl + Vec2f(x, y);
-   m_z += z;
+inline void Entity::translate(const Vec2f& t) {
+   m_transl = m_transl + t;
 }
 
 //===========================================
@@ -226,33 +234,42 @@ inline void Entity::translate_y(float32_t y) {
 }
 
 //===========================================
-// Entity::translate_z
+// Entity::setZ
 //===========================================
-inline void Entity::translate_z(float32_t z) {
-   m_z += z;
+inline void Entity::setZ(int z) {
+   m_z = z;
+}
+
+//===========================================
+// Entity::getZ
+//===========================================
+inline int Entity::getZ() const {
+   return m_z;
 }
 
 //===========================================
 // Entity::setRotation
 //===========================================
 inline void Entity::setRotation(float32_t deg) {
+   m_shape->rotate(deg - m_rot);
    m_rot = deg;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::rotate
 //===========================================
 inline void Entity::rotate(float32_t deg) {
+   if (m_shape) m_shape->rotate(deg);
    m_rot += deg;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::getTranslation
 //===========================================
-inline Vec3f Entity::getTranslation() const {
-   return Vec3f(m_transl.x, m_transl.y, m_z);
+inline Vec2f Entity::getTranslation() const {
+   return m_transl;
 }
 
 //===========================================
@@ -274,71 +291,82 @@ inline float32_t Entity::getRotation_abs() const {
 // Entity::setShape
 //===========================================
 inline void Entity::setShape(std::unique_ptr<Primitive> shape) {
-   m_srcShape = std::move(shape);
-   m_bTransShape = false;
+   m_shape = std::move(shape);
+   if (m_shape) m_shape->rotate(m_rot);
+   if (m_shape) m_shape->scale(m_scale);
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::setScale
 //===========================================
 inline void Entity::setScale(float32_t x, float32_t y) {
+   if (m_shape) m_shape->scale(Vec2f(x / m_scale.x, y / m_scale.y));
    m_scale.x = x;
    m_scale.y = y;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::setScale
 //===========================================
 inline void Entity::setScale(float32_t s) {
+   if (m_shape) m_shape->scale(Vec2f(s / m_scale.x, s / m_scale.y));
    m_scale.x = s;
    m_scale.y = s;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::scale
 //===========================================
 inline void Entity::scale(float32_t x, float32_t y) {
+   if (m_shape) m_shape->scale(Vec2f(x, y));
    m_scale.x *= x;
    m_scale.y *= y;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
 // Entity::scale
 //===========================================
 inline void Entity::scale(float32_t s) {
+   if (m_shape) m_shape->scale(Vec2f(s, s));
    m_scale.x *= s;
    m_scale.y *= s;
-   m_bTransShape = false;
+   m_bBoundary = false; // Indicate that boundary needs to be recomputed
 }
 
 //===========================================
-// Entity::getWidth
+// Entity::setRenderBrush
 //===========================================
-inline float32_t Entity::getWidth() const {
-   if (!m_bTransShape) recomputeShape();
-
-   return m_width;
+inline void Entity::setRenderBrush(boost::shared_ptr<Renderer::Brush> brush) {
+   m_renderBrush = brush;
 }
 
 //===========================================
-// Entity::getHeight
+// Entity::getRenderBrush
 //===========================================
-inline float32_t Entity::getHeight() const {
-   if (!m_bTransShape) recomputeShape();
+inline boost::shared_ptr<Renderer::Brush> Entity::getRenderBrush() const {
+   if (!m_renderBrush)
+      m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
 
-   return m_height;
+   return m_renderBrush;
+}
+
+//===========================================
+// Entity::getBoundary
+//===========================================
+inline const Range& Entity::getBoundary() const {
+   if (!m_bBoundary) recomputeBoundary();
+   return m_boundary;
 }
 
 //===========================================
 // Entity::getShape
 //===========================================
 inline const Primitive& Entity::getShape() const {
-   if (!m_bTransShape) recomputeShape();
-
-   return *m_transShape;
+   return *m_shape;
 }
 
 //===========================================

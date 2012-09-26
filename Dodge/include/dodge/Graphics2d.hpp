@@ -9,10 +9,10 @@
 
 #include <cml/cml.h>
 #include "Renderer.hpp"
-#include "Vec2i.hpp"
-#include "Vec2f.hpp"
+#include "math/Vec2i.hpp"
+#include "math/Vec2f.hpp"
 #include "Colour.hpp"
-#include "Primitive.hpp"
+#include "math/primitives/Primitive.hpp"
 
 
 namespace Dodge {
@@ -49,7 +49,7 @@ class Graphics2d {
    private:
       static bool m_init;
       static Renderer m_renderer;
-      static Renderer::Brush& m_renderBrush;
+      static boost::shared_ptr<Renderer::Brush> m_renderBrush;
       static cml::matrix44f_c m_projectionMatrix;
       static Vec2f m_pixSz;
 };
@@ -58,33 +58,45 @@ class Graphics2d {
 // Graphics2d::setFillColour
 //===========================================
 inline void Graphics2d::setFillColour(const Colour& colour) const {
-   m_renderBrush.fillColour[0] = colour.r;
-   m_renderBrush.fillColour[1] = colour.g;
-   m_renderBrush.fillColour[2] = colour.b;
-   m_renderBrush.fillColour[3] = colour.a;
+   if (!m_init)
+      throw Exception("Error setting fill colour; Graphics2d not initialised", __FILE__, __LINE__);
+
+   m_renderBrush->fillColour[0] = colour.r;
+   m_renderBrush->fillColour[1] = colour.g;
+   m_renderBrush->fillColour[2] = colour.b;
+   m_renderBrush->fillColour[3] = colour.a;
 }
 
 //===========================================
 // Graphics2d::setLineColour
 //===========================================
 inline void Graphics2d::setLineColour(const Colour& colour) const {
-   m_renderBrush.lineColour[0] = colour.r;
-   m_renderBrush.lineColour[1] = colour.g;
-   m_renderBrush.lineColour[2] = colour.b;
-   m_renderBrush.lineColour[3] = colour.a;
+   if (!m_init)
+      throw Exception("Error setting line colour; Graphics2d not initialised", __FILE__, __LINE__);
+
+   m_renderBrush->lineColour[0] = colour.r;
+   m_renderBrush->lineColour[1] = colour.g;
+   m_renderBrush->lineColour[2] = colour.b;
+   m_renderBrush->lineColour[3] = colour.a;
 }
 
 //===========================================
 // Graphics2d::setLineWidth
 //===========================================
 inline void Graphics2d::setLineWidth(int width) const {
-   m_renderBrush.lineWidth = width;
+   if (!m_init)
+      throw Exception("Error setting line width; Graphics2d not initialised", __FILE__, __LINE__);
+
+   m_renderBrush->lineWidth = width;
 }
 
 //===========================================
 // Graphics2d::getPixelSize
 //===========================================
 inline const Vec2f& Graphics2d::getPixelSize() const {
+   if (!m_init)
+      throw Exception("Error fetching pixel size; Graphics2d not initialised", __FILE__, __LINE__);
+
    return m_pixSz;
 }
 
@@ -94,6 +106,10 @@ inline const Vec2f& Graphics2d::getPixelSize() const {
 inline void Graphics2d::drawPrimitive(const Primitive& primitive, float32_t x, float32_t y, int z,
    float32_t angle, const Vec2f& pivot) const {
 
+   if (!m_init)
+      throw Exception("Error drawing primitive; Graphics2d not initialised", __FILE__, __LINE__);
+
+   m_renderer.attachBrush(m_renderBrush);
    primitive.draw(x, y, z, angle, pivot);
 }
 

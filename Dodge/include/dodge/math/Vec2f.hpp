@@ -8,8 +8,8 @@
 
 
 #include <math.h>
-#include "definitions.hpp"
-#include "rapidxml/rapidxml.hpp"
+#include "../definitions.hpp"
+#include "../rapidxml/rapidxml.hpp"
 
 
 namespace Dodge {

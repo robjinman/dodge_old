@@ -1,6 +1,6 @@
 #include <cstring>
 #include <Exception.hpp>
-#include <Box.hpp>
+#include <math/primitives/Box.hpp>
 #include <StringId.hpp>
 #include <cml/cml.h>
 
@@ -14,7 +14,6 @@ namespace Dodge {
 
 
 Renderer Box::m_renderer = Renderer();
-Renderer::Brush Box::m_renderBrush = Renderer::Brush();
 
 
 //===========================================
@@ -70,17 +69,17 @@ void Box::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const Vec2
    float32_t h = m_size.y;
 
    Renderer::vertexElement_t verts[] = {
-      x + w, y + 0.f, fZ,      // Bottom right
-      x + w, y + h, fZ,        // Top right
-      x + 0.f, y + 0.f, fZ,    // Bottom left
-      x + w, y + h, fZ,        // Top right
-      x + 0.f, y + h, fZ,      // Top left
-      x + 0.f, y + 0.f, fZ     // Bottom left
+      w, 0.f, fZ,      // Bottom right
+      w, h, fZ,        // Top right
+      0.f, 0.f, fZ,    // Bottom left
+      w, h, fZ,        // Top right
+      0.f, h, fZ,      // Top left
+      0.f, 0.f, fZ     // Bottom left
    };
 
    matrix44f_c rotation;
    matrix44f_c translation;
-   matrix44f_c modelView;
+   matrix44f_c modelView; // TODO: use pivot
 
    matrix_rotation_euler(rotation, 0.f, 0.f, DEG_TO_RAD(angle), euler_order_xyz);
    matrix_translation(translation, x, y, 0.f);
@@ -102,8 +101,13 @@ void Box::drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec
 // Box::draw
 //===========================================
 void Box::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-   if (m_renderBrush.fillColour[3] != 0.f) drawSolid(x, y, z, angle, pivot);
-   if (m_renderBrush.lineColour[3] != 0.f) drawHollow(x, y, z, angle, pivot);
+   const Renderer::Brush& brush = m_renderer.getBrush();
+
+   if (brush.fillColour[3] != 0.f)
+      drawSolid(x, y, z, angle, pivot);
+
+   if (brush.lineColour[3] != 0.f && brush.lineWidth > 0)
+      drawHollow(x, y, z, angle, pivot);
 }
 
 //===========================================

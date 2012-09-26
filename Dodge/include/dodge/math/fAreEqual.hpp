@@ -7,7 +7,7 @@
 #define __F_ARE_EQUAL_HPP__
 
 
-#include "Primitive.hpp"
+#include "primitives/Primitive.hpp"
 
 
 bool operator==(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2);

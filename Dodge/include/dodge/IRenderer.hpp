@@ -9,6 +9,7 @@
 
 #include <cstring>
 #include <exception>
+#include <boost/shared_ptr.hpp>
 
 
 namespace Dodge {
@@ -16,13 +17,13 @@ namespace Dodge {
 
 // Interface class for cross-platform renderer
 template <
-   typename T_FLOAT,
-   typename T_VERT_ELEM,
-   typename T_MAT_ELEM,
-   typename T_COL_ELEM,
-   typename T_TEXCOORD_ELEM,
-   typename T_TEXDATA,
-   typename T_TEXID
+   typename T_FLOAT,          // float (32 or 64)
+   typename T_VERT_ELEM,      // float (32 or 64)
+   typename T_MAT_ELEM,       // float (32 or 64)
+   typename T_COL_ELEM,       // float (32 or 64)
+   typename T_TEXCOORD_ELEM,  // float (32 or 64)
+   typename T_TEXDATA,        // byte (char, unsigned char, etc.)
+   typename T_TEXID           // integer (int, unsigned int, long, etc.)
 >
 class IRenderer {
    public:
@@ -79,15 +80,15 @@ class IRenderer {
       //===========================================
       // IRenderer::attachBrush
       //===========================================
-      virtual void attachBrush(Brush brush) {
+      virtual void attachBrush(boost::shared_ptr<Brush> brush) {
          m_brush = brush;
       }
 
       //===========================================
       // IRenderer::getBrush
       //===========================================
-      virtual Brush& getBrush() const {
-         return m_brush;
+      virtual const Brush& getBrush() const {
+         return *m_brush;
       }
 
       // A file may be specified containing implementation-specific options.
@@ -114,7 +115,7 @@ class IRenderer {
       virtual void clear() = 0;
 
    protected:
-      static Brush m_brush;
+      static boost::shared_ptr<Brush> m_brush;
       static T_MAT_ELEM m_projMat[16];
 };
 
@@ -124,9 +125,11 @@ template <
    typename T_FLOAT, typename T_VERT_ELEM, typename T_MAT_ELEM, typename T_COL_ELEM,
    typename T_TEXCOORD_ELEM, typename T_TEXDATA, typename T_TEXID
 >
-typename IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::Brush
+typename boost::shared_ptr<typename IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::Brush>
    IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::m_brush
-      = IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::Brush();
+      = boost::shared_ptr<typename IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::Brush>(
+         new IRenderer<T_FLOAT, T_VERT_ELEM, T_MAT_ELEM, T_COL_ELEM, T_TEXCOORD_ELEM, T_TEXDATA, T_TEXID>::Brush
+      );
 
 template <
    typename T_FLOAT, typename T_VERT_ELEM, typename T_MAT_ELEM, typename T_COL_ELEM,

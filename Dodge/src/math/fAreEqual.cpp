@@ -7,11 +7,11 @@
 #include <map>
 #include <math/common.hpp>
 #include <math/fAreEqual.hpp>
-#include <LineSegment.hpp>
-#include <Ellipse.hpp>
-#include <Polygon.hpp>
-#include <Box.hpp>
-#include <Vec2f.hpp>
+#include <math/primitives/LineSegment.hpp>
+#include <math/primitives/Ellipse.hpp>
+#include <math/primitives/Polygon.hpp>
+#include <math/primitives/Box.hpp>
+#include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
 

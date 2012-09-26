@@ -5,8 +5,8 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
-#include "rapidxml/rapidxml.hpp"
-#include "Vec2f.hpp"
+#include "../../rapidxml/rapidxml.hpp"
+#include "../Vec2f.hpp"
 
 
 namespace Dodge {
@@ -22,7 +22,7 @@ class Primitive {
 #endif
       virtual Vec2f getMinimum() const = 0;
       virtual Vec2f getMaximum() const = 0;
-      virtual void rotate(double rads, const Vec2f& pivot) = 0;
+      virtual void rotate(double rads, const Vec2f& pivot = Vec2f(0.f, 0.f)) = 0;
       virtual void scale(const Vec2f& sv) = 0;
 
       // Pivot is offset from (x, y), about which the rotation is applied

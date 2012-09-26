@@ -12,7 +12,9 @@ using namespace std;
 Graphics2d graphics2d;
 map<int, bool> keys;
 double frameRate;
-vector<pSprite_t> sprites;
+vector<pEntity_t> entities;
+Range dragRegion;
+Quadtree<pEntity_t> quadtree(1, Range(0.f, 0.f, 64.f / 48.f, 1.f));
 
 
 void quit() {
@@ -33,22 +35,24 @@ void keyDown(int code) {
 }
 
 void keyboard() {
+   pSprite_t mainGuy = boost::static_pointer_cast<Sprite>(entities[0]);
+
    if (keys[WinIO::KEY_RIGHT]) {
-      sprites[0]->playAnimation(internString("anim0"));
-      sprites[0]->translate_x(0.001);
+      mainGuy->playAnimation(internString("anim0"));
+      mainGuy->translate_x(0.001);
    }
    if (keys[WinIO::KEY_LEFT]) {
-      sprites[0]->playAnimation(internString("anim0"));
-      sprites[0]->translate_x(-0.001);
+      mainGuy->playAnimation(internString("anim0"));
+      mainGuy->translate_x(-0.001);
    }
    if (keys[WinIO::KEY_SPACE]) {
-      sprites[0]->rotate(0.8f, graphics2d.getPixelSize() * 16.f);
+      mainGuy->rotate(0.8f, graphics2d.getPixelSize() * 16.f);
    }
    if (keys[WinIO::KEY_UP]) {
-      sprites[1]->scale(1.01);
+      entities[1]->scale(1.01);
    }
    if (keys[WinIO::KEY_DOWN]) {
-      sprites[1]->scale(0.99);
+      entities[1]->scale(0.99);
    }
 }
 
@@ -76,16 +80,26 @@ void btn1Click(int x, int y) {
    float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
    float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
 
-   std::cout << "Mouse click at pixel coords (" << x << ", " << y << ")\n";
-   std::cout << "Mouse click at game coords (" << xx << ", " << yy << ")\n";
+   dragRegion = Range(xx, yy, 0.f, 0.f);
 }
 
 void btn1Release(int x, int y) {
    float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
    float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
 
-   std::cout << "Mouse release at pixel coords (" << x << ", " << y << ")\n";
-   std::cout << "Mouse release at game coords (" << xx << ", " << yy << ")\n";
+   Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
+
+   pShape_t shape(new Shape(internString("rectangle"), std::unique_ptr<Primitive>(new Box(size))));
+   shape->setTranslation(dragRegion.getPosition());
+   shape->setZ(4);
+
+   shape->getRenderBrush()->fillColour[0] = 1.f;
+   shape->getRenderBrush()->fillColour[1] = 0.f;
+   shape->getRenderBrush()->fillColour[2] = 0.f;
+   shape->getRenderBrush()->fillColour[3] = 0.5f;
+
+   entities.push_back(shape);
+   quadtree.insert(shape, shape->getBoundary());
 }
 
 int main(int argc, char** argv) {
@@ -98,8 +112,6 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(btn1Release));
 
    graphics2d.init(640, 480);
-
-   Quadtree<pEntity_t> quadtree(3, Range(0.f, 0.f, 64.f / 48.f, 1.f));
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
 
@@ -119,21 +131,22 @@ int main(int argc, char** argv) {
    Animation anim0(internString("anim0"), 24.f, aFrames);
 
    float32_t w = 32.f * graphics2d.getPixelSize().x;
-   float32_t h = 32.f * graphics2d.getPixelSize().y;
 
    Sprite proto(internString("type0"), tex0);
    proto.addAnimation(&anim0);
 
-   sprites.push_back(pSprite_t(new Sprite(proto, internString("mainDude"))));
-   sprites[0]->setTranslation(0.3f, 0.3f, 2.f);
+   entities.push_back(pSprite_t(new Sprite(proto, internString("mainDude"))));
+   entities[0]->setTranslation(0.3f, 0.3f);
+   entities[0]->setZ(2);
 
    for (int i = 1; i < 6; ++i) {
       float32_t deg = (i - 1) * (360 / 5);
       float32_t r = w * 2.f;
 
-      sprites.push_back(pSprite_t(new Sprite(proto)));
-      sprites[i]->setParent(sprites[0].get());
-      sprites[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)), 2.f);
+      entities.push_back(pSprite_t(new Sprite(proto)));
+      entities[i]->setParent(entities[0].get());
+      entities[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)));
+      entities[i]->setZ(2);
    }
 
    Polygon poly;
@@ -155,9 +168,9 @@ int main(int argc, char** argv) {
       graphics2d.drawPrimitive(poly, 0.5f, 0.4f, 1);
       quadtree.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
 
-      for (uint_t i = 0; i < sprites.size(); ++i) {
-         sprites[i]->update();
-         sprites[i]->draw(Vec2f(0.f, 0.f));
+      for (uint_t i = 0; i < entities.size(); ++i) {
+         entities[i]->update();
+         entities[i]->draw(Vec2f(0.f, 0.f));
       }
 
       win.swapBuffers();

@@ -326,9 +326,9 @@ void Renderer::render() {
 
       GLfloat* col;
       if (m_primitiveType == LINES)
-         col = m_brush.lineColour;
+         col = m_brush->lineColour;
       else
-         col = m_brush.fillColour;
+         col = m_brush->fillColour;
 
       for (int i = 0; i < m_vertCount; ++i) {
          colours[i * 4 + 0] = col[0];
@@ -352,7 +352,7 @@ void Renderer::render() {
 
    GL_CHECK(glUniformMatrix4fv(m_locMVP, 1, GL_FALSE, mvp.data()));
 
-   GL_CHECK(glLineWidth(m_brush.lineWidth));
+   GL_CHECK(glLineWidth(m_brush->lineWidth));
 
    GL_CHECK(glDrawArrays(m_primitiveType, 0, m_vertCount));
 
@@ -371,7 +371,7 @@ void Renderer::clear() {
    if (!m_init)
       throw Exception("Error clearing rendering surface; renderer not initialised", __FILE__, __LINE__);
 
-   GL_CHECK(glClearColor(m_brush.fillColour[0], m_brush.fillColour[1], m_brush.fillColour[2], m_brush.fillColour[3]));
+   GL_CHECK(glClearColor(m_brush->fillColour[0], m_brush->fillColour[1], m_brush->fillColour[2], m_brush->fillColour[3]));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 

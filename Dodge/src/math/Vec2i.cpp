@@ -6,8 +6,8 @@
 #include <cstring>
 #include <cstdio>
 #include <Exception.hpp>
-#include <Vec2f.hpp>
-#include <Vec2i.hpp>
+#include <math/Vec2f.hpp>
+#include <math/Vec2i.hpp>
 
 
 using namespace rapidxml;

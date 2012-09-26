@@ -1,4 +1,4 @@
-#include <Ellipse.hpp>
+#include <math/primitives/Ellipse.hpp>
 #include <StringId.hpp>
 
 

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <cstring>
 #include <definitions.hpp>
-#include <Polygon.hpp>
+#include <math/primitives/Polygon.hpp>
 #include <StringId.hpp>
 #include <cml/cml.h>
 
@@ -15,7 +15,6 @@ namespace Dodge {
 
 
 Renderer Polygon::m_renderer = Renderer();
-Renderer::Brush& Polygon::m_renderBrush = m_renderer.getBrush();
 
 
 //===========================================
@@ -279,10 +278,12 @@ void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const 
 // Polygon::draw
 //===========================================
 void Polygon::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-   if (m_renderBrush.fillColour[3] != 0.f)
+   const Renderer::Brush& brush = m_renderer.getBrush();
+
+   if (brush.fillColour[3] != 0.f)
       drawSolid(x, y, z, angle, pivot);
 
-   if (m_renderBrush.lineWidth > 0 && m_renderBrush.lineColour[3] != 0.f)
+   if (brush.lineColour[3] != 0.f && brush.lineWidth > 0)
       drawHollow(x, y, z, angle, pivot);
 }
 

@@ -2,7 +2,7 @@
 #define __BOX_HPP__
 
 
-#include "Renderer.hpp"
+#include "../../Renderer.hpp"
 #include "Primitive.hpp"
 
 
@@ -11,8 +11,8 @@ namespace Dodge {
 
 class Box : public Primitive {
    public:
-      Box(float32_t w, float32_t h)
-         : m_size(w, h) {}
+      Box(float32_t w, float32_t h) : m_size(w, h) {}
+      Box(const Vec2f& size) : m_size(size) {}
 
       virtual long typeId() const;
       virtual Primitive* clone() const;
@@ -47,7 +47,6 @@ class Box : public Primitive {
       void drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const;
 
       static Renderer m_renderer;
-      static Renderer::Brush m_renderBrush;
 
       Vec2f m_size;
 };

@@ -8,8 +8,8 @@
 
 
 #include <memory>
-#include "Vec2i.hpp"
-#include "Primitive.hpp"
+#include "math/Vec2i.hpp"
+#include "math/primitives/Primitive.hpp"
 #include "Colour.hpp"
 #include "rapidxml/rapidxml.hpp"
 

@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cml/cml.h>
 #include <Exception.hpp>
-#include <LineSegment.hpp>
+#include <math/primitives/LineSegment.hpp>
 #include <StringId.hpp>
 
 
@@ -14,7 +14,6 @@ namespace Dodge {
 
 
 Renderer LineSegment::m_renderer = Renderer();
-Renderer::Brush& LineSegment::m_renderBrush = m_renderer.getBrush();
 
 
 //===========================================

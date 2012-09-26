@@ -5,9 +5,9 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include "Primitive.hpp"
-#include "Vec2f.hpp"
-#include "Exception.hpp"
-#include "Renderer.hpp"
+#include "../Vec2f.hpp"
+#include "../../Exception.hpp"
+#include "../../Renderer.hpp"
 
 
 namespace Dodge {
@@ -66,7 +66,6 @@ class Polygon : public Primitive {
       std::vector<Polygon> m_children;
 
       static Renderer m_renderer;
-      static Renderer::Brush& m_renderBrush;
 };
 
 //===========================================
