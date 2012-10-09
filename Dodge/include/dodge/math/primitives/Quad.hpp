@@ -19,14 +19,10 @@ class Quad : public Polygon {
 
       inline void clear();
 
-      virtual Primitive* clone() const;
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif
-
-      virtual void draw(float32_t x, float32_t y, int z, float32_t angle = 0.f,
-         const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
 
       virtual ~Quad() {}
 

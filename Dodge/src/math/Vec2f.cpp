@@ -39,5 +39,14 @@ void Vec2f::assignData(const xml_node<>* data) {
    }
 }
 
+//===========================================
+// Vec2f::rotate
+//===========================================
+void Vec2f::rotate(const Vec2f& p, float32_t a) {
+   float32_t x_ = x;
+   x = (x - p.x) * cos(DEG_TO_RAD(a)) - (y - p.y) * sin(DEG_TO_RAD(a)) + p.x;
+   y = (x_ - p.x) * sin(DEG_TO_RAD(a)) + (y - p.y) * cos(DEG_TO_RAD(a)) + p.y;
+}
+
 
 }

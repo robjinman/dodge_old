@@ -21,13 +21,6 @@ Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D) {
    addVertex(D);
 }
 
-//===========================================
-// Quad::clone
-//===========================================
-Primitive* Quad::clone() const {
-   return new Quad(*this);
-}
-
 #ifdef DEBUG
 //===========================================
 // Quad::dbg_print
@@ -68,13 +61,6 @@ void Quad::assignData(const xml_node<>* data) {
 
    if (n != 4)
       throw Exception("Error parsing XML for instance of class Quad; expected 4 vertices", __FILE__, __LINE__);
-}
-
-//===========================================
-// Quad::draw
-//===========================================
-void Quad::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-   // TODO
 }
 
 

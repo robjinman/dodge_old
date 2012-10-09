@@ -8,6 +8,7 @@
 
 
 #include <math.h>
+#include "../definitions.hpp"
 #include "../rapidxml/rapidxml.hpp"
 
 
@@ -35,10 +36,7 @@ class Vec2i {
 
       Vec2i& operator=(const Vec2i& rhs) { x = rhs.x; y = rhs.y; return *this; }
 
-      void rotate(const Vec2i& p, double a) {
-         x = (x - p.x) * cos(a) - (y - p.y) * sin(a) + p.x;
-         y = (x - p.x) * sin(a) + (y - p.y) * cos(a) + p.y;
-      }
+      void rotate(const Vec2i& p, float32_t a);
 
       virtual void assignData(const rapidxml::xml_node<>* data);
 };

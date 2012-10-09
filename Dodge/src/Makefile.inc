@@ -17,4 +17,5 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \
-	$(BASE_DIR)/Texture.o
+	$(BASE_DIR)/Texture.o \
+	$(BASE_DIR)/WorldSpace.o

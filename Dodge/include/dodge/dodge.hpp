@@ -30,12 +30,14 @@
 #include "Range.hpp"
 #include "Renderer.hpp"
 #include "Shape.hpp"
+#include "SpatialContainer.hpp"
 #include "Sprite.hpp"
 #include "StackAllocator.hpp"
 #include "StringId.hpp"
 #include "Texture.hpp"
 #include "Timer.hpp"
 #include "WinIO.hpp"
+#include "WorldSpace.hpp"
 
 
 #endif

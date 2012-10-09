@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include <map>
 #include <vector>
+#include <iostream>
 #include <dodge/dodge.hpp>
 
 
@@ -14,7 +15,8 @@ map<int, bool> keys;
 double frameRate;
 vector<pEntity_t> entities;
 Range dragRegion;
-Quadtree<pEntity_t> quadtree(1, Range(0.f, 0.f, 64.f / 48.f, 1.f));
+WorldSpace worldSpace;
+EventManager eventManager;
 
 
 void quit() {
@@ -31,6 +33,21 @@ void keyDown(int code) {
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n"; break;
+      case WinIO::KEY_N: std::cout << "worldSpace.dbg_getNumEntities() = " << worldSpace.dbg_getNumEntities() << "\n"; break;
+
+      case WinIO::KEY_1: worldSpace.insertEntity(entities[0]); break;
+      case WinIO::KEY_2: worldSpace.insertEntity(entities[1]); break;
+      case WinIO::KEY_3: worldSpace.insertEntity(entities[2]); break;
+      case WinIO::KEY_4: worldSpace.insertEntity(entities[3]); break;
+      case WinIO::KEY_5: worldSpace.insertEntity(entities[4]); break;
+      case WinIO::KEY_6: worldSpace.insertEntity(entities[5]); break;
+
+      case WinIO::KEY_Q: worldSpace.removeEntity(entities[0]); break;
+      case WinIO::KEY_W: worldSpace.removeEntity(entities[1]); break;
+      case WinIO::KEY_E: worldSpace.removeEntity(entities[2]); break;
+      case WinIO::KEY_R: worldSpace.removeEntity(entities[3]); break;
+      case WinIO::KEY_T: worldSpace.removeEntity(entities[4]); break;
+      case WinIO::KEY_Y: worldSpace.removeEntity(entities[5]); break;
    }
 }
 
@@ -96,10 +113,10 @@ void btn1Release(int x, int y) {
    shape->getRenderBrush()->fillColour[0] = 1.f;
    shape->getRenderBrush()->fillColour[1] = 0.f;
    shape->getRenderBrush()->fillColour[2] = 0.f;
-   shape->getRenderBrush()->fillColour[3] = 0.5f;
+   shape->getRenderBrush()->fillColour[3] = 0.2f;
 
    entities.push_back(shape);
-   quadtree.insert(shape, shape->getBoundary());
+   worldSpace.insertEntity(shape);
 }
 
 int main(int argc, char** argv) {
@@ -111,9 +128,14 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
    win.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(btn1Release));
 
+   worldSpace.init(std::unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
+
    graphics2d.init(640, 480);
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
+
+   float32_t w = 32.f * graphics2d.getPixelSize().x;
+   float32_t h = 32.f * graphics2d.getPixelSize().y;
 
    std::vector<AnimFrame> aFrames;
    aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
@@ -130,23 +152,24 @@ int main(int argc, char** argv) {
    aFrames.push_back(AnimFrame(Vec2f(352.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    Animation anim0(internString("anim0"), 24.f, aFrames);
 
-   float32_t w = 32.f * graphics2d.getPixelSize().x;
+   pSprite_t proto(new Sprite(internString("type0"), tex0));
+   proto->addAnimation(&anim0);
+   proto->setShape(std::unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
 
-   Sprite proto(internString("type0"), tex0);
-   proto.addAnimation(&anim0);
-
-   entities.push_back(pSprite_t(new Sprite(proto, internString("mainDude"))));
+   entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
    entities[0]->setTranslation(0.3f, 0.3f);
    entities[0]->setZ(2);
+   worldSpace.trackEntity(entities[0]);
 
    for (int i = 1; i < 6; ++i) {
       float32_t deg = (i - 1) * (360 / 5);
       float32_t r = w * 2.f;
 
-      entities.push_back(pSprite_t(new Sprite(proto)));
+      entities.push_back(pSprite_t(new Sprite(*proto)));
       entities[i]->setParent(entities[0].get());
       entities[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)));
       entities[i]->setZ(2);
+      worldSpace.trackEntity(entities[i]);
    }
 
    Polygon poly;
@@ -166,12 +189,18 @@ int main(int argc, char** argv) {
       graphics2d.setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
       graphics2d.setLineWidth(6);
       graphics2d.drawPrimitive(poly, 0.5f, 0.4f, 1);
-      quadtree.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
+      worldSpace.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < entities.size(); ++i) {
          entities[i]->update();
          entities[i]->draw(Vec2f(0.f, 0.f));
+         entities[i]->getBoundary().dbg_draw(4, Colour(0.f, 1.f, 0.f, 0.5f));
+         graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
+         graphics2d.setLineWidth(0);
+         entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5);
       }
+
+      eventManager.doEvents();
 
       win.swapBuffers();
    }

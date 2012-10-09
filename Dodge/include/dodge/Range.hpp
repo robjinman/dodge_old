@@ -9,6 +9,9 @@
 
 #include "rapidxml/rapidxml.hpp"
 #include "math/Vec2f.hpp"
+#ifdef DEBUG
+   #include "Graphics2d.hpp"
+#endif
 
 
 namespace Dodge {
@@ -26,21 +29,45 @@ class Range {
          : m_pos(pos), m_size(size) {}
 
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab) const;
+      void dbg_print(std::ostream& out, int tab) const;
+      void dbg_draw(int z, const Colour& col) const;
 #endif
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      void assignData(const rapidxml::xml_node<>* data);
 
+      inline void setPosition(float32_t x, float32_t y);
+      inline void setSize(float32_t w, float32_t h);
       inline void setPosition(const Vec2f& pos);
       inline void setSize(const Vec2f& size);
       inline const Vec2f& getPosition() const;
       inline const Vec2f& getSize() const;
 
       bool overlaps(const Range& range) const;
+      bool contains(const Range& range) const;
 
    private:
       Vec2f m_pos;
       Vec2f m_size;
+
+#ifdef DEBUG
+      static Graphics2d m_graphics2d;
+#endif
 };
+
+//===========================================
+// Range::setPosition
+//===========================================
+inline void Range::setPosition(float32_t x, float32_t y) {
+   m_pos.x = x;
+   m_pos.y = y;
+}
+
+//===========================================
+// Range::setSize
+//===========================================
+inline void Range::setSize(float32_t w, float32_t h) {
+   m_size.x = w;
+   m_size.y = h;
+}
 
 //===========================================
 // Range::setPosition

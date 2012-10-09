@@ -4,9 +4,17 @@
  */
 
 #include <Range.hpp>
+#ifdef DEBUG
+   #include <math/primitives/Box.hpp>
+#endif
 
 
 namespace Dodge {
+
+
+#ifdef DEBUG
+Graphics2d Range::m_graphics2d = Graphics2d();
+#endif
 
 
 //===========================================
@@ -23,6 +31,15 @@ void Range::assignData(const rapidxml::xml_node<>* data) {
 void Range::dbg_print(std::ostream& out, int tab) const {
    // TODO
 }
+
+//===========================================
+// Range::dbg_draw
+//===========================================
+void Range::dbg_draw(int z, const Colour& col) const {
+   Box box(m_size);
+   m_graphics2d.setFillColour(col);
+   m_graphics2d.drawPrimitive(box, m_pos.x, m_pos.y, z);
+}
 #endif
 
 //===========================================
@@ -33,6 +50,16 @@ bool Range::overlaps(const Range& range) const {
       && (m_pos.x + m_size.x) > range.m_pos.x
       && m_pos.y < (range.m_pos.y + range.m_size.y)
       && (m_pos.y + m_size.y) > range.m_pos.y;
+}
+
+//===========================================
+// Range::contains
+//===========================================
+bool Range::contains(const Range& range) const {
+   return range.m_pos.x > m_pos.x && range.m_pos.x < m_pos.x + m_size.x
+      && range.m_pos.x + range.m_size.x < m_pos.x + m_size.x
+      && range.m_pos.y > m_pos.y && range.m_pos.y < m_pos.y + m_size.y
+      && range.m_pos.y + range.m_size.y < m_pos.y + m_size.y;
 }
 
 

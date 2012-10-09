@@ -26,14 +26,18 @@ Polygon::Polygon() : m_nVerts(0) {
 
 //===========================================
 // Polygon::Polygon
+//
+// Contruct deep copy
 //===========================================
 Polygon::Polygon(const Polygon& poly) {
-   for (int i = 0; i < poly.m_nVerts; ++i)
-      m_verts[i] = poly.m_verts[i];
+   for (int i = 0; i < poly.m_nVerts; ++i) {
+      boost::shared_ptr<Vec2f> vert(new Vec2f(*poly.m_verts[i])); // Make copy of vertex
+      m_verts.push_back(vert);
+   }
 
    m_nVerts = poly.m_nVerts;
 
-   restructure(); // This will create new children
+   restructure();
 }
 
 //===========================================
@@ -322,9 +326,9 @@ Vec2f Polygon::getMaximum() const {
 //===========================================
 // Polygon::rotate
 //===========================================
-void Polygon::rotate(double rads, const Vec2f& p) {
+void Polygon::rotate(double deg, const Vec2f& p) {
    for (int i = 0; i < m_nVerts; ++i)
-      m_verts[i]->rotate(p, rads);
+      m_verts[i]->rotate(p, deg);
 }
 
 //===========================================

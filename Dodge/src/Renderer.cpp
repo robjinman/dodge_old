@@ -345,6 +345,8 @@ void Renderer::render() {
    if (m_texCoordsSet && (m_texCoordCount != m_vertCount))
       throw Exception("Error rendering geometry; mismatch in array sizes", __FILE__, __LINE__);
 
+   if (m_primitiveType == LINES && m_brush->lineWidth == 0) return;
+
    // Compute MVP matrix
    matrixf_c P(m_projMat, 4, 4);
    P.transpose();
@@ -352,7 +354,8 @@ void Renderer::render() {
 
    GL_CHECK(glUniformMatrix4fv(m_locMVP, 1, GL_FALSE, mvp.data()));
 
-   GL_CHECK(glLineWidth(m_brush->lineWidth));
+   if (m_brush->lineWidth != 0)
+      GL_CHECK(glLineWidth(m_brush->lineWidth));
 
    GL_CHECK(glDrawArrays(m_primitiveType, 0, m_vertCount));
 

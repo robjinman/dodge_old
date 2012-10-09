@@ -20,30 +20,12 @@ class Entity;
 
 class EAnimFinished : public EEvent {
    public:
-      EAnimFinished(boost::shared_ptr<Entity> entity, const Animation* anim)
-         : EEvent(internString("animFinished")), m_anim(anim), m_entity(entity) {}
+      EAnimFinished(boost::shared_ptr<Entity> ent, const Animation* anim)
+         : EEvent(internString("animFinished")), animation(anim), entity(ent) {}
 
-      inline const Animation* getAnimation() const;
-      inline boost::shared_ptr<Entity> getEntity() const;
-
-   private:
-      const Animation* m_anim;
-      boost::shared_ptr<Entity> m_entity;
+      const Animation* animation;
+      boost::shared_ptr<Entity> entity;
 };
-
-//===========================================
-// EAnimFinished::getAnimation
-//===========================================
-inline const Animation* EAnimFinished::getAnimation() const {
-   return m_anim;
-}
-
-//===========================================
-// EAnimFinished::getEntity
-//===========================================
-inline boost::shared_ptr<Entity> EAnimFinished::getEntity() const {
-   return m_entity;
-}
 
 
 }

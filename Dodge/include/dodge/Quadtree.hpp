@@ -10,6 +10,7 @@
 #include <vector>
 #include "Range.hpp"
 #include "definitions.hpp"
+#include "SpatialContainer.hpp"
 #ifdef DEBUG
    #include "Graphics2d.hpp"
 #endif
@@ -18,13 +19,22 @@
 namespace Dodge {
 
 
-template <typename T> class Quadtree {
+template <typename T>
+class Quadtree : public SpatialContainer<T> {
    public:
       class Entry {
          public:
             Entry(T item_, const Range& rect_)
                : item(item_), rect(rect_) {}
+/*
+            static void* operator new(size_t size) {
+               // TODO
+            }
 
+            static void operator delete(void* obj, size_t size) {
+               // TODO
+            }
+*/
             T item;
             Range rect;
       };
@@ -34,38 +44,36 @@ template <typename T> class Quadtree {
       //===========================================
       Quadtree(uint_t splittingThres, const Range& boundary)
          : m_splittingThres(splittingThres), m_boundary(boundary),
-           m_SW(NULL), m_SE(NULL), m_NE(NULL), m_NW(NULL) {
+           m_children({NULL, NULL, NULL, NULL}), m_n(0) {
 
-         m_entries.reserve(splittingThres);
+         m_entries.reserve(splittingThres); // TODO: find optimum
       }
 
       //===========================================
       // Quadtree::insert
       //===========================================
-      bool insert(T item, const Range& boundingBox) {
-         if (!m_boundary.overlaps(boundingBox))
-            return false;
+      virtual bool insert(T item, const Range& boundingBox) {
+         return insert_r(item, boundingBox);
+      }
 
-         if (hasChildren()) {
-            m_SW->insert(item, boundingBox);
-            m_SE->insert(item, boundingBox);
-            m_NE->insert(item, boundingBox);
-            m_NW->insert(item, boundingBox);
-         }
-         else {   // If this is a leaf
-            m_entries.push_back(Entry(item, boundingBox));
+      //===========================================
+      // Quadtree::remove
+      //===========================================
+      virtual bool remove(T item, const Range& boundingBox) {
+         return remove_r(item, boundingBox);
+      }
 
-            if (m_entries.size() > m_splittingThres)
-               subdivide();
-         }
-
-         return true;
+      //===========================================
+      // Quadtree::getNumEntries
+      //===========================================
+      virtual int getNumEntries() const {
+         return getNumEntries_r();
       }
 
       //===========================================
       // Quadtree::getEntries
       //===========================================
-      void getEntries(const Range& region, std::vector<Entry>& entries) const {
+      virtual void getEntries(const Range& region, std::vector<T>& entries) const {
          entries.clear();
          getEntries_r(region, entries);
       }
@@ -92,7 +100,10 @@ template <typename T> class Quadtree {
 //      }
 
 #ifdef DEBUG
-      void dbg_draw(int z, const Colour& col) const {
+      //===========================================
+      // Quadtree::dbg_draw
+      //===========================================
+      virtual void dbg_draw(int z, const Colour& col) const {
          if (hasChildren()) {
             const Vec2f& pos = m_boundary.getPosition();
             const Vec2f& sz = m_boundary.getSize();
@@ -113,22 +124,21 @@ template <typename T> class Quadtree {
             m_graphics2d.drawPrimitive(line1, 0.f, 0.f, z);
             m_graphics2d.drawPrimitive(line2, 0.f, 0.f, z);
 
-            m_SW->dbg_draw(z, col);
-            m_SE->dbg_draw(z, col);
-            m_NE->dbg_draw(z, col);
-            m_NW->dbg_draw(z, col);
+            for (int i = 0; i < 4; ++i)
+               m_children[i]->dbg_draw(z, col);
          }
       }
 #endif
 
    private:
-      unsigned int m_splittingThres;
+      int m_splittingThres;
       Range m_boundary;
-      std::vector<Entry> m_entries;
-      Quadtree<T>* m_SW;
-      Quadtree<T>* m_SE;
-      Quadtree<T>* m_NE;
-      Quadtree<T>* m_NW;
+      std::vector<Entry*> m_entries;
+      Quadtree<T>* m_children[4];
+
+      // Number of entries that are fully contained within a quadrant, but
+      // not contained in a child tree (should therefore be zero for any tree with children)
+      int m_n;
 
 //      PoolAllocator m_memPool;
 #ifdef DEBUG
@@ -138,39 +148,137 @@ template <typename T> class Quadtree {
       //===========================================
       // Quadtree::hasChildren
       //
-      // Assume no children if m_SW is not set
+      // Assume no children if first child tree is not set
       //===========================================
       bool hasChildren() const {
-         return m_SW != NULL;
+         return m_children[0] != NULL;
+      }
+
+      //===========================================
+      // Quadtree::getIndex
+      //===========================================
+      int getIndex(const Range& range) const {
+         Vec2f halfSz = m_boundary.getSize() / 2.f;
+         if (Range(m_boundary.getPosition(), halfSz).contains(range)) return 0;
+         if (Range(m_boundary.getPosition() + Vec2f(halfSz.x, 0.f), halfSz).contains(range)) return 1;
+         if (Range(m_boundary.getPosition() + halfSz, halfSz).contains(range)) return 2;
+         if (Range(m_boundary.getPosition() + Vec2f(0.f, halfSz.y), halfSz).contains(range)) return 3;
+
+         return -1;
+      }
+
+      //===========================================
+      // Quadtree::getNumEntries_r
+      //===========================================
+      int getNumEntries_r() const {
+         int t = 0;
+
+         if (hasChildren()) {
+            for (int i = 0; i < 4; ++i)
+               t += m_children[i]->getNumEntries_r();
+         }
+
+         return m_entries.size() + t;
       }
 
       //===========================================
       // Quadtree::getEntries_r
       //===========================================
-      void getEntries_r(const Range& region, std::vector<Entry>& entries) const {
+      void getEntries_r(const Range& region, std::vector<T>& entries) const {
+         for (uint_t i = 0; i < m_entries.size(); ++i)
+            entries.push_back(m_entries[i]->item);
 
-         // If this is a leaf
-         if (hasChildren() == false) {
-            entries.insert(entries.end(), m_entries.begin(), m_entries.end());
-            return;
+         if (hasChildren()) {
+            for (int i = 0; i < 4; ++i) {
+               if (region.overlaps(m_children[i]->m_boundary))
+                  m_children[i]->getEntries_r(region, entries);
+            }
+         }
+      }
+
+      //===========================================
+      // Quadtree::remove_
+      //===========================================
+      bool remove_(T item) {
+         for (uint_t i = 0; i < m_entries.size(); ++i) {
+            if (m_entries[i]->item == item) {
+               if (getIndex(m_entries[i]->rect) != -1)
+                  --m_n;
+
+               delete m_entries[i];
+               m_entries.erase(m_entries.begin() + i);
+
+               return true;
+            }
+         }
+         return false;
+      }
+
+      //===========================================
+      // Quadtree::remove_r
+      //===========================================
+      bool remove_r(T item, const Range& boundingBox) {
+         if (!m_boundary.overlaps(boundingBox))
+            return false;
+
+         if (hasChildren()) {
+            int t = 0;
+            for (uint_t i = 0; i < 4; ++i) {
+               m_children[i]->remove_r(item, boundingBox);
+               t += m_children[i]->getNumEntries();
+            }
+
+            if (t <= m_splittingThres)
+               remerge();
          }
 
-         if (region.overlaps(m_SW->m_boundary)) m_SW->getEntries_r(region, entries);
-         if (region.overlaps(m_SE->m_boundary)) m_SE->getEntries_r(region, entries);
-         if (region.overlaps(m_NE->m_boundary)) m_NE->getEntries_r(region, entries);
-         if (region.overlaps(m_NW->m_boundary)) m_NW->getEntries_r(region, entries);
+         return remove_(item);
       }
 
       //===========================================
       // Quadtree::insert_
-      //
-      // Separate version of insert() to avoid recursive subdivision
       //===========================================
       void insert_(T item, const Range& boundingBox) {
-         if (!m_boundary.overlaps(boundingBox))
-            return;
+         m_entries.push_back(new Entry(item, boundingBox));
+      }
 
-         m_entries.push_back(Entry(item, boundingBox));
+      //===========================================
+      // Quadtree::insert_r
+      //===========================================
+      bool insert_r(T item, const Range& boundingBox) {
+         if (!m_boundary.contains(boundingBox))
+            return false;
+
+         int i = getIndex(boundingBox);
+
+         if (hasChildren()) {
+            if (i != -1)
+               m_children[i]->insert_r(item, boundingBox);
+            else
+               insert_(item, boundingBox);
+         }
+         else {
+            insert_(item, boundingBox);
+            if (i != -1) ++m_n;
+
+            if (m_n > m_splittingThres)
+               subdivide();
+         }
+
+         return true;
+      }
+
+      //===========================================
+      // Quadtree::remerge
+      //===========================================
+      void remerge() {
+         for (int i = 0; i < 4; ++i) {
+            m_n += m_children[i]->m_entries.size();
+            m_entries.insert(m_entries.end(), m_children[i]->m_entries.begin(), m_children[i]->m_entries.end());
+
+            delete m_children[i];
+            m_children[i] = NULL;
+         }
       }
 
       //===========================================
@@ -178,19 +286,21 @@ template <typename T> class Quadtree {
       //===========================================
       void subdivide() {
          Vec2f halfSz = m_boundary.getSize() / 2.f;
-         m_SW = new Quadtree(m_splittingThres, Range(m_boundary.getPosition(), halfSz));
-         m_SE = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + Vec2f(halfSz.x, 0.f), halfSz));
-         m_NE = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + halfSz, halfSz));
-         m_NW = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + Vec2f(0.f, halfSz.y), halfSz));
+         m_children[0] = new Quadtree(m_splittingThres, Range(m_boundary.getPosition(), halfSz));
+         m_children[1] = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + Vec2f(halfSz.x, 0.f), halfSz));
+         m_children[2] = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + halfSz, halfSz));
+         m_children[3] = new Quadtree(m_splittingThres, Range(m_boundary.getPosition() + Vec2f(0.f, halfSz.y), halfSz));
 
-         // Add all entries into the new leaves
+         // Add entries into the new leaves
          for (uint_t i = 0; i < m_entries.size(); ++i) {
-            m_SW->insert_(m_entries[i].item, m_entries[i].rect);
-            m_SE->insert_(m_entries[i].item, m_entries[i].rect);
-            m_NE->insert_(m_entries[i].item, m_entries[i].rect);
-            m_NW->insert_(m_entries[i].item, m_entries[i].rect);
+            int c = getIndex(m_entries[i]->rect);
+            if (c != -1) {
+               m_children[c]->insert(m_entries[i]->item, m_entries[i]->rect);
+               m_entries.erase(m_entries.begin() + i);
+               --m_n;
+               --i;
+            }
          }
-         m_entries.clear();
       }
 };
 

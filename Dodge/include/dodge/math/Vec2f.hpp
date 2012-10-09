@@ -36,10 +36,7 @@ class Vec2f {
 
       Vec2f& operator=(const Vec2f& rhs) { x = rhs.x; y = rhs.y; return *this; }
 
-      void rotate(const Vec2f& p, float32_t a) {
-         x = (x - p.x) * cos(a) - (y - p.y) * sin(a) + p.x;
-         y = (x - p.x) * sin(a) + (y - p.y) * cos(a) + p.y;
-      }
+      void rotate(const Vec2f& p, float32_t a);
 
       virtual void assignData(const rapidxml::xml_node<>* data);
 };

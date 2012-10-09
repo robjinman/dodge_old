@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #include "Shape.hpp"
 
 
@@ -13,7 +18,12 @@ Renderer Shape::m_renderer = Renderer();
 Shape::Shape(long type, std::unique_ptr<Primitive> shape)
    : Entity(type) {
 
+   bool s = isSilent();
+   setSilent(true);
+
    setShape(std::move(shape));
+
+   setSilent(s);
 }
 
 //===========================================
@@ -22,7 +32,12 @@ Shape::Shape(long type, std::unique_ptr<Primitive> shape)
 Shape::Shape(long name, long type, std::unique_ptr<Primitive> shape)
    : Entity(name, type) {
 
+   bool s = isSilent();
+   setSilent(true);
+
    setShape(std::move(shape));
+
+   setSilent(s);
 }
 
 //===========================================

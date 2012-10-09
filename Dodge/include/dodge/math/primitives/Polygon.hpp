@@ -35,7 +35,7 @@ class Polygon : public Primitive {
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
-      virtual void rotate(double rads, const Vec2f& pivot);
+      virtual void rotate(double deg, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 
       virtual void assignData(const rapidxml::xml_node<>* data);
