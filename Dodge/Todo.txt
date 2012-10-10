@@ -1,3 +1,7 @@
+- Transformations
+- Physics
+- GUI
 - Complete Polygon class
 - Improve Renderer efficiency
-
+- Toolkit
+- Lua binding

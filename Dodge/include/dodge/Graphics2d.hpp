@@ -61,10 +61,8 @@ inline void Graphics2d::setFillColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting fill colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->fillColour[0] = colour.r;
-   m_renderBrush->fillColour[1] = colour.g;
-   m_renderBrush->fillColour[2] = colour.b;
-   m_renderBrush->fillColour[3] = colour.a;
+   Renderer::colourElement_t fCol[] = {colour.r, colour.g, colour.b, colour.a};
+   m_renderBrush->setFillColour(fCol);
 }
 
 //===========================================
@@ -74,20 +72,18 @@ inline void Graphics2d::setLineColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting line colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->lineColour[0] = colour.r;
-   m_renderBrush->lineColour[1] = colour.g;
-   m_renderBrush->lineColour[2] = colour.b;
-   m_renderBrush->lineColour[3] = colour.a;
+   Renderer::colourElement_t lCol[] = {colour.r, colour.g, colour.b, colour.a};
+   m_renderBrush->setLineColour(lCol);
 }
 
 //===========================================
 // Graphics2d::setLineWidth
 //===========================================
-inline void Graphics2d::setLineWidth(int width) const {
+inline void Graphics2d::setLineWidth(int width) const { // TODO: use Renderer::integer_t
    if (!m_init)
       throw Exception("Error setting line width; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->lineWidth = width;
+   m_renderBrush->setLineWidth(width);
 }
 
 //===========================================

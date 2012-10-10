@@ -38,17 +38,42 @@ class IRenderer {
       class Brush {
          public:
             Brush()
-               : fillColour({1.f, 1.f, 1.f, 1.f}), lineColour({0.f, 0.f, 0.f, 1.f}), lineWidth(1) {}
+               : m_fillColour({1.f, 1.f, 1.f, 1.f}), m_lineColour({0.f, 0.f, 0.f, 1.f}), m_lineWidth(1) {}
 
             Brush(const T_COL_ELEM fCol[4], const T_COL_ELEM lCol[4], int lineW) {
-               memcpy(fillColour, fCol, 4 * sizeof(T_COL_ELEM));
-               memcpy(lineColour, lCol, 4 * sizeof(T_COL_ELEM));
-               lineWidth = lineW;
+               setFillColour(fCol);
+               setLineColour(lCol);
+               m_lineWidth = lineW;
             }
 
-            T_COL_ELEM fillColour[4];
-            T_COL_ELEM lineColour[4];
-            int lineWidth;
+            void setFillColour(const T_COL_ELEM fCol[4]) {
+               memcpy(m_fillColour, fCol, 4 * sizeof(T_COL_ELEM));
+            }
+
+            void setLineColour(const T_COL_ELEM lCol[4]) {
+               memcpy(m_lineColour, lCol, 4 * sizeof(T_COL_ELEM));
+            }
+
+            void setLineWidth(int w) { // TODO: use T_INTEGER
+               m_lineWidth = w;
+            }
+
+            const T_COL_ELEM* getFillColour() const {
+               return m_fillColour;
+            }
+
+            const T_COL_ELEM* getLineColour() const {
+               return m_lineColour;
+            }
+
+            int getLineWidth() const { // TODO: T_INTEGER
+               return m_lineWidth;
+            }
+
+         private:
+            T_COL_ELEM m_fillColour[4];
+            T_COL_ELEM m_lineColour[4];
+            int m_lineWidth;
       };
 
       enum primitive_t {

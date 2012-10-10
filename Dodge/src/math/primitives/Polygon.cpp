@@ -284,10 +284,10 @@ void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const 
 void Polygon::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
    const Renderer::Brush& brush = m_renderer.getBrush();
 
-   if (brush.fillColour[3] != 0.f)
+   if (brush.getFillColour()[3] != 0.f)
       drawSolid(x, y, z, angle, pivot);
 
-   if (brush.lineColour[3] != 0.f && brush.lineWidth > 0)
+   if (brush.getLineColour()[3] != 0.f && brush.getLineWidth() > 0)
       drawHollow(x, y, z, angle, pivot);
 }
 

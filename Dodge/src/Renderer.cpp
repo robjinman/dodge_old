@@ -324,11 +324,11 @@ void Renderer::render() {
       StackAllocator::marker_t marker = gMemStack.getMarker();
       GLfloat* colours = static_cast<GLfloat*>(gMemStack.alloc(4 * m_vertCount * sizeof(GLfloat)));
 
-      GLfloat* col;
+      const GLfloat* col;
       if (m_primitiveType == LINES)
-         col = m_brush->lineColour;
+         col = m_brush->getLineColour();
       else
-         col = m_brush->fillColour;
+         col = m_brush->getFillColour();
 
       for (int i = 0; i < m_vertCount; ++i) {
          colours[i * 4 + 0] = col[0];
@@ -345,7 +345,7 @@ void Renderer::render() {
    if (m_texCoordsSet && (m_texCoordCount != m_vertCount))
       throw Exception("Error rendering geometry; mismatch in array sizes", __FILE__, __LINE__);
 
-   if (m_primitiveType == LINES && m_brush->lineWidth == 0) return;
+   if (m_primitiveType == LINES && m_brush->getLineWidth() == 0) return;
 
    // Compute MVP matrix
    matrixf_c P(m_projMat, 4, 4);
@@ -354,8 +354,8 @@ void Renderer::render() {
 
    GL_CHECK(glUniformMatrix4fv(m_locMVP, 1, GL_FALSE, mvp.data()));
 
-   if (m_brush->lineWidth != 0)
-      GL_CHECK(glLineWidth(m_brush->lineWidth));
+   if (m_brush->getLineWidth() != 0)
+      GL_CHECK(glLineWidth(m_brush->getLineWidth()));
 
    GL_CHECK(glDrawArrays(m_primitiveType, 0, m_vertCount));
 
@@ -374,7 +374,7 @@ void Renderer::clear() {
    if (!m_init)
       throw Exception("Error clearing rendering surface; renderer not initialised", __FILE__, __LINE__);
 
-   GL_CHECK(glClearColor(m_brush->fillColour[0], m_brush->fillColour[1], m_brush->fillColour[2], m_brush->fillColour[3]));
+   GL_CHECK(glClearColor(m_brush->getFillColour()[0], m_brush->getFillColour()[1], m_brush->getFillColour()[2], m_brush->getFillColour()[3]));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 

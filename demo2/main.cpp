@@ -34,20 +34,6 @@ void keyDown(int code) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n"; break;
       case WinIO::KEY_N: std::cout << "worldSpace.dbg_getNumEntities() = " << worldSpace.dbg_getNumEntities() << "\n"; break;
-
-      case WinIO::KEY_1: worldSpace.insertEntity(entities[0]); break;
-      case WinIO::KEY_2: worldSpace.insertEntity(entities[1]); break;
-      case WinIO::KEY_3: worldSpace.insertEntity(entities[2]); break;
-      case WinIO::KEY_4: worldSpace.insertEntity(entities[3]); break;
-      case WinIO::KEY_5: worldSpace.insertEntity(entities[4]); break;
-      case WinIO::KEY_6: worldSpace.insertEntity(entities[5]); break;
-
-      case WinIO::KEY_Q: worldSpace.removeEntity(entities[0]); break;
-      case WinIO::KEY_W: worldSpace.removeEntity(entities[1]); break;
-      case WinIO::KEY_E: worldSpace.removeEntity(entities[2]); break;
-      case WinIO::KEY_R: worldSpace.removeEntity(entities[3]); break;
-      case WinIO::KEY_T: worldSpace.removeEntity(entities[4]); break;
-      case WinIO::KEY_Y: worldSpace.removeEntity(entities[5]); break;
    }
 }
 
@@ -110,10 +96,9 @@ void btn1Release(int x, int y) {
    shape->setTranslation(dragRegion.getPosition());
    shape->setZ(4);
 
-   shape->getRenderBrush()->fillColour[0] = 1.f;
-   shape->getRenderBrush()->fillColour[1] = 0.f;
-   shape->getRenderBrush()->fillColour[2] = 0.f;
-   shape->getRenderBrush()->fillColour[3] = 0.2f;
+   Renderer::colourElement_t fCol[] = {1.f, 0.f, 0.f, 0.2f};
+   shape->getRenderBrush()->setFillColour(fCol);
+   shape->getRenderBrush()->setLineWidth(0);
 
    entities.push_back(shape);
    worldSpace.insertEntity(shape);
@@ -172,32 +157,45 @@ int main(int argc, char** argv) {
       worldSpace.trackEntity(entities[i]);
    }
 
-   Polygon poly;
-   poly.addVertex(Vec2f(0.09, 0.0));
-   poly.addVertex(Vec2f(0.31, 0.0));
-   poly.addVertex(Vec2f(0.4, 0.23));
-   poly.addVertex(Vec2f(0.2, 0.4));
-   poly.addVertex(Vec2f(0.0, 0.23));
+   std::unique_ptr<Polygon> pPoly(new Polygon);
+   pPoly->addVertex(Vec2f(0.09, 0.0));
+   pPoly->addVertex(Vec2f(0.31, 0.0));
+   pPoly->addVertex(Vec2f(0.4, 0.23));
+   pPoly->addVertex(Vec2f(0.2, 0.4));
+   pPoly->addVertex(Vec2f(0.0, 0.23));
 
+   pShape_t poly(new Shape(internString("polygon"), internString("bigPentagon"), std::move(pPoly)));
+   poly->setZ(1);
+   poly->setTranslation(0.5f, 0.4f);
+
+   Renderer::colourElement_t polyFc[] = {0.f, 1.f, 0.f, 1.f};
+   Renderer::colourElement_t polyLc[] = {0.f, 0.f, 1.f, 1.f};
+   poly->getRenderBrush()->setFillColour(polyFc);
+   poly->getRenderBrush()->setLineColour(polyLc);
+   poly->getRenderBrush()->setLineWidth(6);
+
+   static long strRectangle = internString("rectangle");
    while (1) {
       win.doEvents();
       keyboard();
       computeFrameRate();
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      graphics2d.setFillColour(Colour(0.f, 1.f, 0.f, 1.f));
-      graphics2d.setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
-      graphics2d.setLineWidth(6);
-      graphics2d.drawPrimitive(poly, 0.5f, 0.4f, 1);
+      poly->draw(Vec2f(0.f, 0.f));
       worldSpace.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < entities.size(); ++i) {
          entities[i]->update();
          entities[i]->draw(Vec2f(0.f, 0.f));
-         entities[i]->getBoundary().dbg_draw(4, Colour(0.f, 1.f, 0.f, 0.5f));
-         graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
-         graphics2d.setLineWidth(0);
-         entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5);
+
+         if (entities[i]->getTypeName() != strRectangle) {
+            graphics2d.setLineWidth(0);
+
+            entities[i]->getBoundary().dbg_draw(4, Colour(0.f, 1.f, 0.f, 0.5f));
+
+            graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
+            entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5);
+         }
       }
 
       eventManager.doEvents();

@@ -11,6 +11,7 @@
 #include <math/primitives/Ellipse.hpp>
 #include <math/primitives/Polygon.hpp>
 #include <math/Vec2f.hpp>
+#include <globals.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
 
@@ -86,9 +87,10 @@ bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive
 
    if (!(xMin1 <= xMax2 && xMax1 >= xMin2 && yMin1 <= yMax2 && yMax1 >= yMin2)) return false;
 
-   // TODO: Use a general memory stack
+   int nLines = poly1.getNumVertices() + poly2.getNumVertices();
 
-   vector<Vec2f> lines;
+   StackAllocator::marker_t marker = gMemStack.getMarker();
+   Vec2f* lines = static_cast<Vec2f*>(gMemStack.alloc(sizeof(Vec2f) * nLines));
 
    for (int i = 0; i < poly1.getNumVertices(); ++i) {
       Vec2f line = (poly1.getVertex(i) - poly1.getVertex((i + 1) % poly1.getNumVertices())) + pos1;
@@ -98,7 +100,7 @@ bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive
       line.x /= sf;
       line.y /= sf;
 
-      lines.push_back(line);
+      lines[i] = line;
    }
 
    for (int i = 0; i < poly2.getNumVertices(); ++i) {
@@ -109,10 +111,10 @@ bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive
       line.x /= sf;
       line.y /= sf;
 
-      lines.push_back(line);
+      lines[poly1.getNumVertices() + i] = line;
    }
 
-   for (uint_t l = 0; l < lines.size(); l++) {
+   for (int l = 0; l < nLines; l++) {
       double p1Min = 0, p1Max = 0, p2Min = 0, p2Max = 0;
 
       for (int i = 0; i < poly1.getNumVertices(); ++i) {
@@ -143,9 +145,13 @@ bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive
          if (pt > p2Max) p2Max = pt;
       }
 
-      if (p1Max <= p2Min || p2Max <= p1Min) return false;
+      if (p1Max <= p2Min || p2Max <= p1Min) {
+         gMemStack.freeToMarker(marker);
+         return false;
+      }
    }
 
+   gMemStack.freeToMarker(marker);
    return true;
 }
 
