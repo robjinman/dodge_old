@@ -1,4 +1,3 @@
-- Complete quadtree implementation
 - Complete Polygon class
 - Improve Renderer efficiency
 

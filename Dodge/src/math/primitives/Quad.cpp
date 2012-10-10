@@ -21,6 +21,16 @@ Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D) {
    addVertex(D);
 }
 
+//===========================================
+// Quad::Quad
+//===========================================
+Quad::Quad(const Vec2f& d) {
+   addVertex(Vec2f(0.f, 0.f));
+   addVertex(Vec2f(d.x, 0.f));
+   addVertex(d);
+   addVertex(Vec2f(0.f, d.y));
+}
+
 #ifdef DEBUG
 //===========================================
 // Quad::dbg_print

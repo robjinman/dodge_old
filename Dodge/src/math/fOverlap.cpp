@@ -10,7 +10,6 @@
 #include <math/primitives/LineSegment.hpp>
 #include <math/primitives/Ellipse.hpp>
 #include <math/primitives/Polygon.hpp>
-#include <math/primitives/Box.hpp>
 #include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
@@ -53,14 +52,6 @@ bool lsegPolyOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitive& 
 }
 
 //===========================================
-// lsegPolyOverlap
-//===========================================
-bool lsegBoxOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
 // ellipseEllipseOverlap
 //===========================================
 bool ellipseEllipseOverlap(const Primitive& elps1, const Vec2f& pos1, const Primitive& elps2, const Vec2f& pos2) {
@@ -72,14 +63,6 @@ bool ellipseEllipseOverlap(const Primitive& elps1, const Vec2f& pos1, const Prim
 // ellipsePolyOverlap
 //===========================================
 bool ellipsePolyOverlap(const Primitive& elps, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
-// ellipseBoxOverlap
-//===========================================
-bool ellipseBoxOverlap(const Primitive& elps, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -167,22 +150,6 @@ bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive
 }
 
 //===========================================
-// polyBoxOverlap
-//===========================================
-bool polyBoxOverlap(const Primitive& poly, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
-// boxBoxOverlap
-//===========================================
-bool boxBoxOverlap(const Primitive& box1, const Vec2f& pos1, const Primitive& box2, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
 // makePair
 //===========================================
 pair<long, long> makePair(long a, long b) {
@@ -198,16 +165,11 @@ dispatchTable_t* initDispatchTable() {
    (*tbl)[makePair(internString("LineSegment"), internString("LineSegment"))] = &lsegLsegOverlap;
    (*tbl)[makePair(internString("LineSegment"), internString("Ellipse"))] = &lsegEllipseOverlap;
    (*tbl)[makePair(internString("LineSegment"), internString("Polygon"))] = &lsegPolyOverlap;
-   (*tbl)[makePair(internString("LineSegment"), internString("Box"))] = &lsegBoxOverlap;
 
    (*tbl)[makePair(internString("Ellipse"), internString("Ellipse"))] = &ellipseEllipseOverlap;
    (*tbl)[makePair(internString("Ellipse"), internString("Polygon"))] = &ellipsePolyOverlap;
-   (*tbl)[makePair(internString("Ellipse"), internString("Box"))] = &ellipseBoxOverlap;
 
    (*tbl)[makePair(internString("Polygon"), internString("Polygon"))] = &polyPolyOverlap;
-   (*tbl)[makePair(internString("Polygon"), internString("Box"))] = &polyBoxOverlap;
-
-   (*tbl)[makePair(internString("Box"), internString("Box"))] = &boxBoxOverlap;
 
    return tbl;
 }

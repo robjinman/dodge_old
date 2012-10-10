@@ -10,7 +10,6 @@
 #include <math/primitives/LineSegment.hpp>
 #include <math/primitives/Ellipse.hpp>
 #include <math/primitives/Polygon.hpp>
-#include <math/primitives/Box.hpp>
 #include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
@@ -66,14 +65,6 @@ bool lsegPolyIntersect(const Primitive& lseg, const Vec2f& pos1, const Primitive
 }
 
 //===========================================
-// lsegBoxIntersect
-//===========================================
-bool lsegBoxIntersect(const Primitive& lseg, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
 // ellipseEllipseIntersect
 //===========================================
 bool ellipseEllipseIntersect(const Primitive& elps1, const Vec2f& pos1, const Primitive& elps2, const Vec2f& pos2) {
@@ -85,14 +76,6 @@ bool ellipseEllipseIntersect(const Primitive& elps1, const Vec2f& pos1, const Pr
 // ellipsePolyIntersect
 //===========================================
 bool ellipsePolyIntersect(const Primitive& elps, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
-// ellipseBoxIntersect
-//===========================================
-bool ellipseBoxIntersect(const Primitive& elps, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -129,22 +112,6 @@ bool polyPolyIntersect(const Primitive& poly1_, const Vec2f& pos1, const Primiti
 }
 
 //===========================================
-// polyBoxIntersect
-//===========================================
-bool polyBoxIntersect(const Primitive& poly, const Vec2f& pos1, const Primitive& box, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
-// boxBoxIntersect
-//===========================================
-bool boxBoxIntersect(const Primitive& box1, const Vec2f& pos1, const Primitive& box2, const Vec2f& pos2) {
-   // TODO
-   return false;
-}
-
-//===========================================
 // makePair
 //===========================================
 pair<long, long> makePair(long a, long b) {
@@ -160,16 +127,11 @@ dispatchTable_t* initDispatchTable() {
    (*tbl)[makePair(internString("LineSegment"), internString("LineSegment"))] = &lsegLsegIntersect;
    (*tbl)[makePair(internString("LineSegment"), internString("Ellipse"))] = &lsegEllipseIntersect;
    (*tbl)[makePair(internString("LineSegment"), internString("Polygon"))] = &lsegPolyIntersect;
-   (*tbl)[makePair(internString("LineSegment"), internString("Box"))] = &lsegBoxIntersect;
 
    (*tbl)[makePair(internString("Ellipse"), internString("Ellipse"))] = &ellipseEllipseIntersect;
    (*tbl)[makePair(internString("Ellipse"), internString("Polygon"))] = &ellipsePolyIntersect;
-   (*tbl)[makePair(internString("Ellipse"), internString("Box"))] = &ellipseBoxIntersect;
 
    (*tbl)[makePair(internString("Polygon"), internString("Polygon"))] = &polyPolyIntersect;
-   (*tbl)[makePair(internString("Polygon"), internString("Box"))] = &polyBoxIntersect;
-
-   (*tbl)[makePair(internString("Box"), internString("Box"))] = &boxBoxIntersect;
 
    return tbl;
 }

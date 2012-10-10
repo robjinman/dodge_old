@@ -10,6 +10,7 @@ namespace Dodge {
 
 class Quad : public Polygon {
    public:
+      explicit Quad(const Vec2f& dimensions);
       Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D);
 
       inline void setVertex(int idx, float32_t x, float32_t y);

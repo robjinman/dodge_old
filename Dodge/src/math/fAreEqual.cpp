@@ -10,7 +10,6 @@
 #include <math/primitives/LineSegment.hpp>
 #include <math/primitives/Ellipse.hpp>
 #include <math/primitives/Polygon.hpp>
-#include <math/primitives/Box.hpp>
 #include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
@@ -49,13 +48,6 @@ bool lsegPolyAreEqual(const Primitive& lseg, const Primitive& poly) {
 }
 
 //===========================================
-// lsegBoxAreEqual
-//===========================================
-bool lsegBoxAreEqual(const Primitive& lseg, const Primitive& box) {
-   throw Exception("Error in operator==(); attempt to compare LineSegment with Box", __FILE__, __LINE__);
-}
-
-//===========================================
 // ellipseEllipseAreEqual
 //===========================================
 bool ellipseEllipseAreEqual(const Primitive& elps1, const Primitive& elps2) {
@@ -84,20 +76,6 @@ bool polyPolyAreEqual(const Primitive& poly1, const Primitive& poly2) {
 }
 
 //===========================================
-// polyBoxAreEqual
-//===========================================
-bool polyBoxAreEqual(const Primitive& poly, const Primitive& box) {
-   throw Exception("Error in operator==(); attempt to compare Polygon with Box", __FILE__, __LINE__);
-}
-
-//===========================================
-// boxBoxAreEqual
-//===========================================
-bool boxBoxAreEqual(const Primitive& box1, const Primitive& box2) {
-   return static_cast<const Box&>(box1).Box::operator==(static_cast<const Box&>(box2));
-}
-
-//===========================================
 // makePair
 //===========================================
 pair<long, long> makePair(long a, long b) {
@@ -113,16 +91,11 @@ dispatchTable_t* initDispatchTable() {
    (*tbl)[makePair(internString("LineSegment"), internString("LineSegment"))] = &lsegLsegAreEqual;
    (*tbl)[makePair(internString("LineSegment"), internString("Ellipse"))] = &lsegEllipseAreEqual;
    (*tbl)[makePair(internString("LineSegment"), internString("Polygon"))] = &lsegPolyAreEqual;
-   (*tbl)[makePair(internString("LineSegment"), internString("Box"))] = &lsegBoxAreEqual;
 
    (*tbl)[makePair(internString("Ellipse"), internString("Ellipse"))] = &ellipseEllipseAreEqual;
    (*tbl)[makePair(internString("Ellipse"), internString("Polygon"))] = &ellipsePolyAreEqual;
-   (*tbl)[makePair(internString("Ellipse"), internString("Box"))] = &ellipseBoxAreEqual;
 
    (*tbl)[makePair(internString("Polygon"), internString("Polygon"))] = &polyPolyAreEqual;
-   (*tbl)[makePair(internString("Polygon"), internString("Box"))] = &polyBoxAreEqual;
-
-   (*tbl)[makePair(internString("Box"), internString("Box"))] = &boxBoxAreEqual;
 
    return tbl;
 }

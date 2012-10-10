@@ -7,7 +7,6 @@
 #define __PRIMITIVES_HPP__
 
 
-#include "Box.hpp"
 #include "Ellipse.hpp"
 #include "LineSegment.hpp"
 #include "Polygon.hpp"

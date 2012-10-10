@@ -106,7 +106,7 @@ void btn1Release(int x, int y) {
 
    Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
 
-   pShape_t shape(new Shape(internString("rectangle"), std::unique_ptr<Primitive>(new Box(size))));
+   pShape_t shape(new Shape(internString("rectangle"), std::unique_ptr<Primitive>(new Quad(size))));
    shape->setTranslation(dragRegion.getPosition());
    shape->setZ(4);
 
