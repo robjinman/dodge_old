@@ -29,7 +29,6 @@ class Animation {
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 
       inline void addFrame(const AnimFrame& frame);
-//      inline void addFrames(const std::vector<AnimFrame>& frame);
       inline void setFrameRate(float32_t rate);
 
       inline long getName() const;
@@ -70,13 +69,6 @@ class Animation {
 inline void Animation::addFrame(const AnimFrame& frame) {
    m_frames.push_back(frame);
 }
-
-//===========================================
-// Animation::addFrames
-//===========================================
-//inline void Animation::addFrames(const std::vector<AnimFrame>& frames) {
-//   m_frames = frames;
-//}
 
 //===========================================
 // Animation::setFrameRate

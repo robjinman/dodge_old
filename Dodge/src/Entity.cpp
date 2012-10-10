@@ -337,23 +337,6 @@ void Entity::translate(float32_t x, float32_t y) {
 }
 
 //===========================================
-// Entity::translate
-//===========================================
-void Entity::translate(const Vec2f& t) {
-   Range bounds = m_boundary;
-
-   m_transl = m_transl + t;
-   m_boundary.setPosition(m_boundary.getPosition() + t);
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
 // Entity::translate_x
 //===========================================
 void Entity::translate_x(float32_t x) {

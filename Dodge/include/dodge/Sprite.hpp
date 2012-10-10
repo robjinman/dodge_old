@@ -13,7 +13,7 @@
 #include <boost/shared_ptr.hpp>
 #include "Entity.hpp"
 #include "EntityAnimations.hpp"
-//#include "EntityTransformations.hpp"
+#include "EntityTransformations.hpp"
 
 
 namespace Dodge {
@@ -21,21 +21,20 @@ namespace Dodge {
 
 class Sprite
    : public Entity,
-     public EntityAnimations/*, TODO
-     public EntityTransformations*/ {
+     public EntityAnimations,
+     public EntityTransformations {
 
    public:
       Sprite(long type, pTexture_t texture)
-         : Entity(type), EntityAnimations(this, texture)/*, EntityTransformations(this)*/ {}
+         : Entity(type), EntityAnimations(this, texture), EntityTransformations(this) {}
 
       Sprite(long name, long type, pTexture_t texture)
-         : Entity(name, type), EntityAnimations(this, texture)/*, EntityTransformations(this)*/ {}
+         : Entity(name, type), EntityAnimations(this, texture), EntityTransformations(this) {}
 
       Sprite(const Sprite& sprite);
 
       Sprite(const Sprite& sprite, long name);
 
-      bool isStationary() const;
       virtual void draw(const Vec2f& at) const;
       virtual void update();
       virtual void assignData(const rapidxml::xml_node<>* data);

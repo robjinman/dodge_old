@@ -34,7 +34,7 @@ class EntityAnimations {
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
 
-      // EntityAnimations takes ownership of Animation object
+      // TODO: use unique_ptr ?
       void addAnimation(Animation* anim);
 
       inline const Range& getTextureSection() const;

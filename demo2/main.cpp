@@ -32,8 +32,8 @@ void keyDown(int code) {
 
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
-      case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n"; break;
-      case WinIO::KEY_N: std::cout << "worldSpace.dbg_getNumEntities() = " << worldSpace.dbg_getNumEntities() << "\n"; break;
+      case WinIO::KEY_F: cout << "frame rate: " << frameRate << "\n"; break;
+      case WinIO::KEY_N: cout << "worldSpace.dbg_getNumEntities() = " << worldSpace.dbg_getNumEntities() << "\n"; break;
    }
 }
 
@@ -92,7 +92,7 @@ void btn1Release(int x, int y) {
 
    Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
 
-   pShape_t shape(new Shape(internString("rectangle"), std::unique_ptr<Primitive>(new Quad(size))));
+   pShape_t shape(new Shape(internString("rectangle"), unique_ptr<Primitive>(new Quad(size))));
    shape->setTranslation(dragRegion.getPosition());
    shape->setZ(4);
 
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
    win.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(btn1Release));
 
-   worldSpace.init(std::unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
+   worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
    graphics2d.init(640, 480);
 
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
    float32_t w = 32.f * graphics2d.getPixelSize().x;
    float32_t h = 32.f * graphics2d.getPixelSize().y;
 
-   std::vector<AnimFrame> aFrames;
+   vector<AnimFrame> aFrames;
    aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(32.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(64.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 
    pSprite_t proto(new Sprite(internString("type0"), tex0));
    proto->addAnimation(&anim0);
-   proto->setShape(std::unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
+   proto->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
 
    entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
    entities[0]->setTranslation(0.3f, 0.3f);
@@ -157,14 +157,14 @@ int main(int argc, char** argv) {
       worldSpace.trackEntity(entities[i]);
    }
 
-   std::unique_ptr<Polygon> pPoly(new Polygon);
+   unique_ptr<Polygon> pPoly(new Polygon);
    pPoly->addVertex(Vec2f(0.09, 0.0));
    pPoly->addVertex(Vec2f(0.31, 0.0));
    pPoly->addVertex(Vec2f(0.4, 0.23));
    pPoly->addVertex(Vec2f(0.2, 0.4));
    pPoly->addVertex(Vec2f(0.0, 0.23));
 
-   pShape_t poly(new Shape(internString("polygon"), internString("bigPentagon"), std::move(pPoly)));
+   pShape_t poly(new Shape(internString("polygon"), internString("bigPentagon"), move(pPoly)));
    poly->setZ(1);
    poly->setTranslation(0.5f, 0.4f);
 

@@ -168,7 +168,7 @@ void EntityAnimations::update() {
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {
-               EAnimFinished* event(new EAnimFinished(m_entity->getSharedPtr(), it->second));
+               EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), it->second);
                m_entity->onEvent(event);
             }
             catch (bad_alloc& e) {

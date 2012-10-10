@@ -6,6 +6,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/EEvent.o \
 	$(BASE_DIR)/Entity.o \
 	$(BASE_DIR)/EntityAnimations.o \
+	$(BASE_DIR)/EntityTransformations.o \
 	$(BASE_DIR)/EventManager.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/globals.o \
@@ -18,4 +19,6 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \
 	$(BASE_DIR)/Texture.o \
+	$(BASE_DIR)/Transformation.o \
+	$(BASE_DIR)/TransFrame.o \
 	$(BASE_DIR)/WorldSpace.o

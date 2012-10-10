@@ -58,7 +58,7 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       void setTranslation_x(float32_t x);
       void setTranslation_y(float32_t y);
       void translate(float32_t x, float32_t y);
-      void translate(const Vec2f& t);
+      inline void translate(const Vec2f& t);
       void translate_x(float32_t x);
       void translate_y(float32_t y);
       inline void setZ(int z);
@@ -67,8 +67,10 @@ class Entity : public boost::enable_shared_from_this<Entity> {
       void rotate(float32_t deg, const Vec2f& pivot);
       void setScale(float32_t s);
       void setScale(float32_t x, float32_t y);
+      inline void setScale(const Vec2f& s);
       void scale(float32_t s);
       void scale(float32_t x, float32_t y);
+      inline void scale(const Vec2f& s);
       void setShape(std::unique_ptr<Primitive> shape);
 
       inline void setRenderBrush(boost::shared_ptr<Renderer::Brush> brush);
@@ -182,6 +184,27 @@ inline Entity* Entity::getParent() const {
 //===========================================
 inline const std::set<pEntity_t>& Entity::getChildren() const {
    return m_children;
+}
+
+//===========================================
+// Entity::translate
+//===========================================
+inline void Entity::translate(const Vec2f& t) {
+   translate(t.x, t.y);
+}
+
+//===========================================
+// Entity::setScale
+//===========================================
+inline void Entity::setScale(const Vec2f& s) {
+   setScale(s.x, s.y);
+}
+
+//===========================================
+// Entity::scale
+//===========================================
+inline void Entity::scale(const Vec2f& s) {
+   scale(s.x, s.y);
 }
 
 //===========================================
