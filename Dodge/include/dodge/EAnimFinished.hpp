@@ -20,10 +20,10 @@ class Entity;
 
 class EAnimFinished : public EEvent {
    public:
-      EAnimFinished(boost::shared_ptr<Entity> ent, const Animation* anim)
+      EAnimFinished(boost::shared_ptr<Entity> ent, const pAnimation_t anim)
          : EEvent(internString("animFinished")), animation(anim), entity(ent) {}
 
-      const Animation* animation;
+      const pAnimation_t animation;
       boost::shared_ptr<Entity> entity;
 };
 

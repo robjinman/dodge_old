@@ -23,7 +23,7 @@ Texture::Texture(const char* file) : ITexture(file) {
 
    PNG_CHECK(png_open_file(&m_png, file));
 
-   m_data = new unsigned char[m_png.bpp * m_png.width * m_png.height];
+   m_data = new byte_t[m_png.bpp * m_png.width * m_png.height];
 
    PNG_CHECK(png_get_data(&m_png, m_data));
 
@@ -31,7 +31,7 @@ Texture::Texture(const char* file) : ITexture(file) {
    m_height = m_png.height;
 
    Renderer renderer;
-   m_id = renderer.newTexture(m_data, m_png.width, m_png.height);
+   m_handle = renderer.newTexture(m_data, m_png.width, m_png.height);
 }
 
 

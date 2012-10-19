@@ -34,8 +34,8 @@ class EntityAnimations {
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
 
-      // TODO: use unique_ptr ?
-      void addAnimation(Animation* anim);
+      void addAnimation(pAnimation_t anim);
+      void removeAnimation(long anim);
 
       inline const Range& getTextureSection() const;
       inline const Colour& getColour() const;
@@ -57,14 +57,14 @@ class EntityAnimations {
 
    protected:
       inline pTexture_t getTexture() const;
-      inline std::map<long, Animation*>& getAnimations();
+      inline std::map<long, pAnimation_t>& getAnimations();
 
    private:
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;
-      std::map<long, Animation*> m_animations;
-      Animation* m_activeAnim;
+      std::map<long, pAnimation_t> m_animations;
+      pAnimation_t m_activeAnim;
 
       static Graphics2d m_graphics2d;
 };
@@ -101,7 +101,10 @@ inline void EntityAnimations::pauseAnimation() {
 // EntityAnimations::stopAnimation
 //===========================================
 inline void EntityAnimations::stopAnimation() {
-   if (m_activeAnim) m_activeAnim->stop();
+   if (m_activeAnim) {
+      m_activeAnim->stop();
+      m_activeAnim = pAnimation_t();
+   }
 }
 
 //===========================================

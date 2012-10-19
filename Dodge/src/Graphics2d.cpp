@@ -112,11 +112,11 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
    modelView = translation * rotation;
 
    m_renderer.setMatrix(modelView.data());
-   m_renderer.setActiveTexture(image.getId());
+   m_renderer.setActiveTexture(image.getHandle());
    m_renderer.setGeometry(verts, Renderer::TRIANGLES, 6);
    m_renderer.setTextureCoords(texCoords, 6);
 
-   setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
+//   setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
    m_renderer.attachBrush(m_renderBrush);
    m_renderer.render();
 }
@@ -139,12 +139,10 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
 
    int rowLen = (static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW)) + 0.5;
 
-   for (unsigned int i = 0; i < text.length(); ++i) {
+   for (uint_t i = 0; i < text.length(); ++i) {
       float32_t pxOffset = scale.x * static_cast<float32_t>(i) * pxChW;
       float32_t chX = x + pxOffset * m_pixSz.x;
       float32_t chY = y;
-      float32_t chW = pxChW * scale.x * m_pixSz.x;
-      float32_t chH = pxChH * scale.y * m_pixSz.y;
       float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((text[i] - ' ') % rowLen));
       float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((text[i] - ' ') / rowLen);
       srcY = font.getTexture()->getHeight() - srcY - pxChH; // Flip
@@ -156,7 +154,7 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
       matrix_rotation_euler(rot, 0.f, 0.f, DEG_TO_RAD(angle), euler_order_xyz);
       pos = piv + (rot * (pos - piv));
 
-      drawImage(*font.getTexture(), srcX, srcY, chW, chH, pos[0], pos[1], z, angle, Vec2f(pos[0], pos[1]), scale);
+      drawImage(*font.getTexture(), srcX, srcY, pxChW, pxChH, pos[0], pos[1], z, angle, Vec2f(pos[0], pos[1]), scale);
    }
 }
 

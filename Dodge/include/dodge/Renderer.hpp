@@ -12,6 +12,7 @@
 #include <set>
 #include <map>
 #include "GL_CHECK.hpp"
+#include "definitions.hpp"
 #include "IRenderer.hpp"
 
 
@@ -19,23 +20,15 @@ namespace Dodge {
 
 
 // OpenGL ES 2.0 implementation of IRenderer interface
-class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, unsigned char, GLuint> {
+class Renderer : public IRenderer<GLint, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, byte_t, GLuint> {
    public:
-      typedef GLfloat float_t;
-      typedef GLfloat vertexElement_t;
-      typedef GLfloat matrixElement_t;
-      typedef GLfloat colourElement_t;
-      typedef GLfloat texCoordElement_t;
-      typedef unsigned char textureData_t;
-      typedef unsigned int textureId_t;
-
       virtual void init(const char* optsFile = NULL);
       virtual void setMode(mode_t mode);
-      virtual textureId_t newTexture(const textureData_t* texture, int width, int height);
-      virtual void setActiveTexture(textureId_t texId);
-      virtual void setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int count);
-      virtual void setColours(const colourElement_t* colours, int count);
-      virtual void setTextureCoords(const texCoordElement_t* texCoords, int count);
+      virtual textureHandle_t newTexture(const textureData_t* texture, int_t width, int_t height);
+      virtual void setActiveTexture(textureHandle_t texId);
+      virtual void setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int_t count);
+      virtual void setColours(const colourElement_t* colours, int_t count);
+      virtual void setTextureCoords(const texCoordElement_t* texCoords, int_t count);
       virtual void render();
       virtual void setMatrix(const matrixElement_t* mat);
       virtual void clear();
@@ -65,9 +58,9 @@ class Renderer : public IRenderer<GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, u
       static bool m_coloursSet;
       static bool m_texCoordsSet;
 
-      static int m_vertCount;
-      static int m_colCount;
-      static int m_texCoordCount;
+      static GLint m_vertCount;
+      static GLint m_colCount;
+      static GLint m_texCoordCount;
 
       static GLint m_primitiveType;
 };

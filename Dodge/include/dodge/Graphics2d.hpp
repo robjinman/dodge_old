@@ -122,7 +122,7 @@ inline void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_
 // Graphics2d::drawText
 //===========================================
 inline void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x, float32_t y, int z) const {
-   drawText(font, text, x, y, z, 0.f, Vec2f(0.f, 0.f), Vec2f(0.f, 0.f));
+   drawText(font, text, x, y, z, 0.f, Vec2f(0.f, 0.f), Vec2f(1.f, 1.f));
 }
 
 

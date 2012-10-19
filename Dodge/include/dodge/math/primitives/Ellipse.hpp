@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __ELLIPSE_HPP__
 #define __ELLIPSE_HPP__
 

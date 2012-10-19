@@ -18,6 +18,9 @@ Renderer Shape::m_renderer = Renderer();
 Shape::Shape(long type, std::unique_ptr<Primitive> shape)
    : Entity(type) {
 
+   // Set to silent to prevent an EEntityMoved event being propagated -- because EEntityMoved
+   // objects need a boost::shared_ptr<Entity>, which cannot be retrieved via Entity::getSharedPtr()
+   // until entity is fully constructed (otherwise boost::bad_weak_ptr exception will occur).
    bool s = isSilent();
    setSilent(true);
 

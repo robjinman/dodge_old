@@ -11,6 +11,7 @@
 #include <ostream>
 #endif
 #include <vector>
+#include <boost/shared_ptr.hpp>
 #include "definitions.hpp"
 #include "rapidxml/rapidxml.hpp"
 #include "Exception.hpp"
@@ -62,6 +63,8 @@ class Animation {
 
       bool m_frameReady;   // Indicates when frame is ready to be read via getCurrentFrame()
 };
+
+typedef boost::shared_ptr<Animation> pAnimation_t;
 
 //===========================================
 // Animation::addFrame

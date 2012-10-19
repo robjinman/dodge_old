@@ -1,7 +1,9 @@
-- Transformations
-- Physics
-- GUI
-- Complete Polygon class
+- Entity Placement Tool
+- Level data streaming
+- Basic UI
 - Improve Renderer efficiency
-- Toolkit
+- Physics
+- Complete Polygon class
+- Advanced UI
+- Scripted events
 - Lua binding

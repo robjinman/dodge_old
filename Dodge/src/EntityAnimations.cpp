@@ -24,11 +24,11 @@ Graphics2d EntityAnimations::m_graphics2d = Graphics2d();
 //===========================================
 // EntityAnimations::dbg_print
 //===========================================
-void EntityAnimations::dbg_print(std::ostream& out, int tab) const {
+void EntityAnimations::dbg_print(ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";
    out << "EntityAnimations\n";
 
-   for (map<long, Animation*>::const_iterator it = m_animations.begin(); it != m_animations.end(); ++it)
+   for (map<long, pAnimation_t>::const_iterator it = m_animations.begin(); it != m_animations.end(); ++it)
       it->second->dbg_print(out, tab + 1);
 }
 #endif
@@ -45,9 +45,9 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
    m_texture = copy.m_texture;
 
    try {
-      map<long, Animation*>::const_iterator it = copy.m_animations.begin();
+      map<long, pAnimation_t>::const_iterator it = copy.m_animations.begin();
       while (it != copy.m_animations.end()) {
-         Animation* anim(new Animation(*(it->second)));
+         pAnimation_t anim(new Animation(*(it->second)));
          m_animations[it->first] = anim;
          ++it;
       }
@@ -96,7 +96,7 @@ void EntityAnimations::assignData(const xml_node<>* data) {
    }
    while (node) {
       if (strcmp(node->name(), "Animation") == 0) {
-         Animation* anim(new Animation());
+         pAnimation_t anim(new Animation());
          anim->assignData(node);
          m_animations[anim->getName()] = anim;
       }
@@ -121,6 +121,7 @@ void EntityAnimations::draw(const Vec2f& at) const {
    float32_t th = m_texSection.getSize().y;
    float32_t a = m_entity->getRotation_abs();
 
+   m_graphics2d.setFillColour(Colour(m_entity->getRenderBrush()->getFillColour()));
    m_graphics2d.drawImage(*m_texture, tx, ty, tw, th, x, y, z, a, Vec2f(0.f, 0.f), m_entity->getScale());
 }
 
@@ -132,7 +133,7 @@ void EntityAnimations::draw(const Vec2f& at) const {
 bool EntityAnimations::playAnimation(long name) {
    if (getAnimState() == Animation::PLAYING) return false;
 
-   map<long, Animation*>::iterator it = m_animations.find(name);
+   map<long, pAnimation_t>::iterator it = m_animations.find(name);
    if (it == m_animations.end()) return false;
 
    m_activeAnim = it->second;
@@ -142,7 +143,7 @@ bool EntityAnimations::playAnimation(long name) {
 //===========================================
 // EntityAnimations::addAnimation
 //===========================================
-void EntityAnimations::addAnimation(Animation* anim) {
+void EntityAnimations::addAnimation(pAnimation_t anim) {
    m_animations[anim->getName()] = anim;
 
    // If this is the first animation, set default texSection to first frame
@@ -154,10 +155,23 @@ void EntityAnimations::addAnimation(Animation* anim) {
 }
 
 //===========================================
+// EntityAnimations::removeAnimation
+//===========================================
+void EntityAnimations::removeAnimation(long anim) {
+   map<long, pAnimation_t>::iterator i = m_animations.find(anim);
+
+   if (i != m_animations.end()) {
+      if (i->second == m_activeAnim) m_activeAnim = pAnimation_t();
+
+      m_animations.erase(i);
+   }
+}
+
+//===========================================
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
-   map<long, Animation*>::iterator it = m_animations.begin();
+   map<long, pAnimation_t>::iterator it = m_animations.begin();
    while (it != m_animations.end()) {
       it->second->update();
 

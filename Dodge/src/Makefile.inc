@@ -12,6 +12,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/IWinIO.o \
+	$(BASE_DIR)/KvpParser.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Renderer.o \
 	$(BASE_DIR)/Shape.o \

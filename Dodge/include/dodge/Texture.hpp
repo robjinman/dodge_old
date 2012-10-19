@@ -7,6 +7,7 @@
 #define __TEXTURE_HPP__
 
 
+#include <GLES2/gl2.h>
 #include "definitions.hpp"
 #include "ITexture.hpp"
 #include "pnglite/pnglite.h"
@@ -15,8 +16,8 @@
 namespace Dodge {
 
 
-// PNG implementation of ITexture interface
-class Texture : public ITexture<unsigned int> {
+// PNG/OGLES2 implementation of ITexture interface
+class Texture : public ITexture<GLint, GLuint> {
    public:
       Texture(const char* file);
 

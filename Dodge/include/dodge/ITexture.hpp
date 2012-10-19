@@ -7,10 +7,13 @@
 #define __I_TEXTURE_HPP__
 
 
+#include "definitions.hpp"
+
+
 namespace Dodge {
 
 
-template <typename T_ID>
+template <typename T_INTEGER, typename T_HANDLE>
 class ITexture { 
    public:
       ITexture(const char* file) {}
@@ -18,36 +21,36 @@ class ITexture {
       //===========================================
       // ITexture::getWidth
       //===========================================
-      int getWidth() const {
+      T_INTEGER getWidth() const {
          return m_width;
       }
 
       //===========================================
       // ITexture::getHeight
       //===========================================
-      int getHeight() const {
+      T_INTEGER getHeight() const {
          return m_height;
       }
 
       //===========================================
       // ITexture::getData
       //===========================================
-      const unsigned char* getData() const {
+      const byte_t* getData() const {
          return m_data;
       }
 
       //===========================================
-      // ITexture::getId
+      // ITexture::getHandle
       //===========================================
-      const T_ID& getId() const {
-         return m_id;
+      const T_HANDLE& getHandle() const {
+         return m_handle;
       }
 
    protected:
-      unsigned char* m_data;
-      int m_width;
-      int m_height;
-      T_ID m_id;
+      byte_t* m_data;
+      T_INTEGER m_width;
+      T_INTEGER m_height;
+      T_HANDLE m_handle;
 };
 
 

@@ -29,9 +29,9 @@ bool Renderer::m_init = false;
 bool Renderer::m_geometrySet = false;
 bool Renderer::m_coloursSet = false;
 bool Renderer::m_texCoordsSet = false;
-int Renderer::m_vertCount = -1;
-int Renderer::m_colCount = -1;
-int Renderer::m_texCoordCount = -1;
+GLint Renderer::m_vertCount = -1;
+GLint Renderer::m_colCount = -1;
+GLint Renderer::m_texCoordCount = -1;
 GLint Renderer::m_primitiveType = GL_TRIANGLES;
 
 
@@ -228,7 +228,7 @@ void Renderer::setMatrix(const matrixElement_t* modelView) {
 //===========================================
 // Renderer::newTexture
 //===========================================
-Renderer::textureId_t Renderer::newTexture(const textureData_t* texture, int width, int height) {
+Renderer::textureHandle_t Renderer::newTexture(const textureData_t* texture, int_t width, int_t height) {
    if (!m_init)
       throw Exception("Error creating texture; renderer not initialised", __FILE__, __LINE__);
 
@@ -244,23 +244,23 @@ Renderer::textureId_t Renderer::newTexture(const textureData_t* texture, int wid
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-   return static_cast<textureId_t>(texId);
+   return static_cast<textureHandle_t>(texId);
 }
 
 //===========================================
 // Renderer::setActiveTexture
 //===========================================
-void Renderer::setActiveTexture(textureId_t texId) {
+void Renderer::setActiveTexture(textureHandle_t texId) {
    if (!m_init)
       throw Exception("Error setting active texture; renderer not initialised", __FILE__, __LINE__);
 
-   glBindTexture(GL_TEXTURE_2D, static_cast<textureId_t>(texId));
+   glBindTexture(GL_TEXTURE_2D, static_cast<textureHandle_t>(texId));
 }
 
 //===========================================
 // Renderer::setGeometry
 //===========================================
-void Renderer::setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int count) {
+void Renderer::setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int_t count) {
    if (!m_init)
       throw Exception("Error setting render geometry; renderer not initialised", __FILE__, __LINE__);
 
@@ -279,7 +279,7 @@ void Renderer::setGeometry(const vertexElement_t* verts, primitive_t primitiveTy
 //===========================================
 // Renderer::setColours
 //===========================================
-void Renderer::setColours(const colourElement_t* colours, int count) {
+void Renderer::setColours(const colourElement_t* colours, int_t count) {
    if (!m_init)
       throw Exception("Error setting render colours; renderer not initialised", __FILE__, __LINE__);
 
@@ -293,7 +293,7 @@ void Renderer::setColours(const colourElement_t* colours, int count) {
 //===========================================
 // Renderer::setTextureCoords
 //===========================================
-void Renderer::setTextureCoords(const texCoordElement_t* texCoords, int count) {
+void Renderer::setTextureCoords(const texCoordElement_t* texCoords, int_t count) {
    if (!m_init)
       throw Exception("Error setting texture coords; renderer not initialised", __FILE__, __LINE__);
 
@@ -330,7 +330,7 @@ void Renderer::render() {
       else
          col = m_brush->getFillColour();
 
-      for (int i = 0; i < m_vertCount; ++i) {
+      for (int_t i = 0; i < m_vertCount; ++i) {
          colours[i * 4 + 0] = col[0];
          colours[i * 4 + 1] = col[1];
          colours[i * 4 + 2] = col[2];

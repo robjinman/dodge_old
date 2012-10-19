@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #include <sstream>
 #include <cstring>
 #include <definitions.hpp>

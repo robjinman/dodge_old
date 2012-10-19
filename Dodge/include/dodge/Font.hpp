@@ -1,5 +1,5 @@
 /*
- * Author: Rob Jinman <jinmane@gmail.com>
+ * Author: Rob Jinman <admin@robjinman.com>
  * Date: 2012
  */
 

@@ -1,6 +1,6 @@
 /*
- * Author: Rob Jinman <jinmane@gmail.com>
- * Date: 2011
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
  */
 
 #include <map>
@@ -25,7 +25,7 @@ void EntityTransformations::dbg_print(std::ostream& out, int tab) const {
    for (int i = 0; i < tab; ++i) out << "\t";
    out << "EntityTransformations\n";
 
-   for (map<long, Transformation*>::const_iterator it = m_transformations.begin(); it != m_transformations.end(); ++it)
+   for (map<long, pTransformation_t>::const_iterator it = m_transformations.begin(); it != m_transformations.end(); ++it)
       it->second->dbg_print(out, tab + 1);
 }
 #endif
@@ -37,9 +37,9 @@ EntityTransformations::EntityTransformations(const EntityTransformations& copy, 
    : m_entity(entity) {
 
    try {
-      map<long, Transformation*>::const_iterator it = copy.m_transformations.begin();
+      map<long, pTransformation_t>::const_iterator it = copy.m_transformations.begin();
       while (it != copy.m_transformations.end()) {
-         Transformation* trans = new Transformation(*it->second);
+         pTransformation_t trans(new Transformation(*it->second));
          m_transformations[it->first] = trans;
          ++it;
       }
@@ -61,7 +61,7 @@ void EntityTransformations::assignData(const xml_node<>* data) {
    xml_node<>* node = data->first_node();
    while (node) {
       if (strcmp(node->name(), "Transformation") == 0) {
-         Transformation* trans = new Transformation();
+         pTransformation_t trans(new Transformation());
          trans->assignData(node);
          m_transformations[trans->getName()] = trans;
       }
@@ -73,7 +73,7 @@ void EntityTransformations::assignData(const xml_node<>* data) {
 // EntityTransformations::playTransformation
 //===========================================
 void EntityTransformations::playTransformation(long name) {
-   map<long, Transformation*>::iterator it = m_transformations.find(name);
+   map<long, pTransformation_t>::iterator it = m_transformations.find(name);
    if (it == m_transformations.end()) return;
 
    it->second->play();
@@ -83,7 +83,7 @@ void EntityTransformations::playTransformation(long name) {
 // EntityTransformations::update
 //===========================================
 void EntityTransformations::update() {
-   map<long, Transformation*>::iterator it = m_transformations.begin();
+   map<long, pTransformation_t>::iterator it = m_transformations.begin();
    while (it != m_transformations.end()) {
       it->second->update();
 
@@ -116,7 +116,7 @@ void EntityTransformations::update() {
 int EntityTransformations::numActiveTransformations() const {
    int n = 0;
 
-   map<long, Transformation*>::const_iterator it = m_transformations.begin();
+   map<long, pTransformation_t>::const_iterator it = m_transformations.begin();
    while (it != m_transformations.end()) {
       if (it->second->getState() == Transformation::PLAYING) n++;
       ++it;
@@ -129,7 +129,7 @@ int EntityTransformations::numActiveTransformations() const {
 // EntityTransformations::getTransState
 //===========================================
 Transformation::state_t EntityTransformations::getTransState(long name) const {
-   std::map<long, Transformation*>::const_iterator it = m_transformations.find(name);
+   std::map<long, pTransformation_t>::const_iterator it = m_transformations.find(name);
 
    if (it == m_transformations.end())
       throw Exception("Error retrieving transformation state; Transformation not found", __FILE__, __LINE__);

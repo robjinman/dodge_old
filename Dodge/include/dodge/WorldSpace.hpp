@@ -12,6 +12,7 @@
 #include "EventManager.hpp"
 #include "SpatialContainer.hpp"
 #include "Entity.hpp"
+#include "StringId.hpp"
 #ifdef DEBUG
    #include "Colour.hpp"
 #endif

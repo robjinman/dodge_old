@@ -27,7 +27,7 @@ class EntityTransformations {
 
       EntityTransformations(const EntityTransformations& copy, Entity* entity);
 
-      inline void addTransformation(Transformation* trans); // Should be unique_ptr ?
+      inline void addTransformation(pTransformation_t trans);
 
       void playTransformation(long name);
       void resumeTransformations();
@@ -48,14 +48,14 @@ class EntityTransformations {
       virtual ~EntityTransformations() {}
 
    private:
-      std::map<long, Transformation*> m_transformations;
+      std::map<long, pTransformation_t> m_transformations;
       Entity* m_entity;
 };
 
 //===========================================
 // EntityTransformations::addTransformation
 //===========================================
-inline void EntityTransformations::addTransformation(Transformation* trans) {
+inline void EntityTransformations::addTransformation(pTransformation_t trans) {
    m_transformations[trans->getName()] = trans;
 }
 
@@ -63,7 +63,7 @@ inline void EntityTransformations::addTransformation(Transformation* trans) {
 // EntityTransformations::pauseTransformation
 //===========================================
 inline void EntityTransformations::pauseTransformation(long name) {
-   std::map<long, Transformation*>::iterator it = m_transformations.find(name);
+   std::map<long, pTransformation_t>::iterator it = m_transformations.find(name);
    if (it != m_transformations.end()) it->second->pause();
 }
 
@@ -71,7 +71,7 @@ inline void EntityTransformations::pauseTransformation(long name) {
 // EntityTransformations::stopTransformation
 //===========================================
 inline void EntityTransformations::stopTransformation(long name) {
-   std::map<long, Transformation*>::iterator it = m_transformations.find(name);
+   std::map<long, pTransformation_t>::iterator it = m_transformations.find(name);
    if (it != m_transformations.end()) it->second->stop();
 }
 

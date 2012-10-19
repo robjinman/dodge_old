@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #include <math/primitives/Ellipse.hpp>
 #include <StringId.hpp>
 

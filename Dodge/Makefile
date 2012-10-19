@@ -3,7 +3,7 @@ BASE_DIR = src
 INCL = -I/usr/include -Iinclude -Iinclude/dodge
 include src/Makefile.inc
 CC = g++
-FLAGS = -std=c++0x -Wall -O3 -DDEBUG -g
+FLAGS = -std=c++0x -Wall -DDEBUG -g
 OUT = lib/libDodge.a
 
 all: $(OBJS)

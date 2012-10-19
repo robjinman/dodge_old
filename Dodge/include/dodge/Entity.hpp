@@ -14,9 +14,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <set>
-#include <cmath>
 #include "definitions.hpp"
-#include "EEntityMoved.hpp"
 #include "EventManager.hpp"
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"

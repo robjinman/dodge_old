@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __LINE_SEGMENT_HPP__
 #define __LINE_SEGMENT_HPP__
 

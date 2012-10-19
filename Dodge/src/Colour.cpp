@@ -16,7 +16,7 @@ namespace Dodge {
 
 
 //===========================================
-// Colour::Colour
+// Colour::assignData
 //===========================================
 void Colour::assignData(const xml_node<>* data) {
    if (strcmp(data->name(), "Colour") != 0)

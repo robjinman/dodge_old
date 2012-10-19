@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #include <cstring>
 #include <cml/cml.h>
 #include <Exception.hpp>

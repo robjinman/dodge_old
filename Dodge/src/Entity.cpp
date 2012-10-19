@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstdio>
 #include <Entity.hpp>
+#include <EEntityMoved.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
 
