@@ -8,10 +8,11 @@
 
 
 #include <cml/cml.h>
-#include "Renderer.hpp"
+#include "renderer/Renderer.hpp"
+#include "renderer/Camera.hpp"
+#include "renderer/Colour.hpp"
 #include "math/Vec2i.hpp"
 #include "math/Vec2f.hpp"
-#include "Colour.hpp"
 #include "math/primitives/Primitive.hpp"
 
 
@@ -29,9 +30,6 @@ class Graphics2d {
       inline void setLineColour(const Colour& colour) const;
       inline void setLineWidth(int width) const;
 
-      inline const Vec2f& getPixelSize() const;
-      void setViewPos(float32_t x, float32_t y);
-
       inline void drawPrimitive(const Primitive& primitive, float32_t x, float32_t y, int z,
          float32_t angle = 0.f, const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
 
@@ -46,12 +44,14 @@ class Graphics2d {
 
       void clear(const Colour& col = Colour(0.f, 0.f, 0.f, 1.f)) const;
 
+      inline void setCamera(pCamera_t camera);
+      inline pCamera_t getCamera() const;
+
    private:
       static bool m_init;
       static Renderer m_renderer;
       static boost::shared_ptr<Renderer::Brush> m_renderBrush;
-      static cml::matrix44f_c m_projectionMatrix;
-      static Vec2f m_pixSz;
+      static pCamera_t m_camera;
 };
 
 //===========================================
@@ -79,21 +79,11 @@ inline void Graphics2d::setLineColour(const Colour& colour) const {
 //===========================================
 // Graphics2d::setLineWidth
 //===========================================
-inline void Graphics2d::setLineWidth(int width) const { // TODO: use Renderer::integer_t
+inline void Graphics2d::setLineWidth(Renderer::int_t width) const {
    if (!m_init)
       throw Exception("Error setting line width; Graphics2d not initialised", __FILE__, __LINE__);
 
    m_renderBrush->setLineWidth(width);
-}
-
-//===========================================
-// Graphics2d::getPixelSize
-//===========================================
-inline const Vec2f& Graphics2d::getPixelSize() const {
-   if (!m_init)
-      throw Exception("Error fetching pixel size; Graphics2d not initialised", __FILE__, __LINE__);
-
-   return m_pixSz;
 }
 
 //===========================================
@@ -123,6 +113,20 @@ inline void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_
 //===========================================
 inline void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x, float32_t y, int z) const {
    drawText(font, text, x, y, z, 0.f, Vec2f(0.f, 0.f), Vec2f(1.f, 1.f));
+}
+
+//===========================================
+// Graphics2d::setCamera
+//===========================================
+inline void Graphics2d::setCamera(pCamera_t camera) {
+   m_renderer.attachCamera(camera);
+}
+
+//===========================================
+// Graphics2d::getCamera
+//===========================================
+inline pCamera_t Graphics2d::getCamera() const {
+   return m_camera;
 }
 
 

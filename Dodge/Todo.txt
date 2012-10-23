@@ -1,6 +1,5 @@
 - Entity Placement Tool
 - Level data streaming
-- Basic UI
 - Improve Renderer efficiency
 - Physics
 - Complete Polygon class

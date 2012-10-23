@@ -5,9 +5,8 @@
 #include <memory>
 #include <boost/shared_ptr.hpp>
 #include "Entity.hpp"
-#include "Colour.hpp"
 #include "math/primitives/Primitive.hpp"
-#include "Renderer.hpp"
+#include "renderer/Renderer.hpp"
 
 
 namespace Dodge {

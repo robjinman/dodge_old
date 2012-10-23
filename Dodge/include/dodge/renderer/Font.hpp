@@ -7,9 +7,9 @@
 #define __FONT_HPP__
 
 
-#include "definitions.hpp"
+#include "../definitions.hpp"
 #include "Texture.hpp"
-#include "Range.hpp"
+#include "../Range.hpp"
 
 
 namespace Dodge {

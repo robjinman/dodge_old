@@ -3,8 +3,8 @@
  * Date: 2012
  */
 
-#include <Texture.hpp>
-#include <Renderer.hpp>
+#include <renderer/ogles2.0/Texture.hpp>
+#include <renderer/ogles2.0/Renderer.hpp>
 #include <PNG_CHECK.hpp>
 
 
@@ -14,7 +14,7 @@ namespace Dodge {
 //===========================================
 // Texture::Texture
 //===========================================
-Texture::Texture(const char* file) : ITexture(file) {
+Texture::Texture(const char* file) {
    static bool once = false;
    if (!once) {
       PNG_CHECK(png_init(0, 0));

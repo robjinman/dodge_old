@@ -12,7 +12,7 @@
 #include "Primitive.hpp"
 #include "../Vec2f.hpp"
 #include "../../Exception.hpp"
-#include "../../Renderer.hpp"
+#include "../../renderer/Renderer.hpp"
 
 
 namespace Dodge {

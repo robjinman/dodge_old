@@ -1,5 +1,5 @@
 /*
- * Author: Rob Jinman <jinmane@gmail.com>
+ * Author: Rob Jinman <admin@robjinman.com>
  * Date: 2012
  */
 
@@ -9,6 +9,7 @@
 
 #include "definitions.hpp"
 #include "StackAllocator.hpp"
+#include "math/Vec2f.hpp"
 
 
 namespace Dodge {
@@ -16,6 +17,8 @@ namespace Dodge {
 
 const size_t GLOBAL_STACK_SIZE = 102400; // 100KB
 extern StackAllocator gMemStack;
+
+extern Vec2f gGetPixelSize();
 
 
 };

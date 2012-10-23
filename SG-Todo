@@ -1,0 +1,19 @@
+Menu system
+Scrolling backgrounds
+Entity placement tool
+   - Loads all item files in specified directory
+      - For each, its defName is extracted
+      - Some sort of icon is produced and added to the toolbar
+   - User may edit XML before placing the item
+   - When map is saved, XML nodes for each item instance contain only information that differs from item def (e.g. position).
+   - User specified naming scheme, e.g. "soil14,10"
+Water
+Dynamic animation frame rates
+Separate dig/move animations
+Sound
+OpenGL ES compliance
+More items
+   - rocks
+Smoother snapToGrid methods
+Profile to find performance bottlenecks
+Port to Windows

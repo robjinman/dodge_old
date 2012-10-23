@@ -4,7 +4,7 @@
  */
 
 #include <cstring>
-#include "Texture.hpp"
+#include "renderer/Texture.hpp"
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
 #include "EAnimFinished.hpp"

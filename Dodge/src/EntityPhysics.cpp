@@ -78,7 +78,7 @@ void EntityPhysics::removeFromWorld() {
 //===========================================
 // EntityPhysics::constructBody
 //===========================================
-void EntityPhysics::constructBody() {
+void EntityPhysics::constructBody() {/*
    b2BodyDef bdef;
 
    if (m_opts.dynamic) bdef.type = b2_dynamicBody;
@@ -108,7 +108,7 @@ void EntityPhysics::constructBody() {
 
       m_body->CreateFixture(&fdef);
       m_numFixtures++;
-   }
+   }*/
 }
 
 //===========================================
@@ -159,22 +159,22 @@ void EntityPhysics::loadSettings(const string& file) {
    m_v_iterations = atoi(parser.getValue("vIterations").data());
    m_p_iterations = atoi(parser.getValue("pIterations").data());
 
-   Functor<void, TYPELIST_1(pEEvent_t)> fEntMovedHandler(&EntityPhysics::entityMovedHandler);
+   Functor<void, TYPELIST_1(EEvent*)> fEntMovedHandler(&EntityPhysics::entityMovedHandler);
    m_eventManager.registerCallback(internString("entityMoved"), fEntMovedHandler);
 }
 
 //===========================================
 // EntityPhysics::entityMovedHandler
 //===========================================
-void EntityPhysics::entityMovedHandler(pEEvent_t ev) {
+void EntityPhysics::entityMovedHandler(EEvent* ev) {
    static long entityMovedStr = internString("entityMoved");
    if (ev->getType() != entityMovedStr)
       throw Exception("Error handling entityMoved event; unexpected event type", __FILE__, __LINE__);
 
-   EEntityMoved* event = static_cast<EEntityMoved*>(ev.get());
+   EEntityMoved* event = static_cast<EEntityMoved*>(ev);
 
    if (m_ignore.find(event) == m_ignore.end()) {
-      map<Entity*, EntityPhysics*>::iterator it = m_physEnts.find(event->getEntity().get());
+      map<Entity*, EntityPhysics*>::iterator it = m_physEnts.find(event->entity.get());
       if (it != m_physEnts.end()) it->second->updatePos(event);
    }
    else
@@ -184,7 +184,7 @@ void EntityPhysics::entityMovedHandler(pEEvent_t ev) {
 //===========================================
 // EntityPhysics::updatePos
 //===========================================
-void EntityPhysics::updatePos(EEntityMoved* event) {
+void EntityPhysics::updatePos(EEntityMoved* event) {/*
    if (!m_init)
       throw Exception("Instance of EntityPhysics is not initialised", __FILE__, __LINE__);
 
@@ -234,7 +234,7 @@ void EntityPhysics::updatePos(EEntityMoved* event) {
 
    // Wake bodies
    for (map<Entity*, EntityPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it)
-      it->second->m_body->SetAwake(true);
+      it->second->m_body->SetAwake(true);*/
 }
 
 //===========================================
@@ -255,7 +255,7 @@ void EntityPhysics::updateFrameRate() {
 //
 //! @brief Call in main loop.
 //===========================================
-void EntityPhysics::update() {
+void EntityPhysics::update() {/*
    updateFrameRate();
    if (m_physEnts.empty()) return;
 
@@ -299,7 +299,7 @@ void EntityPhysics::update() {
       }
    }
    //-----------------------------------------
-}
+*/}
 
 //===========================================
 // EntityPhysics::getLinearVelocity

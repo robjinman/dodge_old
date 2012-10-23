@@ -10,7 +10,7 @@
 #include <memory>
 #include "math/Vec2i.hpp"
 #include "math/primitives/Primitive.hpp"
-#include "Colour.hpp"
+#include "renderer/Colour.hpp"
 #include "rapidxml/rapidxml.hpp"
 
 

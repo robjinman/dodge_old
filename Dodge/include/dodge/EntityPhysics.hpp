@@ -9,7 +9,7 @@
 
 #include <map>
 #include <set>
-#include "box2d/Box2D.h"
+#include "../Box2D/Box2D.h"
 #include "Entity.hpp"
 #include "EventManager.hpp"
 #include "Exception.hpp"
@@ -45,7 +45,7 @@ class EntityPhysics {
       static void loadSettings(const std::string& file);
       static void update();
 
-      static void entityMovedHandler(pEEvent_t ev);
+      static void entityMovedHandler(EEvent* ev);
 
       void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p);
       void applyForce(const Vec2f& force, const Vec2f& p);

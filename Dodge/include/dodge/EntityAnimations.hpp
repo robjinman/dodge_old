@@ -13,7 +13,7 @@
 #include "rapidxml/rapidxml.hpp"
 #include "Animation.hpp"
 #include "Entity.hpp"
-#include "Texture.hpp"
+#include "renderer/Texture.hpp"
 #include "Graphics2d.hpp"
 #include "Range.hpp"
 

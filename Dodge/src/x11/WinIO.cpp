@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 #include <X11/XKBlib.h>
-#include <linux/WinIO.hpp>
+#include <x11/WinIO.hpp>
 
 
 using namespace std;
@@ -23,6 +23,10 @@ XVisualInfo* WinIO::m_pVisual = NULL;
 EGLDisplay WinIO::m_eglDisplay = EGLDisplay();
 EGLContext WinIO::m_eglContext = EGLContext();
 EGLSurface WinIO::m_eglSurface = EGLSurface();
+
+WinIO::callbackMap_t WinIO::m_callbacks = WinIO::callbackMap_t();
+int WinIO::m_width = 0;
+int WinIO::m_height = 0;
 
 bool WinIO::m_init = false;
 
@@ -84,6 +88,24 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    eglSwapInterval(m_eglDisplay, 0);
 
    m_init = true;
+}
+
+//===========================================
+// WinIO::unregisterCallback
+//===========================================
+void WinIO::unregisterCallback(winEvent_t event, callback_t func) {
+   callbackMap_t::iterator i = m_callbacks.find(event);
+
+   if (i != m_callbacks.end()) {
+
+     for (unsigned int f = 0; f < i->second.size(); f++) {
+        if (i->second[f] == func) {
+           i->second.erase(i->second.begin() + f);
+           --f;
+        }
+     }
+
+   }
 }
 
 //===========================================

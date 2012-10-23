@@ -1,0 +1,3 @@
+0m39.158s
+0m34.792s      Moved all inline functions from Entity.hpp to Entity.cpp (and erased #include <cmath> and moved #include "EEntityMoved.hpp" to src file.
+0m26.259s      Removed -O3 flag

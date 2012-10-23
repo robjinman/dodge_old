@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include <dodge/dodge.hpp>
 
 
@@ -49,7 +50,7 @@ void keyboard() {
       mainGuy->translate_x(-0.001);
    }
    if (keys[WinIO::KEY_SPACE]) {
-      mainGuy->rotate(0.8f, graphics2d.getPixelSize() * 16.f);
+      mainGuy->rotate(0.8f, gGetPixelSize() * 16.f);
    }
    if (keys[WinIO::KEY_UP]) {
       entities[1]->scale(1.01);
@@ -80,21 +81,21 @@ void computeFrameRate() {
 }
 
 void btn1Click(int x, int y) {
-   float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
-   float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
+   float32_t xx = gGetPixelSize().x * static_cast<float32_t>(x);
+   float32_t yy = 1.f - gGetPixelSize().y * static_cast<float32_t>(y);
 
    dragRegion = Range(xx, yy, 0.f, 0.f);
 }
 
 void btn1Release(int x, int y) {
-   float32_t xx = graphics2d.getPixelSize().x * static_cast<float32_t>(x);
-   float32_t yy = 1.f - graphics2d.getPixelSize().y * static_cast<float32_t>(y);
+   float32_t xx = gGetPixelSize().x * static_cast<float32_t>(x);
+   float32_t yy = 1.f - gGetPixelSize().y * static_cast<float32_t>(y);
 
    Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
 
    pShape_t shape(new Shape(internString("rectangle"), unique_ptr<Primitive>(new Quad(size))));
    shape->setTranslation(dragRegion.getPosition());
-   shape->setZ(4);
+   shape->setZ(1);
 
    Renderer::colourElement_t fCol[] = {1.f, 0.f, 0.f, 0.2f};
    shape->getRenderBrush()->setFillColour(fCol);
@@ -118,9 +119,12 @@ int main(int argc, char** argv) {
    graphics2d.init(640, 480);
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
+   pTexture_t texFont1(new Texture("data/textures/font2.png"));
 
-   float32_t w = 32.f * graphics2d.getPixelSize().x;
-   float32_t h = 32.f * graphics2d.getPixelSize().y;
+   Dodge::Font font1(texFont1, 0, 0, 852, 792, 71, 98);
+
+   float32_t w = 32.f * gGetPixelSize().x;
+   float32_t h = 32.f * gGetPixelSize().y;
 
    vector<AnimFrame> aFrames;
    aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
@@ -135,10 +139,10 @@ int main(int argc, char** argv) {
    aFrames.push_back(AnimFrame(Vec2f(288.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(320.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(352.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   Animation anim0(internString("anim0"), 24.f, aFrames);
+   pAnimation_t anim0(new Animation(internString("anim0"), 24.f, aFrames));
 
    pSprite_t proto(new Sprite(internString("type0"), tex0));
-   proto->addAnimation(&anim0);
+   proto->addAnimation(anim0);
    proto->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
 
    entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
@@ -165,7 +169,7 @@ int main(int argc, char** argv) {
    pPoly->addVertex(Vec2f(0.0, 0.23));
 
    pShape_t poly(new Shape(internString("polygon"), internString("bigPentagon"), move(pPoly)));
-   poly->setZ(1);
+   poly->setZ(0);
    poly->setTranslation(0.5f, 0.4f);
 
    Renderer::colourElement_t polyFc[] = {0.f, 1.f, 0.f, 1.f};
@@ -182,21 +186,33 @@ int main(int argc, char** argv) {
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
       poly->draw(Vec2f(0.f, 0.f));
-      worldSpace.dbg_draw(3, Colour(1.f, 0.f, 0.f, 1.f));
+      worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < entities.size(); ++i) {
-         entities[i]->update();
-         entities[i]->draw(Vec2f(0.f, 0.f));
-
-         if (entities[i]->getTypeName() != strRectangle) {
-            graphics2d.setLineWidth(0);
-
-            entities[i]->getBoundary().dbg_draw(4, Colour(0.f, 1.f, 0.f, 0.5f));
-
-            graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
-            entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5);
+         if (entities[i]->getTypeName() == strRectangle) {
+            entities[i]->update();
+            entities[i]->draw(Vec2f(0.f, 0.f));
          }
       }
+
+      for (uint_t i = 0; i < entities.size(); ++i) {
+         if (entities[i]->getTypeName() != strRectangle) {
+            entities[i]->update();
+            entities[i]->draw(Vec2f(0.f, 0.f));
+
+            graphics2d.setLineWidth(0);
+
+            entities[i]->getBoundary().dbg_draw(3, Colour(0.f, 1.f, 0.f, 0.5f));
+
+            graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
+            entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 4);
+         }
+      }
+
+      stringstream strFr;
+      strFr << "Frame Rate: " << frameRate << "fps";
+      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
+      graphics2d.drawText(font1, strFr.str(), 0.03f, 460.f * gGetPixelSize().y, 5, 0.f, Vec2f(0.f, 0.f), Vec2f(0.15f, 0.15f));
 
       eventManager.doEvents();
 

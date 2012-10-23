@@ -7,12 +7,13 @@
 #define __SPATIAL_CONTAINER_HPP__
 
 
-#include "Range.hpp"
+#include <vector>
 
 
 namespace Dodge {
 
 
+class Range;
 #ifdef DEBUG
 class Colour;
 #endif

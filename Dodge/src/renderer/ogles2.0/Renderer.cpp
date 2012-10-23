@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <Exception.hpp>
-#include <Renderer.hpp>
+#include <renderer/ogles2.0/Renderer.hpp>
 #include <globals.hpp>
 
 
@@ -33,6 +33,8 @@ GLint Renderer::m_vertCount = -1;
 GLint Renderer::m_colCount = -1;
 GLint Renderer::m_texCoordCount = -1;
 GLint Renderer::m_primitiveType = GL_TRIANGLES;
+boost::shared_ptr<Renderer::Brush> Renderer::m_brush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
+boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
 
 
 //===========================================
@@ -324,20 +326,20 @@ void Renderer::render() {
       StackAllocator::marker_t marker = gMemStack.getMarker();
       GLfloat* colours = static_cast<GLfloat*>(gMemStack.alloc(4 * m_vertCount * sizeof(GLfloat)));
 
-      const GLfloat* col;
+      const Colour* col;
       if (m_primitiveType == LINES)
-         col = m_brush->getLineColour();
+         col = &m_brush->getLineColour();
       else
-         col = m_brush->getFillColour();
+         col = &m_brush->getFillColour();
 
       for (int_t i = 0; i < m_vertCount; ++i) {
-         colours[i * 4 + 0] = col[0];
-         colours[i * 4 + 1] = col[1];
-         colours[i * 4 + 2] = col[2];
-         colours[i * 4 + 3] = col[3];
+         colours[i * 4 + 0] = col->r;
+         colours[i * 4 + 1] = col->g;
+         colours[i * 4 + 2] = col->b;
+         colours[i * 4 + 3] = col->a;
       }
 
-      setColours(colours, m_vertCount); // TODO: I assume the colour array is copied ??
+      setColours(colours, m_vertCount);
 
       gMemStack.freeToMarker(marker);
    }
@@ -348,7 +350,7 @@ void Renderer::render() {
    if (m_primitiveType == LINES && m_brush->getLineWidth() == 0) return;
 
    // Compute MVP matrix
-   matrixf_c P(m_projMat, 4, 4);
+   matrixf_c P(m_camera->getMatrix().data(), 4, 4);
    P.transpose();
    matrix44f_c mvp = P * m_mv;
 
@@ -374,7 +376,7 @@ void Renderer::clear() {
    if (!m_init)
       throw Exception("Error clearing rendering surface; renderer not initialised", __FILE__, __LINE__);
 
-   GL_CHECK(glClearColor(m_brush->getFillColour()[0], m_brush->getFillColour()[1], m_brush->getFillColour()[2], m_brush->getFillColour()[3]));
+   GL_CHECK(glClearColor(m_brush->getFillColour().r, m_brush->getFillColour().g, m_brush->getFillColour().b, m_brush->getFillColour().a));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 

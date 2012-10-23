@@ -10,6 +10,7 @@
 #include "rapidxml/rapidxml.hpp"
 #include "math/Vec2f.hpp"
 #ifdef DEBUG
+   #include <ostream>
    #include "Graphics2d.hpp"
 #endif
 
@@ -43,6 +44,7 @@ class Range {
 
       bool overlaps(const Range& range) const;
       bool contains(const Range& range) const;
+      inline bool contains(const Vec2f& p) const;
 
    private:
       Vec2f m_pos;
@@ -95,6 +97,14 @@ inline const Vec2f& Range::getPosition() const {
 //===========================================
 inline const Vec2f& Range::getSize() const {
    return m_size;
+}
+
+//===========================================
+// Range::contains
+//===========================================
+inline bool Range::contains(const Vec2f& p) const {
+   return p.x > m_pos.x && p.x < m_pos.x + m_size.x
+      && p.y > m_pos.y && p.y < m_pos.y + m_size.y;
 }
 
 

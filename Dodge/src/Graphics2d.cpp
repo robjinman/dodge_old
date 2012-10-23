@@ -5,8 +5,8 @@
 
 #include <definitions.hpp>
 #include <Graphics2d.hpp>
-#include <Texture.hpp>
-#include <Font.hpp>
+#include <renderer/renderer.hpp>
+#include <globals.hpp>
 
 
 using namespace cml;
@@ -17,8 +17,7 @@ namespace Dodge {
 
 bool Graphics2d::m_init = false;
 Renderer Graphics2d::m_renderer = Renderer();
-matrix44f_c Graphics2d::m_projectionMatrix = matrix44f_c();
-Vec2f Graphics2d::m_pixSz = Vec2f(0.f, 0.f);
+pCamera_t Graphics2d::m_camera = pCamera_t();
 boost::shared_ptr<Renderer::Brush> Graphics2d::m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
 
 
@@ -28,32 +27,10 @@ boost::shared_ptr<Renderer::Brush> Graphics2d::m_renderBrush = boost::shared_ptr
 void Graphics2d::init(int w, int h) {
    m_init = true;
 
+   m_camera = pCamera_t(new Camera(64.f / 48.f, 1.f));
+
    m_renderer.init();
-
-   float32_t ratio = static_cast<float32_t>(w) / static_cast<float32_t>(h);
-   matrix_orthographic_RH(m_projectionMatrix, ratio, 1.f, 0.01f, 100.f, cml::z_clip_neg_one);
-
-   m_pixSz = Vec2f(ratio / static_cast<float32_t>(w), 1.f / static_cast<float32_t>(h));
-
-   setViewPos(0.f, 0.f);
-}
-
-//===========================================
-// Graphics2d::setViewPos
-//===========================================
-void Graphics2d::setViewPos(float32_t x, float32_t y) {
-   if (!m_init)
-      throw Exception("Error setting view position; Graphics2d not initialised", __FILE__, __LINE__);
-
-   m_projectionMatrix.data()[12] = x - 1.0;
-   m_projectionMatrix.data()[13] = y - 1.0;
-
-   // Move the camera back slightly (any small negative number will do as
-   // we're using an orthographic projection).
-   m_projectionMatrix.data()[14] = -0.01f;
-
-   // TODO: this is inefficient
-   m_renderer.setP(m_projectionMatrix.data());
+   m_renderer.attachCamera(m_camera);
 }
 
 //===========================================
@@ -65,8 +42,8 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
    if (!m_init)
       throw Exception("Error drawing image; Graphics2d not initialised", __FILE__, __LINE__);
 
-   float32_t w = srcW * m_pixSz.x * scale.x;
-   float32_t h = srcH * m_pixSz.y * scale.y;
+   float32_t w = srcW * gGetPixelSize().x * scale.x;
+   float32_t h = srcH * gGetPixelSize().y * scale.y;
 
    m_renderer.setMode(Renderer::TEXTURED_ALPHA);
 
@@ -141,7 +118,7 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
 
    for (uint_t i = 0; i < text.length(); ++i) {
       float32_t pxOffset = scale.x * static_cast<float32_t>(i) * pxChW;
-      float32_t chX = x + pxOffset * m_pixSz.x;
+      float32_t chX = x + pxOffset * gGetPixelSize().x;
       float32_t chY = y;
       float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((text[i] - ' ') % rowLen));
       float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((text[i] - ' ') / rowLen);

@@ -1,0 +1,10 @@
+Dodge::Engine Entity Placement Tool
+
+- In the XML editor, write the XML code defining some game asset.
+- Click add to toolbox
+- Assets of that type may then be added to the map
+   - When added, the asset joins the list of added game assets.
+   - To position the asset, click the 'pos' xml node in the xml editor, and click the map.
+   - Its compoundPoly is set similarly.
+   - We only want to store the XML that differs from the asset's definition/prototype
+      - Click the 'reduce' button. This happens automatically when the map is saved/exported.

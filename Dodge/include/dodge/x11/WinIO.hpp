@@ -3,26 +3,27 @@
  * Date: 2012
  */
 
-#ifndef __I_WIN_IO_HPP__
-#define __I_WIN_IO_HPP__
+#ifndef __WIN_IO_HPP__
+#define __WIN_IO_HPP__
 
 
 #include <map>
 #include <string>
 #include <vector>
 #include <boost/variant.hpp>
-#include "utils/Functor.hpp"
-#include "utils/TypeList.hpp"
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <EGL/egl.h>
+#include "../utils/Functor.hpp"
+#include "../utils/TypeList.hpp"
+#include "../EGL_CHECK.hpp"
 
 
 namespace Dodge {
 
 
-class IWinIO {
+class WinIO {
    public:
-
-      // These are defaults for Linux.
-      // Implementation should redefine these.
       enum keyCode_t {
          KEY_BACKSPACE = 65288,
          KEY_TAB = 65289,
@@ -143,45 +144,58 @@ class IWinIO {
          Functor<void, TYPELIST_2(int, int)>
       > callback_t;
 
-      // Construct window and rendering context
-      virtual void init(const std::string& winTitle, int w, int h, bool fullscreen = false) = 0;
-
-      // Associate callback function with window/io event. Multiple callbacks per event are permitted.
-      virtual void registerCallback(winEvent_t event, callback_t func);
-
-      virtual void unregisterCallback(winEvent_t event, callback_t func);
-
-      // Dispatch events to their respective callback functions
-      virtual void doEvents() = 0;
-
-      virtual void destroyWindow() = 0;
-
+      void init(const std::string& winTitle, int w, int h, bool fullscreen = false);
       inline int getWindowWidth() const;
-
       inline int getWindowHeight() const;
+      void registerCallback(winEvent_t event, callback_t func);
+      void unregisterCallback(winEvent_t event, callback_t func);
+      void doEvents();
+      void destroyWindow();
+      void swapBuffers();
 
-      virtual void swapBuffers() = 0;
-
-   protected:
+   private:
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;
       static callbackMap_t m_callbacks;
 
       static int m_width;
       static int m_height;
+
+      static Display* m_display;
+      static Window m_win;
+      static Colormap m_colorMap;
+      static XVisualInfo* m_pVisual;
+
+      static EGLDisplay m_eglDisplay;
+      static EGLContext m_eglContext;
+      static EGLSurface m_eglSurface;
+
+      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr);
+
+      Window createXWindow(const char* title, int width, int height, Display* display,
+         EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual);
+
+      static bool m_init;
 };
 
 //===========================================
-// IWinIO::getWindowHeight
+// WinIO::getWindowHeight
 //===========================================
-inline int IWinIO::getWindowHeight() const {
+inline int WinIO::getWindowHeight() const {
    return m_height;
 }
 
 //===========================================
-// IWinIO::registerCallback
+// WinIO::getWindowWidth
 //===========================================
-inline void IWinIO::registerCallback(winEvent_t event, callback_t func) {
+int WinIO::getWindowWidth() const {
+   return m_width;
+}
+
+//===========================================
+// WinIO::registerCallback
+//===========================================
+inline void WinIO::registerCallback(winEvent_t event, callback_t func) {
    m_callbacks[event].push_back(func);
 }
 
@@ -189,4 +203,4 @@ inline void IWinIO::registerCallback(winEvent_t event, callback_t func) {
 }
 
 
-#endif /*!__I_WIN_IO_HPP__*/
+#endif /*!__WIN_IO_HPP__*/

@@ -18,7 +18,7 @@
 #include "EventManager.hpp"
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"
-#include "Renderer.hpp"
+#include "renderer/Renderer.hpp"
 #include "rapidxml/rapidxml.hpp"
 
 
