@@ -1,8 +1,8 @@
+- Advanced UI
 - Entity Placement Tool
 - Level data streaming
 - Improve Renderer efficiency
 - Physics
 - Complete Polygon class
-- Advanced UI
 - Scripted events
 - Lua binding

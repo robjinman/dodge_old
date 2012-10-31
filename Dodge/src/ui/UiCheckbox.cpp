@@ -3,34 +3,19 @@
  * Date: 2012
  */
 
-#include <ui/UiButton.hpp>
+#include <ui/UiCheckbox.hpp>
 #include <StringId.hpp>
 
 
 namespace Dodge {
 
 
-#ifdef DEBUG
 //===========================================
-// UiButton::dbg_print
+// UiCheckbox::update
 //===========================================
-void UiButton::dbg_print(std::ostream& out) const {
-   // TODO
-}
-#endif
-
-//===========================================
-// UiButton::assignData
-//===========================================
-void UiButton::assignData(const rapidxml::xml_node<>* data) {
-   Sprite::assignData(data);
-}
-
-//===========================================
-// UiButton::update
-//===========================================
-void UiButton::update() {
-   static long idleStr = internString("idle");
+void UiCheckbox::update() {
+   static long idleTrueStr = internString("idleTrue");
+   static long idleFalseStr = internString("idleFalse");
    static long hoverOffStr = internString("hoverOff");
    static long hoverOnStr = internString("hoverOn");
    static long releaseStr = internString("release");
@@ -39,33 +24,33 @@ void UiButton::update() {
 
    if (getAnimState() == Animation::STOPPED) {
       switch (m_state) {
-         case BTN_IDLE:
-            playAnimation(idleStr);
+         case CHK_IDLE:
+            playAnimation(m_checked ? idleTrueStr : idleFalseStr);
          break;
-         case BTN_HOVER_OFF:
+         case CHK_HOVER_OFF:
             if (m_mouseOver) {
-               playAnimation(hoverOnStr);
-               m_state = BTN_HOVER_ON;
+               playAnimation(m_checked ? hoverOnTrueStr : hoverOnFalseStr);
+               m_state = CHK_HOVER_ON;
             }
          break;
-         case BTN_HOVER_ON:
+         case CHK_HOVER_ON:
             if (!m_mouseOver) {
-               playAnimation(hoverOffStr);
-               m_state = BTN_HOVER_OFF;
+               playAnimation(m_checked ? hoverOffTrueStr : hoverOffFalseStr);
+               m_state = CHK_HOVER_OFF;
             }
          break;
-         case BTN_RELEASE:
+         case CHK_RELEASE:
             if (m_mouseOver)
-               m_state = BTN_HOVER_ON;
+               m_state = CHK_HOVER_ON;
             else {
-               playAnimation(hoverOffStr);
-               m_state = BTN_HOVER_OFF;
+               playAnimation(m_checked ? hoverOffTrueStr : hoverOffFalseStr);
+               m_state = CHK_HOVER_OFF;
             }
          break;
-         case BTN_PRESS:
+         case CHK_PRESS:
             if (!m_btn1Pressed || !m_mouseOver) {
                playAnimation(releaseStr);
-               m_state = BTN_RELEASE;
+               m_state = CHK_RELEASE;
             }
          break;
       }
@@ -73,45 +58,45 @@ void UiButton::update() {
 }
 
 //===========================================
-// UiButton::onBtn1Press
+// UiCheckbox::onBtn1Press
 //===========================================
-void UiButton::onBtn1Press(float32_t x, float32_t y) {
+void UiCheckbox::onBtn1Press(float32_t x, float32_t y) {
    static long pressStr = internString("press");
 
    m_btn1Pressed = true;
 
    switch (m_state) {
-      case BTN_PRESS:
-      case BTN_RELEASE:
+      case CHK_PRESS:
+      case CHK_RELEASE:
       break;
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
-      case BTN_IDLE:
+      case CHK_HOVER_ON:
+      case CHK_HOVER_OFF:
+      case CHK_IDLE:
          stopAnimation();
          playAnimation(pressStr);
-         m_state = BTN_PRESS;
+         m_state = CHK_PRESS;
          m_onClick(shared_from_this());
       break;
    }
 }
 
 //===========================================
-// UiButton::onBtn1Release
+// UiCheckbox::onBtn1Release
 //===========================================
-void UiButton::onBtn1Release(float32_t x, float32_t y) {
+void UiCheckbox::onBtn1Release(float32_t x, float32_t y) {
    static long releaseStr = internString("release");
 
    m_btn1Pressed = false;
 
    switch (m_state) {
-      case BTN_IDLE:
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
+      case CHK_IDLE:
+      case CHK_RELEASE:
+      case CHK_HOVER_ON:
+      case CHK_HOVER_OFF:
       break;
-      case BTN_PRESS:
+      case CHK_PRESS:
          if (playAnimation(releaseStr)) {
-            m_state = BTN_RELEASE;
+            m_state = CHK_RELEASE;
             m_onRelease(shared_from_this());
          }
       break;
@@ -119,49 +104,49 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
 }
 
 //===========================================
-// UiButton::onHoverOn
+// UiCheckbox::onHoverOn
 //===========================================
-void UiButton::onHoverOn(float32_t x, float32_t y) {
+void UiCheckbox::onHoverOn(float32_t x, float32_t y) {
    static long hoverOnStr = internString("hoverOn");
 
    m_mouseOver = true;
 
    switch (m_state) {
-      case BTN_IDLE:
+      case CHK_IDLE:
          stopAnimation();
          playAnimation(hoverOnStr);
-         m_state = BTN_HOVER_ON;
+         m_state = CHK_HOVER_ON;
       break;
-      case BTN_PRESS:
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
+      case CHK_PRESS:
+      case CHK_RELEASE:
+      case CHK_HOVER_ON:
+      case CHK_HOVER_OFF:
       break;
    }
 }
 
 //===========================================
-// UiButton::onHoverOff
+// UiCheckbox::onHoverOff
 //===========================================
-void UiButton::onHoverOff(float32_t x, float32_t y) {
+void UiCheckbox::onHoverOff(float32_t x, float32_t y) {
    static long hoverOffStr = internString("hoverOff");
    static long releaseStr = internString("release");
 
    m_mouseOver = false;
 
    switch (m_state) {
-      case BTN_PRESS:
+      case CHK_PRESS:
          if (playAnimation(releaseStr))
-            m_state = BTN_RELEASE;
+            m_state = CHK_RELEASE;
       break;
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
+      case CHK_RELEASE:
+      case CHK_HOVER_ON:
+      case CHK_HOVER_OFF:
       break;
-      case BTN_IDLE:
+      case CHK_IDLE:
          stopAnimation();
          playAnimation(hoverOffStr);
-         m_state = BTN_HOVER_OFF;
+         m_state = CHK_HOVER_OFF;
       break;
    }
 }

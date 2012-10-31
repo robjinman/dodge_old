@@ -215,6 +215,14 @@ void Game::playerSetup() {
    m_worldSpace.trackEntity(m_player);
 }
 
+void Game::buttonPressHandler(pEntity_t entity) {
+   std::cout << "Button Pressed!\n";
+}
+
+void Game::buttonReleaseHandler(pEntity_t entity) {
+   std::cout << "Button Released!\n";
+}
+
 void Game::uiSetup() {
    pTexture_t tex(new Texture("data/textures/ss8x8squares128x128y.png"));
    pUiButton_t btn(new UiButton(internString("button1"), tex));
@@ -257,6 +265,9 @@ void Game::uiSetup() {
 
    btn->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
    btn->setTranslation(0.1f, 0.15f);
+
+   btn->setOnPressHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonPressHandler));
+   btn->setOnReleaseHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonReleaseHandler));
 
    m_entities.push_back(btn);
 }

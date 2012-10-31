@@ -31,9 +31,9 @@ class Sprite
       Sprite(long name, long type, pTexture_t texture)
          : Entity(name, type), EntityAnimations(this, texture), EntityTransformations(this) {}
 
-      Sprite(const Sprite& sprite);
+      Sprite(const Sprite& copy);
 
-      Sprite(const Sprite& sprite, long name);
+      Sprite(const Sprite& copy, long name);
 
       virtual void draw(const Vec2f& at) const;
       virtual void update();

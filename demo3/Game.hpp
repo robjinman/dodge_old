@@ -18,6 +18,9 @@ class Game {
       void keyboard();
       void computeFrameRate();
 
+      void buttonPressHandler(Dodge::pEntity_t entity);
+      void buttonReleaseHandler(Dodge::pEntity_t entity);
+
       void init();
       void playerSetup();
       void uiSetup();
