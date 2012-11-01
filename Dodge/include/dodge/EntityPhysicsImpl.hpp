@@ -10,6 +10,10 @@
 #include <memory>
 #include "Entity.hpp"
 #include "math/Vec2f.hpp"
+#ifdef DEBUG
+#include <ostream>
+#include "rapidxml/rapidxml.hpp"
+#endif
 
 
 namespace Dodge {
@@ -29,7 +33,10 @@ class EntityPhysicsImpl {
       virtual void removeFromWorld() = 0;
 
       virtual EntityPhysicsImpl* clone() const = 0;
-
+      virtual void assignData(const rapidxml::xml_node<>* data) = 0;
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
+#endif
       virtual void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p) = 0;
       virtual void applyForce(const Vec2f& force, const Vec2f& p) = 0;
       virtual void applyLinearImpulse(const Vec2f& impulse) = 0;

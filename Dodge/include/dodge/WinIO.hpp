@@ -4,7 +4,7 @@
  */
 
 #ifdef WIN32
-   #include "win32/WinIO.hpp"
+#include "win32/WinIO.hpp"
 #else
-   #include "x11/WinIO.hpp"
+#include "x11/WinIO.hpp"
 #endif

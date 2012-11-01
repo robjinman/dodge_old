@@ -11,6 +11,10 @@
 #include "renderer/Texture.hpp"
 #include "Sprite.hpp"
 #include "EntityPhysics.hpp"
+#ifdef DEBUG
+#include <ostream>
+#include "rapidxml/rapidxml.hpp"
+#endif
 
 
 namespace Dodge {
@@ -18,29 +22,18 @@ namespace Dodge {
 
 class PhysicalSprite : public Sprite, public EntityPhysics {
    public:
-      PhysicalSprite(pEntityPhysicsImpl_t impl, long type, pTexture_t texture)
-         : Sprite(type, texture), EntityPhysics(this, std::move(impl)) {}
+      PhysicalSprite(pEntityPhysicsImpl_t impl, long type, pTexture_t texture);
+      PhysicalSprite(pEntityPhysicsImpl_t impl, long name, long type, pTexture_t texture);
+      PhysicalSprite(const PhysicalSprite& copy);
+      PhysicalSprite(const PhysicalSprite& copy, long name);
 
-      PhysicalSprite(pEntityPhysicsImpl_t impl, long name, long type, pTexture_t texture)
-         : Sprite(name, type, texture), EntityPhysics(this, std::move(impl)) {}
-
-      PhysicalSprite(const PhysicalSprite& copy)
-         : Sprite(copy), EntityPhysics(copy, this) {}
-
-      PhysicalSprite(const PhysicalSprite& copy, long name)
-         : Sprite(copy, name), EntityPhysics(copy, this) {}
-
-      virtual void addToWorld() {
-         EntityPhysics::addToWorld();
-      }
-
-      virtual void removeFromWorld() {
-         EntityPhysics::removeFromWorld();
-      }
-
-      virtual void update() {
-         Sprite::update();
-      }
+      virtual void assignData(const rapidxml::xml_node<>* data);
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const;
+#endif
+      virtual void addToWorld();
+      virtual void removeFromWorld();
+      virtual void update();
 };
 
 typedef boost::shared_ptr<PhysicalSprite> pPhysicalSprite_t;

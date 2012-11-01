@@ -12,7 +12,7 @@
 #include "definitions.hpp"
 #include "SpatialContainer.hpp"
 #ifdef DEBUG
-   #include "Graphics2d.hpp"
+#include "Graphics2d.hpp"
 #endif
 
 

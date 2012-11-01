@@ -31,8 +31,8 @@ void keyDown(int key) {
 void keyUp(int key) { keyState[key] = false; }
 
 void draw() {
-   sprite1->draw(Vec2f(0.0, 0.0));
-   sprite2->draw(Vec2f(0.0, 0.0));
+   sprite1->draw();
+   sprite2->draw();
 }
 
 void keyboard() {
@@ -55,7 +55,7 @@ void computeFrameRate() {
 
 int main() {
    Box2dPhysics::loadSettings("physics.conf");
-   win.init("Demo3", 640, 480, false);
+   win.init("Demo4 - physics", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
@@ -64,9 +64,6 @@ int main() {
 
    pTexture_t tex0(new Texture("sprite1.png"));
    pTexture_t tex1(new Texture("sprite2.png"));
-
-//   physicsOptions_t opts(false, false, 1.f, 0.3f);
-//   sprite1 = boost::shared_ptr<PhysicalSprite<Box2dPhysics> >(new PhysicalSprite<Box2dPhysics>(internString(""), internString(""), tex0, opts));
 
    unique_ptr<Box2dPhysics> spr1Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
    sprite1 = pPhysicalSprite_t(new PhysicalSprite(move(spr1Phys), internString("sprite1"), internString("shape"), tex0));
@@ -82,12 +79,14 @@ int main() {
 
    sprite1->setShape(move(poly));
    sprite1->setTranslation(128.f * gGetPixelSize().x, 128.f * gGetPixelSize().y);
+   sprite1->setZ(1);
    sprite1->setScale(Vec2f(2.f, 1.5f));
    sprite1->setRotation(0.f);
 
    unique_ptr<Box2dPhysics> spr2Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
    sprite2 = pPhysicalSprite_t(new PhysicalSprite(move(spr2Phys), internString("sprite2"), internString("shape"), tex1));
    sprite2->setTranslation(320.f * gGetPixelSize().x, 400.f * gGetPixelSize().y);
+   sprite2->setZ(2);
    sprite2->setTextureSection(0, 0, 32, 32);
 
    unique_ptr<Polygon> poly2(new Polygon);
@@ -102,7 +101,7 @@ int main() {
    sprite2->addToWorld();
 
    while (1) {
-      graphics2d.clear();
+      graphics2d.clear(Colour(0.5f, 0.5f, 0.5f, 1.f));
       win.doEvents();
       eventManager.doEvents();
       Box2dPhysics::update();

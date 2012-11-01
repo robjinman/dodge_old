@@ -91,7 +91,7 @@ class Entity : public boost::enable_shared_from_this<Entity> {
 
       inline pEntity_t getSharedPtr();
 
-      virtual void draw(const Vec2f& at) const {}
+      virtual void draw() const {}
       virtual void update() {}
 
       virtual void assignData(const rapidxml::xml_node<>* data);

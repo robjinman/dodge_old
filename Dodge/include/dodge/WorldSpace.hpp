@@ -14,7 +14,7 @@
 #include "Entity.hpp"
 #include "StringId.hpp"
 #ifdef DEBUG
-   #include "renderer/Colour.hpp"
+#include "renderer/Colour.hpp"
 #endif
 
 

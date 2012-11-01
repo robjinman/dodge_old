@@ -15,12 +15,15 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/EEvent.o \
 	$(BASE_DIR)/Entity.o \
 	$(BASE_DIR)/EntityAnimations.o \
+	$(BASE_DIR)/EntityPhysics.o \
 	$(BASE_DIR)/EntityTransformations.o \
 	$(BASE_DIR)/EventManager.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/KvpParser.o \
+	$(BASE_DIR)/PhysicalEntity.o \
+	$(BASE_DIR)/PhysicalSprite.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Shape.o \
 	$(BASE_DIR)/Sprite.o \

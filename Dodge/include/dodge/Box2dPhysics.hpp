@@ -29,6 +29,10 @@ class Box2dPhysics : public EntityPhysicsImpl {
       }
 
       virtual EntityPhysicsImpl* clone() const;
+      virtual void assignData(const rapidxml::xml_node<>* data);
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const;
+#endif
 
       virtual void addToWorld();
       virtual void removeFromWorld();

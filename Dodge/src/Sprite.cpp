@@ -77,8 +77,8 @@ void Sprite::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // Sprite::draw
 //===========================================
-void Sprite::draw(const Vec2f& at) const {
-   EntityAnimations::draw(at);
+void Sprite::draw() const {
+   EntityAnimations::draw();
 }
 
 //===========================================

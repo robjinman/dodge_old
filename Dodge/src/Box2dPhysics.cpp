@@ -58,6 +58,22 @@ EntityPhysicsImpl* Box2dPhysics::clone() const {
 }
 
 //===========================================
+// Box2dPhysics::assignData
+//===========================================
+void Box2dPhysics::assignData(const rapidxml::xml_node<>* data) {
+   // TODO
+}
+
+#ifdef DEBUG
+//===========================================
+// Box2dPhysics::dbg_print
+//===========================================
+void Box2dPhysics::dbg_print(std::ostream& out, int tab) const {
+   // TODO
+}
+#endif
+
+//===========================================
 // Box2dPhysics::setEntity
 //===========================================
 void Box2dPhysics::setEntity(Entity* entity) {

@@ -12,6 +12,9 @@
 namespace Dodge {
 
 
+// A primitive is a shape that does not have any explicit position defined -- though
+// some primitives such as polygons, which are probably represented as sequences of
+// vertices, will have an implicit position simply because all vertices can be moved.
 class Primitive {
    public:
       virtual long typeId() const = 0;

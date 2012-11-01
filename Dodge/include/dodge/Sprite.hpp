@@ -35,14 +35,13 @@ class Sprite
 
       Sprite(const Sprite& copy, long name);
 
-      virtual void draw(const Vec2f& at) const;
+      virtual void draw() const;
       virtual void update();
-      virtual void assignData(const rapidxml::xml_node<>* data);
 
+      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
-
       virtual ~Sprite() {}
 
    private:

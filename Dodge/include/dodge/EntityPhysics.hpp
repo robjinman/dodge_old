@@ -9,6 +9,10 @@
 
 #include "EntityPhysicsImpl.hpp"
 #include "Entity.hpp"
+#ifdef DEBUG
+#include <ostream>
+#include "rapidxml/rapidxml.hpp"
+#endif
 
 
 namespace Dodge {
@@ -16,25 +20,15 @@ namespace Dodge {
 
 class EntityPhysics {
    public:
-      EntityPhysics(Entity* entity, pEntityPhysicsImpl_t impl)
-         : m_impl(std::move(impl)) {
+      EntityPhysics(Entity* entity, pEntityPhysicsImpl_t impl);
+      EntityPhysics(const EntityPhysics& copy, Entity* entity);
 
-         m_impl->setEntity(entity);
-      }
-
-      EntityPhysics(const EntityPhysics& copy, Entity* entity)
-         : m_impl(m_impl->clone()) {
-
-         m_impl->setEntity(entity);
-      }
-
-      virtual void addToWorld() {
-         m_impl->addToWorld();
-      }
-
-      virtual void removeFromWorld() {
-         m_impl->removeFromWorld();
-      }
+      virtual void assignData(const rapidxml::xml_node<>* data);
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const;
+#endif
+      virtual void addToWorld();
+      virtual void removeFromWorld();
 
       inline void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p);
       inline void applyForce(const Vec2f& force, const Vec2f& p);
