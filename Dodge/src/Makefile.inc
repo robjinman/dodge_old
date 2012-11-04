@@ -26,6 +26,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/PhysicalSprite.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Shape.o \
+	$(BASE_DIR)/SharedAssetManager.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \

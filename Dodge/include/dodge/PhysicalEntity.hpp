@@ -26,6 +26,9 @@ class PhysicalEntity : public Entity, public EntityPhysics {
       PhysicalEntity(const PhysicalEntity& copy);
       PhysicalEntity(const PhysicalEntity& copy, long name);
 
+      // TODO
+      virtual PhysicalEntity* clone() const { return NULL; }
+
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

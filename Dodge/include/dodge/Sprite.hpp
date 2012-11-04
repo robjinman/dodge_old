@@ -35,6 +35,9 @@ class Sprite
 
       Sprite(const Sprite& copy, long name);
 
+      // TODO
+      virtual Sprite* clone() const { return NULL; }
+
       virtual void draw() const;
       virtual void update();
 

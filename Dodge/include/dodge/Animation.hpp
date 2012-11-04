@@ -17,17 +17,21 @@
 #include "Exception.hpp"
 #include "AnimFrame.hpp"
 #include "Timer.hpp"
+#include "Asset.hpp"
 
 
 namespace Dodge {
 
 
-class Animation {
+class Animation : public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
       Animation();
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
+
+      // TODO
+      virtual Animation* clone() const { return NULL; }
 
       inline void addFrame(const AnimFrame& frame);
       inline void setFrameRate(float32_t rate);

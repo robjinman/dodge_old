@@ -10,15 +10,19 @@
 #include <GLES2/gl2.h>
 #include "../../definitions.hpp"
 #include "../../pnglite/pnglite.h"
+#include "../../Asset.hpp"
 
 
 namespace Dodge {
 
 
 // PNG/OGLES2 implementation
-class Texture {
+class Texture : public Asset {
    public:
       Texture(const char* file);
+
+      // TODO
+      virtual Texture* clone() const { return NULL; }
 
       inline GLint getWidth() const;
       inline GLint getHeight() const;

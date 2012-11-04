@@ -33,7 +33,7 @@ long LineSegment::typeId() const {
 //===========================================
 // LineSegment::clone
 //===========================================
-Primitive* LineSegment::clone() const {
+LineSegment* LineSegment::clone() const {
    return new LineSegment(*this);
 }
 

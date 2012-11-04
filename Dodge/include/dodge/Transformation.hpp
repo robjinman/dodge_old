@@ -16,6 +16,7 @@
 #include "Exception.hpp"
 #include "Timer.hpp"
 #include "TransFrame.hpp"
+#include "Asset.hpp"
 
 
 namespace Dodge {
@@ -23,7 +24,7 @@ namespace Dodge {
 
 class Entity;
 
-class Transformation {
+class Transformation : public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
@@ -36,6 +37,9 @@ class Transformation {
            m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
 
       Transformation(long name, double rate, const std::vector<TransFrame>& frames);
+
+      // TODO
+      virtual Transformation* clone() const { return NULL; }
 
       inline void setName(long name);
       inline void addFrame(const TransFrame& frame);

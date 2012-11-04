@@ -36,7 +36,7 @@ class Polygon : public Primitive {
       inline void insertVertex(int idx, float32_t x, float32_t y);
       inline void clear();
 
-      virtual Primitive* clone() const;
+      virtual Polygon* clone() const;
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;

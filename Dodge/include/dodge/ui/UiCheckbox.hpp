@@ -54,6 +54,9 @@ class UiCheckbox : public Sprite, public EntityUi {
            m_onClick(&UiCheckbox::void_entityPtrBool),
            m_onRelease(&UiCheckbox::void_entityPtrBool) {}
 
+      // TODO
+      virtual UiCheckbox* clone() const { return NULL; }
+
       virtual void update();
 
       virtual void onBtn1Press(float32_t x, float32_t y);

@@ -48,7 +48,7 @@ Polygon::Polygon(const Polygon& poly) {
 //===========================================
 // Polygon::clone
 //===========================================
-Primitive* Polygon::clone() const {
+Polygon* Polygon::clone() const {
    return new Polygon(*this);
 }
 

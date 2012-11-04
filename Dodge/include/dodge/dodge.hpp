@@ -9,6 +9,7 @@
 
 #include "Animation.hpp"
 #include "AnimFrame.hpp"
+#include "Asset.hpp"
 #include "Box2dPhysics.hpp"
 #include "definitions.hpp"
 #include "EAnimFinished.hpp"
@@ -31,6 +32,7 @@
 #include "Range.hpp"
 #include "renderer/renderer.hpp"
 #include "Shape.hpp"
+#include "SharedAssetManager.hpp"
 #include "SpatialContainer.hpp"
 #include "Sprite.hpp"
 #include "StackAllocator.hpp"

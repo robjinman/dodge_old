@@ -30,7 +30,7 @@ class LineSegment : public Primitive {
       inline const Vec2f& getPoint1() const;
       inline const Vec2f& getPoint2() const;
 
-      virtual Primitive* clone() const;
+      virtual LineSegment* clone() const;
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;

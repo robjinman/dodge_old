@@ -9,16 +9,20 @@
 
 #include "../definitions.hpp"
 #include "Texture.hpp"
+#include "../Asset.hpp"
 #include "../Range.hpp"
 
 
 namespace Dodge {
 
 
-class Font {
+class Font : public Asset {
    public:
       Font(pTexture_t texture, float32_t texX, float32_t texY, float32_t texW, float32_t texH, int charW, int charH)
          : m_texture(texture), m_texSection(texX, texY, texW, texH), m_charW(charW), m_charH(charH) {}
+
+      // TODO
+      virtual Font* clone() const { return NULL; }
 
       inline const pTexture_t getTexture() const;
       inline int getCharWidth() const;

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<def id="3yrqw903o4f">
+   <Soil>
+      <Item>
+         <Sprite>
+            <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="2" rot="0.0">
+               <Vec2f x="1.0" y="1.0"/>
+               <Polygon def="f82ryi2u38"/>
+            </Entity>
+            <EntityAnimations>
+               <Image def="hqdh89237r"/>
+               <Range>
+                  <Vec2f x="0" y="0"/>
+                  <Vec2f x="16" y="16"/>
+               </Range>
+               <Animation def="4fy8374rte"/>
+            </EntityAnimations>
+         </Sprite>
+      </Item>
+   </Soil>
+</def>
+<def id="f82ryi2u38">
+   <Polygon>
+      <Vec2f x="1.0" y="1.0"/>
+      <Vec2f x="1.0" y="1.0"/>
+      <Vec2f x="1.0" y="1.0"/>
+      <Vec2f x="1.0" y="1.0"/>
+      <Vec2f x="1.0" y="1.0"/>
+   </Polygon>
+</def>
+<def id="hqdh89237r">
+   <Image path="data/images/soil16x16.bmp" w="16" h="16"/>
+</def>
+<def id="4fy8374rte">
+   <Animation name="dissolve" rate="45.0">
+      <AnimFrame>
+         <Vec2i x="0" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="1.0"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="16" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.875"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="32" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.75"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="48" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.625"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="64" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.5"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="80" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.375"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="96" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.25"/>
+      </AnimFrame>
+      <AnimFrame>
+         <Vec2i x="112" y="0"/>
+         <Vec2i x="16" y="16"/>
+         <Colour r="1.0" g="1.0" b="1.0" a="0.125"/>
+      </AnimFrame>
+   </Animation>
+</def>

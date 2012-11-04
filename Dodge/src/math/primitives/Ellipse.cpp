@@ -25,7 +25,7 @@ long Ellipse::typeId() const {
 //===========================================
 // Ellipse::clone
 //===========================================
-Primitive* Ellipse::clone() const {
+Ellipse* Ellipse::clone() const {
    return new Ellipse(*this);
 }
 

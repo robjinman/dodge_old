@@ -16,7 +16,8 @@ namespace Dodge {
 class Ellipse : public Primitive {
    public:
       virtual long typeId() const;
-      virtual Primitive* clone() const;
+
+      virtual Ellipse* clone() const;
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;

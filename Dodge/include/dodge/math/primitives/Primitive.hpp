@@ -7,17 +7,19 @@
 #endif
 #include "../../rapidxml/rapidxml.hpp"
 #include "../Vec2f.hpp"
+#include "../../Asset.hpp"
 
 
 namespace Dodge {
 
 
 // A primitive is a shape that does not have any explicit position defined -- though
-// some primitives such as polygons, which are probably represented as sequences of
-// vertices, will have an implicit position simply because all vertices can be moved.
-class Primitive {
+// some primitives such as polygons, which are represented as sequences of vertices,
+// will have an implicit position because all vertices can be moved.
+class Primitive : public Asset {
    public:
       virtual long typeId() const = 0;
+
       virtual Primitive* clone() const = 0;
       virtual void assignData(const rapidxml::xml_node<>* data) = 0;
 #ifdef DEBUG

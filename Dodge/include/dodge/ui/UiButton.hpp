@@ -58,8 +58,11 @@ class UiButton : public Sprite, public EntityUi {
            m_onClick(&UiButton::void_entityPtr),
            m_onRelease(&UiButton::void_entityPtr) {}
 
+      // TODO
+      virtual UiButton* clone() const { return NULL; }
+
 #ifdef DEBUG
-      void dbg_print(std::ostream& out) const;
+      virtual void dbg_print(std::ostream& out) const;
 #endif
       virtual void assignData(const rapidxml::xml_node<>* data);
 

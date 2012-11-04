@@ -20,6 +20,7 @@
 #include "Range.hpp"
 #include "renderer/Renderer.hpp"
 #include "rapidxml/rapidxml.hpp"
+#include "Asset.hpp"
 
 
 namespace Dodge {
@@ -29,12 +30,15 @@ class Entity;
 typedef boost::shared_ptr<Entity> pEntity_t;
 
 
-class Entity : public boost::enable_shared_from_this<Entity> {
+class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
    public:
       Entity(long type);
       Entity(long name, long type);
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);
+
+      // TODO
+      virtual Entity* clone() const { return NULL; }
 
       // Derived classes may need these
       virtual void addToWorld() {}

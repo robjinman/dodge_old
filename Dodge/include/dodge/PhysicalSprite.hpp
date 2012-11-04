@@ -27,6 +27,9 @@ class PhysicalSprite : public Sprite, public EntityPhysics {
       PhysicalSprite(const PhysicalSprite& copy);
       PhysicalSprite(const PhysicalSprite& copy, long name);
 
+      // TODO
+      virtual PhysicalSprite* clone() const { return NULL; }
+
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
