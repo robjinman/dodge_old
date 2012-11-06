@@ -10,28 +10,11 @@ namespace Dodge {
 
 
 //===========================================
-// PhysicalSprite::PhysicalSprite
+// PhysicalSprite::clone
 //===========================================
-PhysicalSprite::PhysicalSprite(pEntityPhysicsImpl_t impl, long type, pTexture_t texture)
-   : Sprite(type, texture), EntityPhysics(this, std::move(impl)) {}
-
-//===========================================
-// PhysicalSprite::PhysicalSprite
-//===========================================
-PhysicalSprite::PhysicalSprite(pEntityPhysicsImpl_t impl, long name, long type, pTexture_t texture)
-   : Sprite(name, type, texture), EntityPhysics(this, std::move(impl)) {}
-
-//===========================================
-// PhysicalSprite::PhysicalSprite
-//===========================================
-PhysicalSprite::PhysicalSprite(const PhysicalSprite& copy)
-   : Sprite(copy), EntityPhysics(copy, this) {}
-
-//===========================================
-// PhysicalSprite::PhysicalSprite
-//===========================================
-PhysicalSprite::PhysicalSprite(const PhysicalSprite& copy, long name)
-   : Sprite(copy, name), EntityPhysics(copy, this) {}
+PhysicalSprite* PhysicalSprite::clone() const {
+   return new PhysicalSprite(*this);
+}
 
 //===========================================
 // PhysicalSprite::assignData

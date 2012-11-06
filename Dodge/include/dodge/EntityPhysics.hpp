@@ -20,6 +20,7 @@ namespace Dodge {
 
 class EntityPhysics {
    public:
+      EntityPhysics(const rapidxml::xml_node<>* data) {} // TODO
       EntityPhysics(Entity* entity, pEntityPhysicsImpl_t impl);
       EntityPhysics(const EntityPhysics& copy, Entity* entity);
 

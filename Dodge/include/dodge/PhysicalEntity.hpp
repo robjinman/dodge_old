@@ -14,6 +14,7 @@
 #include <ostream>
 #include "rapidxml/rapidxml.hpp"
 #endif
+#include "xml.hpp"
 
 
 namespace Dodge {
@@ -21,14 +22,22 @@ namespace Dodge {
 
 class PhysicalEntity : public Entity, public EntityPhysics {
    public:
-      PhysicalEntity(pEntityPhysicsImpl_t impl, long type);
-      PhysicalEntity(pEntityPhysicsImpl_t impl, long name, long type);
-      PhysicalEntity(const PhysicalEntity& copy);
-      PhysicalEntity(const PhysicalEntity& copy, long name);
+      PhysicalEntity(const rapidxml::xml_node<>* data)
+         : Entity(nthChild(data, 0)), EntityPhysics(nthChild(data, 1)) {}
 
-      // TODO
-      virtual PhysicalEntity* clone() const { return NULL; }
+      PhysicalEntity(pEntityPhysicsImpl_t impl, long type)
+         : Entity(type), EntityPhysics(this, std::move(impl)) {}
 
+      PhysicalEntity(pEntityPhysicsImpl_t impl, long name, long type)
+         : Entity(name, type), EntityPhysics(this, std::move(impl)) {}
+
+      PhysicalEntity(const PhysicalEntity& copy)
+         : Entity(copy), EntityPhysics(copy, this) {}
+
+      PhysicalEntity(const PhysicalEntity& copy, long name)
+         : Entity(copy, name), EntityPhysics(copy, this) {}
+
+      virtual PhysicalEntity* clone() const;
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

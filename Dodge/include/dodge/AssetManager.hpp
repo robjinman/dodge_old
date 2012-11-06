@@ -3,8 +3,8 @@
  * Date: 2012
  */
 
-#ifndef __SHARED_ASSET_MANAGER_HPP__
-#define __SHARED_ASSET_MANAGER_HPP__
+#ifndef __ASSET_MANAGER_HPP__
+#define __ASSET_MANAGER_HPP__
 
 
 #include <map>
@@ -15,7 +15,7 @@
 namespace Dodge {
 
 
-class SharedAssetManager {
+class AssetManager {
    public:
       inline void addAsset(long name, boost::shared_ptr<Asset> obj);
       inline void freeAsset(long name);
@@ -30,38 +30,38 @@ class SharedAssetManager {
 };
 
 //===========================================
-// SharedAssetManager::addAsset
+// AssetManager::addAsset
 //===========================================
-void SharedAssetManager::addAsset(long name, boost::shared_ptr<Asset> obj) {
+void AssetManager::addAsset(long name, boost::shared_ptr<Asset> obj) {
    m_assets[name] = std::move(obj);
 }
 
 //===========================================
-// SharedAssetManager::freeAsset
+// AssetManager::freeAsset
 //===========================================
-void SharedAssetManager::freeAsset(long name) {
+void AssetManager::freeAsset(long name) {
    m_assets.erase(name);
 }
 
 //===========================================
-// SharedAssetManager::freeAllAssets
+// AssetManager::freeAllAssets
 //===========================================
-void SharedAssetManager::freeAllAssets() {
+void AssetManager::freeAllAssets() {
    m_assets.clear();
 }
 
 //===========================================
-// SharedAssetManager::cloneAsset
+// AssetManager::cloneAsset
 //===========================================
-Asset* SharedAssetManager::cloneAsset(long name) const {
+Asset* AssetManager::cloneAsset(long name) const {
    assetMap_t::const_iterator i = m_assets.find(name);
    return i != m_assets.end() ? i->second->clone() : NULL;
 }
 
 //===========================================
-// SharedAssetManager::getAssetPointer
+// AssetManager::getAssetPointer
 //===========================================
-boost::shared_ptr<Asset> SharedAssetManager::getAssetPointer(long name) const {
+boost::shared_ptr<Asset> AssetManager::getAssetPointer(long name) const {
    assetMap_t::const_iterator i = m_assets.find(name);
    return i != m_assets.end() ? i->second : boost::shared_ptr<Asset>();
 }

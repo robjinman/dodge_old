@@ -22,10 +22,14 @@ class Entity;
 
 class EntityTransformations {
    public:
+      EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data) {} // TODO
+
       EntityTransformations(Entity* entity)
          : m_entity(entity) {}
 
       EntityTransformations(const EntityTransformations& copy, Entity* entity);
+
+      virtual void assignData(const rapidxml::xml_node<>* data);
 
       inline void addTransformation(pTransformation_t trans);
 
@@ -40,7 +44,6 @@ class EntityTransformations {
       Transformation::state_t getTransState(long name) const;
 
       virtual void update();
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

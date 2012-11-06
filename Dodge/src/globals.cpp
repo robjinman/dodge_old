@@ -13,6 +13,10 @@ namespace Dodge {
 
 StackAllocator gMemStack(GLOBAL_STACK_SIZE);
 
+
+//===========================================
+// gGetPixelSize
+//===========================================
 Vec2f gGetPixelSize() {
    Renderer renderer;
    WinIO win;

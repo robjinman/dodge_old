@@ -73,6 +73,15 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 }
 #endif
 
+//===========================================
+// Entity::Entity
+//===========================================
+Entity::Entity(const rapidxml::xml_node<>* data)
+   : m_silent(false) {
+
+   assignData(data);
+   ++m_count;
+}
 
 //===========================================
 // Entity::Entity

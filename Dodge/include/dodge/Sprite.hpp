@@ -14,6 +14,7 @@
 #include "Entity.hpp"
 #include "EntityAnimations.hpp"
 #include "EntityTransformations.hpp"
+#include "xml.hpp"
 
 
 namespace Dodge {
@@ -25,6 +26,11 @@ class Sprite
      public EntityTransformations {
 
    public:
+      Sprite(const rapidxml::xml_node<>* data)
+         : Entity(nthChild(data, 0)),
+           EntityAnimations(this, nthChild(data, 1)),
+           EntityTransformations(this, nthChild(data, 2)) {}
+
       Sprite(long type, pTexture_t texture)
          : Entity(type), EntityAnimations(this, texture), EntityTransformations(this) {}
 
@@ -35,13 +41,12 @@ class Sprite
 
       Sprite(const Sprite& copy, long name);
 
-      // TODO
-      virtual Sprite* clone() const { return NULL; }
+      virtual Sprite* clone() const;
+      virtual void assignData(const rapidxml::xml_node<>* data);
 
       virtual void draw() const;
       virtual void update();
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

@@ -11,6 +11,7 @@ include $(BASE_DIR)/renderer/Makefile.inc
 include $(BASE_DIR)/ui/Makefile.inc
 OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/AnimFrame.o \
+	$(BASE_DIR)/AssetManager.o \
 	$(BASE_DIR)/Box2dPhysics.o \
 	$(BASE_DIR)/EEvent.o \
 	$(BASE_DIR)/Entity.o \
@@ -26,10 +27,10 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/PhysicalSprite.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Shape.o \
-	$(BASE_DIR)/SharedAssetManager.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \
 	$(BASE_DIR)/Transformation.o \
 	$(BASE_DIR)/TransFrame.o \
-	$(BASE_DIR)/WorldSpace.o
+	$(BASE_DIR)/WorldSpace.o \
+	$(BASE_DIR)/xml.o

@@ -23,6 +23,8 @@ namespace Dodge {
 
 class EntityAnimations {
    public:
+      EntityAnimations(Entity* entity, const rapidxml::xml_node<>* data) {} // TODO
+
       EntityAnimations(Entity* entity, pTexture_t texture)
          : m_entity(entity),
            m_texture(texture),
@@ -30,6 +32,8 @@ class EntityAnimations {
            m_activeAnim() {}
 
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
+
+      virtual void assignData(const rapidxml::xml_node<>* data);
 
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
@@ -48,7 +52,6 @@ class EntityAnimations {
       inline void stopAnimation();
       virtual void draw() const;
       virtual void update();
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

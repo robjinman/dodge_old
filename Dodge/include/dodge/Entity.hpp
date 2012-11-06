@@ -32,13 +32,14 @@ typedef boost::shared_ptr<Entity> pEntity_t;
 
 class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
    public:
+      Entity(const rapidxml::xml_node<>* data);
       Entity(long type);
       Entity(long name, long type);
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);
 
-      // TODO
-      virtual Entity* clone() const { return NULL; }
+      virtual Entity* clone() const = 0;
+      virtual void assignData(const rapidxml::xml_node<>* data);
 
       // Derived classes may need these
       virtual void addToWorld() {}
@@ -97,8 +98,6 @@ class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
 
       virtual void draw() const {}
       virtual void update() {}
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

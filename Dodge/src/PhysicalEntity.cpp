@@ -10,28 +10,11 @@ namespace Dodge {
 
 
 //===========================================
-// PhysicalEntity::PhysicalEntity
+// PhysicalEntity::clone
 //===========================================
-PhysicalEntity::PhysicalEntity(pEntityPhysicsImpl_t impl, long type)
-   : Entity(type), EntityPhysics(this, std::move(impl)) {}
-
-//===========================================
-// PhysicalEntity::PhysicalEntity
-//===========================================
-PhysicalEntity::PhysicalEntity(pEntityPhysicsImpl_t impl, long name, long type)
-   : Entity(name, type), EntityPhysics(this, std::move(impl)) {}
-
-//===========================================
-// PhysicalEntity::PhysicalEntity
-//===========================================
-PhysicalEntity::PhysicalEntity(const PhysicalEntity& copy)
-   : Entity(copy), EntityPhysics(copy, this) {}
-
-//===========================================
-// PhysicalEntity::PhysicalEntity
-//===========================================
-PhysicalEntity::PhysicalEntity(const PhysicalEntity& copy, long name)
-   : Entity(copy, name), EntityPhysics(copy, this) {}
+PhysicalEntity* PhysicalEntity::clone() const {
+   return new PhysicalEntity(*this);
+}
 
 //===========================================
 // PhysicalEntity::assignData
