@@ -7,7 +7,6 @@
 #define __PHYSICAL_ENTITY_HPP__
 
 
-#include <boost/shared_ptr.hpp>
 #include "Entity.hpp"
 #include "EntityPhysics.hpp"
 #ifdef DEBUG
@@ -20,34 +19,84 @@
 namespace Dodge {
 
 
-class PhysicalEntity : public Entity, public EntityPhysics {
+template <class T_PHYSICS>
+class PhysicalEntity : public Entity, public T_PHYSICS {
+
+   static_assert(
+      std::is_base_of<EntityPhysics, T_PHYSICS>::value,
+      "T_PHYSICS is not an implementation of EntityPhysics"
+   );
+
    public:
       PhysicalEntity(const rapidxml::xml_node<>* data)
-         : Entity(nthChild(data, 0)), EntityPhysics(nthChild(data, 1)) {}
+         : Entity(nthChild(data, 0)), T_PHYSICS(nthChild(data, 1), this) {}
 
-      PhysicalEntity(pEntityPhysicsImpl_t impl, long type)
-         : Entity(type), EntityPhysics(this, std::move(impl)) {}
+      PhysicalEntity(long type)
+         : Entity(type), T_PHYSICS(this) {}
 
-      PhysicalEntity(pEntityPhysicsImpl_t impl, long name, long type)
-         : Entity(name, type), EntityPhysics(this, std::move(impl)) {}
+      PhysicalEntity(long name, long type)
+         : Entity(name, type), T_PHYSICS(this) {}
+
+      PhysicalEntity(long type, const EntityPhysics::options_t& options)
+         : Entity(type), T_PHYSICS(this, options) {}
+
+      PhysicalEntity(long name, long type, const EntityPhysics::options_t& options)
+         : Entity(name, type), T_PHYSICS(this, options) {}
 
       PhysicalEntity(const PhysicalEntity& copy)
-         : Entity(copy), EntityPhysics(copy, this) {}
+         : Entity(copy), T_PHYSICS(copy, this) {}
 
       PhysicalEntity(const PhysicalEntity& copy, long name)
-         : Entity(copy, name), EntityPhysics(copy, this) {}
+         : Entity(copy, name), T_PHYSICS(copy, this) {}
 
-      virtual PhysicalEntity* clone() const;
-      virtual void assignData(const rapidxml::xml_node<>* data);
-#ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab = 0) const;
-#endif
-      virtual void addToWorld();
-      virtual void removeFromWorld();
-      virtual void update();
+      //===========================================
+      // PhysicalEntity::clone
+      //===========================================
+      virtual PhysicalEntity* clone() const {
+         return new PhysicalEntity(*this);
+      }
+
+      //===========================================
+      // PhysicalEntity::assignData
+      //===========================================
+      virtual void assignData(const rapidxml::xml_node<>* data) {
+         Entity::assignData(data);
+         T_PHYSICS::assignData(data);
+      }
+
+      #ifdef DEBUG
+      //===========================================
+      // PhysicalEntity::dbg_print
+      //===========================================
+      virtual void dbg_print(std::ostream& out, int tab) const {
+         for (int i = 0; i < tab; ++i) out << "\t";
+         out << "PhysicalEntity:\n";
+         Entity::dbg_print(out, tab + 1);
+         T_PHYSICS::dbg_print(out, tab + 1);
+      }
+      #endif
+
+      //===========================================
+      // PhysicalEntity::addToWorld
+      //===========================================
+      virtual void addToWorld() {
+         T_PHYSICS::addToWorld();
+      }
+
+      //===========================================
+      // PhysicalEntity::removeFromWorld
+      //===========================================
+      virtual void removeFromWorld() {
+         T_PHYSICS::removeFromWorld();
+      }
+
+      //===========================================
+      // PhysicalEntity::update
+      //===========================================
+      virtual void update() {
+         Entity::update();
+      }
 };
-
-typedef boost::shared_ptr<PhysicalEntity> pPhysicalEntity_t;
 
 
 }

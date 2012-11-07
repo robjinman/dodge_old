@@ -7,8 +7,8 @@
 #define __ENTITY_PHYSICS_HPP__
 
 
-#include "EntityPhysicsImpl.hpp"
 #include "Entity.hpp"
+#include "math/Vec2f.hpp"
 #ifdef DEBUG
 #include <ostream>
 #include "rapidxml/rapidxml.hpp"
@@ -20,82 +20,49 @@ namespace Dodge {
 
 class EntityPhysics {
    public:
-      EntityPhysics(const rapidxml::xml_node<>* data) {} // TODO
-      EntityPhysics(Entity* entity, pEntityPhysicsImpl_t impl);
-      EntityPhysics(const EntityPhysics& copy, Entity* entity);
+      struct options_t {
+         options_t(bool dynamic_, bool fixedAngle_, float32_t density_, float32_t friction_)
+            : dynamic(dynamic_), fixedAngle(fixedAngle_), density(density_), friction(friction_) {}
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
+         bool dynamic;
+         bool fixedAngle;
+         float32_t density;
+         float32_t friction;
+      };
+
+      EntityPhysics(Entity* entity) {}
+      EntityPhysics(Entity* entity, const options_t& options) {}
+      EntityPhysics(const EntityPhysics& copy, Entity* entity) {}
+      EntityPhysics(Entity* entity, const rapidxml::xml_node<>* data) {}
+
+      virtual void addToWorld() = 0;
+      virtual void removeFromWorld() = 0;
+
+      virtual EntityPhysics* clone() const = 0;
+      virtual void assignData(const rapidxml::xml_node<>* data) = 0;
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab = 0) const;
+      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
 #endif
-      virtual void addToWorld();
-      virtual void removeFromWorld();
+      virtual void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p) = 0;
+      virtual void applyForce(const Vec2f& force, const Vec2f& p) = 0;
+      virtual void applyLinearImpulse(const Vec2f& impulse) = 0;
+      virtual void applyForce(const Vec2f& force) = 0;
+      virtual void makeDynamic() = 0;
+      virtual void makeStatic() = 0;
+      virtual Vec2f getLinearVelocity() const = 0;
 
-      inline void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p);
-      inline void applyForce(const Vec2f& force, const Vec2f& p);
-      inline void applyLinearImpulse(const Vec2f& impulse);
-      inline void applyForce(const Vec2f& force);
-      inline void makeDynamic();
-      inline void makeStatic();
-      inline Vec2f getLinearVelocity() const;
+//    Derived class must implement:
+//    static void loadSettings(const std::string& file);
+//    static void update();
 
       virtual ~EntityPhysics() {}
 
-   private:
-      pEntityPhysicsImpl_t m_impl;
+   protected:
+      virtual void setEntity(Entity* entity) = 0;
 };
 
-//===========================================
-// EntityPhysics::applyLinearImpulse
-//===========================================
-inline void EntityPhysics::applyLinearImpulse(const Vec2f& impulse, const Vec2f& p) {
-   m_impl->applyLinearImpulse(impulse, p);
-}
-
-//===========================================
-// EntityPhysics::applyLinearImpulse
-//===========================================
-inline void EntityPhysics::applyLinearImpulse(const Vec2f& impulse) {
-   m_impl->applyLinearImpulse(impulse);
-}
-
-//===========================================
-// EntityPhysics::applyForce
-//===========================================
-inline void EntityPhysics::applyForce(const Vec2f& force, const Vec2f& p) {
-   m_impl->applyForce(force, p);
-}
-
-//===========================================
-// EntityPhysics::applyForce
-//===========================================
-inline void EntityPhysics::applyForce(const Vec2f& force) {
-   m_impl->applyForce(force);
-}
-
-//===========================================
-// EntityPhysics::makeDynamic
-//===========================================
-inline void EntityPhysics::makeDynamic() {
-   m_impl->makeDynamic();
-}
-
-//===========================================
-// EntityPhysics::makeStatic
-//===========================================
-inline void EntityPhysics::makeStatic() {
-   m_impl->makeStatic();
-}
-
-//===========================================
-// EntityPhysics::getLinearVelocity
-//===========================================
-inline Vec2f EntityPhysics::getLinearVelocity() const {
-   return m_impl->getLinearVelocity();
-}
-
 
 }
 
 
-#endif /*!__ENTITY_PHYSICS_HPP__*/
+#endif

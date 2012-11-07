@@ -65,8 +65,9 @@ int main() {
    pTexture_t tex0(new Texture("sprite1.png"));
    pTexture_t tex1(new Texture("sprite2.png"));
 
-   unique_ptr<Box2dPhysics> spr1Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
-   sprite1 = pPhysicalSprite_t(new PhysicalSprite(move(spr1Phys), internString("sprite1"), internString("shape"), tex0));
+//   unique_ptr<Box2dPhysics> spr1Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
+//   sprite1 = pPhysicalSprite_t(new PhysicalSprite(move(spr1Phys), internString("sprite1"), internString("shape"), tex0));
+   sprite1 = boost::shared_ptr<PhysicalSprite<Box2dPhysics> >(new PhysicalSprite<Box2dPhysics>(internString("sprite1"), internString("shape"), tex0, EntityPhysics::options_t(false, false, 1.f, 0.3f)));
    sprite1->setTextureSection(0, 0, 128, 64);
 
    unique_ptr<Polygon> poly(new Polygon);
@@ -83,8 +84,9 @@ int main() {
    sprite1->setScale(Vec2f(2.f, 1.5f));
    sprite1->setRotation(0.f);
 
-   unique_ptr<Box2dPhysics> spr2Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
-   sprite2 = pPhysicalSprite_t(new PhysicalSprite(move(spr2Phys), internString("sprite2"), internString("shape"), tex1));
+//   unique_ptr<Box2dPhysics> spr2Phys(new Box2dPhysics(false, false, 1.f, 0.3f));
+//   sprite2 = pPhysicalSprite_t(new PhysicalSprite(move(spr2Phys), internString("sprite2"), internString("shape"), tex1));
+   sprite2 = boost::shared_ptr<PhysicalSprite<Box2dPhysics> >(new PhysicalSprite<Box2dPhysics>(internString("sprite2"), internString("shape"), tex1, EntityPhysics::options_t(true, false, 1.f, 0.3f)));
    sprite2->setTranslation(320.f * gGetPixelSize().x, 400.f * gGetPixelSize().y);
    sprite2->setZ(2);
    sprite2->setTextureSection(0, 0, 32, 32);

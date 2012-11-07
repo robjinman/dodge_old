@@ -40,6 +40,13 @@ Sprite::Sprite(const Sprite& copy, long name)
 void Sprite::deepCopy(const Sprite& copy) {}
 
 //===========================================
+// Sprite::clone
+//===========================================
+Sprite* Sprite::clone() const {
+   return new Sprite(*this);
+}
+
+//===========================================
 // Sprite::assignData
 //===========================================
 void Sprite::assignData(const xml_node<>* data) {

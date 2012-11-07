@@ -9,7 +9,7 @@
 
 #include "../Box2D/Box2D.h"
 #include "definitions.hpp"
-#include "EntityPhysicsImpl.hpp"
+#include "EntityPhysics.hpp"
 
 
 namespace Dodge {
@@ -19,16 +19,34 @@ class Entity;
 class EEvent;
 class EEntityMoved;
 
-class Box2dPhysics : public EntityPhysicsImpl {
+class Box2dPhysics : public EntityPhysics {
    public:
-      Box2dPhysics(bool dynamic, bool fixedAngle, float32_t density, float32_t friction)
-         : m_dynamic(dynamic), m_fixedAngle(fixedAngle), m_density(density), m_friction(friction) {}
+      Box2dPhysics(Entity* entity)
+         : EntityPhysics(entity),
+           m_entity(entity),
+           m_body(NULL),
+           m_dynamic(false),
+           m_fixedAngle(false),
+           m_density(1.f),
+           m_friction(0.3f) {}
 
-      Box2dPhysics(const Box2dPhysics& copy) {
-         deepCopy(copy);
-      }
+      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
+         : EntityPhysics(entity, options),
+           m_entity(entity),
+           m_body(NULL),
+           m_dynamic(options.dynamic),
+           m_fixedAngle(options.fixedAngle),
+           m_density(options.density),
+           m_friction(options.friction) {}
 
-      virtual EntityPhysicsImpl* clone() const;
+      Box2dPhysics(Entity* entity, const rapidxml::xml_node<>* data)
+         : EntityPhysics(entity, data),
+           m_entity(entity),
+           m_body(NULL) {} // TODO
+
+      Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
+
+      virtual EntityPhysics* clone() const;
       virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
@@ -74,8 +92,8 @@ class Box2dPhysics : public EntityPhysicsImpl {
 
       bool m_init;
 
-      b2Body* m_body;
       Entity* m_entity;
+      b2Body* m_body;
       unsigned int m_numFixtures;
 
       bool m_dynamic;

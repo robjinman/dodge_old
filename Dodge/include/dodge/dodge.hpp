@@ -19,7 +19,6 @@
 #include "Entity.hpp"
 #include "EntityAnimations.hpp"
 #include "EntityPhysics.hpp"
-#include "EntityPhysicsImpl.hpp"
 #include "EventManager.hpp"
 #include "Exception.hpp"
 #include "GL_CHECK.hpp"

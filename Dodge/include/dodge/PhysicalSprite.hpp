@@ -7,7 +7,6 @@
 #define __PHYSICAL_SPRITE_HPP__
 
 
-#include <boost/shared_ptr.hpp>
 #include "renderer/Texture.hpp"
 #include "Sprite.hpp"
 #include "EntityPhysics.hpp"
@@ -21,34 +20,84 @@
 namespace Dodge {
 
 
-class PhysicalSprite : public Sprite, public EntityPhysics {
+template <class T_PHYSICS>
+class PhysicalSprite : public Sprite, public T_PHYSICS {
+
+   static_assert(
+      std::is_base_of<EntityPhysics, T_PHYSICS>::value,
+      "T_PHYSICS is not an implementation of EntityPhysics"
+   );
+
    public:
       PhysicalSprite(const rapidxml::xml_node<>* data)
-         : Sprite(nthChild(data, 0)), EntityPhysics(nthChild(data, 1)) {}
+         : Sprite(nthChild(data, 0)), T_PHYSICS(nthChild(data, 1), this) {}
 
-      PhysicalSprite(pEntityPhysicsImpl_t impl, long type, pTexture_t texture)
-         : Sprite(type, texture), EntityPhysics(this, std::move(impl)) {}
+      PhysicalSprite(long type, pTexture_t texture)
+         : Sprite(type, texture), T_PHYSICS(this) {}
 
-      PhysicalSprite(pEntityPhysicsImpl_t impl, long name, long type, pTexture_t texture)
-         : Sprite(name, type, texture), EntityPhysics(this, std::move(impl)) {}
+      PhysicalSprite(long name, long type, pTexture_t texture)
+         : Sprite(name, type, texture), T_PHYSICS(this) {}
+
+      PhysicalSprite(long type, pTexture_t texture, const EntityPhysics::options_t& options)
+         : Sprite(type, texture), T_PHYSICS(this, options) {}
+
+      PhysicalSprite(long name, long type, pTexture_t texture, const EntityPhysics::options_t& options)
+         : Sprite(name, type, texture), T_PHYSICS(this, options) {}
 
       PhysicalSprite(const PhysicalSprite& copy)
-         : Sprite(copy), EntityPhysics(copy, this) {}
+         : Sprite(copy), T_PHYSICS(copy, this) {}
 
       PhysicalSprite(const PhysicalSprite& copy, long name)
-         : Sprite(copy, name), EntityPhysics(copy, this) {}
+         : Sprite(copy, name), T_PHYSICS(copy, this) {}
 
-      virtual PhysicalSprite* clone() const;
-      virtual void assignData(const rapidxml::xml_node<>* data);
-#ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab = 0) const;
-#endif
-      virtual void addToWorld();
-      virtual void removeFromWorld();
-      virtual void update();
+      //===========================================
+      // PhysicalSprite::clone
+      //===========================================
+      virtual PhysicalSprite* clone() const {
+         return new PhysicalSprite(*this);
+      }
+
+      //===========================================
+      // PhysicalSprite::assignData
+      //===========================================
+      virtual void assignData(const rapidxml::xml_node<>* data) {
+         Sprite::assignData(data);
+         T_PHYSICS::assignData(data);
+      }
+
+      #ifdef DEBUG
+      //===========================================
+      // PhysicalSprite::dbg_print
+      //===========================================
+      virtual void dbg_print(std::ostream& out, int tab) const {
+         for (int i = 0; i < tab; ++i) out << "\t";
+         out << "PhysicalSprite:\n";
+         Sprite::dbg_print(out, tab + 1);
+         T_PHYSICS::dbg_print(out, tab + 1);
+      }
+      #endif
+
+      //===========================================
+      // PhysicalSprite::addToWorld
+      //===========================================
+      virtual void addToWorld() {
+         T_PHYSICS::addToWorld();
+      }
+
+      //===========================================
+      // PhysicalSprite::removeFromWorld
+      //===========================================
+      virtual void removeFromWorld() {
+         T_PHYSICS::removeFromWorld();
+      }
+
+      //===========================================
+      // PhysicalSprite::update
+      //===========================================
+      virtual void update() {
+         Sprite::update();
+      }
 };
-
-typedef boost::shared_ptr<PhysicalSprite> pPhysicalSprite_t;
 
 
 }

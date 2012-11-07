@@ -30,6 +30,17 @@ b2World Box2dPhysics::m_world = b2World(m_gravity, true);
 
 
 //===========================================
+// Box2dPhysics::Box2dPhysics
+//===========================================
+Box2dPhysics::Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
+   : EntityPhysics(copy, entity),
+     m_entity(entity),
+     m_body(NULL) {
+
+   deepCopy(copy);
+}
+
+//===========================================
 // Box2dPhysics::deepCopy
 //===========================================
 void Box2dPhysics::deepCopy(const Box2dPhysics& copy) {
@@ -53,7 +64,7 @@ void Box2dPhysics::deepCopy(const Box2dPhysics& copy) {
 //===========================================
 // Box2dPhysics::clone
 //===========================================
-EntityPhysicsImpl* Box2dPhysics::clone() const {
+EntityPhysics* Box2dPhysics::clone() const {
    return new Box2dPhysics(*this);
 }
 
