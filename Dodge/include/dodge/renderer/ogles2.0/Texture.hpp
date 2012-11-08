@@ -8,6 +8,8 @@
 
 
 #include <GLES2/gl2.h>
+#include <boost/shared_ptr.hpp>
+#include "../../rapidxml/rapidxml.hpp"
 #include "../../definitions.hpp"
 #include "../../pnglite/pnglite.h"
 #include "../../Asset.hpp"
@@ -19,10 +21,10 @@ namespace Dodge {
 // PNG/OGLES2 implementation
 class Texture : public Asset {
    public:
+      Texture(const rapidxml::xml_node<>* data);
       Texture(const char* file);
 
-      // TODO
-      virtual Texture* clone() const { return NULL; }
+      virtual Texture* clone() const;
 
       inline GLint getWidth() const;
       inline GLint getHeight() const;
@@ -30,6 +32,9 @@ class Texture : public Asset {
       inline const GLuint& getHandle() const;
 
    private:
+      void constructTexture(const char* file);
+      void pngInit() const;
+
       png_t m_png;
       byte_t* m_data;
       GLint m_width;
@@ -37,7 +42,7 @@ class Texture : public Asset {
       GLuint m_handle;
 };
 
-typedef sharedPtr_t<Texture> pTexture_t;
+typedef boost::shared_ptr<Texture> pTexture_t;
 
 //===========================================
 // Texture::getWidth

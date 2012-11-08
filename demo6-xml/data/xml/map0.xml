@@ -1,34 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gameMap>
    <using>
-      <file>planet.xml</file>
       <file>player.xml</file>
+<!--
       <file>soil.xml</file>
+-->
    </using>
    <assets>
-      <asset class="Soil" id="fehwerw764" proto="3yrqw903o4f">
-         <Soil>
-            <Item>
-               <Sprite>
-                  <Entity type="soil" name="soil1,0" x="0.00" y="0.0" z="2" rot="0.0"/>
-               </Sprite>
-            </Item>
-         </Soil>
-      </asset>
-      <asset class="Planet" id="efhweuir9w" proto="fhweufe23d">
-         <Planet>
-            <Item>
-               <Sprite>
-                  <Entity type="planet" name="jupiter" x="1.00" y="1.00" z="2" rot="0.0">
-                     <children>
-                        <child ptr="fhwduf93y7"/>
-                        <child ptr="fhwjdfpj23"/>
-                        <child ptr="lskoxdnwdh"/>
-                     </children>
-                  </Entity>
-               </Sprite>
-            </Item>
-         </Planet>
-      </asset>
+      <asset id="100" proto="10"><Player><Item><Sprite><Entity name="player" x="0.00" y="0.00" z="2" rot="0.0"/><EntityAnimations/><EntityTransformations/></Sprite></Item></Player></asset>
+<!--
+      <asset id="101" proto="50"><Soil><Item><Sprite><Entity name="soil1,0" x="0.01" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
+      <asset id="102" proto="50"><Soil><Item><Sprite><Entity name="soil2,0" x="0.02" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
+      <asset id="103" proto="50"><Soil><Item><Sprite><Entity name="soil3,0" x="0.03" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
+      <asset id="104" proto="50"><Soil><Item><Sprite><Entity name="soil4,0" x="0.04" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
+      <asset id="105" proto="50"><Soil><Item><Sprite><Entity name="soil5,0" x="0.05" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
+-->
    </assets>
 </gameMap>

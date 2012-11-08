@@ -8,6 +8,7 @@
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
 #include "EAnimFinished.hpp"
+#include "AssetManager.hpp"
 
 
 using namespace std;
@@ -60,47 +61,97 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 }
 
 //===========================================
+// EntityAnimations::EntityAnimations
+//===========================================
+EntityAnimations::EntityAnimations(Entity* entity, const rapidxml::xml_node<>* data)
+   : m_entity(entity), m_activeAnim() {
+
+   assignData_strict(data);
+}
+
+//===========================================
+// EntityAnimations::assignData_strict
+//
+// XML node must contain ALL required data.
+//===========================================
+void EntityAnimations::assignData_strict(const xml_node<>* data) {
+   if (!data || strcmp(data->name(), "EntityAnimations") != 0)
+      throw Exception("Error parsing XML for instance of class EntityAnimations; expected 'EntityAnimations' tag", __FILE__, __LINE__);
+
+   AssetManager assetManager;
+
+   const xml_node<>* node = data->first_node();
+   if (!node || strcmp(node->name(), "texture") != 0)
+      throw Exception("Error parsing XML for instance of class EntityAnimations; Expected 'texture' tag", __FILE__, __LINE__);
+
+   xml_attribute<>* attr = node->first_attribute();
+   if (attr && strcmp(attr->name(), "id") == 0) {
+      long id = 0;
+      sscanf(attr->value(), "%ld", &id);
+      m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
+
+      if (!m_texture)
+         throw Exception("Error parsing XML for instance of class EntityAnimations; Bad asset id for texture", __FILE__, __LINE__);
+   }
+   else {
+      m_texture = pTexture_t(new Texture(data->first_node()));
+   }
+
+   node = node->next_sibling();
+
+   if (!node || strcmp(node->name(), "textureSection") != 0)
+      throw Exception("Error parsing XML for instance of class EntityAnimations; Expected 'textureSection' tag", __FILE__, __LINE__);
+
+   m_texSection.assignData(node->first_node());
+
+   node = node->next_sibling();
+   while (node) {
+      if (strcmp(node->name(), "animation") != 0)
+         throw Exception("Error parsing XML for instance of class EntityAnimations; Expected 'animation' tag", __FILE__, __LINE__);
+
+      pAnimation_t anim(new Animation(node->first_node()));
+      m_animations[anim->getName()] = anim;
+
+      node = node->next_sibling();
+   }
+}
+
+//===========================================
 // EntityAnimations::assignData
 //===========================================
 void EntityAnimations::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "EntityAnimations") != 0)
-      throw Exception("Error parsing XML for instance of class EntityAnimations", __FILE__, __LINE__);
+   if (!data || strcmp(data->name(), "EntityAnimations") != 0)
+      throw Exception("Error parsing XML for instance of class EntityAnimations; expected 'EntityAnimations' tag", __FILE__, __LINE__);
+
+   AssetManager assetManager;
 
    const xml_node<>* node = data->first_node();
-   if (node && strcmp(node->name(), "Image") == 0) {
+   if (node && strcmp(node->name(), "texture") == 0) {
+
       xml_attribute<>* attr = node->first_attribute();
+      if (attr && strcmp(attr->name(), "id") == 0) {
+         long id = 0;
+         sscanf(attr->value(), "%ld", &id);
+         m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
-      string path;
-      int w, h;
-
-      if (attr && strcmp(attr->name(), "path") == 0) {
-         path.assign(attr->value());
-         attr = attr->next_attribute();
-
-         if (attr && strcmp(attr->name(), "w") == 0) {
-            sscanf(attr->value(), "%d", &w);
-            attr = attr->next_attribute();
-
-            if (attr && strcmp(attr->name(), "h") == 0) {
-               sscanf(attr->value(), "%d", &h);
-
-               m_texture = pTexture_t(new Texture(path.data()));
-            }
-         }
+         if (!m_texture)
+            throw Exception("Error parsing XML for instance of class EntityAnimations; Bad asset id for texture", __FILE__, __LINE__);
       }
+      else {
+         m_texture = pTexture_t(new Texture(data->first_node()));
+      }
+
       node = node->next_sibling();
    }
-   if (node && strcmp(node->name(), "textureSection") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) m_texSection.assignData(child);
-   }
-   while (node) {
-      if (strcmp(node->name(), "Animation") == 0) {
-         pAnimation_t anim(new Animation());
-         anim->assignData(node);
-         m_animations[anim->getName()] = anim;
-      }
 
+   if (node && strcmp(node->name(), "textureSection") == 0) {
+      m_texSection.assignData(node->first_node());
+      node = node->next_sibling();
+   }
+
+   while (node && strcmp(node->name(), "animation") == 0) {
+      pAnimation_t anim(new Animation(node->first_node()));
+      m_animations[anim->getName()] = anim;
       node = node->next_sibling();
    }
 }

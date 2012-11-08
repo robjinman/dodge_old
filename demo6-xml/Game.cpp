@@ -146,7 +146,7 @@ void Game::computeFrameRate() {
    }
 }
 
-void Game::playerSetup() {
+void Game::playerSetup() {/*
    float32_t w = 32.f * gGetPixelSize().x;
    float32_t h = 32.f * gGetPixelSize().y;
 
@@ -216,7 +216,7 @@ void Game::playerSetup() {
    m_player->setTranslation(w * 7.f, h * 5.f);
    m_player->setZ(2);
 
-   m_worldSpace.trackEntity(m_player);
+   m_worldSpace.trackEntity(m_player);*/
 }
 
 void Game::buttonPressHandler(pEntity_t entity) {
@@ -227,7 +227,7 @@ void Game::buttonReleaseHandler(pEntity_t entity) {
    std::cout << "Button Released!\n";
 }
 
-void Game::uiSetup() {
+void Game::uiSetup() {/*
    pTexture_t tex(new Texture("data/textures/ss8x8squares128x128y.png"));
    pUiButton_t btn(new UiButton(internString("button1"), tex));
 
@@ -273,25 +273,44 @@ void Game::uiSetup() {
    btn->setOnPressHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonPressHandler));
    btn->setOnReleaseHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonReleaseHandler));
 
-   m_entities.push_back(btn);
+   m_entities.push_back(btn);*/
 }
 
-Asset* Game::constructAsset(const xml_node<>* data) {
-   Asset* asset = NULL;
+boost::shared_ptr<Asset> Game::constructAsset(const xml_node<>* data, long proto) {
+   // if proto = -1 asset is *not* constructed from prototype
+
+   boost::shared_ptr<Asset> asset;
 
    if (strcmp(data->name(), "Texture") == 0) {
 //      asset = new Texture;
       // TODO
    }
    else if (strcmp(data->name(), "Player") == 0) {
-//      Entity* entity = new Player;
-//      entity->assignData(data);
-//      asset = entity;
+      if (proto == -1) {
+         m_player = pPlayer_t(new Player(data));
+      }
+      else {
+         Player* player = dynamic_cast<Player*>(m_assetManager.cloneAsset(proto));
+
+         if (!player)
+            throw Exception("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
+
+         m_player = pPlayer_t(player);
+         m_player->assignData(data);
+      }
+
+      m_player->addToWorld();
+      m_worldSpace.trackEntity(m_player);
+
+      asset = m_player;
    }
-   else if (strcmp(data->name(), "Soil") == 0) {
-//      Entity* entity = new Soil;
-//      entity->assignData(data);
-//      asset = entity;
+   else if (strcmp(data->name(), "Soil") == 0) {/*
+      pSoil_t soil(new Soil(data));
+      soil->addToWorld();
+      m_worldSpace.trackEntity(soil);
+      m_items.push_back(soil);
+
+      asset = soil;*/
    }
    else
       throw Exception("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
@@ -299,27 +318,10 @@ Asset* Game::constructAsset(const xml_node<>* data) {
    return asset;
 }
 
-pEntity_t Game::constructEntity(const xml_node<>* data) {
-   pEntity_t entity;
-/*
-   if (strcmp(data->name(), "Soil") == 0)
-      entity = pEntity_t(new Soil);
-   else if (strcmp(data->name(), "Player") == 0)
-      entity = pEntity_t(new Player);
-   else
-      throw Exception("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
-*/
-   entity->assignData(data);
-
-   return entity;
-}
-
 void Game::parseDefinitionFile(const string& file) {
-   long id;
-
    ifstream fin(file);
    if (!fin.good())
-      throw Exception("Error parsing xml file; bad file", __FILE__, __LINE__);
+      throw Exception("Error parsing XML file; Bad file", __FILE__, __LINE__);
 
    // Get file length
    fin.seekg (0, ios::end);
@@ -337,7 +339,7 @@ void Game::parseDefinitionFile(const string& file) {
    }
    catch (parse_error& e) {
       stringstream msg;
-      msg << "Error parsing xml file: " << e.what() << " at byte "
+      msg << "Error parsing XML file: " << e.what() << " at byte "
          << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
 
       throw Exception(msg.str(), __FILE__, __LINE__);
@@ -345,20 +347,30 @@ void Game::parseDefinitionFile(const string& file) {
 
    // First node is XML declaration
    xml_node<>* decl = doc.first_node();
-   xml_node<>* node0 = NULL;
+   xml_node<>* node = NULL;
 
-   if (decl) node0 = decl->next_sibling();
-   if (!node0 || strcmp(node0->name(), "def") != 0)
-      throw Exception("Error parsing xml file; expected 'def'", __FILE__, __LINE__);
+   if (decl) node = decl->next_sibling();
+   if (!node || strcmp(node->name(), "assets") != 0)
+      throw Exception("Error parsing XML file; expected 'assets' tag", __FILE__, __LINE__);
 
-   const xml_attribute<>* attr = node0->first_attribute();
-   if (attr && strcmp(attr->name(), "id") == 0)
-      id = internString(attr->value());
-   else
-      throw Exception("Error parsing xml file; Expected id attribute", __FILE__, __LINE__);
+   node = node->first_node();
 
-   boost::shared_ptr<Asset> asset(constructAsset(node0->first_node()));
-   m_assetManager.addAsset(id, asset);
+   while (node) {
+      if (!node || strcmp(node->name(), "asset") != 0)
+         throw Exception("Error parsing XML file; expected 'asset' tag", __FILE__, __LINE__);
+
+      const xml_attribute<>* attr = node->first_attribute();
+      if (!attr || strcmp(attr->name(), "id") != 0)
+         throw Exception("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
+
+      long id = 0;
+      sscanf(attr->value(), "%ld", &id);
+
+      boost::shared_ptr<Asset> asset = constructAsset(node->first_node());
+      m_assetManager.addAsset(id, asset);
+
+      node = node->next_sibling();
+   }
 }
 
 void Game::loadMap() {
@@ -368,7 +380,7 @@ void Game::loadMap() {
 
       ifstream fin(strMap.str());
       if (!fin.good())
-         throw Exception("Error parsing xml file; bad file", __FILE__, __LINE__);
+         throw Exception("Error parsing XML file; bad file", __FILE__, __LINE__);
 
       // Get file length
       fin.seekg (0, ios::end);
@@ -386,7 +398,7 @@ void Game::loadMap() {
       }
       catch (parse_error& e) {
          stringstream msg;
-         msg << "Error parsing xml file: " << e.what() << " at byte "
+         msg << "Error parsing XML file: " << e.what() << " at byte "
             << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
 
          throw Exception(msg.str(), __FILE__, __LINE__);
@@ -394,40 +406,49 @@ void Game::loadMap() {
 
       // First node is XML declaration
       xml_node<>* decl = doc.first_node();
-      xml_node<>* node0 = NULL;
+      xml_node<>* node = NULL;
 
-      if (decl) node0 = decl->next_sibling();
-      if (!node0 || strcmp(node0->name(), "gameMap") != 0)
-         throw Exception("Error parsing xml file; expected 'gameMap'", __FILE__, __LINE__);
+      if (decl) node = decl->next_sibling();
+      if (!node || strcmp(node->name(), "gameMap") != 0)
+         throw Exception("Error parsing XML file; expected 'gameMap'", __FILE__, __LINE__);
 
-      xml_node<>* node1 = node0->first_node();
-      if (!node1 || strcmp(node1->name(), "using") != 0)
-         throw Exception("Error parsing xml file; expected 'using'", __FILE__, __LINE__);
+      node = node->first_node();
+      if (!node || strcmp(node->name(), "using") != 0)
+         throw Exception("Error parsing XML file; expected 'using'", __FILE__, __LINE__);
 
-      // Load item prototypes
-      xml_node<>* node2 = node1->first_node();
-      while (node2) {
-         if (strcmp(node2->name(), "file") == 0) {
-            string path = string("data/xml/").append(node2->value());
+      xml_node<>* node_ = node->first_node();
+      while (node_) {
+         if (strcmp(node_->name(), "file") == 0) {
+            string path = string("data/xml/").append(node_->value());
             parseDefinitionFile(path);
          }
 
-         node2 = node2->next_sibling();
+         node_ = node_->next_sibling();
       }
 
-      node1 = node1->next_sibling();
-      if (!node1 || strcmp(node1->name(), "entities") != 0)
-         throw Exception("Error parsing xml file; expected 'entities'", __FILE__, __LINE__);
+      node = node->next_sibling();
+      if (!node || strcmp(node->name(), "assets") != 0)
+         throw Exception("Error parsing XML file; expected 'assets'", __FILE__, __LINE__);
 
-      node2 = node1->first_node();
-      while (node2) {
-         pEntity_t entity = constructEntity(node2);
+      node = node->first_node();
+      while (node) {
+         if (!node || strcmp(node->name(), "asset") != 0)
+            throw Exception("Error parsing XML file; expected 'asset' tag", __FILE__, __LINE__);
 
-         entity->addToWorld();
-         m_worldSpace.trackEntity(entity);
-         m_entities.push_back(entity);
+         xml_attribute<>* attr = node->first_attribute();
+         if (!attr || strcmp(attr->name(), "id") != 0)
+            throw Exception("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
 
-         node2 = node2->next_sibling();
+         long id = internString(attr->value());
+         long proto = -1;
+
+         attr = attr->next_attribute();
+         if (attr) sscanf(attr->value(), "%ld", &proto);
+
+         boost::shared_ptr<Asset> asset = constructAsset(node->first_node(), proto);
+         m_assetManager.addAsset(id, asset);
+
+         node = node->next_sibling();
       }
    }
    catch (bad_alloc& e) {
@@ -468,9 +489,9 @@ void Game::launch() {
       m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
       m_worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
 
-      for (uint_t i = 0; i < m_entities.size(); ++i) {
-         m_entities[i]->update();
-         m_entities[i]->draw();
+      for (uint_t i = 0; i < m_items.size(); ++i) {
+         m_items[i]->update();
+         m_items[i]->draw();
       }
 
       m_player->update();

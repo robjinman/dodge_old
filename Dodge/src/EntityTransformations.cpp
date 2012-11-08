@@ -52,6 +52,15 @@ EntityTransformations::EntityTransformations(const EntityTransformations& copy, 
 }
 
 //===========================================
+// EntityTransformations::EntityTransformations
+//===========================================
+EntityTransformations::EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data)
+   : m_entity(entity) {
+
+   assignData(data);
+}
+
+//===========================================
 // EntityTransformations::assignData
 //===========================================
 void EntityTransformations::assignData(const xml_node<>* data) {

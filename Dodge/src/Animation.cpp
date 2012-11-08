@@ -51,8 +51,19 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // Animation::Animation
 //===========================================
-Animation::Animation()
-      : m_name(0), m_rate(0.f), m_state(STOPPED), m_frameReady(false) {}
+Animation::Animation(const rapidxml::xml_node<>* data) {
+   assignData(data);
+}
+
+//===========================================
+// Animation::Animation
+//===========================================
+Animation::Animation(const Animation& copy, long name)
+      : m_name(name), m_state(STOPPED), m_frameReady(false) {
+
+   m_rate = copy.m_rate;
+   m_frames = copy.m_frames;
+}
 
 //===========================================
 // Animation::Animation
@@ -61,27 +72,32 @@ Animation::Animation(long name, float32_t rate, const std::vector<AnimFrame>& fr
       : m_name(name), m_rate(rate), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
 
 //===========================================
+// Animation::clone
+//===========================================
+Animation* Animation::clone() const {
+   return new Animation(*this);
+}
+
+//===========================================
 // Animation::assignData
 //===========================================
 void Animation::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Animation") != 0)
-      throw Exception("Error parsing XML for instance of class Animation", __FILE__, __LINE__);
+   if (!data || strcmp(data->name(), "Animation") != 0)
+      throw Exception("Error parsing XML for instance of class Animation; Expected 'Animation' tag", __FILE__, __LINE__);
 
    const xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "name") == 0) {
-      m_name = internString(attr->value());
-   }
+   if (!attr || strcmp(attr->name(), "name") != 0)
+      throw Exception("Error parsing XML for instance of class Animation; Expected 'name' attribute", __FILE__, __LINE__);
+
+   m_name = internString(attr->value());
+
+   attr = attr->next_attribute();
+   if (attr) sscanf(attr->value(), "%f", &m_rate);
 
    const xml_node<>* node = data->first_node();
-   if (node && strcmp(node->name(), "rate") == 0) {
-      sscanf(node->value(), "%f", &m_rate);
-      node = node->next_sibling();
-   }
-
    while (node) {
       if (strcmp(node->name(), "AnimFrame") == 0) {
-         AnimFrame frame;
-         frame.assignData(node);
+         AnimFrame frame(node);
          m_frames.push_back(frame);
       }
 

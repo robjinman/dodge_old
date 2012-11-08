@@ -14,8 +14,9 @@ namespace Dodge {
 //===========================================
 // AnimFrame::AnimFrame
 //===========================================
-AnimFrame::AnimFrame()
-   : pos(0, 0), dim(0, 0) {}
+AnimFrame::AnimFrame(const rapidxml::xml_node<>* data) {
+   assignData(data);
+}
 
 //===========================================
 // AnimFrame::AnimFrame
@@ -58,24 +59,21 @@ AnimFrame& AnimFrame::operator=(const AnimFrame& rhs) {
 // AnimFrame::assignData
 //===========================================
 void AnimFrame::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "AnimFrame") != 0)
-      throw Exception("Error parsing XML for instance of class AnimFrame", __FILE__, __LINE__);
+   if (!data || strcmp(data->name(), "AnimFrame") != 0)
+      throw Exception("Error parsing XML for instance of class AnimFrame; Expected 'AnimFrame' tag", __FILE__, __LINE__);
 
    const xml_node<>* node = data->first_node();
 
    if (node && strcmp(node->name(), "pos") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) pos.assignData(child);
+      pos.assignData(node->first_node());
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "dim") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) dim.assignData(child);
+      dim.assignData(node->first_node());
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "col") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) col.assignData(child);
+      col.assignData(node->first_node());
       node = node->next_sibling();
    }
    if (node && strcmp(node->name(), "shape") == 0) {     // TODO: PrimitiveDelta

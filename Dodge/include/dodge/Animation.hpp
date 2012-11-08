@@ -27,11 +27,11 @@ class Animation : public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
-      Animation();
+      Animation(const rapidxml::xml_node<>* data);
+      Animation(const Animation& copy, long name);
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 
-      // TODO
-      virtual Animation* clone() const { return NULL; }
+      virtual Animation* clone() const;
 
       inline void addFrame(const AnimFrame& frame);
       inline void setFrameRate(float32_t rate);

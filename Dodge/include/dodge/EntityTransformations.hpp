@@ -22,7 +22,7 @@ class Entity;
 
 class EntityTransformations {
    public:
-      EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data) {} // TODO
+      EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data);
 
       EntityTransformations(Entity* entity)
          : m_entity(entity) {}

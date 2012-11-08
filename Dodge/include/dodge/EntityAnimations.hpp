@@ -23,7 +23,7 @@ namespace Dodge {
 
 class EntityAnimations {
    public:
-      EntityAnimations(Entity* entity, const rapidxml::xml_node<>* data) {} // TODO
+      EntityAnimations(Entity* entity, const rapidxml::xml_node<>* data);
 
       EntityAnimations(Entity* entity, pTexture_t texture)
          : m_entity(entity),
@@ -63,6 +63,8 @@ class EntityAnimations {
       inline std::map<long, pAnimation_t>& getAnimations();
 
    private:
+      virtual void assignData_strict(const rapidxml::xml_node<>* data);
+
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;
