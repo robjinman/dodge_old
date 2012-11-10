@@ -12,7 +12,7 @@
 #endif
 #include <map>
 #include "Transformation.hpp"
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 
 
 namespace Dodge {
@@ -22,14 +22,14 @@ class Entity;
 
 class EntityTransformations {
    public:
-      EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data);
+      EntityTransformations(Entity* entity, const XmlNode data);
 
       EntityTransformations(Entity* entity)
          : m_entity(entity) {}
 
       EntityTransformations(const EntityTransformations& copy, Entity* entity);
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void assignData(const XmlNode data);
 
       inline void addTransformation(pTransformation_t trans);
 

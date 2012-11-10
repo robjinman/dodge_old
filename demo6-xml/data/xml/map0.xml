@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<gameMap>
+<ASSETFILE>
    <using>
       <file>player.xml</file>
-<!--
+   <!--
       <file>soil.xml</file>
--->
+   -->
    </using>
    <assets>
       <asset id="100" proto="10"><Player><Item><Sprite><Entity name="player" x="0.00" y="0.00" z="2" rot="0.0"/><EntityAnimations/><EntityTransformations/></Sprite></Item></Player></asset>
-<!--
+   <!--
       <asset id="101" proto="50"><Soil><Item><Sprite><Entity name="soil1,0" x="0.01" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
       <asset id="102" proto="50"><Soil><Item><Sprite><Entity name="soil2,0" x="0.02" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
       <asset id="103" proto="50"><Soil><Item><Sprite><Entity name="soil3,0" x="0.03" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
       <asset id="104" proto="50"><Soil><Item><Sprite><Entity name="soil4,0" x="0.04" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
       <asset id="105" proto="50"><Soil><Item><Sprite><Entity name="soil5,0" x="0.05" y="0.0" z="2" rot="0.0"/></Sprite></Item></Soil></asset>
--->
+   -->
    </assets>
-</gameMap>
+</ASSETFILE>

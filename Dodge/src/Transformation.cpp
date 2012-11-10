@@ -16,6 +16,59 @@ using namespace rapidxml;
 namespace Dodge {
 
 
+//===========================================
+// Transformation::Transformation
+//===========================================
+Transformation::Transformation(long name, double rate, const std::vector<TransFrame>& frames)
+   : m_name(name), m_rate(rate), m_smooth(1), m_frames(frames), m_state(STOPPED),
+     m_frameReady(false), m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
+
+//===========================================
+// Transformation::Transformation
+//===========================================
+Transformation::Transformation(const XmlNode data) {
+   if (data.isNull() || data.name() != "Transformation")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'Transformation' tag", __FILE__, __LINE__);
+
+   XmlAttribute attr = data.firstAttribute();
+   if (attr.isNull() || attr.name() != "name")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'name' attribute", __FILE__, __LINE__);
+
+   m_name = internString(attr.value());
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "rate")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'rate' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%lf", &m_rate);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "smooth")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'smooth' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%d", &m_smooth);
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "TransFrame") {
+      TransFrame frame(node);
+      m_frames.push_back(frame);
+
+      node = node.nextSibling();
+   }
+}
+
+//===========================================
+// Transformation::Transformation
+//===========================================
+Transformation::Transformation(const Transformation& copy, long name)
+   : m_name(name), m_state(STOPPED), m_frameReady(false),
+     m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {
+
+   m_rate = copy.m_name;
+   m_smooth = copy.m_smooth;
+   m_frames = copy.m_frames;
+}
+
 #ifdef DEBUG
 //===========================================
 // Transformation::dbg_print
@@ -43,40 +96,10 @@ void Transformation::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
-// Transformation::Transformation
+// Transformation::clone
 //===========================================
-Transformation::Transformation(long name, double rate, const std::vector<TransFrame>& frames)
-   : m_name(name), m_rate(rate), m_smooth(1), m_frames(frames), m_state(STOPPED),
-     m_frameReady(false), m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
-
-//===========================================
-// Transformation::assignData
-//===========================================
-void Transformation::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Transformation") != 0)
-      throw Exception("Error parsing XML for instance of class Transformation", __FILE__, __LINE__);
-
-   xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "name") == 0) {
-      m_name = internString(attr->value());
-   }
-
-   xml_node<>* node = data->first_node();
-   if (node && strcmp(node->name(), "rate") == 0) {
-      sscanf(node->value(), "%lf", &m_rate);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "smooth") == 0) {
-      sscanf(node->value(), "%d", &m_smooth);
-      node = node->next_sibling();
-   }
-   while (node && strcmp(node->name(), "TransFrame") == 0) {
-      TransFrame frame;
-      frame.assignData(node);
-      m_frames.push_back(frame);
-
-      node = node->next_sibling();
-   }
+Transformation* Transformation::clone() const {
+   return new Transformation(*this);
 }
 
 //===========================================

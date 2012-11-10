@@ -14,6 +14,13 @@ namespace Dodge {
 
 
 //===========================================
+// Ellipse::Ellipse
+//===========================================
+Ellipse::Ellipse(const XmlNode data) {
+   // TODO
+}
+
+//===========================================
 // Ellipse::typeId
 //===========================================
 long Ellipse::typeId() const {
@@ -72,13 +79,6 @@ void Ellipse::rotate(double rads, const Vec2f& pivot) {
 // Ellipse::scale
 //===========================================
 void Ellipse::scale(const Vec2f& sv) {
-   // TODO
-}
-
-//===========================================
-// Ellipse::assignData
-//===========================================
-void Ellipse::assignData(const rapidxml::xml_node<>* data) {
    // TODO
 }
 

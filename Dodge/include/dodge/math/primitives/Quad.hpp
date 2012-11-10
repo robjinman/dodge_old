@@ -10,6 +10,7 @@ namespace Dodge {
 
 class Quad : public Polygon {
    public:
+      explicit Quad(const XmlNode data);
       explicit Quad(const Vec2f& dimensions);
       Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D);
 
@@ -20,7 +21,6 @@ class Quad : public Polygon {
 
       inline void clear();
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif

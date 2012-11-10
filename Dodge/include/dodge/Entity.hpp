@@ -19,7 +19,7 @@
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"
 #include "renderer/Renderer.hpp"
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #include "Asset.hpp"
 
 
@@ -32,14 +32,17 @@ typedef boost::shared_ptr<Entity> pEntity_t;
 
 class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
    public:
-      Entity(const rapidxml::xml_node<>* data);
+      Entity(const XmlNode data);
       Entity(long type);
       Entity(long name, long type);
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);
 
       virtual Entity* clone() const = 0;
-      virtual void assignData(const rapidxml::xml_node<>* data);
+
+      // The XML node needn't contain a complete description of the object.
+      // This function should extract from 'data' any information it can.
+      virtual void assignData(const XmlNode data) = 0;
 
       // Derived classes may need these
       virtual void addToWorld() {}

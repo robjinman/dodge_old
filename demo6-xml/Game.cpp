@@ -276,18 +276,17 @@ void Game::uiSetup() {/*
    m_entities.push_back(btn);*/
 }
 
-boost::shared_ptr<Asset> Game::constructAsset(const xml_node<>* data, long proto) {
+boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
    // if proto = -1 asset is *not* constructed from prototype
 
    boost::shared_ptr<Asset> asset;
 
-   if (strcmp(data->name(), "Texture") == 0) {
-//      asset = new Texture;
-      // TODO
+   if (data.name() == "Texture") {
+      asset = boost::shared_ptr<Asset>(new Texture(data));
    }
-   else if (strcmp(data->name(), "Player") == 0) {
+   else if (data.name() == "Player") {
       if (proto == -1) {
-         m_player = pPlayer_t(new Player(data));
+         asset = pPlayer_t(new Player(data));
       }
       else {
          Player* player = dynamic_cast<Player*>(m_assetManager.cloneAsset(proto));
@@ -297,14 +296,14 @@ boost::shared_ptr<Asset> Game::constructAsset(const xml_node<>* data, long proto
 
          m_player = pPlayer_t(player);
          m_player->assignData(data);
+
+         m_player->addToWorld();
+         m_worldSpace.trackEntity(m_player);
+
+         asset = m_player;
       }
-
-      m_player->addToWorld();
-      m_worldSpace.trackEntity(m_player);
-
-      asset = m_player;
    }
-   else if (strcmp(data->name(), "Soil") == 0) {/*
+   else if (data.name() == "Soil") {/*
       pSoil_t soil(new Soil(data));
       soil->addToWorld();
       m_worldSpace.trackEntity(soil);
@@ -318,143 +317,50 @@ boost::shared_ptr<Asset> Game::constructAsset(const xml_node<>* data, long proto
    return asset;
 }
 
-void Game::parseDefinitionFile(const string& file) {
-   ifstream fin(file);
-   if (!fin.good())
-      throw Exception("Error parsing XML file; Bad file", __FILE__, __LINE__);
+void Game::loadAssets_r(const string& file) {
+   XmlNode decl = parseXmlDocument(file);
+   XmlNode node = decl.nextSibling();
 
-   // Get file length
-   fin.seekg (0, ios::end);
-   int len = fin.tellg();
-   fin.seekg (0, ios::beg);
+   if (node.isNull() || node.name() != "ASSETFILE")
+      throw XmlException("Error parsing XML file; expected 'ASSETFILE' tag", __FILE__, __LINE__);
 
-   // Load data and add null byte
-   unique_ptr<char[]> buf(new char[len + 1]);
-   buf[len] = '\0';
-   fin.read(buf.get(), len);
+   node = node.firstChild();
 
-   xml_document<char> doc;
-   try {
-      doc.parse<parse_full ^ parse_comment_nodes>(buf.get());
-   }
-   catch (parse_error& e) {
-      stringstream msg;
-      msg << "Error parsing XML file: " << e.what() << " at byte "
-         << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
+   if (node.isNull())
+      throw XmlException("Error parsing XML file; expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
-      throw Exception(msg.str(), __FILE__, __LINE__);
+   if (node.name() == "using") {
+      XmlNode node_ = node.firstChild();
+      while (!node_.isNull() && node_.name() == "file") {
+         string path = string("data/xml/").append(node_.value());
+         loadAssets_r(path);
+
+         node_ = node_.nextSibling();
+      }
+
+      node = node.nextSibling();
    }
 
-   // First node is XML declaration
-   xml_node<>* decl = doc.first_node();
-   xml_node<>* node = NULL;
+   if (node.isNull() || node.name() != "assets")
+      throw XmlException("Error parsing XML file; expected 'assets' tag", __FILE__, __LINE__);
 
-   if (decl) node = decl->next_sibling();
-   if (!node || strcmp(node->name(), "assets") != 0)
-      throw Exception("Error parsing XML file; expected 'assets' tag", __FILE__, __LINE__);
-
-   node = node->first_node();
-
-   while (node) {
-      if (!node || strcmp(node->name(), "asset") != 0)
-         throw Exception("Error parsing XML file; expected 'asset' tag", __FILE__, __LINE__);
-
-      const xml_attribute<>* attr = node->first_attribute();
-      if (!attr || strcmp(attr->name(), "id") != 0)
-         throw Exception("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
+   node = node.firstChild();
+   while (!node.isNull() && node.name() == "asset") {
+      XmlAttribute attr = node.firstAttribute();
+      if (attr.isNull() || attr.name() != "id")
+         throw XmlException("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
 
       long id = 0;
-      sscanf(attr->value(), "%ld", &id);
+      long proto = -1;
+      sscanf(attr.value().data(), "%ld", &id);
 
-      boost::shared_ptr<Asset> asset = constructAsset(node->first_node());
+      attr = attr.nextAttribute();
+      if (!attr.isNull()) sscanf(attr.value().data(), "%ld", &proto);
+
+      boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto);
       m_assetManager.addAsset(id, asset);
 
-      node = node->next_sibling();
-   }
-}
-
-void Game::loadMap() {
-   try {
-      stringstream strMap;
-      strMap << "data/xml/map" << m_currentMap << ".xml";
-
-      ifstream fin(strMap.str());
-      if (!fin.good())
-         throw Exception("Error parsing XML file; bad file", __FILE__, __LINE__);
-
-      // Get file length
-      fin.seekg (0, ios::end);
-      int len = fin.tellg();
-      fin.seekg (0, ios::beg);
-
-      // Load data and add null byte
-      unique_ptr<char[]> buf(new char[len + 1]);
-      buf[len] = '\0';
-      fin.read(buf.get(), len);
-
-      xml_document<char> doc;
-      try {
-         doc.parse<parse_full ^ parse_comment_nodes>(buf.get());
-      }
-      catch (parse_error& e) {
-         stringstream msg;
-         msg << "Error parsing XML file: " << e.what() << " at byte "
-            << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
-
-         throw Exception(msg.str(), __FILE__, __LINE__);
-      }
-
-      // First node is XML declaration
-      xml_node<>* decl = doc.first_node();
-      xml_node<>* node = NULL;
-
-      if (decl) node = decl->next_sibling();
-      if (!node || strcmp(node->name(), "gameMap") != 0)
-         throw Exception("Error parsing XML file; expected 'gameMap'", __FILE__, __LINE__);
-
-      node = node->first_node();
-      if (!node || strcmp(node->name(), "using") != 0)
-         throw Exception("Error parsing XML file; expected 'using'", __FILE__, __LINE__);
-
-      xml_node<>* node_ = node->first_node();
-      while (node_) {
-         if (strcmp(node_->name(), "file") == 0) {
-            string path = string("data/xml/").append(node_->value());
-            parseDefinitionFile(path);
-         }
-
-         node_ = node_->next_sibling();
-      }
-
-      node = node->next_sibling();
-      if (!node || strcmp(node->name(), "assets") != 0)
-         throw Exception("Error parsing XML file; expected 'assets'", __FILE__, __LINE__);
-
-      node = node->first_node();
-      while (node) {
-         if (!node || strcmp(node->name(), "asset") != 0)
-            throw Exception("Error parsing XML file; expected 'asset' tag", __FILE__, __LINE__);
-
-         xml_attribute<>* attr = node->first_attribute();
-         if (!attr || strcmp(attr->name(), "id") != 0)
-            throw Exception("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
-
-         long id = internString(attr->value());
-         long proto = -1;
-
-         attr = attr->next_attribute();
-         if (attr) sscanf(attr->value(), "%ld", &proto);
-
-         boost::shared_ptr<Asset> asset = constructAsset(node->first_node(), proto);
-         m_assetManager.addAsset(id, asset);
-
-         node = node->next_sibling();
-      }
-   }
-   catch (bad_alloc& e) {
-      Exception ex("Error loading map; ", __FILE__, __LINE__);
-      ex.append(e.what());
-      throw ex;
+      node = node.nextSibling();
    }
 }
 
@@ -470,7 +376,10 @@ void Game::init() {
 
    m_currentMap = 0;
 
-   loadMap();
+   stringstream strMap;
+   strMap << "data/xml/map" << m_currentMap << ".xml";
+   loadAssets_r(strMap.str());
+
    playerSetup();
    uiSetup();
 

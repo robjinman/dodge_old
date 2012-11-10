@@ -51,8 +51,29 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // Animation::Animation
 //===========================================
-Animation::Animation(const rapidxml::xml_node<>* data) {
-   assignData(data);
+Animation::Animation(const XmlNode data) {
+   if (data.isNull() || data.name() != "Animation")
+      throw XmlException("Error parsing XML for instance of class Animation; Expected 'Animation' tag", __FILE__, __LINE__);
+
+   XmlAttribute attr = data.firstAttribute();
+   if (attr.isNull() || attr.name() != "name")
+      throw XmlException("Error parsing XML for instance of class Animation; Expected 'name' attribute", __FILE__, __LINE__);
+
+   m_name = internString(attr.value());
+
+   attr = attr.nextAttribute();
+   if (attr.isNull() || attr.name() != "rate")
+      throw XmlException("Error parsing XML for instance of class Animation; Expected 'rate' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &m_rate);
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "AnimFrame") {
+      AnimFrame frame(node);
+      m_frames.push_back(frame);
+
+      node = node.nextSibling();
+   }
 }
 
 //===========================================
@@ -76,33 +97,6 @@ Animation::Animation(long name, float32_t rate, const std::vector<AnimFrame>& fr
 //===========================================
 Animation* Animation::clone() const {
    return new Animation(*this);
-}
-
-//===========================================
-// Animation::assignData
-//===========================================
-void Animation::assignData(const xml_node<>* data) {
-   if (!data || strcmp(data->name(), "Animation") != 0)
-      throw Exception("Error parsing XML for instance of class Animation; Expected 'Animation' tag", __FILE__, __LINE__);
-
-   const xml_attribute<>* attr = data->first_attribute();
-   if (!attr || strcmp(attr->name(), "name") != 0)
-      throw Exception("Error parsing XML for instance of class Animation; Expected 'name' attribute", __FILE__, __LINE__);
-
-   m_name = internString(attr->value());
-
-   attr = attr->next_attribute();
-   if (attr) sscanf(attr->value(), "%f", &m_rate);
-
-   const xml_node<>* node = data->first_node();
-   while (node) {
-      if (strcmp(node->name(), "AnimFrame") == 0) {
-         AnimFrame frame(node);
-         m_frames.push_back(frame);
-      }
-
-      node = node->next_sibling();
-   }
 }
 
 //===========================================

@@ -11,7 +11,7 @@
 #include "math/Vec2i.hpp"
 #include "math/primitives/Primitive.hpp"
 #include "renderer/Colour.hpp"
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 
 
 namespace Dodge {
@@ -23,14 +23,12 @@ class AnimFrame {
       std::unique_ptr<Primitive> shape;   // TODO: Eventually change this to PrimitiveDelta
       Colour col;
 
-      AnimFrame(const rapidxml::xml_node<>* data);
+      AnimFrame(const XmlNode data);
       AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Primitive> shape_, const Colour& col_);
       AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_);
       AnimFrame(const AnimFrame& copy);
 
       AnimFrame& operator=(const AnimFrame& rhs);
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 };
 
 

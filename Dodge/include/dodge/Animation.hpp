@@ -13,7 +13,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include "definitions.hpp"
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #include "Exception.hpp"
 #include "AnimFrame.hpp"
 #include "Timer.hpp"
@@ -27,7 +27,7 @@ class Animation : public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
-      Animation(const rapidxml::xml_node<>* data);
+      Animation(const XmlNode data);
       Animation(const Animation& copy, long name);
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 
@@ -51,7 +51,6 @@ class Animation : public Asset {
       inline void stop();
       void update();
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
@@ -68,7 +67,7 @@ class Animation : public Asset {
       bool m_frameReady;   // Indicates when frame is ready to be read via getCurrentFrame()
 };
 
-typedef boost::shared_ptr<Animation> pAnimation_t;
+typedef boost::shared_ptr<Animation> pAnimation_t; // TODO: use unique_ptr instead
 
 //===========================================
 // Animation::addFrame

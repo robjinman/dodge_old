@@ -8,6 +8,7 @@
 #include <EntityTransformations.hpp>
 #include <Entity.hpp>
 #include <ETransFinished.hpp>
+#include <AssetManager.hpp>
 
 
 using namespace rapidxml;
@@ -54,27 +55,57 @@ EntityTransformations::EntityTransformations(const EntityTransformations& copy, 
 //===========================================
 // EntityTransformations::EntityTransformations
 //===========================================
-EntityTransformations::EntityTransformations(Entity* entity, const rapidxml::xml_node<>* data)
+EntityTransformations::EntityTransformations(Entity* entity, const XmlNode data)
    : m_entity(entity) {
 
-   assignData(data);
+   if (data.isNull() || data.name() != "EntityTransformations")
+      throw XmlException("Error parsing XML for instance of class EntityTransformations; Expected 'EntityTransformations' tag", __FILE__, __LINE__);
+
+   AssetManager assetManager;
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "transformation") {
+      XmlAttribute attr = node.firstAttribute();
+      if (!attr.isNull() && attr.name() == "proto") {
+         long id = 0;
+         sscanf(attr.value().data(), "%ld", &id);
+
+         pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
+         m_transformations[trans->getName()] = trans;
+      }
+      else {
+         pTransformation_t trans(new Transformation(node.firstChild()));
+         m_transformations[trans->getName()] = trans;
+      }
+
+      node = node.nextSibling();
+   }
 }
 
 //===========================================
 // EntityTransformations::assignData
 //===========================================
-void EntityTransformations::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "EntityTransformations") != 0)
-      throw Exception("Error parsing XML for instance of class EntityTransformations", __FILE__, __LINE__);
+void EntityTransformations::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "EntityTransformations") return;
 
-   xml_node<>* node = data->first_node();
-   while (node) {
-      if (strcmp(node->name(), "Transformation") == 0) {
-         pTransformation_t trans(new Transformation());
-         trans->assignData(node);
+   AssetManager assetManager;
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "transformation") {
+      XmlAttribute attr = node.firstAttribute();
+      if (!attr.isNull() && attr.name() == "proto") {
+         long id = 0;
+         sscanf(attr.value().data(), "%ld", &id);
+
+         pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
          m_transformations[trans->getName()] = trans;
       }
-      node = node->next_sibling();
+      else {
+         pTransformation_t trans(new Transformation(node.firstChild()));
+         m_transformations[trans->getName()] = trans;
+      }
+
+      node = node.nextSibling();
    }
 }
 

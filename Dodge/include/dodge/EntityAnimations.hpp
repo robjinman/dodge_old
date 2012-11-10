@@ -10,7 +10,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #include "Animation.hpp"
 #include "Entity.hpp"
 #include "renderer/Texture.hpp"
@@ -23,7 +23,7 @@ namespace Dodge {
 
 class EntityAnimations {
    public:
-      EntityAnimations(Entity* entity, const rapidxml::xml_node<>* data);
+      EntityAnimations(Entity* entity, const XmlNode data);
 
       EntityAnimations(Entity* entity, pTexture_t texture)
          : m_entity(entity),
@@ -33,12 +33,12 @@ class EntityAnimations {
 
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void assignData(const XmlNode data);
 
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
 
-      void addAnimation(pAnimation_t anim);
+      void addAnimation(pAnimation_t anim); // TODO: use unique_ptr instead
       void removeAnimation(long anim);
 
       inline const Range& getTextureSection() const;
@@ -63,8 +63,6 @@ class EntityAnimations {
       inline std::map<long, pAnimation_t>& getAnimations();
 
    private:
-      virtual void assignData_strict(const rapidxml::xml_node<>* data);
-
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;

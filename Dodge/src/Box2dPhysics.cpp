@@ -41,6 +41,17 @@ Box2dPhysics::Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
 }
 
 //===========================================
+// Box2dPhysics::Box2dPhysics
+//===========================================
+Box2dPhysics::Box2dPhysics(Entity* entity, const XmlNode data)
+   : EntityPhysics(entity, data),
+     m_entity(entity),
+     m_body(NULL) {
+
+   // TODO
+}
+
+//===========================================
 // Box2dPhysics::deepCopy
 //===========================================
 void Box2dPhysics::deepCopy(const Box2dPhysics& copy) {
@@ -71,7 +82,7 @@ EntityPhysics* Box2dPhysics::clone() const {
 //===========================================
 // Box2dPhysics::assignData
 //===========================================
-void Box2dPhysics::assignData(const rapidxml::xml_node<>* data) {
+void Box2dPhysics::assignData(const XmlNode data) {
    // TODO
 }
 

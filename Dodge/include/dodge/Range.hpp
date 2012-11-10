@@ -7,7 +7,7 @@
 #define __RANGE_HPP__
 
 
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #include "math/Vec2f.hpp"
 #ifdef DEBUG
    #include <ostream>
@@ -23,6 +23,8 @@ class Range {
       Range()
          : m_pos(0.f, 0.f), m_size(0.f, 0.f) {}
 
+      Range(const XmlNode data);
+
       Range(float32_t x, float32_t y, float32_t w, float32_t h)
          : m_pos(x, y), m_size(w, h) {}
 
@@ -33,7 +35,6 @@ class Range {
       void dbg_print(std::ostream& out, int tab) const;
       void dbg_draw(int z, const Colour& col) const;
 #endif
-      void assignData(const rapidxml::xml_node<>* data);
 
       inline void setPosition(float32_t x, float32_t y);
       inline void setSize(float32_t w, float32_t h);

@@ -9,6 +9,7 @@ include $(BASE_DIR)/$(PLATFORM)/Makefile.inc
 include $(BASE_DIR)/math/Makefile.inc
 include $(BASE_DIR)/renderer/Makefile.inc
 include $(BASE_DIR)/ui/Makefile.inc
+include $(BASE_DIR)/xml/Makefile.inc
 OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/AnimFrame.o \
 	$(BASE_DIR)/AssetManager.o \
@@ -29,5 +30,4 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/StringId.o \
 	$(BASE_DIR)/Transformation.o \
 	$(BASE_DIR)/TransFrame.o \
-	$(BASE_DIR)/WorldSpace.o \
-	$(BASE_DIR)/xml.o
+	$(BASE_DIR)/WorldSpace.o

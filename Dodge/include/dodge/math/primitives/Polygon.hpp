@@ -21,6 +21,7 @@ namespace Dodge {
 class Polygon : public Primitive {
    public:
       Polygon();
+      explicit Polygon(const XmlNode data);
       Polygon(const Polygon& copy);
 
       static const int MAX_VERTS = 8;
@@ -42,8 +43,6 @@ class Polygon : public Primitive {
       virtual Vec2f getMaximum() const;
       virtual void rotate(double deg, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif

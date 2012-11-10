@@ -16,28 +16,36 @@ namespace Dodge {
 
 
 //===========================================
-// Colour::assignData
+// Colour::Colour
 //===========================================
-void Colour::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Colour") != 0)
-      throw Exception("Error parsing XML for instance of class Colour", __FILE__, __LINE__);
+Colour::Colour(const XmlNode data) {
+   if (data.isNull() || data.name() != "Colour")
+      throw XmlException("Error parsing XML for instance of class Colour; Expected 'Colour' tag", __FILE__, __LINE__);
 
-   const xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "r") == 0) {
-      sscanf(attr->value(), "%f", &r);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "g") == 0) {
-      sscanf(attr->value(), "%f", &g);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "b") == 0) {
-      sscanf(attr->value(), "%f", &b);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "a") == 0) {
-      sscanf(attr->value(), "%f", &a);
-   }
+   XmlAttribute attr = data.firstAttribute();
+
+   if (attr.isNull() || attr.name() != "r")
+      throw XmlException("Error parsing XML for instance of class Colour; Expected 'r' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &r);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "g")
+      throw XmlException("Error parsing XML for instance of class Colour; Expected 'g' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &g);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "b")
+      throw XmlException("Error parsing XML for instance of class Colour; Expected 'b' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &b);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "a")
+      throw XmlException("Error parsing XML for instance of class Colour; Expected 'a' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &a);
 }
 
 

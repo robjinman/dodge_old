@@ -12,9 +12,8 @@
 #include "EntityPhysics.hpp"
 #ifdef DEBUG
 #include <ostream>
-#include "rapidxml/rapidxml.hpp"
 #endif
-#include "xml.hpp"
+#include "xml/xml.hpp"
 
 
 namespace Dodge {
@@ -29,8 +28,8 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
    );
 
    public:
-      PhysicalSprite(const rapidxml::xml_node<>* data)
-         : Sprite(nthChild(data, 0)), T_PHYSICS(nthChild(data, 1), this) {}
+      PhysicalSprite(const XmlNode data)
+         : Sprite(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {}
 
       PhysicalSprite(long type, pTexture_t texture)
          : Sprite(type, texture), T_PHYSICS(this) {}
@@ -60,9 +59,12 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::assignData
       //===========================================
-      virtual void assignData(const rapidxml::xml_node<>* data) {
-         Sprite::assignData(data);
-         T_PHYSICS::assignData(data);
+      virtual void assignData(const XmlNode data) {
+         if (data.isNull() || data.name() != "PhysicalSprite")
+            throw XmlException("Error parsing XML for instance of class PhysicalSprite; Expected 'PhysicalSprite' tag", __FILE__, __LINE__);
+
+         Sprite::assignData(data.nthChild(0));
+         T_PHYSICS::assignData(data.nthChild(1));
       }
 
       #ifdef DEBUG

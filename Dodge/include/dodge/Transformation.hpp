@@ -10,7 +10,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #include <boost/shared_ptr.hpp>
 #include "math/Vec2f.hpp"
 #include "Exception.hpp"
@@ -36,10 +36,11 @@ class Transformation : public Asset {
            m_frameReady(false),
            m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
 
+      Transformation(const XmlNode data);
+      Transformation(const Transformation& copy, long name);
       Transformation(long name, double rate, const std::vector<TransFrame>& frames);
 
-      // TODO
-      virtual Transformation* clone() const { return NULL; }
+      virtual Transformation* clone() const;
 
       inline void setName(long name);
       inline void addFrame(const TransFrame& frame);
@@ -62,7 +63,6 @@ class Transformation : public Asset {
       void play();
       void update();
 
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

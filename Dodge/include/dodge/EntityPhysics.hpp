@@ -11,7 +11,7 @@
 #include "math/Vec2f.hpp"
 #ifdef DEBUG
 #include <ostream>
-#include "rapidxml/rapidxml.hpp"
+#include "xml/xml.hpp"
 #endif
 
 
@@ -33,13 +33,13 @@ class EntityPhysics {
       EntityPhysics(Entity* entity) {}
       EntityPhysics(Entity* entity, const options_t& options) {}
       EntityPhysics(const EntityPhysics& copy, Entity* entity) {}
-      EntityPhysics(Entity* entity, const rapidxml::xml_node<>* data) {}
+      EntityPhysics(Entity* entity, const XmlNode data) {}
 
       virtual void addToWorld() = 0;
       virtual void removeFromWorld() = 0;
 
       virtual EntityPhysics* clone() const = 0;
-      virtual void assignData(const rapidxml::xml_node<>* data) = 0;
+      virtual void assignData(const XmlNode data) = 0;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
 #endif

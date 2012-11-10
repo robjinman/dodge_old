@@ -14,6 +14,29 @@ namespace Dodge {
 //===========================================
 // Quad::Quad
 //===========================================
+Quad::Quad(const XmlNode data) {
+   if (data.isNull() || data.name() != "Quad")
+      throw XmlException("Error parsing XML for instance of class Quad; Expected 'Quad' tag", __FILE__, __LINE__);
+
+   clear();
+   int n = 0;
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "Vec2f") {
+      Vec2f vert(node);
+      addVertex(vert);
+
+      ++n;
+      node = node.nextSibling();
+   }
+
+   if (n != 4)
+      throw XmlException("Error parsing XML for instance of class Quad; expected 4 vertices", __FILE__, __LINE__);
+}
+
+//===========================================
+// Quad::Quad
+//===========================================
 Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D) {
    addVertex(A);
    addVertex(B);
@@ -45,33 +68,6 @@ void Quad::dbg_print(std::ostream& out, int tab) const {
    }
 }
 #endif
-
-//===========================================
-// Quad::assignData
-//===========================================
-void Quad::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Quad") != 0)
-      throw Exception("Error parsing XML for instance of class Quad", __FILE__, __LINE__);
-
-   clear();
-   int n = 0;
-
-   xml_node<>* node = data->first_node();
-   while (node) {
-      if (strcmp(node->name(), "Vec2f") == 0) {
-         Vec2f vert;
-         vert.assignData(node);
-
-         addVertex(vert);
-
-         ++n;
-      }
-      node = node->next_sibling();
-   }
-
-   if (n != 4)
-      throw Exception("Error parsing XML for instance of class Quad; expected 4 vertices", __FILE__, __LINE__);
-}
 
 
 }

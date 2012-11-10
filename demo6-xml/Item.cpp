@@ -1,4 +1,3 @@
-#include <dodge/rapidxml/rapidxml.hpp>
 #include "EPendingDeletion.hpp"
 #include "Item.hpp"
 
@@ -21,10 +20,9 @@ void Item::setPendingDeletion() {
 //===========================================
 // Item::assignData
 //===========================================
-void Item::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Item") != 0)
-      throw Exception("Error parsing XML for instance of class Item", __FILE__, __LINE__);
+void Item::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "Item")
+      throw Exception("Error parsing XML for instance of class Item; Expected 'Item' tag", __FILE__, __LINE__);
 
-   const xml_node<>* node = data->first_node();
-   if (node) Sprite::assignData(node);
+   Sprite::assignData(data.firstChild());
 }

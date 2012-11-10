@@ -39,15 +39,11 @@ class Box2dPhysics : public EntityPhysics {
            m_density(options.density),
            m_friction(options.friction) {}
 
-      Box2dPhysics(Entity* entity, const rapidxml::xml_node<>* data)
-         : EntityPhysics(entity, data),
-           m_entity(entity),
-           m_body(NULL) {} // TODO
-
+      Box2dPhysics(Entity* entity, const XmlNode data);
       Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
 
       virtual EntityPhysics* clone() const;
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void assignData(const XmlNode data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

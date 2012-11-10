@@ -18,6 +18,8 @@ namespace Dodge {
 
 class LineSegment : public Primitive {
    public:
+      explicit LineSegment(const XmlNode data);
+
       LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
          : m_p1(p1x, p1y), m_p2(p2x, p2y) {}
 
@@ -31,7 +33,6 @@ class LineSegment : public Primitive {
       inline const Vec2f& getPoint2() const;
 
       virtual LineSegment* clone() const;
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif

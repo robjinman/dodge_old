@@ -26,14 +26,14 @@ Texture::Texture(const char* file) {
 //===========================================
 // Texture::Texture
 //===========================================
-Texture::Texture(const xml_node<>* data) {
+Texture::Texture(const XmlNode data) {
    pngInit();
 
-   xml_attribute<>* attr = data->first_attribute();
-   if (!attr || strcmp(attr->name(), "path") != 0)
-      throw Exception("Error constructing texture from XML data; Expected 'path' attribute", __FILE__, __LINE__);
+   XmlAttribute attr = data.firstAttribute();
+   if (attr.isNull() || attr.name() != "path")
+      throw XmlException("Error constructing texture from XML data; Expected 'path' attribute", __FILE__, __LINE__);
 
-   constructTexture(attr->value());
+   constructTexture(attr.value().data());
 }
 
 //===========================================
@@ -43,11 +43,12 @@ void Texture::constructTexture(const char* file) {
    PNG_CHECK(png_open_file(&m_png, file));
 
    m_data = new byte_t[m_png.bpp * m_png.width * m_png.height];
-
    PNG_CHECK(png_get_data(&m_png, m_data));
 
    m_width = m_png.width;
    m_height = m_png.height;
+
+   PNG_CHECK(png_close_file(&m_png));
 
    Renderer renderer;
    m_handle = renderer.newTexture(m_data, m_png.width, m_png.height);

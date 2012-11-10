@@ -11,7 +11,7 @@
 #include "../utils/Functor.hpp"
 #include "../Sprite.hpp"
 #include "EntityUi.hpp"
-#include "../rapidxml/rapidxml.hpp"
+#include "../xml/xml.hpp"
 #ifdef DEBUG
 #include <ostream>
 #endif
@@ -22,6 +22,12 @@ namespace Dodge {
 
 class UiButton : public Sprite, public EntityUi {
    public:
+      UiButton(const XmlNode data, long name)
+         : Sprite(data.firstChild(), name),
+           EntityUi(this),
+           m_onClick(&UiButton::void_entityPtr),
+           m_onRelease(&UiButton::void_entityPtr) {}
+
       UiButton(long type, pTexture_t texture)
          : Sprite(type, texture),
            EntityUi(this),
@@ -58,13 +64,12 @@ class UiButton : public Sprite, public EntityUi {
            m_onClick(&UiButton::void_entityPtr),
            m_onRelease(&UiButton::void_entityPtr) {}
 
-      // TODO
-      virtual UiButton* clone() const { return NULL; }
+      virtual UiButton* clone() const;
 
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out) const;
 #endif
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void assignData(const XmlNode data);
 
       virtual void update();
 

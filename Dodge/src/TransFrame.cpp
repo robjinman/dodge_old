@@ -10,7 +10,37 @@ using namespace rapidxml;
 namespace Dodge {
 
 
+//===========================================
+// TransFrame::Transframe
+//===========================================
+TransFrame::TransFrame(const XmlNode data) {
+   if (data.isNull() || data.name() != "TransFrame")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'TransFrame' tag", __FILE__, __LINE__);
+
+   XmlNode node = data.firstChild();
+   if (node.isNull() || node.name() != "delta")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'delta' tag", __FILE__, __LINE__);
+
+   delta = Vec2f(node.firstChild());
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "rot")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'rot' tag", __FILE__, __LINE__);
+
+   sscanf(node.value().data(), "%f", &rot);
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "scale")
+      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'scale' tag", __FILE__, __LINE__);
+
+   scale = Vec2f(node.firstChild());
+}
+
+
 #ifdef DEBUG
+//===========================================
+// TransFrame::dbg_print
+//===========================================
 void TransFrame::dbg_print(std::ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";
    out << "delta: (" << delta.x << ", " << delta.y << ")\n";
@@ -22,26 +52,6 @@ void TransFrame::dbg_print(std::ostream& out, int tab) const {
    out << "scale: (" << scale.x << ", " << scale.y << ")\n";
 }
 #endif
-
-void TransFrame::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "TransFrame") != 0)
-      throw Exception("Error parsing XML for instance of class Transformation", __FILE__, __LINE__);
-
-   xml_node<>* node = data->first_node();
-   if (node && strcmp(node->name(), "delta") == 0) {
-      xml_node<>* child = node->first_node();
-      if (child) delta.assignData(child);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "rot") == 0) {
-      sscanf(node->value(), "%lf", &rot);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "scale") == 0) {
-      xml_node<>* child = node->first_node();
-      if (child) scale.assignData(child);
-   }
-}
 
 
 }

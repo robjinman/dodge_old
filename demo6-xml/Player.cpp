@@ -16,10 +16,9 @@ Player* Player::clone() const {
 //===========================================
 // Player::assignData
 //===========================================
-void Player::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Player") != 0)
-      throw Exception("Error parsing XML for instance of class Player", __FILE__, __LINE__);
+void Player::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "Player")
+      throw Exception("Error parsing XML for instance of class Player; Expected 'Player' tag", __FILE__, __LINE__);
 
-   const xml_node<>* node = data->first_node();
-   if (node) Item::assignData(node);
+   Item::assignData(data.firstChild());
 }

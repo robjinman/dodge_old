@@ -9,6 +9,7 @@
 #include <EEntityMoved.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
+#include <AssetManager.hpp>
 
 
 using namespace rapidxml;
@@ -76,10 +77,86 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // Entity::Entity
 //===========================================
-Entity::Entity(const rapidxml::xml_node<>* data)
+Entity::Entity(const XmlNode data)
    : m_silent(false) {
 
-   assignData(data);
+   if (data.isNull() || data.name() != "Entity")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'Entity' tag", __FILE__, __LINE__);
+
+   AssetManager assetManager;
+
+   XmlAttribute attr = data.firstAttribute();
+   if (attr.isNull() || attr.name() != "type")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'type' attribute", __FILE__, __LINE__);
+
+   m_type = internString(attr.value());
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "name")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'name' attribute", __FILE__, __LINE__);
+
+   m_name = internString(attr.value());
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "x")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'x' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &m_transl.x);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "y")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'y' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &m_transl.y);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "z")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'z' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%d", &m_z);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "rot")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'rot' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &m_rot);
+
+   XmlNode node = data.firstChild();
+   if (node.isNull() || node.name() != "scale")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'scale' tag", __FILE__, __LINE__);
+
+   m_scale = Vec2f(node.firstChild());
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "shape")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'shape' tag", __FILE__, __LINE__);
+
+//   m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "children")
+      throw XmlException("Error parsing XML for instance of class Entity; Expected 'children' tag", __FILE__, __LINE__);
+
+   XmlNode node_ = node.firstChild();
+
+   while (!node_.isNull() && node_.name() == "child") {
+      XmlAttribute attr = node_.firstAttribute();
+
+      if (!attr.isNull() && attr.name() == "id") {
+         long id = 0;
+         sscanf(attr.value().data(), "%ld", &id);
+
+         pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
+
+         if (!child)
+            throw XmlException("Error parsing XML for instance of class Entity; Bad entity asset id", __FILE__, __LINE__);
+
+         addChild(child);
+      }
+
+      node_ = node_.nextSibling();
+   }
+
    ++m_count;
 }
 
@@ -158,51 +235,68 @@ long Entity::generateName() {
 
 //===========================================
 // Entity::assignData
+//
+// 'data' contains partial or complete description of the object. This
+// function extracts whatever data is available, but does not raise an
+// error if there is missing data, as this is permitted.
 //===========================================
-void Entity::assignData(const rapidxml::xml_node<>* data) {
-   if (strcmp(data->name(), "Entity") != 0)
-      throw Exception("Error parsing XML for instance of class Entity", __FILE__, __LINE__);
+void Entity::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "Entity") return;
 
-   const xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "type") == 0) {
-      m_type = internString(attr->value());
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "name") == 0) {
-      m_name = internString(attr->value());
-   }
-   const xml_node<>* node = data->first_node();
-   if (node && strcmp(node->name(), "translation") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) m_transl.assignData(child);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "z") == 0) {
-      sscanf(node->value(), "%d", &m_z);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "rotation") == 0) {
-      sscanf(node->value(), "%f", &m_rot);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "scale") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) m_scale.assignData(child);
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "shape") == 0) {
-      const xml_node<>* child = node->first_node();
-      if (child) {
-//         m_shape = unique_ptr<Primitive>(primitiveFactory.create(child));
-      }
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "children") == 0) {
-      const xml_node<>* child = node->first_node();
-      while (child) {
-         // TODO
+   AssetManager assetManager;
 
-         child = child->next_sibling();
+   XmlAttribute attr = data.firstAttribute();
+   if (!attr.isNull() && attr.name() == "type") {
+      m_type = internString(attr.value());
+      attr = attr.nextAttribute();
+   }
+   if (!attr.isNull() && attr.name() == "name") {
+      m_name = internString(attr.value());
+      attr = attr.nextAttribute();
+   }
+   if (!attr.isNull() && attr.name() == "x") {
+      sscanf(attr.value().data(), "%f", &m_transl.x);
+      attr = attr.nextAttribute();
+   }
+   if (!attr.isNull() && attr.name() == "y") {
+      sscanf(attr.value().data(), "%f", &m_transl.y);
+      attr = attr.nextAttribute();
+   }
+   if (!attr.isNull() && attr.name() == "z") {
+      sscanf(attr.value().data(), "%d", &m_z);
+      attr = attr.nextAttribute();
+   }
+   if (!attr.isNull() && attr.name() == "rot") {
+      sscanf(attr.value().data(), "%f", &m_rot);
+   }
+   XmlNode node = data.firstChild();
+   if (!node.isNull() && node.name() == "scale") {
+      m_scale = Vec2f(node.firstChild());
+      node = node.nextSibling();
+   }
+   if (!node.isNull() && node.name() == "shape") {
+//      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      node = node.nextSibling();
+   }
+   if (!node.isNull() && node.name() == "children") {
+      XmlNode node_ = node.firstChild();
+
+      while (!node_.isNull() && node_.name() == "child") {
+         XmlAttribute attr = node_.firstAttribute();
+
+         if (!attr.isNull() && attr.name() == "id") {
+            long id = 0;
+            sscanf(attr.value().data(), "%ld", &id);
+
+            pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
+
+            if (!child)
+               throw XmlException("Error parsing XML for instance of class Entity; Bad entity asset id", __FILE__, __LINE__);
+
+            addChild(child);
+         }
+
+         node_ = node_.nextSibling();
       }
    }
 }

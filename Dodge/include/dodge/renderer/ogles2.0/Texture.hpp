@@ -9,7 +9,7 @@
 
 #include <GLES2/gl2.h>
 #include <boost/shared_ptr.hpp>
-#include "../../rapidxml/rapidxml.hpp"
+#include "../../xml/xml.hpp"
 #include "../../definitions.hpp"
 #include "../../pnglite/pnglite.h"
 #include "../../Asset.hpp"
@@ -21,7 +21,7 @@ namespace Dodge {
 // PNG/OGLES2 implementation
 class Texture : public Asset {
    public:
-      Texture(const rapidxml::xml_node<>* data);
+      Texture(const XmlNode data);
       Texture(const char* file);
 
       virtual Texture* clone() const;

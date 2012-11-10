@@ -14,8 +14,33 @@ namespace Dodge {
 //===========================================
 // AnimFrame::AnimFrame
 //===========================================
-AnimFrame::AnimFrame(const rapidxml::xml_node<>* data) {
-   assignData(data);
+AnimFrame::AnimFrame(const XmlNode data) {
+   if (data.isNull() || data.name() != "AnimFrame")
+      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'AnimFrame' tag", __FILE__, __LINE__);
+
+   XmlNode node = data.firstChild();
+
+   if (node.isNull() || node.name() != "pos")
+      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'pos' tag", __FILE__, __LINE__);
+
+   pos = Vec2i(node.firstChild());
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "dim")
+      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'dim' tag", __FILE__, __LINE__);
+
+   dim = Vec2i(node.firstChild());
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "col")
+      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'col' tag", __FILE__, __LINE__);
+
+   col = Colour(node.firstChild());
+   node = node.nextSibling();
+
+   if (!node.isNull() && node.name() == "shape") {     // TODO: PrimitiveDelta
+//      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+   }
 }
 
 //===========================================
@@ -53,33 +78,6 @@ AnimFrame& AnimFrame::operator=(const AnimFrame& rhs) {
    col = rhs.col;
 
    return *this;
-}
-
-//===========================================
-// AnimFrame::assignData
-//===========================================
-void AnimFrame::assignData(const xml_node<>* data) {
-   if (!data || strcmp(data->name(), "AnimFrame") != 0)
-      throw Exception("Error parsing XML for instance of class AnimFrame; Expected 'AnimFrame' tag", __FILE__, __LINE__);
-
-   const xml_node<>* node = data->first_node();
-
-   if (node && strcmp(node->name(), "pos") == 0) {
-      pos.assignData(node->first_node());
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "dim") == 0) {
-      dim.assignData(node->first_node());
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "col") == 0) {
-      col.assignData(node->first_node());
-      node = node->next_sibling();
-   }
-   if (node && strcmp(node->name(), "shape") == 0) {     // TODO: PrimitiveDelta
-//      const xml_node<>* child = node->first_node();
-//      if (child) shape = primitiveFactory.create(child);
-   }
 }
 
 

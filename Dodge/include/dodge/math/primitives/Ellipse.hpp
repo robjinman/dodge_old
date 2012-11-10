@@ -15,6 +15,8 @@ namespace Dodge {
 
 class Ellipse : public Primitive {
    public:
+      explicit Ellipse(const XmlNode data);
+
       virtual long typeId() const;
 
       virtual Ellipse* clone() const;
@@ -23,8 +25,6 @@ class Ellipse : public Primitive {
       virtual Vec2f getMaximum() const;
       virtual void rotate(double rads, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif

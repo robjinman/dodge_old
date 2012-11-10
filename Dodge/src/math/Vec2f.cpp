@@ -22,21 +22,24 @@ namespace Dodge {
 Vec2f::Vec2f(const Vec2i& v) : x(v.x), y(v.y) {}
 
 //===========================================
-// Vec2f::assignData
+// Vec2f::Vec2f
 //===========================================
-void Vec2f::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Vec2f") != 0)
-      throw Exception("Error parsing XML for instance of class Vec2f", __FILE__, __LINE__);
+Vec2f::Vec2f(const XmlNode data) {
+   if (data.isNull() || data.name() != "Vec2f")
+      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'Vec2f' tag", __FILE__, __LINE__);
 
-   xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "x") == 0) {
-      sscanf(attr->value(), "%f", &x);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "y") == 0) {
-      sscanf(attr->value(), "%f", &y);
-      attr = attr->next_attribute();
-   }
+   XmlAttribute attr = data.firstAttribute();
+
+   if (attr.isNull() || attr.name() != "x")
+      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'x' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &x);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "y")
+      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'y' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &y);
 }
 
 //===========================================

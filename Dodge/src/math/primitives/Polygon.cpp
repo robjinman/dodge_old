@@ -31,10 +31,35 @@ Polygon::Polygon() : m_nVerts(0) {
 
 //===========================================
 // Polygon::Polygon
+//===========================================
+Polygon::Polygon(const XmlNode data) {
+   if (data.isNull() || data.name() != "Polygon")
+      throw XmlException("Error parsing XML for instance of class Polygon; Expected 'Polygon' tag", __FILE__, __LINE__);
+
+   clear();
+   m_verts.resize(Polygon::MAX_VERTS);
+   m_nVerts = 0;
+
+   XmlNode node = data.firstChild();
+   while (!node.isNull() && node.name() == "Vec2f") {
+      boost::shared_ptr<Vec2f> vert(new Vec2f(node));
+      m_verts[m_nVerts] = vert;
+
+      ++m_nVerts;
+      node = node.nextSibling();
+   }
+
+   restructure();
+}
+
+//===========================================
+// Polygon::Polygon
 //
 // Contruct deep copy
 //===========================================
 Polygon::Polygon(const Polygon& poly) {
+   m_verts.resize(Polygon::MAX_VERTS);
+
    for (int i = 0; i < poly.m_nVerts; ++i) {
       boost::shared_ptr<Vec2f> vert(new Vec2f(*poly.m_verts[i])); // Make copy of vertex
       m_verts.push_back(vert);
@@ -74,31 +99,6 @@ long Polygon::typeId() const {
    static long typeId = internString("Polygon");
 
    return typeId;
-}
-
-//===========================================
-// Polygon::assignData
-//===========================================
-void Polygon::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Poly") != 0)
-      throw Exception("Error parsing XML for instance of class Poly", __FILE__, __LINE__);
-
-   clear();
-
-   xml_node<>* node = data->first_node();
-   while (node) {
-      if (strcmp(node->name(), "Vec2f") == 0) {
-         boost::shared_ptr<Vec2f> vert(new Vec2f);
-         vert->assignData(node);
-
-         m_verts[m_nVerts] = vert;
-
-         ++m_nVerts;
-      }
-      node = node->next_sibling();
-   }
-
-   restructure();
 }
 
 //===========================================

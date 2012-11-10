@@ -22,6 +22,28 @@ Renderer LineSegment::m_renderer = Renderer();
 
 
 //===========================================
+// LineSegment::LineSegment
+//===========================================
+LineSegment::LineSegment(const XmlNode data) {
+   if (data.name() != "LineSegment")
+      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'LineSegment' tag", __FILE__, __LINE__);
+
+   XmlNode node = data.firstChild();
+
+   if (node.isNull() || node.name() != "Vec2f")
+      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'Vec2f' tag", __FILE__, __LINE__);
+
+   m_p1 = Vec2f(node);
+
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "Vec2f")
+      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'Vec2f' tag", __FILE__, __LINE__);
+
+   m_p2 = Vec2f(node);
+}
+
+//===========================================
 // LineSegment::typeId
 //===========================================
 long LineSegment::typeId() const {
@@ -52,24 +74,6 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
    out << "p2: (" << m_p2.x << ", " << m_p2.y << ")\n";
 }
 #endif
-
-//===========================================
-// LineSegment::assignData
-//===========================================
-void LineSegment::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "LineSegment") != 0)
-      throw Exception("Error parsing XML for instance of class LineSegment", __FILE__, __LINE__);
-
-   xml_node<>* node = data->first_node();
-
-   if (node && strcmp(node->name(), "Vec2f") == 0)
-      m_p1.assignData(node);
-
-   node = node->next_sibling();
-
-   if (node && strcmp(node->name(), "Vec2f") == 0)
-      m_p2.assignData(node);
-}
 
 //===========================================
 // LineSegment::draw

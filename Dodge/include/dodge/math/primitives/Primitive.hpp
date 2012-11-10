@@ -5,7 +5,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
-#include "../../rapidxml/rapidxml.hpp"
+#include "../../xml/xml.hpp"
 #include "../Vec2f.hpp"
 #include "../../Asset.hpp"
 
@@ -21,7 +21,6 @@ class Primitive : public Asset {
       virtual long typeId() const = 0;
 
       virtual Primitive* clone() const = 0;
-      virtual void assignData(const rapidxml::xml_node<>* data) = 0;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const = 0;
 #endif

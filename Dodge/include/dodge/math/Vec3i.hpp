@@ -8,7 +8,7 @@
 
 
 #include <math.h>
-#include "../rapidxml/rapidxml.hpp"
+#include "../xml/xml.hpp"
 
 
 namespace Dodge {
@@ -21,6 +21,7 @@ class Vec3i {
       int x, y, z;
 
       Vec3i() {}
+      Vec3i(const XmlNode data);
       Vec3i(int x_, int y_, int z_) : x(x_), y(y_), z(z_) {}
       Vec3i(const Vec3i& v) : x(v.x), y(v.y), z(v.z) {}
       Vec3i(const Vec3f& v);
@@ -34,8 +35,6 @@ class Vec3i {
       bool operator!=(const Vec3i& v) const { return !(*this == v); }
 
       Vec3i& operator=(const Vec3i& rhs) { x = rhs.x; y = rhs.y; z = rhs.z; return *this; }
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 };
 
 

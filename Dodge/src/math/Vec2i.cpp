@@ -24,19 +24,22 @@ Vec2i::Vec2i(const Vec2f& v) : x(v.x), y(v.y) {}
 //===========================================
 // Vec2i::Vec2i
 //===========================================
-void Vec2i::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Vec2i") != 0)
-      throw Exception("Error parsing XML for instance of class Vec2i", __FILE__, __LINE__);
+Vec2i::Vec2i(const XmlNode data) {
+   if (data.isNull() || data.name() != "Vec2i")
+      throw XmlException("Error parsing XML for instance of class Vec2i; Expected 'Vec2i' tag", __FILE__, __LINE__);
 
-   xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "x") == 0) {
-      sscanf(attr->value(), "%d", &x);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "y") == 0) {
-      sscanf(attr->value(), "%d", &y);
-      attr = attr->next_attribute();
-   }
+   XmlAttribute attr = data.firstAttribute();
+
+   if (attr.isNull() || attr.name() != "x")
+      throw XmlException("Error parsing XML for instance of class Vec2i; Expected 'x' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%d", &x);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "y")
+      throw XmlException("Error parsing XML for instance of class Vec2i; Expected 'y' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%d", &y);
 }
 
 //===========================================

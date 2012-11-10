@@ -40,6 +40,7 @@
 #include "ui/ui.hpp"
 #include "WinIO.hpp"
 #include "WorldSpace.hpp"
+#include "xml/xml.hpp"
 
 
 #endif

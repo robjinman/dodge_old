@@ -20,10 +20,20 @@ void UiButton::dbg_print(std::ostream& out) const {
 #endif
 
 //===========================================
+// UiButton::clone
+//===========================================
+UiButton* UiButton::clone() const {
+   return new UiButton(*this);
+}
+
+//===========================================
 // UiButton::assignData
 //===========================================
-void UiButton::assignData(const rapidxml::xml_node<>* data) {
-   Sprite::assignData(data);
+void UiButton::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "UiButton")
+      throw XmlException("Error parsing XML for instance of class UiButton; Expected 'UiButton' tag", __FILE__, __LINE__);
+
+   Sprite::assignData(data.firstChild());
 }
 
 //===========================================

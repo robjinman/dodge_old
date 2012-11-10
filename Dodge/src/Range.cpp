@@ -18,10 +18,25 @@ Graphics2d Range::m_graphics2d = Graphics2d();
 
 
 //===========================================
-// Range::assignData
+// Range::Range
 //===========================================
-void Range::assignData(const rapidxml::xml_node<>* data) {
-   // TODO
+Range::Range(const XmlNode data) {
+   if (data.isNull() || data.name() != "Range")
+      throw XmlException("Error constructing Range from XML data; Expected 'Range' tag", __FILE__, __LINE__);
+
+   XmlNode node = data.firstChild();
+
+   if (node.isNull() || node.name() != "pos")
+      throw XmlException("Error constructing Range from XML data; Expected 'pos' tag", __FILE__, __LINE__);
+
+   m_pos = Vec2f(node.firstChild());
+
+   node = node.nextSibling();
+
+   if (node.isNull() || node.name() != "size")
+      throw XmlException("Error constructing Range from XML data; Expected 'size' tag", __FILE__, __LINE__);
+
+   m_size = Vec2f(node.firstChild());
 }
 
 #ifdef DEBUG
@@ -29,7 +44,14 @@ void Range::assignData(const rapidxml::xml_node<>* data) {
 // Range::dbg_print
 //===========================================
 void Range::dbg_print(std::ostream& out, int tab) const {
-   // TODO
+   for (int i = 0; i < tab; ++i) out << "\t";
+   out << "Range\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "pos: (" << m_pos.x << ", " << m_pos.y << ")\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "size: (" << m_size.x << ", " << m_size.y << ")\n";
 }
 
 //===========================================

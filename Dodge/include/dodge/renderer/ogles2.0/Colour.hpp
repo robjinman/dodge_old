@@ -8,7 +8,7 @@
 
 
 #include <GLES2/gl2.h>
-#include "../../rapidxml/rapidxml.hpp"
+#include "../../xml/xml.hpp"
 
 
 namespace Dodge {
@@ -21,13 +21,13 @@ class Colour {
       Colour()
          : r(0), g(0), b(0), a(0) {}
 
+      Colour(const XmlNode data);
+
       Colour(GLfloat r_, GLfloat g_, GLfloat b_, GLfloat a_)
          : r(r_), g(g_), b(b_), a(a_) {}
 
       Colour(const GLfloat col[4])
          : r(col[0]), g(col[1]), b(col[2]), a(col[3]) {}
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 };
 
 

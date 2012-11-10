@@ -7,14 +7,16 @@
 #define __XML_HPP__
 
 
-#include "definitions.hpp"
 #include "rapidxml/rapidxml.hpp"
+#include "XmlNode.hpp"
+#include "XmlAttribute.hpp"
+#include "XmlException.hpp"
 
 
 namespace Dodge {
 
 
-const rapidxml::xml_node<>* nthChild(const rapidxml::xml_node<>* node, uint_t n);
+const XmlNode parseXmlDocument(const std::string& file);
 
 
 }

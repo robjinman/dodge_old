@@ -49,22 +49,18 @@ Sprite* Sprite::clone() const {
 //===========================================
 // Sprite::assignData
 //===========================================
-void Sprite::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Sprite") != 0)
-      throw Exception("Error parsing XML for instance of class Sprite", __FILE__, __LINE__);
+void Sprite::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "Sprite") return;
 
-   const xml_node<>* node = data->first_node();
-   if (node) {
-      Entity::assignData(node);
-      node = node->next_sibling();
-   }
-   if (node) {
-      EntityAnimations::assignData(node);
-      node = node->next_sibling();
-   }
-   if (node) {
-      EntityTransformations::assignData(node);
-   }
+   XmlNode node = data.firstChild();
+
+   Entity::assignData(node);
+   node = node.nextSibling();
+
+   EntityAnimations::assignData(node);
+   node = node.nextSibling();
+
+   EntityTransformations::assignData(node);
 }
 
 #ifdef DEBUG

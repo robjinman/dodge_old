@@ -22,25 +22,30 @@ namespace Dodge {
 Vec3f::Vec3f(const Vec3i& v) : x(v.x), y(v.y), z(v.z) {}
 
 //===========================================
-// Vec3f::assignData
+// Vec3f::Vec3f
 //===========================================
-void Vec3f::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Vec3f") != 0)
-      throw Exception("Error parsing XML for instance of class Vec3f", __FILE__, __LINE__);
+Vec3f::Vec3f(const XmlNode data) {
+   if (data.isNull() || data.name() != "Vec3f")
+      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'Vec3f' tag", __FILE__, __LINE__);
 
-   xml_attribute<>* attr = data->first_attribute();
-   if (attr && strcmp(attr->name(), "x") == 0) {
-      sscanf(attr->value(), "%f", &x);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "y") == 0) {
-      sscanf(attr->value(), "%f", &y);
-      attr = attr->next_attribute();
-   }
-   if (attr && strcmp(attr->name(), "z") == 0) {
-      sscanf(attr->value(), "%f", &z);
-      attr = attr->next_attribute();
-   }
+   XmlAttribute attr = data.firstAttribute();
+
+   if (attr.isNull() || attr.name() != "x")
+      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'x' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &x);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "y")
+      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'y' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &y);
+   attr = attr.nextAttribute();
+
+   if (attr.isNull() || attr.name() != "z")
+      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'z' attribute", __FILE__, __LINE__);
+
+   sscanf(attr.value().data(), "%f", &z);
 }
 
 

@@ -9,7 +9,7 @@
 
 #include <math.h>
 #include "../definitions.hpp"
-#include "../rapidxml/rapidxml.hpp"
+#include "../xml/xml.hpp"
 
 
 namespace Dodge {
@@ -22,6 +22,7 @@ class Vec2i {
       int x, y;
 
       Vec2i() : x(0), y(0) {}
+      Vec2i(const XmlNode data);
       Vec2i(int x_, int y_) : x(x_), y(y_) {}
       Vec2i(const Vec2i& v) : x(v.x), y(v.y) {}
       Vec2i(const Vec2f& v);
@@ -37,8 +38,6 @@ class Vec2i {
       Vec2i& operator=(const Vec2i& rhs) { x = rhs.x; y = rhs.y; return *this; }
 
       void rotate(const Vec2i& p, float32_t a);
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
 };
 
 

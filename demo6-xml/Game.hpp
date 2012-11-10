@@ -24,9 +24,8 @@ class Game {
       void buttonReleaseHandler(Dodge::pEntity_t entity);
 
       void init();
-      void loadMap();
-      void parseDefinitionFile(const std::string& file);
-      boost::shared_ptr<Dodge::Asset> constructAsset(const rapidxml::xml_node<>* data, long proto = -1);
+      void loadAssets_r(const std::string& file);
+      boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto = -1);
       void playerSetup();
       void uiSetup();
 

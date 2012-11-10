@@ -11,9 +11,8 @@
 #include "EntityPhysics.hpp"
 #ifdef DEBUG
 #include <ostream>
-#include "rapidxml/rapidxml.hpp"
 #endif
-#include "xml.hpp"
+#include "xml/xml.hpp"
 
 
 namespace Dodge {
@@ -28,8 +27,8 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
    );
 
    public:
-      PhysicalEntity(const rapidxml::xml_node<>* data)
-         : Entity(nthChild(data, 0)), T_PHYSICS(nthChild(data, 1), this) {}
+      PhysicalEntity(const XmlNode data)
+         : Entity(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {}
 
       PhysicalEntity(long type)
          : Entity(type), T_PHYSICS(this) {}
@@ -59,9 +58,12 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::assignData
       //===========================================
-      virtual void assignData(const rapidxml::xml_node<>* data) {
-         Entity::assignData(data);
-         T_PHYSICS::assignData(data);
+      virtual void assignData(const XmlNode data) {
+         if (data.isNull() || data.name() != "PhysicalEntity")
+            throw XmlException("Error parsing XML for instance of class PhysicalEntity; Expected 'PhysicalEntity' tag", __FILE__, __LINE__);
+
+         Entity::assignData(data.nthChild(0));
+         T_PHYSICS::assignData(data.nthChild(1));
       }
 
       #ifdef DEBUG

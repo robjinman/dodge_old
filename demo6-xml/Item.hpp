@@ -6,13 +6,12 @@
 #include <dodge/Sprite.hpp>
 #include <dodge/math/Vec2f.hpp>
 #include <dodge/EventManager.hpp>
-#include <dodge/rapidxml/rapidxml.hpp>
-#include <dodge/xml.hpp>
+#include <dodge/xml/xml.hpp>
 
 
 class Item : public Dodge::Sprite {
    public:
-      Item(const rapidxml::xml_node<>* data) : Sprite(Dodge::nthChild(data, 0)) {}
+      Item(const Dodge::XmlNode data) : Sprite(data.firstChild()) {}
       Item(const Item& copy) : Sprite(copy) {}
       Item(const Item& copy, long name) : Sprite(copy, name) {}
 
@@ -20,7 +19,7 @@ class Item : public Dodge::Sprite {
       virtual void update() { Sprite::update(); }
 
       virtual Item* clone() const { return new Item(*this); }
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void assignData(const Dodge::XmlNode data);
 
       void setPendingDeletion();
 
