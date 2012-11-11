@@ -26,7 +26,12 @@ Transformation::Transformation(long name, double rate, const std::vector<TransFr
 //===========================================
 // Transformation::Transformation
 //===========================================
-Transformation::Transformation(const XmlNode data) {
+Transformation::Transformation(const XmlNode data)
+   : m_current(0),
+     m_state(STOPPED),
+     m_frameReady(false),
+     m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {
+
    if (data.isNull() || data.name() != "Transformation")
       throw XmlException("Error parsing XML for instance of class Transformation; Expected 'Transformation' tag", __FILE__, __LINE__);
 
@@ -61,10 +66,13 @@ Transformation::Transformation(const XmlNode data) {
 // Transformation::Transformation
 //===========================================
 Transformation::Transformation(const Transformation& copy, long name)
-   : m_name(name), m_state(STOPPED), m_frameReady(false),
+   : m_name(name),
+     m_current(0),
+     m_state(STOPPED),
+     m_frameReady(false),
      m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {
 
-   m_rate = copy.m_name;
+   m_rate = copy.m_rate;
    m_smooth = copy.m_smooth;
    m_frames = copy.m_frames;
 }
@@ -127,6 +135,7 @@ void Transformation::play() {
 //===========================================
 void Transformation::update() {
    if (m_state != PLAYING) return;
+   if (m_frames.empty()) return;
 
    double time = m_timer.getTime();
    double diff = time - m_prev;
@@ -146,7 +155,7 @@ void Transformation::update() {
             dScale.y *= m_frames[m_current / m_smooth].scale.y;
          }
 
-         m_current++;
+         ++m_current;
          if (m_current == m_frames.size() * m_smooth) {
             m_state = STOPPED;
             break;

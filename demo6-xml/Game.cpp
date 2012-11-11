@@ -13,10 +13,16 @@ using namespace rapidxml;
 using namespace std;
 
 
+//===========================================
+// Game::quit
+//===========================================
 void Game::quit() {
    exit(0);
 }
 
+//===========================================
+// Game::keyUp
+//===========================================
 void Game::keyUp(int code) {
    m_keys[code] = false;
 
@@ -30,6 +36,9 @@ void Game::keyUp(int code) {
    }
 }
 
+//===========================================
+// Game::keyDown
+//===========================================
 void Game::keyDown(int code) {
    if (code == WinIO::KEY_LEFT || code == WinIO::KEY_RIGHT
       || code == WinIO::KEY_UP || code == WinIO::KEY_DOWN) {
@@ -44,6 +53,9 @@ void Game::keyDown(int code) {
    }
 }
 
+//===========================================
+// Game::keyboard
+//===========================================
 void Game::keyboard() {
    static long strMoveDown = internString("moveDown");
    static long strMoveLeft = internString("moveLeft");
@@ -126,6 +138,9 @@ void Game::keyboard() {
    }
 }
 
+//===========================================
+// Game::computeFrameRate
+//===========================================
 void Game::computeFrameRate() {
    static long i = 0;
    ++i;
@@ -146,136 +161,9 @@ void Game::computeFrameRate() {
    }
 }
 
-void Game::playerSetup() {/*
-   float32_t w = 32.f * gGetPixelSize().x;
-   float32_t h = 32.f * gGetPixelSize().y;
-
-   pTexture_t texMan(new Texture("data/textures/man.png"));
-   m_player = pSprite_t(new Sprite(internString("m_player"), internString("man"), texMan));
-
-   vector<AnimFrame> aFrames;
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 32.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 64.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 96.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t animMoveDown(new Animation(internString("moveDown"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 32.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 64.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 96.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t animMoveLeft(new Animation(internString("moveLeft"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(64.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(64.f, 32.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(64.f, 64.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(64.f, 96.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t animMoveUp(new Animation(internString("moveUp"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(96.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(96.f, 32.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(96.f, 64.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(96.f, 96.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t animMoveRight(new Animation(internString("moveRight"), 16.f, aFrames));
-
-   m_player->addAnimation(animMoveDown);
-   m_player->addAnimation(animMoveLeft);
-   m_player->addAnimation(animMoveUp);
-   m_player->addAnimation(animMoveRight);
-
-   vector<TransFrame> fFrames;
-   fFrames.push_back(TransFrame(Vec2f(0.f, -h), 0.f, Vec2f(1.f, 1.f)));
-   pTransformation_t transMoveDown(new Transformation(internString("moveDown"), 4.f, fFrames));
-   transMoveDown->setSmooth(8);
-
-   fFrames.clear();
-   fFrames.push_back(TransFrame(Vec2f(-w, 0.f), 0.f, Vec2f(1.f, 1.f)));
-   pTransformation_t transMoveLeft(new Transformation(internString("moveLeft"), 4.f, fFrames));
-   transMoveLeft->setSmooth(8);
-
-   fFrames.clear();
-   fFrames.push_back(TransFrame(Vec2f(0.f, h), 0.f, Vec2f(1.f, 1.f)));
-   pTransformation_t transMoveUp(new Transformation(internString("moveUp"), 4.f, fFrames));
-   transMoveUp->setSmooth(8);
-
-   fFrames.clear();
-   fFrames.push_back(TransFrame(Vec2f(w, 0.f), 0.f, Vec2f(1.f, 1.f)));
-   pTransformation_t transMoveRight(new Transformation(internString("moveRight"), 4.f, fFrames));
-   transMoveRight->setSmooth(8);
-
-   m_player->addTransformation(transMoveDown);
-   m_player->addTransformation(transMoveLeft);
-   m_player->addTransformation(transMoveUp);
-   m_player->addTransformation(transMoveRight);
-
-   m_player->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
-
-   m_player->setTranslation(w * 7.f, h * 5.f);
-   m_player->setZ(2);
-
-   m_worldSpace.trackEntity(m_player);*/
-}
-
-void Game::buttonPressHandler(pEntity_t entity) {
-   std::cout << "Button Pressed!\n";
-}
-
-void Game::buttonReleaseHandler(pEntity_t entity) {
-   std::cout << "Button Released!\n";
-}
-
-void Game::uiSetup() {/*
-   pTexture_t tex(new Texture("data/textures/ss8x8squares128x128y.png"));
-   pUiButton_t btn(new UiButton(internString("button1"), tex));
-
-   vector<AnimFrame> aFrames;
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(16.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(48.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t btnPress(new Animation(internString("press"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 16.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(16.f, 16.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 16.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(48.f, 16.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t btnRelease(new Animation(internString("release"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 32.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(16.f, 32.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 32.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(48.f, 32.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t hoverOn(new Animation(internString("hoverOn"), 16.f, aFrames));
-
-   aFrames.clear();
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 48.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(16.f, 48.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 48.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(48.f, 48.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t hoverOff(new Animation(internString("hoverOff"), 16.f, aFrames));
-
-   btn->addAnimation(btnPress);
-   btn->addAnimation(btnRelease);
-   btn->addAnimation(hoverOn);
-   btn->addAnimation(hoverOff);
-
-   float32_t w = 16.f * gGetPixelSize().x;
-   float32_t h = 16.f * gGetPixelSize().y;
-
-   btn->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
-   btn->setTranslation(0.1f, 0.15f);
-
-   btn->setOnPressHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonPressHandler));
-   btn->setOnReleaseHandler(Functor<void, TYPELIST_1(pEntity_t)>(this, &Game::buttonReleaseHandler));
-
-   m_entities.push_back(btn);*/
-}
-
+//===========================================
+// Game::constructAsset
+//===========================================
 boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
    // if proto = -1 asset is *not* constructed from prototype
 
@@ -317,8 +205,12 @@ boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
    return asset;
 }
 
+//===========================================
+// Game::loadAssets_r
+//===========================================
 void Game::loadAssets_r(const string& file) {
-   XmlNode decl = parseXmlDocument(file);
+   XmlDocument doc;
+   XmlNode decl = doc.parse(file);
    XmlNode node = decl.nextSibling();
 
    if (node.isNull() || node.name() != "ASSETFILE")
@@ -364,6 +256,9 @@ void Game::loadAssets_r(const string& file) {
    }
 }
 
+//===========================================
+// Game::init
+//===========================================
 void Game::init() {
    m_win.init("Shit Game", 640, 480, false);
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Game::quit));
@@ -380,13 +275,13 @@ void Game::init() {
    strMap << "data/xml/map" << m_currentMap << ".xml";
    loadAssets_r(strMap.str());
 
-   playerSetup();
-   uiSetup();
-
    pTexture_t texFont1(new Texture("data/textures/font2.png"));
    m_font1 = pFont_t(new Dodge::Font(texFont1, 0, 0, 852, 792, 71, 98));
 }
 
+//===========================================
+// Game::launch
+//===========================================
 void Game::launch() {
    init();
 

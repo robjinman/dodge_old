@@ -19,6 +19,18 @@ namespace Dodge {
 //===========================================
 // Sprite::Sprite
 //===========================================
+Sprite::Sprite(const XmlNode data)
+   : Entity(data.nthChild(0)),
+     EntityAnimations(this, data.nthChild(1)),
+     EntityTransformations(this, data.nthChild(2)) {
+
+      if (data.isNull() || data.name() != "Sprite")
+         throw XmlException("Error parsing XML for instance of class Sprite; Expected 'Sprite' tag", __FILE__, __LINE__);
+}
+
+//===========================================
+// Sprite::Sprite
+//===========================================
 Sprite::Sprite(const Sprite& copy)
    : Entity(copy), EntityAnimations(copy, this), EntityTransformations(copy, this) {
 
@@ -48,19 +60,27 @@ Sprite* Sprite::clone() const {
 
 //===========================================
 // Sprite::assignData
+//
+// All tags and attributes are optional.
 //===========================================
 void Sprite::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Sprite") return;
 
    XmlNode node = data.firstChild();
 
-   Entity::assignData(node);
-   node = node.nextSibling();
+   if (!node.isNull() && node.name() == "Entity") {
+      Entity::assignData(node);
+      node = node.nextSibling();
+   }
 
-   EntityAnimations::assignData(node);
-   node = node.nextSibling();
+   if (!node.isNull() && node.name() == "EntityAnimations") {
+      EntityAnimations::assignData(node);
+      node = node.nextSibling();
+   }
 
-   EntityTransformations::assignData(node);
+   if (!node.isNull() && node.name() == "EntityTransformations") {
+      EntityTransformations::assignData(node);
+   }
 }
 
 #ifdef DEBUG

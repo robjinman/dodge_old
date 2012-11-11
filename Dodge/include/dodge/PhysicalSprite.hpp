@@ -29,7 +29,11 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
 
    public:
       PhysicalSprite(const XmlNode data)
-         : Sprite(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {}
+         : Sprite(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {
+
+         if (data.isNull() || data.name() != "PhysicalSprite")
+            throw XmlException("Error parsing XML for instance of class PhysicalSprite; Expected 'PhysicalSprite' tag", __FILE__, __LINE__);
+      }
 
       PhysicalSprite(long type, pTexture_t texture)
          : Sprite(type, texture), T_PHYSICS(this) {}
@@ -60,11 +64,18 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::assignData
       //===========================================
       virtual void assignData(const XmlNode data) {
-         if (data.isNull() || data.name() != "PhysicalSprite")
-            throw XmlException("Error parsing XML for instance of class PhysicalSprite; Expected 'PhysicalSprite' tag", __FILE__, __LINE__);
+         if (data.isNull() || data.name() != "PhysicalSprite") return;
 
-         Sprite::assignData(data.nthChild(0));
-         T_PHYSICS::assignData(data.nthChild(1));
+         XmlNode node = data.firstChild();
+
+         if (!node.isNull() && node.name() == "Sprite") {
+            Sprite::assignData(node);
+            node = node.nextSibling();
+         }
+
+         if (!node.isNull() && node.name() == "EntityPhysics") {
+            T_PHYSICS::assignData(data.nthChild(1));
+         }
       }
 
       #ifdef DEBUG

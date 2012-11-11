@@ -33,21 +33,33 @@ class XmlNode {
       const rapidxml::xml_node<>* m_node;
 };
 
+//===========================================
+// XmlNode::name
+//===========================================
 inline std::string XmlNode::name() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return std::string(m_node->name());
 }
 
+//===========================================
+// XmlNode::value
+//===========================================
 inline std::string XmlNode::value() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return std::string(m_node->value());
 }
 
+//===========================================
+// XmlNode::firstChild
+//===========================================
 inline const XmlNode XmlNode::firstChild() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return XmlNode(m_node->first_node());
 }
 
+//===========================================
+// XmlNode::nthChild
+//===========================================
 inline const XmlNode XmlNode::nthChild(uint_t n) const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
 
@@ -57,16 +69,25 @@ inline const XmlNode XmlNode::nthChild(uint_t n) const {
    return c;
 }
 
+//===========================================
+// XmlNode::nextSibling
+//===========================================
 inline const XmlNode XmlNode::nextSibling() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return XmlNode(m_node->next_sibling());
 }
 
+//===========================================
+// XmlNode::firstAttribute
+//===========================================
 inline const XmlAttribute XmlNode::firstAttribute() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return XmlAttribute(m_node->first_attribute());
 }
 
+//===========================================
+// XmlNode::isNull
+//===========================================
 inline bool XmlNode::isNull() const {
    return m_node == NULL;
 }

@@ -76,7 +76,7 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       throw XmlException("Error parsing XML for instance of class EntityAnimations; Expected 'texture' tag", __FILE__, __LINE__);
 
    XmlAttribute attr = node.firstAttribute();
-   if (!attr.isNull() && attr.name() == "id") {
+   if (!attr.isNull() && attr.name() == "ptr") {
       long id = 0;
       sscanf(attr.value().data(), "%ld", &id);
       m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));

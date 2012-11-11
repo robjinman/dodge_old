@@ -7,6 +7,7 @@
 #include "Entity.hpp"
 #include "math/primitives/Primitive.hpp"
 #include "renderer/Renderer.hpp"
+#include "xml/xml.hpp"
 
 
 namespace Dodge {
@@ -14,9 +15,11 @@ namespace Dodge {
 
 class Shape : public Entity {
    public:
+      Shape(const XmlNode data);
       Shape(long type, std::unique_ptr<Primitive> shape);
       Shape(long name, long type, std::unique_ptr<Primitive> shape);
 
+      virtual void assignData(const XmlNode data);
       virtual void draw(const Vec2f& at) const;
 
    private:

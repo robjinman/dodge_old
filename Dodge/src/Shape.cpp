@@ -44,6 +44,30 @@ Shape::Shape(long name, long type, std::unique_ptr<Primitive> shape)
 }
 
 //===========================================
+// Shape::Shape
+//===========================================
+Shape::Shape(const XmlNode data)
+   : Entity(data.firstChild()) {
+
+   if (data.isNull() || data.name() != "Shape")
+      throw XmlException("Error parsing XML for instance of class Shape; Expected 'Shape' tag", __FILE__, __LINE__);
+}
+
+//===========================================
+// Shape::assignData
+//
+// All tags and attributes are optional.
+//===========================================
+void Shape::assignData(const XmlNode data) {
+   if (data.isNull() || data.name() != "Shape") return;
+
+   XmlNode node = data.firstChild();
+   if (!node.isNull() && node.name() == "Entity") {
+      Entity::assignData(node);
+   }
+}
+
+//===========================================
 // Shape::draw
 //===========================================
 void Shape::draw(const Vec2f& at) const {

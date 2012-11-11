@@ -12,7 +12,11 @@ tag and has a 'class' attribute, and an 'id' attribute which uniquely
 identifies it. -->
 <ASSETFILE>
    <assets>
-      <!-- Player -->
+      <!-- 'man' texture -->
+      <asset id="9">
+         <Texture path="data/textures/man.png"/>
+      </asset>
+      <!-- 'player' prototype -->
       <asset id="10">
          <Player>
             <Item>
@@ -23,30 +27,24 @@ identifies it. -->
                      </scale>
                      <shape>
                         <Polygon>
-                           <Vec2f x="0" y="4"/>
-                           <Vec2f x="7" y="0"/>
-                           <Vec2f x="9" y="0"/>
-                           <Vec2f x="16" y="4"/>
-                           <Vec2f x="16" y="16"/>
-                           <Vec2f x="0" y="16"/>
+                           <Vec2f x="0" y="8"/>
+                           <Vec2f x="14" y="0"/>
+                           <Vec2f x="18" y="0"/>
+                           <Vec2f x="32" y="8"/>
+                           <Vec2f x="32" y="32"/>
+                           <Vec2f x="0" y="32"/>
                         </Polygon>
                      </shape>
                      <children/>
                   </Entity>
                   <EntityAnimations>
-   <!--
-                     <texture id="1245"/>
-   -->
-                     <texture>
-                        <Texture path="data/textures/man.png"/>
-                     </texture>
+                     <texture ptr="9"/>
                      <textureSection>
                         <Range>
                            <pos><Vec2f x="0" y="0"/></pos>
-                           <size><Vec2f x="16" y="16"/></size>
+                           <size><Vec2f x="32" y="32"/></size>
                         </Range>
                      </textureSection>
-                     <!-- 'Move down' animation -->
                      <animation>
                         <Animation name="moveDown" rate="16.0">
                            <AnimFrame>
@@ -71,7 +69,6 @@ identifies it. -->
                            </AnimFrame>
                         </Animation>
                      </animation>
-                     <!-- 'Move left' animation -->
                      <animation>
                         <Animation name="moveLeft" rate="16.0">
                            <AnimFrame>
@@ -96,7 +93,6 @@ identifies it. -->
                            </AnimFrame>
                         </Animation>
                      </animation>
-                     <!-- 'Move up' animation -->
                      <animation>
                         <Animation name="moveUp" rate="16.0">
                            <AnimFrame>
@@ -121,7 +117,6 @@ identifies it. -->
                            </AnimFrame>
                         </Animation>
                      </animation>
-                     <!-- 'Move right' animation -->
                      <animation>
                         <Animation name="moveRight" rate="16.0">
                            <AnimFrame>
@@ -150,11 +145,38 @@ identifies it. -->
                   <EntityTransformations>
                      <transformation>
                         <Transformation name="moveDown" rate="4.0" smooth="8">
-                           <Transframe>
-                              <delta><Vec2f x="0.0" y="-32.0"/></delta>
+                           <TransFrame>
+                              <delta><Vec2f x="0.0" y="-32"/></delta>
                               <rot>0.0</rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </Transframe>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveLeft" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="-32" y="0.0"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveUp" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="0.0" y="32"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveRight" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="32" y="0.0"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
                         </Transformation>
                      </transformation>
                   </EntityTransformations>

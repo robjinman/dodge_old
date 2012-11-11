@@ -29,21 +29,33 @@ class XmlAttribute {
       const rapidxml::xml_attribute<>* m_attr;
 };
 
+//===========================================
+// XmlAttribute::name
+//===========================================
 inline std::string XmlAttribute::name() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
    return std::string(m_attr->name());
 }
 
+//===========================================
+// XmlAttribute::value
+//===========================================
 inline std::string XmlAttribute::value() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
    return std::string(m_attr->value());
 }
 
+//===========================================
+// XmlAttribute::nextAttribute
+//===========================================
 inline const XmlAttribute XmlAttribute::nextAttribute() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
    return XmlAttribute(m_attr->next_attribute());
 }
 
+//===========================================
+// XmlAttribute::isNull
+//===========================================
 inline bool XmlAttribute::isNull() const {
    return m_attr == NULL;
 }

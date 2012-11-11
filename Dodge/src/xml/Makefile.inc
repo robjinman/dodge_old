@@ -1,1 +1,1 @@
-OBJS += $(BASE_DIR)/xml/xml.o
+OBJS += $(BASE_DIR)/xml/XmlDocument.o

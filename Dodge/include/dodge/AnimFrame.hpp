@@ -12,6 +12,9 @@
 #include "math/primitives/Primitive.hpp"
 #include "renderer/Colour.hpp"
 #include "xml/xml.hpp"
+#ifdef DEBUG
+#include <ostream>
+#endif
 
 
 namespace Dodge {
@@ -29,6 +32,10 @@ class AnimFrame {
       AnimFrame(const AnimFrame& copy);
 
       AnimFrame& operator=(const AnimFrame& rhs);
+
+#ifdef DEBUG
+      void dbg_print(std::ostream& out, int tab = 0) const;
+#endif
 };
 
 

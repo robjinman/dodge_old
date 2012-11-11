@@ -26,10 +26,7 @@ class Sprite
      public EntityTransformations {
 
    public:
-      Sprite(const XmlNode data)
-         : Entity(data.nthChild(0)),
-           EntityAnimations(this, data.nthChild(1)),
-           EntityTransformations(this, data.nthChild(2)) {}
+      Sprite(const XmlNode data);
 
       Sprite(long type, pTexture_t texture)
          : Entity(type), EntityAnimations(this, texture), EntityTransformations(this) {}

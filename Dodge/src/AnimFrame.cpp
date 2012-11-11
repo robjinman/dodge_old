@@ -68,6 +68,29 @@ AnimFrame::AnimFrame(const AnimFrame& copy) {
    col = copy.col;
 }
 
+#ifdef DEBUG
+//===========================================
+// AnimFrame::AnimFrame
+//===========================================
+void AnimFrame::dbg_print(std::ostream& out, int tab) const {
+   for (int i = 0; i < tab; i++) out << "\t";
+   out << "AnimFrame\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "pos: (" << pos.x << ", " << pos.y << ")\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "dim: (" << dim.x << ", " << dim.y << ")\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "col: (" << col.r << ", " << col.g << ", " << col.b << ", " << col.a << ")\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "shape:\n";
+   if (shape) shape->dbg_print(out, tab + 1);
+}
+#endif
+
 //===========================================
 // AnimFrame::operator=
 //===========================================

@@ -20,14 +20,9 @@ class Game {
       void keyboard();
       void computeFrameRate();
 
-      void buttonPressHandler(Dodge::pEntity_t entity);
-      void buttonReleaseHandler(Dodge::pEntity_t entity);
-
       void init();
       void loadAssets_r(const std::string& file);
       boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto = -1);
-      void playerSetup();
-      void uiSetup();
 
       Dodge::WinIO                     m_win;
       Dodge::Graphics2d                m_graphics2d;

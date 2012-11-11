@@ -28,7 +28,11 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
 
    public:
       PhysicalEntity(const XmlNode data)
-         : Entity(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {}
+         : Entity(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {
+
+         if (data.isNull() || data.name() != "PhysicalEntity")
+            throw XmlException("Error parsing XML for instance of class PhysicalEntity; Expected 'PhysicalEntity' tag", __FILE__, __LINE__);
+      }
 
       PhysicalEntity(long type)
          : Entity(type), T_PHYSICS(this) {}
@@ -59,11 +63,18 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
       // PhysicalEntity::assignData
       //===========================================
       virtual void assignData(const XmlNode data) {
-         if (data.isNull() || data.name() != "PhysicalEntity")
-            throw XmlException("Error parsing XML for instance of class PhysicalEntity; Expected 'PhysicalEntity' tag", __FILE__, __LINE__);
+         if (data.isNull() || data.name() != "PhysicalEntity") return;
 
-         Entity::assignData(data.nthChild(0));
-         T_PHYSICS::assignData(data.nthChild(1));
+         XmlNode node = data.firstChild();
+
+         if (!node.isNull() && node.name() == "Entity") {
+            Entity::assignData(node);
+            node = node.nextSibling();
+         }
+
+         if (!node.isNull() && node.name() == "EntityPhysics") {
+            T_PHYSICS::assignData(data.nthChild(1));
+         }
       }
 
       #ifdef DEBUG

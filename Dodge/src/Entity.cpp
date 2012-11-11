@@ -10,6 +10,7 @@
 #include <Exception.hpp>
 #include <StringId.hpp>
 #include <AssetManager.hpp>
+#include <globals.hpp>
 
 
 using namespace rapidxml;
@@ -51,7 +52,7 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
    out << "shape (src):\n";
-   m_shape->dbg_print(out, tab + 1);
+   if (m_shape) m_shape->dbg_print(out, tab + 1);
 
    for (int i = 0; i < tab + 1; i++) out << "\t";
    out << "boundary:\n";
@@ -102,12 +103,16 @@ Entity::Entity(const XmlNode data)
       throw XmlException("Error parsing XML for instance of class Entity; Expected 'x' attribute", __FILE__, __LINE__);
 
    sscanf(attr.value().data(), "%f", &m_transl.x);
+   m_transl.x *= gGetPixelSize().x;
+
    attr = attr.nextAttribute();
 
    if (attr.isNull() || attr.name() != "y")
       throw XmlException("Error parsing XML for instance of class Entity; Expected 'y' attribute", __FILE__, __LINE__);
 
    sscanf(attr.value().data(), "%f", &m_transl.y);
+   m_transl.y *= gGetPixelSize().y;
+
    attr = attr.nextAttribute();
 
    if (attr.isNull() || attr.name() != "z")
@@ -142,7 +147,7 @@ Entity::Entity(const XmlNode data)
    while (!node_.isNull() && node_.name() == "child") {
       XmlAttribute attr = node_.firstAttribute();
 
-      if (!attr.isNull() && attr.name() == "id") {
+      if (!attr.isNull() && attr.name() == "ptr") {
          long id = 0;
          sscanf(attr.value().data(), "%ld", &id);
 
@@ -256,10 +261,12 @@ void Entity::assignData(const XmlNode data) {
    }
    if (!attr.isNull() && attr.name() == "x") {
       sscanf(attr.value().data(), "%f", &m_transl.x);
+      m_transl.x *= gGetPixelSize().x;
       attr = attr.nextAttribute();
    }
    if (!attr.isNull() && attr.name() == "y") {
       sscanf(attr.value().data(), "%f", &m_transl.y);
+      m_transl.y *= gGetPixelSize().y;
       attr = attr.nextAttribute();
    }
    if (!attr.isNull() && attr.name() == "z") {
@@ -284,7 +291,7 @@ void Entity::assignData(const XmlNode data) {
       while (!node_.isNull() && node_.name() == "child") {
          XmlAttribute attr = node_.firstAttribute();
 
-         if (!attr.isNull() && attr.name() == "id") {
+         if (!attr.isNull() && attr.name() == "ptr") {
             long id = 0;
             sscanf(attr.value().data(), "%ld", &id);
 

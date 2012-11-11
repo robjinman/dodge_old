@@ -10,16 +10,8 @@
 #include "rapidxml/rapidxml.hpp"
 #include "XmlNode.hpp"
 #include "XmlAttribute.hpp"
+#include "XmlDocument.hpp"
 #include "XmlException.hpp"
-
-
-namespace Dodge {
-
-
-const XmlNode parseXmlDocument(const std::string& file);
-
-
-}
 
 
 #endif

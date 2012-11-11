@@ -31,19 +31,9 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 
    for (unsigned int f = 0; f < m_frames.size(); f++) {
       for (int i = 0; i < tab + 1; ++i) out << "\t";
-      out << "frame :\n";
+      out << "frame " << f << ":\n";
 
-      for (int i = 0; i < tab + 2; ++i) out << "\t";
-      out << "pos: (" << m_frames[f].pos.x << ", " << m_frames[f].pos.y << ")\n";
-
-      for (int i = 0; i < tab + 2; ++i) out << "\t";
-      out << "dim: (" << m_frames[f].dim.x << ", " << m_frames[f].dim.y << ")\n";
-
-      for (int i = 0; i < tab + 2; ++i) out << "\t";
-      out << "col: (" << m_frames[f].col.r << ", " << m_frames[f].col.g
-         << ", " << m_frames[f].col.b << ", " << m_frames[f].col.a << ")\n";
-
-      if (m_frames[f].shape) m_frames[f].shape->dbg_print(out, tab + 2);
+      m_frames[f].dbg_print(out, tab + 1);
    }
 }
 #endif
@@ -51,7 +41,9 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // Animation::Animation
 //===========================================
-Animation::Animation(const XmlNode data) {
+Animation::Animation(const XmlNode data)
+   : m_state(STOPPED), m_frameReady(false) {
+
    if (data.isNull() || data.name() != "Animation")
       throw XmlException("Error parsing XML for instance of class Animation; Expected 'Animation' tag", __FILE__, __LINE__);
 
@@ -80,7 +72,7 @@ Animation::Animation(const XmlNode data) {
 // Animation::Animation
 //===========================================
 Animation::Animation(const Animation& copy, long name)
-      : m_name(name), m_state(STOPPED), m_frameReady(false) {
+   : m_name(name), m_state(STOPPED), m_frameReady(false) {
 
    m_rate = copy.m_rate;
    m_frames = copy.m_frames;
@@ -90,7 +82,7 @@ Animation::Animation(const Animation& copy, long name)
 // Animation::Animation
 //===========================================
 Animation::Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames)
-      : m_name(name), m_rate(rate), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
+   : m_name(name), m_rate(rate), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
 
 //===========================================
 // Animation::clone
@@ -126,6 +118,7 @@ bool Animation::play() {
 //===========================================
 void Animation::update() {
    if (m_state != PLAYING) return;
+   if (m_frames.empty()) return;
 
    float32_t diff = m_timer.getTime() - m_prev;
    float32_t dt = 1.f / m_rate;
