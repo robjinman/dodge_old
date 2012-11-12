@@ -11,9 +11,9 @@
 #include <StringId.hpp>
 #include <AssetManager.hpp>
 #include <globals.hpp>
+#include <PrimitiveFactory.hpp>
 
 
-using namespace rapidxml;
 using namespace std;
 
 
@@ -29,44 +29,44 @@ int Entity::m_count = 0;
 // Entity::dbg_print
 //===========================================
 void Entity::dbg_print(std::ostream& out, int tab) const {
-   for (int i = 0; i < tab; i++) out << "\t";
+   for (int i = 0; i < tab; ++i) out << "\t";
    out << "Entity\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "name: " << getInternedString(m_name) << "\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "type: " << getInternedString(m_type) << "\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "scale: (" << m_scale.x << ", " << m_scale.y << ")\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "translation: (" << m_transl.x << ", " << m_transl.y << ")\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "z: " << m_z << "\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "rotation: " << m_rot << "\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "shape (src):\n";
    if (m_shape) m_shape->dbg_print(out, tab + 1);
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "boundary:\n";
    m_boundary.dbg_print(out, tab + 1);
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "parent: " << (m_parent ? getInternedString(m_parent->getName()) : "NULL") << "\n";
 
-   for (int i = 0; i < tab + 1; i++) out << "\t";
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "children: ";
    if (m_children.size() > 0) {
       out << "\n";
       for (set<pEntity_t>::const_iterator c = m_children.begin(); c != m_children.end(); ++c) {
-         for (int i = 0; i < tab + 2; i++) out << "\t";
+         for (int i = 0; i < tab + 2; ++i) out << "\t";
          out << getInternedString((*c)->getName()) << "\n";
       }
    }
@@ -81,69 +81,51 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 Entity::Entity(const XmlNode data)
    : m_silent(false) {
 
-   if (data.isNull() || data.name() != "Entity")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'Entity' tag", __FILE__, __LINE__);
-
    AssetManager assetManager;
+   PrimitiveFactory primitiveFactory;
+
+   string msg("Error parsing XML for instance of class Entity");
+
+   XML_NODE_CHECK(msg, data, Entity);
 
    XmlAttribute attr = data.firstAttribute();
-   if (attr.isNull() || attr.name() != "type")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'type' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, type);
    m_type = internString(attr.value());
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "name")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'name' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, name);
    m_name = internString(attr.value());
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "x")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'x' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, x);
    sscanf(attr.value().data(), "%f", &m_transl.x);
    m_transl.x *= gGetPixelSize().x;
 
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "y")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'y' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, y);
    sscanf(attr.value().data(), "%f", &m_transl.y);
    m_transl.y *= gGetPixelSize().y;
 
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "z")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'z' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, z);
    sscanf(attr.value().data(), "%d", &m_z);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "rot")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'rot' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, rot);
    sscanf(attr.value().data(), "%f", &m_rot);
 
    XmlNode node = data.firstChild();
-   if (node.isNull() || node.name() != "scale")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'scale' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, scale);
    m_scale = Vec2f(node.firstChild());
+
    node = node.nextSibling();
+   XML_NODE_CHECK(msg, node, shape);
+   m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
 
-   if (node.isNull() || node.name() != "shape")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'shape' tag", __FILE__, __LINE__);
-
-//   m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "children")
-      throw XmlException("Error parsing XML for instance of class Entity; Expected 'children' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, children);
 
    XmlNode node_ = node.firstChild();
-
    while (!node_.isNull() && node_.name() == "child") {
       XmlAttribute attr = node_.firstAttribute();
 
@@ -154,7 +136,7 @@ Entity::Entity(const XmlNode data)
          pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
 
          if (!child)
-            throw XmlException("Error parsing XML for instance of class Entity; Bad entity asset id", __FILE__, __LINE__);
+            throw XmlException(msg + "; Bad entity asset id", __FILE__, __LINE__);
 
          addChild(child);
       }
@@ -240,15 +222,14 @@ long Entity::generateName() {
 
 //===========================================
 // Entity::assignData
-//
-// 'data' contains partial or complete description of the object. This
-// function extracts whatever data is available, but does not raise an
-// error if there is missing data, as this is permitted.
 //===========================================
 void Entity::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Entity") return;
 
    AssetManager assetManager;
+   PrimitiveFactory primitiveFactory;
+
+   string msg("Error parsing XML for instance of class Entity");
 
    XmlAttribute attr = data.firstAttribute();
    if (!attr.isNull() && attr.name() == "type") {
@@ -282,7 +263,7 @@ void Entity::assignData(const XmlNode data) {
       node = node.nextSibling();
    }
    if (!node.isNull() && node.name() == "shape") {
-//      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
       node = node.nextSibling();
    }
    if (!node.isNull() && node.name() == "children") {
@@ -298,7 +279,7 @@ void Entity::assignData(const XmlNode data) {
             pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
 
             if (!child)
-               throw XmlException("Error parsing XML for instance of class Entity; Bad entity asset id", __FILE__, __LINE__);
+               throw XmlException(msg + "; Bad entity asset id", __FILE__, __LINE__);
 
             addChild(child);
          }

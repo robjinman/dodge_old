@@ -9,7 +9,6 @@
 
 
 using namespace std;
-using namespace rapidxml;
 
 
 namespace Dodge {
@@ -44,18 +43,17 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 Animation::Animation(const XmlNode data)
    : m_state(STOPPED), m_frameReady(false) {
 
-   if (data.isNull() || data.name() != "Animation")
-      throw XmlException("Error parsing XML for instance of class Animation; Expected 'Animation' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Animation");
+
+   XML_NODE_CHECK(msg, data, Animation);
 
    XmlAttribute attr = data.firstAttribute();
-   if (attr.isNull() || attr.name() != "name")
-      throw XmlException("Error parsing XML for instance of class Animation; Expected 'name' attribute", __FILE__, __LINE__);
+   XML_ATTR_CHECK(msg, attr, name);
 
    m_name = internString(attr.value());
 
    attr = attr.nextAttribute();
-   if (attr.isNull() || attr.name() != "rate")
-      throw XmlException("Error parsing XML for instance of class Animation; Expected 'rate' attribute", __FILE__, __LINE__);
+   XML_ATTR_CHECK(msg, attr, rate);
 
    sscanf(attr.value().data(), "%f", &m_rate);
 

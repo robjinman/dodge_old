@@ -12,7 +12,6 @@
 
 
 using namespace std;
-using namespace rapidxml;
 
 
 namespace Dodge {
@@ -66,14 +65,14 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    : m_entity(entity), m_activeAnim() {
 
-   if (data.isNull() || data.name() != "EntityAnimations")
-      throw XmlException("Error parsing XML for instance of class EntityAnimations; Expected 'EntityAnimations' tag", __FILE__, __LINE__);
-
    AssetManager assetManager;
 
+   string msg("Error parsing XML for instance of class EntityAnimations");
+
+   XML_NODE_CHECK(msg, data, EntityAnimations);
+
    XmlNode node = data.firstChild();
-   if (node.isNull() || node.name() != "texture")
-      throw XmlException("Error parsing XML for instance of class EntityAnimations; Expected 'texture' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, texture);
 
    XmlAttribute attr = node.firstAttribute();
    if (!attr.isNull() && attr.name() == "ptr") {
@@ -82,20 +81,17 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
       if (!m_texture)
-         throw XmlException("Error parsing XML for instance of class EntityAnimations; Bad texture asset id", __FILE__, __LINE__);
+         throw XmlException(msg + "; Bad texture asset id", __FILE__, __LINE__);
    }
    else {
       m_texture = pTexture_t(new Texture(node.firstChild()));
    }
 
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "textureSection")
-      throw XmlException("Error parsing XML for instance of class EntityAnimations; Expected 'textureSection' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, textureSection);
    m_texSection = Range(node.firstChild());
-   node = node.nextSibling();
 
+   node = node.nextSibling();
    while (!node.isNull() && node.name() == "animation") {
       XmlAttribute attr = node.firstAttribute();
       if (!attr.isNull() && attr.name() == "proto") {
@@ -122,6 +118,8 @@ void EntityAnimations::assignData(const XmlNode data) {
 
    AssetManager assetManager;
 
+   string msg("Error parsing XML for instance of class EntityAnimations");
+
    XmlNode node = data.firstChild();
    if (!node.isNull() && node.name() == "texture") {
 
@@ -132,7 +130,7 @@ void EntityAnimations::assignData(const XmlNode data) {
          m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
          if (!m_texture)
-            throw XmlException("Error parsing XML for instance of class EntityAnimations; Bad texture asset id", __FILE__, __LINE__);
+            throw XmlException(msg + "; Bad texture asset id", __FILE__, __LINE__);
       }
       else {
          m_texture = pTexture_t(new Texture(node.firstChild()));

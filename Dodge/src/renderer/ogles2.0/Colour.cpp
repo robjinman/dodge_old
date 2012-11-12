@@ -9,7 +9,7 @@
 #include <renderer/ogles2.0/Colour.hpp>
 
 
-using namespace rapidxml;
+using namespace std;
 
 
 namespace Dodge {
@@ -19,32 +19,24 @@ namespace Dodge {
 // Colour::Colour
 //===========================================
 Colour::Colour(const XmlNode data) {
-   if (data.isNull() || data.name() != "Colour")
-      throw XmlException("Error parsing XML for instance of class Colour; Expected 'Colour' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Colour");
+
+   XML_NODE_CHECK(msg, data, Colour);
 
    XmlAttribute attr = data.firstAttribute();
-
-   if (attr.isNull() || attr.name() != "r")
-      throw XmlException("Error parsing XML for instance of class Colour; Expected 'r' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, r);
    sscanf(attr.value().data(), "%f", &r);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "g")
-      throw XmlException("Error parsing XML for instance of class Colour; Expected 'g' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, g);
    sscanf(attr.value().data(), "%f", &g);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "b")
-      throw XmlException("Error parsing XML for instance of class Colour; Expected 'b' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, b);
    sscanf(attr.value().data(), "%f", &b);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "a")
-      throw XmlException("Error parsing XML for instance of class Colour; Expected 'a' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, a);
    sscanf(attr.value().data(), "%f", &a);
 }
 

@@ -9,7 +9,7 @@
 #include <PNG_CHECK.hpp>
 
 
-using namespace rapidxml;
+using namespace std;
 
 
 namespace Dodge {
@@ -27,11 +27,14 @@ Texture::Texture(const char* file) {
 // Texture::Texture
 //===========================================
 Texture::Texture(const XmlNode data) {
+   string msg("Error parsing XML for instance of class Texture");
+
+   XML_NODE_CHECK(msg, data, Texture);
+
    pngInit();
 
    XmlAttribute attr = data.firstAttribute();
-   if (attr.isNull() || attr.name() != "path")
-      throw XmlException("Error constructing texture from XML data; Expected 'path' attribute", __FILE__, __LINE__);
+   XML_ATTR_CHECK(msg, attr, path);
 
    constructTexture(attr.value().data());
 }

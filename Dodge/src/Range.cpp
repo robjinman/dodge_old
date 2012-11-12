@@ -9,6 +9,9 @@
 #endif
 
 
+using namespace std;
+
+
 namespace Dodge {
 
 
@@ -21,21 +24,16 @@ Graphics2d Range::m_graphics2d = Graphics2d();
 // Range::Range
 //===========================================
 Range::Range(const XmlNode data) {
-   if (data.isNull() || data.name() != "Range")
-      throw XmlException("Error constructing Range from XML data; Expected 'Range' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Range");
+
+   XML_NODE_CHECK(msg, data, Range);
 
    XmlNode node = data.firstChild();
-
-   if (node.isNull() || node.name() != "pos")
-      throw XmlException("Error constructing Range from XML data; Expected 'pos' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, pos);
    m_pos = Vec2f(node.firstChild());
 
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "size")
-      throw XmlException("Error constructing Range from XML data; Expected 'size' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, size);
    m_size = Vec2f(node.firstChild());
 }
 
@@ -43,7 +41,7 @@ Range::Range(const XmlNode data) {
 //===========================================
 // Range::dbg_print
 //===========================================
-void Range::dbg_print(std::ostream& out, int tab) const {
+void Range::dbg_print(ostream& out, int tab) const {
    for (int i = 0; i < tab; ++i) out << "\t";
    out << "Range\n";
 

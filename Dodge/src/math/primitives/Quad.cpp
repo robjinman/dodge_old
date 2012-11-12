@@ -4,7 +4,6 @@
 #include <StringId.hpp>
 
 
-using namespace rapidxml;
 using namespace std;
 
 
@@ -15,8 +14,9 @@ namespace Dodge {
 // Quad::Quad
 //===========================================
 Quad::Quad(const XmlNode data) {
-   if (data.isNull() || data.name() != "Quad")
-      throw XmlException("Error parsing XML for instance of class Quad; Expected 'Quad' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Quad");
+
+   XML_NODE_CHECK(msg, data, Quad);
 
    clear();
    int n = 0;
@@ -31,7 +31,7 @@ Quad::Quad(const XmlNode data) {
    }
 
    if (n != 4)
-      throw XmlException("Error parsing XML for instance of class Quad; expected 4 vertices", __FILE__, __LINE__);
+      throw XmlException(msg + "; Expected 4 vertices", __FILE__, __LINE__);
 }
 
 //===========================================

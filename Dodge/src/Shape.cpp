@@ -6,6 +6,9 @@
 #include "Shape.hpp"
 
 
+using namespace std;
+
+
 namespace Dodge {
 
 
@@ -15,7 +18,7 @@ Renderer Shape::m_renderer = Renderer();
 //===========================================
 // Shape::Shape
 //===========================================
-Shape::Shape(long type, std::unique_ptr<Primitive> shape)
+Shape::Shape(long type, unique_ptr<Primitive> shape)
    : Entity(type) {
 
    // Set to silent to prevent an EEntityMoved event being propagated -- because EEntityMoved
@@ -24,7 +27,7 @@ Shape::Shape(long type, std::unique_ptr<Primitive> shape)
    bool s = isSilent();
    setSilent(true);
 
-   setShape(std::move(shape));
+   setShape(move(shape));
 
    setSilent(s);
 }
@@ -32,13 +35,13 @@ Shape::Shape(long type, std::unique_ptr<Primitive> shape)
 //===========================================
 // Shape::Shape
 //===========================================
-Shape::Shape(long name, long type, std::unique_ptr<Primitive> shape)
+Shape::Shape(long name, long type, unique_ptr<Primitive> shape)
    : Entity(name, type) {
 
    bool s = isSilent();
    setSilent(true);
 
-   setShape(std::move(shape));
+   setShape(move(shape));
 
    setSilent(s);
 }
@@ -49,8 +52,8 @@ Shape::Shape(long name, long type, std::unique_ptr<Primitive> shape)
 Shape::Shape(const XmlNode data)
    : Entity(data.firstChild()) {
 
-   if (data.isNull() || data.name() != "Shape")
-      throw XmlException("Error parsing XML for instance of class Shape; Expected 'Shape' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Shape");
+   XML_NODE_CHECK(msg, data, Shape);
 }
 
 //===========================================

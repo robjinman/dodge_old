@@ -11,7 +11,6 @@
 #include <AssetManager.hpp>
 
 
-using namespace rapidxml;
 using namespace std;
 
 
@@ -58,10 +57,11 @@ EntityTransformations::EntityTransformations(const EntityTransformations& copy, 
 EntityTransformations::EntityTransformations(Entity* entity, const XmlNode data)
    : m_entity(entity) {
 
-   if (data.isNull() || data.name() != "EntityTransformations")
-      throw XmlException("Error parsing XML for instance of class EntityTransformations; Expected 'EntityTransformations' tag", __FILE__, __LINE__);
-
    AssetManager assetManager;
+
+   string msg("Error parsing XML for instance of class EntityTransformations");
+
+   XML_NODE_CHECK(msg, data, EntityTransformations);
 
    XmlNode node = data.firstChild();
    while (!node.isNull() && node.name() == "transformation") {

@@ -10,7 +10,7 @@
 #include <math/Vec3i.hpp>
 
 
-using namespace rapidxml;
+using namespace std;
 
 
 namespace Dodge {
@@ -25,26 +25,20 @@ Vec3f::Vec3f(const Vec3i& v) : x(v.x), y(v.y), z(v.z) {}
 // Vec3f::Vec3f
 //===========================================
 Vec3f::Vec3f(const XmlNode data) {
-   if (data.isNull() || data.name() != "Vec3f")
-      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'Vec3f' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Vec3f");
+
+   XML_NODE_CHECK(msg, data, Vec3f);
 
    XmlAttribute attr = data.firstAttribute();
-
-   if (attr.isNull() || attr.name() != "x")
-      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'x' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, x);
    sscanf(attr.value().data(), "%f", &x);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "y")
-      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'y' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, y);
    sscanf(attr.value().data(), "%f", &y);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "z")
-      throw XmlException("Error parsing XML for instance of class Vec3f; Expected 'z' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, z);
    sscanf(attr.value().data(), "%f", &z);
 }
 

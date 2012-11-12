@@ -7,6 +7,9 @@
 #include <StringId.hpp>
 
 
+using namespace std;
+
+
 namespace Dodge {
 
 
@@ -14,7 +17,7 @@ namespace Dodge {
 //===========================================
 // UiButton::dbg_print
 //===========================================
-void UiButton::dbg_print(std::ostream& out) const {
+void UiButton::dbg_print(ostream& out) const {
    // TODO
 }
 #endif
@@ -30,10 +33,14 @@ UiButton* UiButton::clone() const {
 // UiButton::assignData
 //===========================================
 void UiButton::assignData(const XmlNode data) {
-   if (data.isNull() || data.name() != "UiButton")
-      throw XmlException("Error parsing XML for instance of class UiButton; Expected 'UiButton' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class UiButton");
 
-   Sprite::assignData(data.firstChild());
+   XML_NODE_CHECK(msg, data, UiButton);
+
+   XmlNode node = data.firstChild();
+   if (!node.isNull() && node.name() == "Sprite") {
+      Sprite::assignData(node);
+   }
 }
 
 //===========================================

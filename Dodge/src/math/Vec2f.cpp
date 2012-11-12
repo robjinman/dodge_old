@@ -10,7 +10,7 @@
 #include <math/Vec2i.hpp>
 
 
-using namespace rapidxml;
+using namespace std;
 
 
 namespace Dodge {
@@ -25,20 +25,16 @@ Vec2f::Vec2f(const Vec2i& v) : x(v.x), y(v.y) {}
 // Vec2f::Vec2f
 //===========================================
 Vec2f::Vec2f(const XmlNode data) {
-   if (data.isNull() || data.name() != "Vec2f")
-      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'Vec2f' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Vec2f");
+
+   XML_NODE_CHECK(msg, data, Vec2f);
 
    XmlAttribute attr = data.firstAttribute();
-
-   if (attr.isNull() || attr.name() != "x")
-      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'x' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, x);
    sscanf(attr.value().data(), "%f", &x);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "y")
-      throw XmlException("Error parsing XML for instance of class Vec2f; Expected 'y' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, y);
    sscanf(attr.value().data(), "%f", &y);
 }
 

@@ -23,6 +23,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/KvpParser.o \
+	$(BASE_DIR)/PrimitiveFactory.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Shape.o \
 	$(BASE_DIR)/Sprite.o \

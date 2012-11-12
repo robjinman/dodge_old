@@ -5,7 +5,7 @@
 #include <globals.hpp>
 
 
-using namespace rapidxml;
+using namespace std;
 
 
 namespace Dodge {
@@ -15,28 +15,23 @@ namespace Dodge {
 // TransFrame::Transframe
 //===========================================
 TransFrame::TransFrame(const XmlNode data) {
-   if (data.isNull() || data.name() != "TransFrame")
-      throw XmlException("Error parsing XML for instance of class TransFrame; Expected 'TransFrame' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class TransFrame");
+
+   XML_NODE_CHECK(msg, data, TransFrame);
 
    XmlNode node = data.firstChild();
-   if (node.isNull() || node.name() != "delta")
-      throw XmlException("Error parsing XML for instance of class TransFrame; Expected 'delta' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, delta);
    delta = Vec2f(node.firstChild());
+
    delta.x *= gGetPixelSize().x;
    delta.y *= gGetPixelSize().y;
 
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "rot")
-      throw XmlException("Error parsing XML for instance of class TransFrame; Expected 'rot' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, rot);
    sscanf(node.value().data(), "%f", &rot);
+
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "scale")
-      throw XmlException("Error parsing XML for instance of class TransFrame; Expected 'scale' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, scale);
    scale = Vec2f(node.firstChild());
 }
 
@@ -45,7 +40,7 @@ TransFrame::TransFrame(const XmlNode data) {
 //===========================================
 // TransFrame::dbg_print
 //===========================================
-void TransFrame::dbg_print(std::ostream& out, int tab) const {
+void TransFrame::dbg_print(ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";
    out << "TransFrame\n";
 

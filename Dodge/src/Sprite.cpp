@@ -9,7 +9,6 @@
 #include "Sprite.hpp"
 
 
-using namespace rapidxml;
 using namespace std;
 
 
@@ -24,8 +23,8 @@ Sprite::Sprite(const XmlNode data)
      EntityAnimations(this, data.nthChild(1)),
      EntityTransformations(this, data.nthChild(2)) {
 
-      if (data.isNull() || data.name() != "Sprite")
-         throw XmlException("Error parsing XML for instance of class Sprite; Expected 'Sprite' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Sprite");
+   XML_NODE_CHECK(msg, data, Sprite);
 }
 
 //===========================================

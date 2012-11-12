@@ -12,7 +12,6 @@
 
 
 using namespace cml;
-using namespace rapidxml;
 using namespace std;
 
 
@@ -33,8 +32,9 @@ Polygon::Polygon() : m_nVerts(0) {
 // Polygon::Polygon
 //===========================================
 Polygon::Polygon(const XmlNode data) {
-   if (data.isNull() || data.name() != "Polygon")
-      throw XmlException("Error parsing XML for instance of class Polygon; Expected 'Polygon' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Polygon");
+
+   XML_NODE_CHECK(msg, data, Polygon);
 
    clear();
    m_verts.resize(Polygon::MAX_VERTS);

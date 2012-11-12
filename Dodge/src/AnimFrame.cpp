@@ -2,10 +2,10 @@
 #include <cstring>
 #include <Exception.hpp>
 #include <AnimFrame.hpp>
+#include <PrimitiveFactory.hpp>
 
 
 using namespace std;
-using namespace rapidxml;
 
 
 namespace Dodge {
@@ -15,31 +15,30 @@ namespace Dodge {
 // AnimFrame::AnimFrame
 //===========================================
 AnimFrame::AnimFrame(const XmlNode data) {
-   if (data.isNull() || data.name() != "AnimFrame")
-      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'AnimFrame' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class AnimFrame");
+
+   XML_NODE_CHECK(msg, data, AnimFrame);
 
    XmlNode node = data.firstChild();
 
-   if (node.isNull() || node.name() != "pos")
-      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'pos' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, pos);
 
    pos = Vec2i(node.firstChild());
    node = node.nextSibling();
 
-   if (node.isNull() || node.name() != "dim")
-      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'dim' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, dim);
 
    dim = Vec2i(node.firstChild());
    node = node.nextSibling();
 
-   if (node.isNull() || node.name() != "col")
-      throw XmlException("Error parsing XML for instance of class AnimFrame; Expected 'col' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, col);
 
    col = Colour(node.firstChild());
    node = node.nextSibling();
 
    if (!node.isNull() && node.name() == "shape") {     // TODO: PrimitiveDelta
-//      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      PrimitiveFactory primitiveFactory;
+      shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
    }
 }
 

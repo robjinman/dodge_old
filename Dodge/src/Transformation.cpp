@@ -10,7 +10,6 @@
 
 
 using namespace std;
-using namespace rapidxml;
 
 
 namespace Dodge {
@@ -32,25 +31,20 @@ Transformation::Transformation(const XmlNode data)
      m_frameReady(false),
      m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {
 
-   if (data.isNull() || data.name() != "Transformation")
-      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'Transformation' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class Transformation");
+
+   XML_NODE_CHECK(msg, data, Transformation);
 
    XmlAttribute attr = data.firstAttribute();
-   if (attr.isNull() || attr.name() != "name")
-      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'name' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, name);
    m_name = internString(attr.value());
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "rate")
-      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'rate' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, rate);
    sscanf(attr.value().data(), "%lf", &m_rate);
+
    attr = attr.nextAttribute();
-
-   if (attr.isNull() || attr.name() != "smooth")
-      throw XmlException("Error parsing XML for instance of class Transformation; Expected 'smooth' attribute", __FILE__, __LINE__);
-
+   XML_ATTR_CHECK(msg, attr, smooth);
    sscanf(attr.value().data(), "%d", &m_smooth);
 
    XmlNode node = data.firstChild();

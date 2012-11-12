@@ -11,7 +11,6 @@
 
 
 using namespace cml;
-using namespace rapidxml;
 using namespace std;
 
 
@@ -25,21 +24,16 @@ Renderer LineSegment::m_renderer = Renderer();
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const XmlNode data) {
-   if (data.name() != "LineSegment")
-      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'LineSegment' tag", __FILE__, __LINE__);
+   string msg("Error parsing XML for instance of class LineSegment");
+
+   XML_NODE_CHECK(msg, data, LineSegment);
 
    XmlNode node = data.firstChild();
-
-   if (node.isNull() || node.name() != "Vec2f")
-      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'Vec2f' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, Vec2f);
    m_p1 = Vec2f(node);
 
    node = node.nextSibling();
-
-   if (node.isNull() || node.name() != "Vec2f")
-      throw XmlException("Error parsing XML for instance of class LineSegment; Expected 'Vec2f' tag", __FILE__, __LINE__);
-
+   XML_NODE_CHECK(msg, node, Vec2f);
    m_p2 = Vec2f(node);
 }
 
