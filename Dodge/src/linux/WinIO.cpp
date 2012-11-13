@@ -183,106 +183,106 @@ void WinIO::swapBuffers() {
 //===========================================
 void WinIO::doEvents() {
    try {
-     while (XPending(m_display)) {
-       XEvent xEvent;
-       XNextEvent(m_display, &xEvent);
+      while (XPending(m_display)) {
+         XEvent xEvent;
+         XNextEvent(m_display, &xEvent);
 
-       switch (xEvent.type) {
-         case Expose: {
-            callbackMap_t::iterator it = m_callbacks.find(EVENT_WINEXPOSE);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_0()> >(*f)();
+         switch (xEvent.type) {
+            case Expose: {
+               callbackMap_t::iterator it = m_callbacks.find(EVENT_WINEXPOSE);
+               if (it != m_callbacks.end()) {
+               for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                  boost::get<Functor<void, TYPELIST_0()> >(*f)();
+               }
             }
-         }
-         break;
-         case KeyPress: {
-            callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYDOWN);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+            break;
+            case KeyPress: {
+               callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYDOWN);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+               }
             }
-         }
-         break;
-         case KeyRelease: {
-            callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYUP);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+            break;
+            case KeyRelease: {
+               callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYUP);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+               }
             }
-         }
-         break;
-         case ButtonPress: {
-            winEvent_t kind = EVENT_UNDEFINED;
-            switch (xEvent.xbutton.button) {
-              case 1: kind = EVENT_BTN1PRESS; break;
-              case 2: kind = EVENT_BTN2PRESS; break;
-              case 3: kind = EVENT_BTN3PRESS;
+            break;
+            case ButtonPress: {
+               winEvent_t kind = EVENT_UNDEFINED;
+               switch (xEvent.xbutton.button) {
+                  case 1: kind = EVENT_BTN1PRESS; break;
+                  case 2: kind = EVENT_BTN2PRESS; break;
+                  case 3: kind = EVENT_BTN3PRESS;
+               }
+               callbackMap_t::iterator it = m_callbacks.find(kind);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+               }
             }
-            callbackMap_t::iterator it = m_callbacks.find(kind);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+            break;
+            case ButtonRelease: {
+               winEvent_t kind = EVENT_UNDEFINED;
+               switch (xEvent.xbutton.button) {
+                  case 1: kind = EVENT_BTN1RELEASE; break;
+                  case 2: kind = EVENT_BTN2RELEASE; break;
+                  case 3: kind = EVENT_BTN3RELEASE;
+               }
+               callbackMap_t::iterator it = m_callbacks.find(kind);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+               }
             }
-         }
-         break;
-         case ButtonRelease: {
-            winEvent_t kind = EVENT_UNDEFINED;
-            switch (xEvent.xbutton.button) {
-              case 1: kind = EVENT_BTN1RELEASE; break;
-              case 2: kind = EVENT_BTN2RELEASE; break;
-              case 3: kind = EVENT_BTN3RELEASE;
+            break;
+            case MotionNotify: {
+               callbackMap_t::iterator it = m_callbacks.find(EVENT_MOUSEMOVE);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xmotion.x, xEvent.xmotion.y);
+               }
             }
-            callbackMap_t::iterator it = m_callbacks.find(kind);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+            break;
+            case ClientMessage: {
+               callbackMap_t::iterator it = m_callbacks.find(EVENT_WINCLOSE);
+               if (it != m_callbacks.end()) {
+                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                     boost::get<Functor<void, TYPELIST_0()> >(*f)();
+               }
             }
-         }
-         break;
-         case MotionNotify: {
-            callbackMap_t::iterator it = m_callbacks.find(EVENT_MOUSEMOVE);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xmotion.x, xEvent.xmotion.y);
-            }
-         }
-         break;
-         case ClientMessage: {
-            callbackMap_t::iterator it = m_callbacks.find(EVENT_WINCLOSE);
-            if (it != m_callbacks.end()) {
-              for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                boost::get<Functor<void, TYPELIST_0()> >(*f)();
-            }
-         }
-         break;
-         case ConfigureNotify: {
-            int w = m_width;
-            int h = m_height;
-            if (w != xEvent.xconfigure.width || h != xEvent.xconfigure.height) {
-              m_width = xEvent.xconfigure.width;
-              m_height = xEvent.xconfigure.height;
-              callbackMap_t::iterator it = m_callbacks.find(EVENT_WINRESIZE);
+            break;
+            case ConfigureNotify: {
+               int w = m_width;
+               int h = m_height;
+               if (w != xEvent.xconfigure.width || h != xEvent.xconfigure.height) {
+                  m_width = xEvent.xconfigure.width;
+                  m_height = xEvent.xconfigure.height;
+                  callbackMap_t::iterator it = m_callbacks.find(EVENT_WINRESIZE);
 
-              if (it != m_callbacks.end()) {
-                for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                  boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xconfigure.width, xEvent.xconfigure.height);
-              }
+                  if (it != m_callbacks.end()) {
+                     for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
+                        boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xconfigure.width, xEvent.xconfigure.height);
+                  }
+               }
             }
+            break;
          }
-         break;
-       }
-     }
+      }
    }
    catch (boost::bad_get& e) {
-     Exception ex("Error processing window events; bad callback function; ", __FILE__, __LINE__);
-     ex.append(e.what());
-     throw ex;
+      Exception ex("Error processing window events; bad callback function; ", __FILE__, __LINE__);
+      ex.append(e.what());
+      throw ex;
    }
    catch (bad_alloc& e) {
-     Exception ex("Error processing window events; ", __FILE__, __LINE__);
-     ex.append(e.what());
-     throw ex;
+      Exception ex("Error processing window events; ", __FILE__, __LINE__);
+      ex.append(e.what());
+      throw ex;
    }
 }
 

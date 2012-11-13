@@ -60,6 +60,13 @@ void Renderer::init(const char* optsFile) {
 }
 
 //===========================================
+// Renderer::onWindowResize
+//===========================================
+void Renderer::onWindowResize(int_t w, int_t h) {
+   GL_CHECK(glViewport(0, 0, w, h));
+}
+
+//===========================================
 // Renderer::setMode
 //===========================================
 void Renderer::setMode(mode_t mode) {

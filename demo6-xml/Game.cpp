@@ -288,7 +288,9 @@ void Game::init() {
 // Game::windowResize
 //===========================================
 void Game::windowResize(int w, int h) {
-//   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+   Renderer renderer;
+   renderer.onWindowResize(w, h);
+   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 //===========================================

@@ -99,6 +99,8 @@ class Renderer {
       inline const Brush& getBrush() const;
       inline const Camera& getCamera() const;
 
+      void onWindowResize(int_t w, int_t h);
+
       textureHandle_t newTexture(const textureData_t* texture, int_t width, int_t height);
       void setActiveTexture(textureHandle_t texId);
       void setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int_t count);
