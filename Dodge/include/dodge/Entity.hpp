@@ -32,8 +32,8 @@ typedef boost::shared_ptr<Entity> pEntity_t;
 
 class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
    public:
-      Entity(const XmlNode data);
-      Entity(long type);
+      explicit Entity(const XmlNode data);
+      explicit Entity(long type);
       Entity(long name, long type);
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);

@@ -61,8 +61,7 @@ inline void Graphics2d::setFillColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting fill colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   Renderer::colourElement_t fCol[] = {colour.r, colour.g, colour.b, colour.a};
-   m_renderBrush->setFillColour(fCol);
+   m_renderBrush->setFillColour(colour);
 }
 
 //===========================================
@@ -72,8 +71,7 @@ inline void Graphics2d::setLineColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting line colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   Renderer::colourElement_t lCol[] = {colour.r, colour.g, colour.b, colour.a};
-   m_renderBrush->setLineColour(lCol);
+   m_renderBrush->setLineColour(colour);
 }
 
 //===========================================

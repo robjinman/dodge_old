@@ -36,7 +36,7 @@ class Transformation : public Asset {
            m_frameReady(false),
            m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
 
-      Transformation(const XmlNode data);
+      explicit Transformation(const XmlNode data);
       Transformation(const Transformation& copy, long name);
       Transformation(long name, double rate, const std::vector<TransFrame>& frames);
 

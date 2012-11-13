@@ -1,10 +1,3 @@
-ifeq ($(PLATFORM), linux)
-	include $(BASE_DIR)/x11/Makefile.inc
-else
-	ifeq ($(PLATFORM), windows)
-		include $(BASE_DIR)/win32/Makefile.inc
-	endif
-endif
 include $(BASE_DIR)/$(PLATFORM)/Makefile.inc
 include $(BASE_DIR)/math/Makefile.inc
 include $(BASE_DIR)/renderer/Makefile.inc

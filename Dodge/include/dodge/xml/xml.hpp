@@ -8,7 +8,7 @@
 
 
 #include <string>
-#include "rapidxml/rapidxml.hpp"
+#include "../../rapidxml/rapidxml.hpp"
 #include "XmlNode.hpp"
 #include "XmlAttribute.hpp"
 #include "XmlDocument.hpp"

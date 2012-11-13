@@ -18,6 +18,7 @@ class Game {
       void keyUp(int code);
       void keyDown(int code);
       void keyboard();
+      void windowResize(int w, int h);
       void computeFrameRate();
 
       void init();

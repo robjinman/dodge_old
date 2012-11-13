@@ -9,7 +9,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
-#include "../utils/Functor.hpp"
+#include "../../utils/Functor.hpp"
 #include "../WinIO.hpp"
 #include "../EventManager.hpp"
 #include "uiEventTypes.hpp"

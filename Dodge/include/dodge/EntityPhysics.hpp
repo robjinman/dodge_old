@@ -30,7 +30,7 @@ class EntityPhysics {
          float32_t friction;
       };
 
-      EntityPhysics(Entity* entity) {}
+      explicit EntityPhysics(Entity* entity) {}
       EntityPhysics(Entity* entity, const options_t& options) {}
       EntityPhysics(const EntityPhysics& copy, Entity* entity) {}
       EntityPhysics(Entity* entity, const XmlNode data) {}

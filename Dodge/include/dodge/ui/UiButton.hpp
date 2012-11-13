@@ -8,7 +8,6 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include "../utils/Functor.hpp"
 #include "../Sprite.hpp"
 #include "EntityUi.hpp"
 #include "../xml/xml.hpp"
@@ -22,8 +21,8 @@ namespace Dodge {
 
 class UiButton : public Sprite, public EntityUi {
    public:
-      UiButton(const XmlNode data, long name)
-         : Sprite(data.firstChild(), name),
+      explicit UiButton(const XmlNode data)
+         : Sprite(data.firstChild()),
            EntityUi(this),
            m_onClick(&UiButton::void_entityPtr),
            m_onRelease(&UiButton::void_entityPtr) {}

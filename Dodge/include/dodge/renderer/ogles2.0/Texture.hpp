@@ -11,7 +11,7 @@
 #include <boost/shared_ptr.hpp>
 #include "../../xml/xml.hpp"
 #include "../../definitions.hpp"
-#include "../../pnglite/pnglite.h"
+#include "../../../pnglite/pnglite.h"
 #include "../../Asset.hpp"
 
 

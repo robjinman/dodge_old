@@ -8,7 +8,6 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include "../utils/Functor.hpp"
 #include "../Sprite.hpp"
 #include "EntityUi.hpp"
 

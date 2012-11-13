@@ -27,7 +27,7 @@ class Animation : public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
-      Animation(const XmlNode data);
+      explicit Animation(const XmlNode data);
       Animation(const Animation& copy, long name);
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 

@@ -7,7 +7,7 @@
 #define __XML_NODE_HPP__
 
 
-#include "rapidxml/rapidxml.hpp"
+#include "../../rapidxml/rapidxml.hpp"
 #include "../definitions.hpp"
 #include "XmlException.hpp"
 #include "XmlAttribute.hpp"

@@ -23,7 +23,7 @@ class Range {
       Range()
          : m_pos(0.f, 0.f), m_size(0.f, 0.f) {}
 
-      Range(const XmlNode data);
+      explicit Range(const XmlNode data);
 
       Range(float32_t x, float32_t y, float32_t w, float32_t h)
          : m_pos(x, y), m_size(w, h) {}

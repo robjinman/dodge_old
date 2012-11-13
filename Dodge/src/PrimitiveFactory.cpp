@@ -23,7 +23,7 @@ Primitive* PrimitiveFactory::create(const XmlNode data) const {
    else if (data.name() == "Polygon") return new Polygon(data);
    else if (data.name() == "Quad") return new Quad(data);
    else
-      throw Exception("Error creating primitive of unknown type", __FILE__, __LINE__);
+      throw XmlException("Error creating primitive of unknown type", __FILE__, __LINE__);
 }
 
 

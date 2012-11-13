@@ -9,7 +9,6 @@
 
 using namespace Dodge;
 using namespace boost;
-using namespace rapidxml;
 using namespace std;
 
 
@@ -163,9 +162,12 @@ void Game::computeFrameRate() {
 
 //===========================================
 // Game::constructAsset
+//
+// If proto = -1 asset is *not* constructed from prototype
 //===========================================
 boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
-   // if proto = -1 asset is *not* constructed from prototype
+   if (data.isNull())
+      throw XmlException("Error constructing asset; XML node is empty", __FILE__, __LINE__);
 
    boost::shared_ptr<Asset> asset;
 
@@ -180,7 +182,7 @@ boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
          Player* player = dynamic_cast<Player*>(m_assetManager.cloneAsset(proto));
 
          if (!player)
-            throw Exception("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
+            throw XmlException("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
 
          m_player = pPlayer_t(player);
          m_player->assignData(data);
@@ -200,7 +202,7 @@ boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
       asset = soil;*/
    }
    else
-      throw Exception("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
+      throw XmlException("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
 
    return asset;
 }
@@ -209,17 +211,20 @@ boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
 // Game::loadAssets_r
 //===========================================
 void Game::loadAssets_r(const string& file) {
-   XmlDocument doc;
-   XmlNode decl = doc.parse(file);
-   XmlNode node = decl.nextSibling();
+   string msg("Error loading assets from XML file");
 
-   if (node.isNull() || node.name() != "ASSETFILE")
-      throw XmlException("Error parsing XML file; expected 'ASSETFILE' tag", __FILE__, __LINE__);
+   XmlDocument doc;
+
+   XmlNode decl = doc.parse(file);
+   if (decl.isNull())
+      throw XmlException(msg + "; Expected XML declaration", __FILE__, __LINE__);
+
+   XmlNode node = decl.nextSibling();
+   XML_NODE_CHECK(msg, node, ASSETFILE);
 
    node = node.firstChild();
-
    if (node.isNull())
-      throw XmlException("Error parsing XML file; expected 'using' or 'assets' tag", __FILE__, __LINE__);
+      throw XmlException(msg + "; Expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
    if (node.name() == "using") {
       XmlNode node_ = node.firstChild();
@@ -233,14 +238,12 @@ void Game::loadAssets_r(const string& file) {
       node = node.nextSibling();
    }
 
-   if (node.isNull() || node.name() != "assets")
-      throw XmlException("Error parsing XML file; expected 'assets' tag", __FILE__, __LINE__);
+   XML_NODE_CHECK(msg, node, assets);
 
    node = node.firstChild();
    while (!node.isNull() && node.name() == "asset") {
       XmlAttribute attr = node.firstAttribute();
-      if (attr.isNull() || attr.name() != "id")
-         throw XmlException("Error parsing XML file; expected 'id' attribute", __FILE__, __LINE__);
+      XML_ATTR_CHECK(msg, attr, id);
 
       long id = 0;
       long proto = -1;
@@ -264,6 +267,7 @@ void Game::init() {
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Game::quit));
    m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Game::keyDown));
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Game::keyUp));
+   m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Game::windowResize));
 
    m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
@@ -277,6 +281,13 @@ void Game::init() {
 
    pTexture_t texFont1(new Texture("data/textures/font2.png"));
    m_font1 = pFont_t(new Dodge::Font(texFont1, 0, 0, 852, 792, 71, 98));
+}
+
+//===========================================
+// Game::windowResize
+//===========================================
+void Game::windowResize(int w, int h) {
+   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 //===========================================

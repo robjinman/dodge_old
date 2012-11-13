@@ -27,14 +27,14 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
    );
 
    public:
-      PhysicalEntity(const XmlNode data)
+      explicit PhysicalEntity(const XmlNode data)
          : Entity(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {
 
-         if (data.isNull() || data.name() != "PhysicalEntity")
-            throw XmlException("Error parsing XML for instance of class PhysicalEntity; Expected 'PhysicalEntity' tag", __FILE__, __LINE__);
+         std::string msg("Error parsing XML for instance of class PhysicalEntity");
+         XML_NODE_CHECK(msg, data, PhysicalEntity);
       }
 
-      PhysicalEntity(long type)
+      explicit PhysicalEntity(long type)
          : Entity(type), T_PHYSICS(this) {}
 
       PhysicalEntity(long name, long type)

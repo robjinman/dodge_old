@@ -27,7 +27,7 @@ boost::shared_ptr<Renderer::Brush> Graphics2d::m_renderBrush = boost::shared_ptr
 void Graphics2d::init(int w, int h) {
    m_init = true;
 
-   m_camera = pCamera_t(new Camera(64.f / 48.f, 1.f));
+   m_camera = pCamera_t(new Camera(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f));
 
    m_renderer.init();
    m_renderer.attachCamera(m_camera);

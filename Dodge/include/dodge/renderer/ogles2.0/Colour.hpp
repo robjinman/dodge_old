@@ -21,7 +21,7 @@ class Colour {
       Colour()
          : r(0), g(0), b(0), a(0) {}
 
-      Colour(const XmlNode data);
+      explicit Colour(const XmlNode data);
 
       Colour(GLfloat r_, GLfloat g_, GLfloat b_, GLfloat a_)
          : r(r_), g(g_), b(b_), a(a_) {}

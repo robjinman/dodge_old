@@ -1,13 +1,10 @@
 /*
- * Author: Rob Jinman <jinmane@gmail.com>
+ * Author: Rob Jinman <admin@robjinman.com>
  * Date: 2012
  */
 
 #ifndef __DEFINITIONS_HPP__
 #define __DEFINITIONS_HPP__
-
-
-#include <memory>
 
 
 #define sharedPtr_t std::shared_ptr

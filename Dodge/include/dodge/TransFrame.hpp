@@ -25,7 +25,7 @@ class TransFrame {
       TransFrame()
          : delta(0, 0), rot(0), scale(0, 0) {}
 
-      TransFrame(const XmlNode data);
+      explicit TransFrame(const XmlNode data);
 
       TransFrame(const Vec2f& d, float32_t r, const Vec2f& s)
          : delta(d), rot(r), scale(s) {}

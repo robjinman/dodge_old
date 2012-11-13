@@ -14,8 +14,8 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <EGL/egl.h>
-#include "../utils/Functor.hpp"
-#include "../utils/TypeList.hpp"
+#include "../../utils/Functor.hpp"
+#include "../../utils/TypeList.hpp"
 #include "../EGL_CHECK.hpp"
 
 

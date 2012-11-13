@@ -24,7 +24,7 @@ class EntityTransformations {
    public:
       EntityTransformations(Entity* entity, const XmlNode data);
 
-      EntityTransformations(Entity* entity)
+      explicit EntityTransformations(Entity* entity)
          : m_entity(entity) {}
 
       EntityTransformations(const EntityTransformations& copy, Entity* entity);

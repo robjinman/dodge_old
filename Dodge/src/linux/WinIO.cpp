@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 #include <X11/XKBlib.h>
-#include <x11/WinIO.hpp>
+#include <WinIO.hpp>
 
 
 using namespace std;
@@ -58,7 +58,7 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    EGLint nConfigs;
 
    m_display = XOpenDisplay(NULL);
-   if(m_display == NULL)
+   if (m_display == NULL)
       throw Exception("Error constructing window; could not create X Display", __FILE__, __LINE__);
 
    m_eglDisplay = EGL_CHECK(eglGetDisplay(m_display));

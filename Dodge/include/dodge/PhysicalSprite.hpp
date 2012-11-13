@@ -28,11 +28,11 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
    );
 
    public:
-      PhysicalSprite(const XmlNode data)
+      explicit PhysicalSprite(const XmlNode data)
          : Sprite(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {
 
-         if (data.isNull() || data.name() != "PhysicalSprite")
-            throw XmlException("Error parsing XML for instance of class PhysicalSprite; Expected 'PhysicalSprite' tag", __FILE__, __LINE__);
+         std::string msg("Error parsing XML for instance of class PhysicalSprite");
+         XML_NODE_CHECK(msg, data, PhysicalSprite);
       }
 
       PhysicalSprite(long type, pTexture_t texture)
