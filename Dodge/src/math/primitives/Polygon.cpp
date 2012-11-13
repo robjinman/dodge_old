@@ -25,7 +25,7 @@ Renderer Polygon::m_renderer = Renderer();
 // Polygon::Polygon
 //===========================================
 Polygon::Polygon() : m_nVerts(0) {
-   m_verts.resize(Polygon::MAX_VERTS);
+//   m_verts.resize(Polygon::MAX_VERTS);
 }
 
 //===========================================
@@ -37,13 +37,12 @@ Polygon::Polygon(const XmlNode data) {
    XML_NODE_CHECK(msg, data, Polygon);
 
    clear();
-   m_verts.resize(Polygon::MAX_VERTS);
-   m_nVerts = 0;
+//   m_verts.resize(Polygon::MAX_VERTS);
 
    XmlNode node = data.firstChild();
    while (!node.isNull() && node.name() == "Vec2f") {
       boost::shared_ptr<Vec2f> vert(new Vec2f(node));
-      m_verts[m_nVerts] = vert;
+      m_verts.push_back(vert);
 
       ++m_nVerts;
       node = node.nextSibling();
@@ -58,7 +57,7 @@ Polygon::Polygon(const XmlNode data) {
 // Contruct deep copy
 //===========================================
 Polygon::Polygon(const Polygon& poly) {
-   m_verts.resize(Polygon::MAX_VERTS);
+//   m_verts.resize(Polygon::MAX_VERTS);
 
    for (int i = 0; i < poly.m_nVerts; ++i) {
       boost::shared_ptr<Vec2f> vert(new Vec2f(*poly.m_verts[i])); // Make copy of vertex
@@ -110,6 +109,15 @@ bool Polygon::isConvex() const {
 }
 
 //===========================================
+// Polygon::clear
+//===========================================
+void Polygon::clear() {
+   m_nVerts = 0;
+   m_verts.clear();
+   m_children.clear();
+}
+
+//===========================================
 // Polygon::subdivide
 //
 // Divide polygon into convex children
@@ -154,7 +162,7 @@ void Polygon::addVertex(const Vec2f& vert) {
       throw Exception(msg.str(), __FILE__, __LINE__);
    }
 
-   m_verts[m_nVerts] = boost::shared_ptr<Vec2f>(new Vec2f(vert));
+   m_verts.push_back(boost::shared_ptr<Vec2f>(new Vec2f(vert)));
    ++m_nVerts;
 
    restructure();

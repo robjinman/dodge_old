@@ -3,10 +3,12 @@
  * Date: 2012
  */
 
+#include <cml/cml.h>
+#include <renderer/renderer.hpp>
 #include <definitions.hpp>
 #include <Graphics2d.hpp>
-#include <renderer/renderer.hpp>
 #include <globals.hpp>
+#include <Range.hpp>
 
 
 using namespace cml;
@@ -35,15 +37,18 @@ void Graphics2d::init(int w, int h) {
 
 //===========================================
 // Graphics2d::drawImage
+//
+// src:  Source rectangle in pixel coords
+// dest: Destination rectangle in world coords
 //===========================================
-void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY, float32_t srcW, float32_t srcH,
-   float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot, const Vec2f& scale) const {
+void Graphics2d::drawImage(const Texture& image, const Range& src, const Range& dest, int z,
+   float32_t angle, const Vec2f& pivot) const {
 
    if (!m_init)
       throw Exception("Error drawing image; Graphics2d not initialised", __FILE__, __LINE__);
 
-   float32_t w = srcW * gGetPixelSize().x * scale.x;
-   float32_t h = srcH * gGetPixelSize().y * scale.y;
+   float32_t w = dest.getSize().x;
+   float32_t h = dest.getSize().y;
 
    m_renderer.setMode(Renderer::TEXTURED_ALPHA);
 
@@ -60,10 +65,10 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
       0.f, 0.f, fZ     // Bottom left
    };
 
-   float32_t tX1 = srcX / imgW;
-   float32_t tX2 = (srcX + srcW) / imgW;
-   float32_t tY1 = srcY / imgH;
-   float32_t tY2 = (srcY + srcH) / imgH;
+   float32_t tX1 = src.getPosition().x / imgW;
+   float32_t tX2 = (src.getPosition().x + src.getSize().x) / imgW;
+   float32_t tY1 = src.getPosition().y / imgH;
+   float32_t tY2 = (src.getPosition().y + src.getSize().y) / imgH;
 
    // Flip texture vertically
    tY1 = 1.f - tY1;
@@ -85,7 +90,7 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
    // TODO: use pivot
    float32_t rads = DEG_TO_RAD(angle);
    matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
-   matrix_translation(translation, x, y, 0.f);
+   matrix_translation(translation, dest.getPosition().x, dest.getPosition().y, 0.f);
    modelView = translation * rotation;
 
    m_renderer.setMatrix(modelView.data());
@@ -101,8 +106,8 @@ void Graphics2d::drawImage(const Texture& image, float32_t srcX, float32_t srcY,
 //===========================================
 // Graphics2d::drawText
 //===========================================
-void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x, float32_t y, int z,
-   float32_t angle, const Vec2f& pivot, const Vec2f& scale) const {
+void Graphics2d::drawText(const Font& font, const Vec2f& size, const std::string& text, float32_t x,
+   float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
 
    if (!m_init)
       throw Exception("Error drawing text; Graphics2d not initialised", __FILE__, __LINE__);
@@ -111,17 +116,19 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
    float32_t texSectionY1 = font.getTextureSection().getPosition().y;
    float32_t texSectionX2 = font.getTextureSection().getSize().x;
 
-   float32_t pxChW = font.getCharWidth();    // Char dimensions in pixels (not scaled)
+   float32_t pxChW = font.getCharWidth();    // Char dimensions in pixels
    float32_t pxChH = font.getCharHeight();
 
    int rowLen = (static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW)) + 0.5;
 
    for (uint_t i = 0; i < text.length(); ++i) {
-      float32_t pxOffset = scale.x * static_cast<float32_t>(i) * pxChW;
-      float32_t chX = x + pxOffset * gGetPixelSize().x;
+      // Character world coords (pre-transformation)
+      float32_t chX = x + static_cast<float32_t>(i) * size.x;
       float32_t chY = y;
+
       float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((text[i] - ' ') % rowLen));
       float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((text[i] - ' ') / rowLen);
+
       srcY = font.getTexture()->getHeight() - srcY - pxChH; // Flip
 
       vector4f pos(chX, chY, 0.f, 1.f);
@@ -131,7 +138,7 @@ void Graphics2d::drawText(const Font& font, const std::string& text, float32_t x
       matrix_rotation_euler(rot, 0.f, 0.f, DEG_TO_RAD(angle), euler_order_xyz);
       pos = piv + (rot * (pos - piv));
 
-      drawImage(*font.getTexture(), srcX, srcY, pxChW, pxChH, pos[0], pos[1], z, angle, Vec2f(pos[0], pos[1]), scale);
+      drawImage(*font.getTexture(), Range(srcX, srcY, pxChW, pxChH), Range(pos[0], pos[1], size.x, size.y), z, angle, Vec2f(pos[0], pos[1]));
    }
 }
 

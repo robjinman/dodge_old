@@ -49,6 +49,7 @@ void Game::keyDown(int code) {
 
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
+      case WinIO::KEY_P: m_player->dbg_print(cout); break;
    }
 }
 
@@ -287,7 +288,7 @@ void Game::init() {
 // Game::windowResize
 //===========================================
 void Game::windowResize(int w, int h) {
-   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+//   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 //===========================================
@@ -315,7 +316,7 @@ void Game::launch() {
       stringstream strFr;
       strFr << "Frame Rate: " << m_frameRate << "fps";
       m_graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
-      m_graphics2d.drawText(*m_font1, strFr.str(), 0.03f, 460.f * gGetPixelSize().y, 5, 0.f, Vec2f(0.f, 0.f), Vec2f(0.15f, 0.15f));
+      m_graphics2d.drawText(*m_font1, Vec2f(0.05, 0.075), strFr.str(), 0.1, 0.8, 5, 0.f, Vec2f(0.f, 0.f));
 
       m_eventManager.doEvents();
 

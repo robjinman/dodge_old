@@ -23,6 +23,7 @@ void keyDown(int key) {
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: cout << "Frame rate: " << frameRate << "fps\n" << flush; break;
+      case WinIO::KEY_P: sprite1->dbg_print(cout); break;
    }
 
    keyState[key] = true;
@@ -82,6 +83,7 @@ int main() {
    sprite1->setShape(move(poly));
    sprite1->setTranslation(128.f * gGetPixelSize().x, 128.f * gGetPixelSize().y);
    sprite1->setZ(1);
+   sprite1->setOnScreenSize(128.f * gGetPixelSize().x, 64.f * gGetPixelSize().y);
    sprite1->setScale(Vec2f(2.f, 1.5f));
    sprite1->setRotation(0.f);
 
@@ -91,6 +93,7 @@ int main() {
 
    sprite2->setTranslation(320.f * gGetPixelSize().x, 400.f * gGetPixelSize().y);
    sprite2->setZ(2);
+   sprite2->setOnScreenSize(32.f * gGetPixelSize().x, 32.f * gGetPixelSize().y);
    sprite2->setTextureSection(0, 0, 32, 32);
 
    unique_ptr<Polygon> poly2(new Polygon);

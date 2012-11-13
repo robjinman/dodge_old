@@ -35,7 +35,7 @@ class Polygon : public Primitive {
       void removeVertex(int idx);
       void insertVertex(int idx, const Vec2f& vert);
       inline void insertVertex(int idx, float32_t x, float32_t y);
-      inline void clear();
+      void clear();
 
       virtual Polygon* clone() const;
 
@@ -120,14 +120,6 @@ inline void Polygon::addVertex(float32_t x, float32_t y) {
 //===========================================
 inline void Polygon::insertVertex(int idx, float32_t x, float32_t y) {
    insertVertex(idx, Vec2f(x, y));
-}
-
-//===========================================
-// Polygon::clear
-//===========================================
-inline void Polygon::clear() {
-   m_nVerts = 0;
-   m_children.clear();
 }
 
 

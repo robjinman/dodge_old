@@ -28,6 +28,13 @@ void EntityAnimations::dbg_print(ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";
    out << "EntityAnimations\n";
 
+   for (int i = 0; i < tab + 1; i++) out << "\t";
+   out << "texSection:\n";
+   m_texSection.dbg_print(out, tab + 1);
+
+   for (int i = 0; i < tab + 1; i++) out << "\t";
+   out << "onScreenSize: (" << m_onScreenSize.x << ", " << m_onScreenSize.y << ")\n";
+
    for (map<long, pAnimation_t>::const_iterator it = m_animations.begin(); it != m_animations.end(); ++it)
       it->second->dbg_print(out, tab + 1);
 }
@@ -41,6 +48,7 @@ void EntityAnimations::dbg_print(ostream& out, int tab) const {
 EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
    : m_entity(entity), m_activeAnim() {
 
+   m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
    m_texture = copy.m_texture;
 
@@ -90,6 +98,10 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    node = node.nextSibling();
    XML_NODE_CHECK(msg, node, textureSection);
    m_texSection = Range(node.firstChild());
+
+   node = node.nextSibling();
+   XML_NODE_CHECK(msg, node, onScreenSize);
+   m_onScreenSize = Vec2f(node.firstChild());
 
    node = node.nextSibling();
    while (!node.isNull() && node.name() == "animation") {
@@ -144,6 +156,11 @@ void EntityAnimations::assignData(const XmlNode data) {
       node = node.nextSibling();
    }
 
+   if (!node.isNull() && node.name() == "onScreenSize") {
+      m_onScreenSize = Vec2f(node.firstChild());
+      node = node.nextSibling();
+   }
+
    while (!node.isNull() && node.name() == "animation") {
       XmlAttribute attr = node.firstAttribute();
       if (!attr.isNull() && attr.name() == "proto") {
@@ -172,14 +189,12 @@ void EntityAnimations::draw() const {
    float32_t y = pos.y;
    int z = m_entity->getZ();
 
-   float32_t tx = m_texSection.getPosition().x;
-   float32_t ty = m_texSection.getPosition().y;
-   float32_t tw = m_texSection.getSize().x;
-   float32_t th = m_texSection.getSize().y;
    float32_t a = m_entity->getRotation_abs();
 
+   Range destRect(x, y, m_onScreenSize.x * m_entity->getScale().x, m_onScreenSize.y * m_entity->getScale().y);
+
    m_graphics2d.setFillColour(Colour(m_entity->getRenderBrush()->getFillColour()));
-   m_graphics2d.drawImage(*m_texture, tx, ty, tw, th, x, y, z, a, Vec2f(0.f, 0.f), m_entity->getScale());
+   m_graphics2d.drawImage(*m_texture, m_texSection, destRect, z, a);
 }
 
 //===========================================
@@ -235,6 +250,7 @@ void EntityAnimations::update() {
       const AnimFrame* frame = it->second->getCurrentFrame();
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         m_entity->getRenderBrush()->setFillColour(frame->col);
          if (frame->shape) m_entity->setShape(unique_ptr<Primitive>(frame->shape->clone())); // TODO: PrimitiveDelta
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {

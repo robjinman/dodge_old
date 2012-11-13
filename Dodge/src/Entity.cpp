@@ -99,12 +99,10 @@ Entity::Entity(const XmlNode data)
    attr = attr.nextAttribute();
    XML_ATTR_CHECK(msg, attr, x);
    sscanf(attr.value().data(), "%f", &m_transl.x);
-   m_transl.x *= gGetPixelSize().x;
 
    attr = attr.nextAttribute();
    XML_ATTR_CHECK(msg, attr, y);
    sscanf(attr.value().data(), "%f", &m_transl.y);
-   m_transl.y *= gGetPixelSize().y;
 
    attr = attr.nextAttribute();
    XML_ATTR_CHECK(msg, attr, z);
@@ -242,12 +240,10 @@ void Entity::assignData(const XmlNode data) {
    }
    if (!attr.isNull() && attr.name() == "x") {
       sscanf(attr.value().data(), "%f", &m_transl.x);
-      m_transl.x *= gGetPixelSize().x;
       attr = attr.nextAttribute();
    }
    if (!attr.isNull() && attr.name() == "y") {
       sscanf(attr.value().data(), "%f", &m_transl.y);
-      m_transl.y *= gGetPixelSize().y;
       attr = attr.nextAttribute();
    }
    if (!attr.isNull() && attr.name() == "z") {

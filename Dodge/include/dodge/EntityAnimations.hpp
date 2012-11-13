@@ -37,11 +37,13 @@ class EntityAnimations {
 
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
+      inline void setOnScreenSize(float32_t w, float32_t h);
 
       void addAnimation(pAnimation_t anim); // TODO: use unique_ptr instead
       void removeAnimation(long anim);
 
       inline const Range& getTextureSection() const;
+      inline const Vec2f& getOnScreenSize() const;
       inline const Colour& getColour() const;
       inline Animation::state_t getAnimState() const;
       inline long getAnimName() const;
@@ -66,6 +68,7 @@ class EntityAnimations {
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;
+      Vec2f m_onScreenSize;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
 
@@ -84,6 +87,14 @@ inline void EntityAnimations::setTexture(pTexture_t texture) {
 //===========================================
 inline void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h) {
    m_texSection = Range(x, y, w, h);
+}
+
+//===========================================
+// EntityAnimations::setOnScreenSize
+//===========================================
+inline void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
+   m_onScreenSize.x = w;
+   m_onScreenSize.y = h;
 }
 
 //===========================================
@@ -122,6 +133,13 @@ inline pTexture_t EntityAnimations::getTexture() const {
 //===========================================
 inline const Range& EntityAnimations::getTextureSection() const {
    return m_texSection;
+}
+
+//===========================================
+// EntityAnimations::getOnScreenSize
+//===========================================
+inline const Vec2f& EntityAnimations::getOnScreenSize() const {
+   return m_onScreenSize;
 }
 
 //===========================================

@@ -23,9 +23,6 @@ TransFrame::TransFrame(const XmlNode data) {
    XML_NODE_CHECK(msg, node, delta);
    delta = Vec2f(node.firstChild());
 
-   delta.x *= gGetPixelSize().x;
-   delta.y *= gGetPixelSize().y;
-
    node = node.nextSibling();
    XML_NODE_CHECK(msg, node, rot);
    sscanf(node.value().data(), "%f", &rot);
@@ -34,7 +31,6 @@ TransFrame::TransFrame(const XmlNode data) {
    XML_NODE_CHECK(msg, node, scale);
    scale = Vec2f(node.firstChild());
 }
-
 
 #ifdef DEBUG
 //===========================================
