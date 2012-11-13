@@ -41,7 +41,6 @@ class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
       virtual Entity* clone() const = 0;
 
       // The XML node needn't contain a complete description of the object.
-      // This function should extract from 'data' any information it can.
       virtual void assignData(const XmlNode data) = 0;
 
       // Derived classes may need these

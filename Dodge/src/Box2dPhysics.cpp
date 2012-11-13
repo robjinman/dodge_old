@@ -19,7 +19,7 @@ namespace Dodge {
 
 
 float Box2dPhysics::m_frameRate = 60.0;
-float Box2dPhysics::m_scaledPixPerMetre = 8.0;
+float Box2dPhysics::m_worldUnitsPerMetre = 0.01;
 int Box2dPhysics::m_v_iterations = 6;
 int Box2dPhysics::m_p_iterations = 4;
 EventManager Box2dPhysics::m_eventManager = EventManager();
@@ -134,37 +134,19 @@ void Box2dPhysics::removeFromWorld() {
 //===========================================
 // Box2dPhysics::constructBody
 //===========================================
-void Box2dPhysics::constructBody() {/*
+void Box2dPhysics::constructBody() {
    b2BodyDef bdef;
 
    if (m_opts.dynamic) bdef.type = b2_dynamicBody;
    bdef.fixedRotation = m_opts.fixedAngle;
 
-   bdef.position.Set(static_cast<float>(m_entity->getPosition().x) / m_scaledPixPerMetre,
-      static_cast<float>(m_entity->getPosition().y) / m_scaledPixPerMetre);
+   Vec2f pos = m_entity->getTranslation_abs() / m_worldUnitsPerMetre;
+   bdef.position.Set(pos.x, pos.y);
 
    m_body = m_world.CreateBody(&bdef);
 
-   const CompoundPoly& compoundPoly = m_entity->getBoundingPoly();
-   for (unsigned int p = 0; p < compoundPoly.getNumPolys(); p++) {
-      const Poly& poly = compoundPoly.getPoly(p);
-
-      b2Vec2* verts = new b2Vec2[poly.verts.size()];
-      for (unsigned int i = 0; i < poly.verts.size(); i++)
-         verts[i] = b2Vec2(static_cast<float>(poly.verts[i].x) / m_scaledPixPerMetre,
-            static_cast<float>(poly.verts[i].y) / m_scaledPixPerMetre);
-
-      b2PolygonShape b2Poly;
-      b2Poly.Set(verts, poly.verts.size());
-
-      b2FixtureDef fdef;
-      fdef.shape = &b2Poly;
-      fdef.density = m_opts.density;
-      fdef.friction = m_opts.friction;
-
-      m_body->CreateFixture(&fdef);
-      m_numFixtures++;
-   }*/
+   const Primitive& entShape = m_entity->getShape(); // TODO
+   primitiveToBox2dBody(entShape, m_opts, &m_body, &m_numFixtures)
 }
 
 //===========================================
@@ -180,7 +162,7 @@ void Box2dPhysics::makeDynamic() {
    m_world.DestroyBody(m_body);
    m_numFixtures = 0;
 
-   m_dynamic = true;
+   m_opts.dynamic = true;
    constructBody();
 }
 
@@ -197,7 +179,7 @@ void Box2dPhysics::makeStatic() {
    m_world.DestroyBody(m_body);
    m_numFixtures = 0;
 
-   m_dynamic = false;
+   m_opts.dynamic = false;
    constructBody();
 }
 
@@ -225,7 +207,7 @@ void Box2dPhysics::loadSettings(const string& file) {
 void Box2dPhysics::entityMovedHandler(EEvent* ev) {
    static long entityMovedStr = internString("entityMoved");
    if (ev->getType() != entityMovedStr)
-      throw Exception("Error handling entityMoved event; unexpected event type", __FILE__, __LINE__);
+      throw Exception("Error handling entityMoved event; Unexpected event type", __FILE__, __LINE__);
 
    EEntityMoved* event = static_cast<EEntityMoved*>(ev);
 
@@ -240,7 +222,7 @@ void Box2dPhysics::entityMovedHandler(EEvent* ev) {
 //===========================================
 // Box2dPhysics::updatePos
 //===========================================
-void Box2dPhysics::updatePos(EEntityMoved* event) {/*
+void Box2dPhysics::updatePos(EEntityMoved* event) {
    if (!m_init)
       throw Exception("Instance of Box2dPhysics is not initialised", __FILE__, __LINE__);
 
@@ -251,46 +233,23 @@ void Box2dPhysics::updatePos(EEntityMoved* event) {/*
    m_body->SetTransform(b2Vec2(entX / m_scaledPixPerMetre, entY / m_scaledPixPerMetre), entA);
 
 
-   // Update poly
+   // Update shape
+   const pPrimitive_t oldShape = event->getOldShape();
+   const pPrimitive_t newShape = event->getNewShape(); 
 
-   CompoundPoly oldPoly = event->getOldSrcPoly();
-   CompoundPoly newPoly = event->getNewSrcPoly();
-   oldPoly.scaleFromZero(event->getOldScale());
-   newPoly.scaleFromZero(event->getNewScale());
-
-   if (oldPoly != newPoly) {
+   if (oldShape != newShape) {
       float d = m_body->GetFixtureList()->GetDensity();
       float f = m_body->GetFixtureList()->GetFriction();
 
-      for (unsigned int i = 0; i < m_numFixtures; i++)
+      for (unsigned int i = 0; i < m_numFixtures; ++i)
          m_body->DestroyFixture(m_body->GetFixtureList());
 
-      m_numFixtures = 0;
-
-      for (unsigned int p = 0; p < newPoly.getNumPolys(); p++) {
-         const Poly& poly = newPoly.getPoly(p);
-
-         b2Vec2* verts = new b2Vec2[poly.verts.size()];
-         for (unsigned int i = 0; i < poly.verts.size(); i++)
-            verts[i] = b2Vec2(static_cast<float>(poly.verts[i].x) / m_scaledPixPerMetre,
-               static_cast<float>(poly.verts[i].y) / m_scaledPixPerMetre);
-
-         b2PolygonShape b2Poly;
-         b2Poly.Set(verts, poly.verts.size());
-
-         b2FixtureDef fdef;
-         fdef.shape = &b2Poly;
-         fdef.density = d;
-         fdef.friction = f;
-
-         m_body->CreateFixture(&fdef);
-         m_numFixtures++;
-      }
+      primitiveToBox2dBody(newPoly, m_opts, &m_body, &m_numFixtures);
    }
 
    // Wake bodies
    for (map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it)
-      it->second->m_body->SetAwake(true);*/
+      it->second->m_body->SetAwake(true);
 }
 
 //===========================================
@@ -311,7 +270,7 @@ void Box2dPhysics::updateFrameRate() {
 //
 //! @brief Call in main loop.
 //===========================================
-void Box2dPhysics::update() {/*
+void Box2dPhysics::update() {
    updateFrameRate();
    if (m_physEnts.empty()) return;
 
@@ -328,23 +287,26 @@ void Box2dPhysics::update() {/*
 
       Entity* ent = it->second->m_entity;
 
-      Vec2i pos(it->second->m_body->GetPosition()(0) * m_scaledPixPerMetre,
-         it->second->m_body->GetPosition()(1) * m_scaledPixPerMetre);
+      Vec2f pos(it->second->m_body->GetPosition()(0) * m_worldUnitsPerMetre,
+         it->second->m_body->GetPosition()(1) * m_worldUnitsPerMetre);
+
       double a = it->second->m_body->GetAngle();
 
-      Vec2i posDiff = ent->getPosition() - pos;
-      double aDiff = ent->getAngle() - a;
+      Vec2f posDiff = ent->getPosition_abs() - pos;
+      double aDiff = ent->getRotation_abs() - a;
       if (!(abs(posDiff.x) >= 1 || abs(posDiff.y) >= 1 || fabs(aDiff) >= 0.01)) continue;
 
       try {
-         Vec2f oldPos = ent->getPosition();
-         double oldA = ent->getAngle();
+         Vec2f oldPos = ent->getTranslation_abs();
+         double oldA = ent->getRotation_abs();
 
-         ent->setPosition_s(pos.x, pos.y);
-         ent->setAngle_s(a);
+         ent->setTranslation_s(pos.x, pos.y); // TODO: abs?
+         ent->setRotation_s(a);
 
-         pEEntityMoved_t event(new EEntityMoved(ent->getSharedPtr(), oldPos, pos,
-            ent->getSourcePoly(), ent->getSourcePoly(), ent->getScaleVector(), ent->getScaleVector(), oldA, a));
+         // TODO
+//         pEEntityMoved_t event(new EEntityMoved(ent->getSharedPtr(), oldPos, pos,
+//            ent->getSourcePoly(), ent->getSourcePoly(), ent->getScaleVector(), ent->getScaleVector(), oldA, a));
+
          m_ignore.insert(event.get());
          m_eventManager.queueEvent(event);
       }
@@ -355,7 +317,7 @@ void Box2dPhysics::update() {/*
       }
    }
    //-----------------------------------------
-*/}
+}
 
 //===========================================
 // Box2dPhysics::getLinearVelocity

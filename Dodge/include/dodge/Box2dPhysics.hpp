@@ -25,19 +25,13 @@ class Box2dPhysics : public EntityPhysics {
          : EntityPhysics(entity),
            m_entity(entity),
            m_body(NULL),
-           m_dynamic(false),
-           m_fixedAngle(false),
-           m_density(1.f),
-           m_friction(0.3f) {}
+           m_opts(false, false, 1.f, 0.3f) {}
 
       Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
          : EntityPhysics(entity, options),
            m_entity(entity),
            m_body(NULL),
-           m_dynamic(options.dynamic),
-           m_fixedAngle(options.fixedAngle),
-           m_density(options.density),
-           m_friction(options.friction) {}
+           m_opts(options) {}
 
       Box2dPhysics(Entity* entity, const XmlNode data);
       Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
@@ -78,7 +72,7 @@ class Box2dPhysics : public EntityPhysics {
       static std::set<EEvent*> m_ignore;
 
       static float32_t m_frameRate;
-      static float32_t m_scaledPixPerMetre;
+      static float32_t m_worldUnitsPerMetre;
       static int m_v_iterations;
       static int m_p_iterations;
 
@@ -93,9 +87,7 @@ class Box2dPhysics : public EntityPhysics {
       unsigned int m_numFixtures;
 
       bool m_dynamic;
-      bool m_fixedAngle;
-      float32_t m_density;
-      float32_t m_friction;
+      options_t m_opts;
 };
 
 
