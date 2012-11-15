@@ -15,6 +15,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <set>
 #include "definitions.hpp"
+#include "StringId.hpp"
 #include "EventManager.hpp"
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"
@@ -28,6 +29,44 @@ namespace Dodge {
 
 class Entity;
 typedef boost::shared_ptr<Entity> pEntity_t;
+
+
+class EEntityBoundingBox : public EEvent {
+   public:
+      EEntityBoundingBox(pEntity_t entity_, const Range& oldBoundingBox_, const Range& newBoundingBox_)
+         : EEvent(internString("entityBoundingBox")), entity(entity_), oldBoundingBox(oldBoundingBox_),
+           newBoundingBox(newBoundingBox_) {}
+
+      pEntity_t entity;
+      Range oldBoundingBox;
+      Range newBoundingBox;
+};
+
+
+class EEntityShape : public EEvent {
+   public:
+      EEntityShape(pEntity_t entity_, pPrimitive_t oldShape_, pPrimitive_t newShape_)
+         : EEvent(internString("entityShape")), entity(entity_), oldShape(oldShape_), newShape(newShape_) {}
+
+      pEntity_t entity;
+      pPrimitive_t oldShape;
+      pPrimitive_t newShape;
+};
+
+
+class EEntityRotation : public EEvent {
+   public:
+      EEntityRotation(pEntity_t entity_, float32_t oldRotation_, float32_t oldRotation_abs_,
+         float32_t newRotation_, float32_t newRotation_abs_)
+            : EEvent(internString("entityRotation")), oldRotation(oldRotation_), oldRotation_abs(oldRotation_abs_),
+              newRotation(newRotation_), newRotation_abs(newRotation_abs_) {}
+
+      pEntity_t entity;
+      float32_t oldRotation;
+      float32_t oldRotation_abs;
+      float32_t newRotation;
+      float32_t newRotation_abs;
+};
 
 
 class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
@@ -58,22 +97,21 @@ class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
       inline void setSilent(bool b);
       inline bool isSilent() const;
 
-      void setTranslation(float32_t x, float32_t y);
-      void setTranslation(const Vec2f& t);
-      void setTranslation_x(float32_t x);
-      void setTranslation_y(float32_t y);
+      inline void setTranslation(float32_t x, float32_t y);
+      inline void setTranslation(const Vec2f& t);
+      inline void setTranslation_x(float32_t x);
+      inline void setTranslation_y(float32_t y);
       void translate(float32_t x, float32_t y);
       inline void translate(const Vec2f& t);
-      void translate_x(float32_t x);
-      void translate_y(float32_t y);
+      inline void translate_x(float32_t x);
+      inline void translate_y(float32_t y);
       inline void setZ(int z);
       inline void setRotation(float32_t deg);
-      void rotate(float32_t deg);
-      void rotate(float32_t deg, const Vec2f& pivot);
-      void setScale(float32_t s);
-      void setScale(float32_t x, float32_t y);
+      void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
+      inline void setScale(float32_t s);
+      inline void setScale(float32_t x, float32_t y);
       inline void setScale(const Vec2f& s);
-      void scale(float32_t s);
+      inline void scale(float32_t s);
       void scale(float32_t x, float32_t y);
       inline void scale(const Vec2f& s);
       void setShape(std::unique_ptr<Primitive> shape);
@@ -194,6 +232,69 @@ inline const std::set<pEntity_t>& Entity::getChildren() const {
 //===========================================
 inline void Entity::translate(const Vec2f& t) {
    translate(t.x, t.y);
+}
+
+//===========================================
+// Entity::setTranslation
+//===========================================
+inline void Entity::setTranslation(float32_t x, float32_t y) {
+   translate(Vec2f(x, y) - m_transl);
+}
+
+//===========================================
+// Entity::setTranslation
+//===========================================
+inline void Entity::setTranslation(const Vec2f& t) {
+   setTranslation(t.x, t.y);
+}
+
+//===========================================
+// Entity::setTranslation_x
+//===========================================
+inline void Entity::setTranslation_x(float32_t x) {
+   setTranslation(x, getTranslation().y);
+}
+
+//===========================================
+// Entity::setTranslation_y
+//===========================================
+inline void Entity::setTranslation_y(float32_t y) {
+   setTranslation(getTranslation().x, y);
+}
+
+//===========================================
+// Entity::translate_x
+//===========================================
+inline void Entity::translate_x(float32_t x) {
+   translate(x, 0.f);
+}
+
+//===========================================
+// Entity::translate_y
+//===========================================
+inline void Entity::translate_y(float32_t y) {
+   translate(0.f, y);
+}
+
+//===========================================
+// Entity::setScale
+//===========================================
+inline void Entity::setScale(float32_t s) {
+   setScale(s, s);
+}
+
+//===========================================
+// Entity::setScale
+//===========================================
+inline void Entity::setScale(float32_t x, float32_t y) {
+   scale(x / m_scale.x, y / m_scale.y);
+}
+
+//===========================================
+// Entity::scale
+//===========================================
+inline void Entity::scale(float32_t s) {
+   scale(s, s);
 }
 
 //===========================================

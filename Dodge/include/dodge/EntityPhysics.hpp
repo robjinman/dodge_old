@@ -18,6 +18,13 @@
 namespace Dodge {
 
 
+class PhysicsException : public Exception {
+   public:
+      PhysicsException(const std::string& msg, const char* srcFile, int srcLine)
+         : Exception(msg, srcFile, srcLine) {}
+};
+
+
 class EntityPhysics {
    public:
       struct options_t {

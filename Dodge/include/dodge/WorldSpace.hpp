@@ -55,7 +55,7 @@ inline void WorldSpace::init(std::unique_ptr<SpatialContainer<pEntity_t> > conta
    m_container = std::move(container);
 
    Functor<void, TYPELIST_1(EEvent*)> fEntMovedHandler(this, &WorldSpace::entityMovedHandler);
-   m_eventManager.registerCallback(internString("entityMoved"), fEntMovedHandler);
+   m_eventManager.registerCallback(internString("entityBoundingBox"), fEntMovedHandler);
 
    m_init = true;
 }

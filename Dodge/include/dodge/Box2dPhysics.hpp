@@ -21,22 +21,11 @@ class EEntityMoved;
 
 class Box2dPhysics : public EntityPhysics {
    public:
-      Box2dPhysics(Entity* entity)
-         : EntityPhysics(entity),
-           m_entity(entity),
-           m_body(NULL),
-           m_opts(false, false, 1.f, 0.3f) {}
-
-      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
-         : EntityPhysics(entity, options),
-           m_entity(entity),
-           m_body(NULL),
-           m_opts(options) {}
-
-      Box2dPhysics(Entity* entity, const XmlNode data);
+      Box2dPhysics(Entity* entity);
       Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
+      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options);
+      Box2dPhysics(Entity* entity, const XmlNode data);
 
-      virtual EntityPhysics* clone() const;
       virtual void assignData(const XmlNode data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
@@ -51,6 +40,7 @@ class Box2dPhysics : public EntityPhysics {
       virtual void applyForce(const Vec2f& force);
       virtual void makeDynamic();
       virtual void makeStatic();
+
       virtual Vec2f getLinearVelocity() const;
 
       static void loadSettings(const std::string& file);
@@ -62,7 +52,8 @@ class Box2dPhysics : public EntityPhysics {
       void setEntity(Entity* entity);
 
       void constructBody();
-      void updatePos(EEntityMoved* event);
+      void primitiveToBox2dBody(const Primitive& shape, const EntityPhysics::options_t& opts, b2Body* body, uint_t* nFixtures) const;
+      void updatePos(EEvent* event);
       void deepCopy(const Box2dPhysics& copy);
 
       static void updateFrameRate();
@@ -84,9 +75,8 @@ class Box2dPhysics : public EntityPhysics {
 
       Entity* m_entity;
       b2Body* m_body;
-      unsigned int m_numFixtures;
+      uint_t m_numFixtures;
 
-      bool m_dynamic;
       options_t m_opts;
 };
 

@@ -6,7 +6,6 @@
 #include <sstream>
 #include <cstdio>
 #include <Entity.hpp>
-#include <EEntityMoved.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
 #include <AssetManager.hpp>
@@ -296,10 +295,13 @@ void Entity::setParent(Entity* parent) {
    Range bounds = m_boundary;
    recomputeBoundary();
 
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
+   if (!m_silent) {
+      EEvent* event = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      onEvent(event);
+      m_eventManager.queueEvent(event);
+   }
 
-   // Children must dispatch EEntityMoved events too
+   // Children must dispatch EEntityBoundingBox events too
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
       (*i)->parentMovedHandler();
 }
@@ -336,78 +338,6 @@ void Entity::recomputeBoundary() {
 }
 
 //===========================================
-// Entity::setTranslation
-//===========================================
-void Entity::setTranslation(float32_t x, float32_t y) {
-   Range bounds = m_boundary;
-
-   Vec2f diff = Vec2f(x, y) - m_transl;
-   m_transl = Vec2f(x, y);
-   m_boundary.setPosition(m_boundary.getPosition() + diff);
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
-// Entity::setTranslation
-//===========================================
-void Entity::setTranslation(const Vec2f& t) {
-   Range bounds = m_boundary;
-
-   Vec2f diff = t - m_transl;
-   m_transl = t;
-   m_boundary.setPosition(m_boundary.getPosition() + diff);
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
-// Entity::setTranslation_x
-//===========================================
-void Entity::setTranslation_x(float32_t x) {
-   Range bounds = m_boundary;
-
-   float32_t dx = x - m_transl.x;
-   m_transl.x = x;
-   m_boundary.setPosition(m_boundary.getPosition() + Vec2f(dx, 0.f));
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
-// Entity::setTranslation_y
-//===========================================
-void Entity::setTranslation_y(float32_t y) {
-   Range bounds = m_boundary;
-
-   float32_t dy = y - m_transl.y;
-   m_transl.y = y;
-   m_boundary.setPosition(m_boundary.getPosition() + Vec2f(0.f, dy));
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
 // Entity::translate
 //===========================================
 void Entity::translate(float32_t x, float32_t y) {
@@ -416,44 +346,13 @@ void Entity::translate(float32_t x, float32_t y) {
    m_transl = m_transl + Vec2f(x, y);
    m_boundary.setPosition(m_boundary.getPosition() + Vec2f(x, y));
 
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
+   if (!m_silent) {
+      EEvent* event = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      onEvent(event);
+      m_eventManager.queueEvent(event);
+   }
 
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
-// Entity::translate_x
-//===========================================
-void Entity::translate_x(float32_t x) {
-   Range bounds = m_boundary;
-
-   m_transl.x += x;
-   m_boundary.setPosition(m_boundary.getPosition() + Vec2f(x, 0.f));
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
-}
-
-//===========================================
-// Entity::translate_y
-//===========================================
-void Entity::translate_y(float32_t y) {
-   Range bounds = m_boundary;
-
-   m_transl.y += y;
-   m_boundary.setPosition(m_boundary.getPosition() + Vec2f(0.f, y));
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
+   // Children must dispatch EEntityBoundingBox events too
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
       (*i)->parentMovedHandler();
 }
@@ -464,6 +363,9 @@ void Entity::translate_y(float32_t y) {
 // Pivot is in model space
 //===========================================
 void Entity::rotate(float32_t deg, const Vec2f& pivot) {
+   float32_t oldRot = m_rot;
+   float32_t oldRot_abs = getRotation_abs();
+
    // - Find model's origin (bottom-left corner) in parent's model space (o)
    //    - This is just m_transl (despite any prior rotations)
    // - Find pivot in parent's model space (p)
@@ -494,33 +396,20 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    Range bounds = m_boundary;
    recomputeBoundary();
 
-   // Children must dispatch EEntityMoved events too
+   // Children must dispatch EEntityBoundingBox events too
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
       (*i)->parentMovedHandler();
 
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-}
+   if (!m_silent) {
+      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      EEvent* event2 = new EEntityRotation(shared_from_this(), oldRot, m_rot, oldRot_abs, getRotation_abs());
 
-//===========================================
-// Entity::rotate
-//===========================================
-void Entity::rotate(float32_t deg) {
-   Range bounds = m_boundary;
+      onEvent(event1);
+      onEvent(event2);
 
-   if (m_shape) m_shape->rotate(deg);
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->m_shape->rotate(deg);
-
-   m_rot += deg;
-   recomputeBoundary();
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-
-   // Children must dispatch EEntityMoved events too
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->parentMovedHandler();
+      m_eventManager.queueEvent(event1);
+      m_eventManager.queueEvent(event2);
+   }
 }
 
 //===========================================
@@ -528,44 +417,23 @@ void Entity::rotate(float32_t deg) {
 //===========================================
 void Entity::setShape(std::unique_ptr<Primitive> shape) {
    Range bounds = m_boundary;
+   Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
 
    m_shape = std::move(shape);
    if (m_shape) m_shape->rotate(m_rot);
    if (m_shape) m_shape->scale(m_scale);
    recomputeBoundary();
 
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-}
+   if (!m_silent) {
+      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), pPrimitive_t(m_shape->clone()));
 
-//===========================================
-// Entity::setScale
-//===========================================
-void Entity::setScale(float32_t x, float32_t y) {
-   Range bounds = m_boundary;
+      onEvent(event1);
+      onEvent(event2);
 
-   if (m_shape) m_shape->scale(Vec2f(x / m_scale.x, y / m_scale.y));
-   m_scale.x = x;
-   m_scale.y = y;
-   recomputeBoundary();
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-}
-
-//===========================================
-// Entity::setScale
-//===========================================
-void Entity::setScale(float32_t s) {
-   Range bounds = m_boundary;
-
-   if (m_shape) m_shape->scale(Vec2f(s / m_scale.x, s / m_scale.y));
-   m_scale.x = s;
-   m_scale.y = s;
-   recomputeBoundary();
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
+      m_eventManager.queueEvent(event1);
+      m_eventManager.queueEvent(event2);
+   }
 }
 
 //===========================================
@@ -573,29 +441,23 @@ void Entity::setScale(float32_t s) {
 //===========================================
 void Entity::scale(float32_t x, float32_t y) {
    Range bounds = m_boundary;
+   Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
 
    if (m_shape) m_shape->scale(Vec2f(x, y));
    m_scale.x *= x;
    m_scale.y *= y;
    recomputeBoundary();
 
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
-}
+   if (!m_silent) {
+      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), pPrimitive_t(m_shape->clone()));
 
-//===========================================
-// Entity::scale
-//===========================================
-void Entity::scale(float32_t s) {
-   Range bounds = m_boundary;
+      onEvent(event1);
+      onEvent(event2);
 
-   if (m_shape) m_shape->scale(Vec2f(s, s));
-   m_scale.x *= s;
-   m_scale.y *= s;
-   recomputeBoundary();
-
-   if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
+      m_eventManager.queueEvent(event1);
+      m_eventManager.queueEvent(event2);
+   }
 }
 
 //===========================================
@@ -606,7 +468,7 @@ void Entity::parentMovedHandler() {
    recomputeBoundary();
 
    if (!m_silent)
-      m_eventManager.queueEvent(new EEntityMoved(shared_from_this(), bounds, m_boundary));
+      m_eventManager.queueEvent(new EEntityBoundingBox(shared_from_this(), bounds, m_boundary));
 }
 
 //===========================================

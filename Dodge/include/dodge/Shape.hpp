@@ -18,7 +18,9 @@ class Shape : public Entity {
       explicit Shape(const XmlNode data);
       Shape(long type, std::unique_ptr<Primitive> shape);
       Shape(long name, long type, std::unique_ptr<Primitive> shape);
+      Shape(const Shape& copy);
 
+      virtual Shape* clone() const;
       virtual void assignData(const XmlNode data);
       virtual void draw(const Vec2f& at) const;
 

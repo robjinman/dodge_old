@@ -105,6 +105,12 @@ void btn1Release(int x, int y) {
    worldSpace.insertEntity(shape);
 }
 
+void onWindowResize(int w, int h) {
+   Renderer renderer;
+   renderer.onWindowResize(w, h);
+   graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+}
+
 int main(int argc, char** argv) {
    WinIO win;
    win.init("OpenGLES 2.0 Demo", 640, 480, false);
@@ -113,6 +119,7 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
    win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
    win.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(btn1Release));
+   win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
    worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
@@ -144,6 +151,7 @@ int main(int argc, char** argv) {
    pSprite_t proto(new Sprite(internString("type0"), tex0));
    proto->addAnimation(anim0);
    proto->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
+   proto->setOnScreenSize(w, h);
 
    entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
    entities[0]->setTranslation(0.3f, 0.3f);
@@ -191,14 +199,14 @@ int main(int argc, char** argv) {
       for (uint_t i = 0; i < entities.size(); ++i) {
          if (entities[i]->getTypeName() == strRectangle) {
             entities[i]->update();
-            entities[i]->draw(Vec2f(0.f, 0.f));
+            entities[i]->draw();
          }
       }
 
       for (uint_t i = 0; i < entities.size(); ++i) {
          if (entities[i]->getTypeName() != strRectangle) {
             entities[i]->update();
-            entities[i]->draw(Vec2f(0.f, 0.f));
+            entities[i]->draw();
 
             graphics2d.setLineWidth(0);
 
@@ -212,7 +220,7 @@ int main(int argc, char** argv) {
       stringstream strFr;
       strFr << "Frame Rate: " << frameRate << "fps";
       graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
-      graphics2d.drawText(font1, strFr.str(), 0.03f, 460.f * gGetPixelSize().y, 5, 0.f, Vec2f(0.f, 0.f), Vec2f(0.15f, 0.15f));
+      graphics2d.drawText(font1, Vec2f(0.02, 0.03), strFr.str(), 0.1, 0.9, 5, 0.f, Vec2f(0.f, 0.f));
 
       eventManager.doEvents();
 

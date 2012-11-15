@@ -27,6 +27,7 @@ class Polygon : public Primitive {
       static const int MAX_VERTS = 8;
 
       inline const Vec2f& getVertex(int idx) const;
+      inline const std::vector<Polygon>& getConvexChildren() const;
       inline int getNumVertices() const;
       inline void setVertex(int idx, const Vec2f& vert);
       inline void setVertex(int idx, float32_t x, float32_t y);
@@ -80,6 +81,13 @@ inline const Vec2f& Polygon::getVertex(int idx) const {
       throw Exception("Index out of range", __FILE__, __LINE__);
 
    return *m_verts[idx];
+}
+
+//===========================================
+// Polygon::getConvexChildren
+//===========================================
+inline const std::vector<Polygon>& Polygon::getConvexChildren() const {
+   return m_children;
 }
 
 //===========================================

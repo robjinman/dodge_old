@@ -5,6 +5,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
+#include <boost/shared_ptr.hpp>
 #include "../../xml/xml.hpp"
 #include "../Vec2f.hpp"
 #include "../../Asset.hpp"
@@ -35,6 +36,8 @@ class Primitive : public Asset {
 
       virtual ~Primitive() {};
 };
+
+typedef boost::shared_ptr<Primitive> pPrimitive_t;
 
 
 }

@@ -5,7 +5,6 @@
 
 #include <WorldSpace.hpp>
 #include <StringId.hpp>
-#include <EEntityMoved.hpp>
 
 
 namespace Dodge {
@@ -24,7 +23,7 @@ void WorldSpace::entityMovedHandler(EEvent* e) {
    if (!m_init)   // This is impossible
       throw Exception("Error in entityMoveHandler; WorldSpace not initialised", __FILE__, __LINE__);
 
-   EEntityMoved* event = static_cast<EEntityMoved*>(e);
+   EEntityBoundingBox* event = static_cast<EEntityBoundingBox*>(e);
 
    std::set<pEntity_t>::iterator it = m_tracking.find(event->entity);
    if (it != m_tracking.end()) {

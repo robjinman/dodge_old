@@ -57,6 +57,19 @@ Shape::Shape(const XmlNode data)
 }
 
 //===========================================
+// Shape::Shape
+//===========================================
+Shape::Shape(const Shape& copy)
+   : Entity(copy) {}
+
+//===========================================
+// Shape::clone
+//===========================================
+Shape* Shape::clone() const {
+   return new Shape(*this);
+}
+
+//===========================================
 // Shape::assignData
 //
 // All tags and attributes are optional.
