@@ -21,9 +21,16 @@ class XmlNode {
       explicit XmlNode(const rapidxml::xml_node<>* node) : m_node(node) {}
 
       inline std::string name() const;
-      inline std::string value() const;
+
+      inline std::string getString() const;
+      int getInt() const;
+      long getLong() const;
+      float getFloat() const;
+      double getDouble() const;
+      bool getBool() const;
+
       inline const XmlNode firstChild() const;
-      inline const XmlNode nthChild(uint_t n) const;
+      const XmlNode nthChild(uint_t n) const;
       inline const XmlNode nextSibling() const;
       inline const XmlAttribute firstAttribute() const;
 
@@ -42,10 +49,12 @@ inline std::string XmlNode::name() const {
 }
 
 //===========================================
-// XmlNode::value
+// XmlNode::getString
 //===========================================
-inline std::string XmlNode::value() const {
-   if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
+inline std::string XmlNode::getString() const {
+   if (isNull())
+      throw XmlException("Node is NULL", __FILE__, __LINE__);
+
    return std::string(m_node->value());
 }
 
@@ -55,18 +64,6 @@ inline std::string XmlNode::value() const {
 inline const XmlNode XmlNode::firstChild() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
    return XmlNode(m_node->first_node());
-}
-
-//===========================================
-// XmlNode::nthChild
-//===========================================
-inline const XmlNode XmlNode::nthChild(uint_t n) const {
-   if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-
-   XmlNode c = firstChild();
-   for (uint_t i = 0; i < n; ++i) c = c.nextSibling();
-
-   return c;
 }
 
 //===========================================

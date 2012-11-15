@@ -20,9 +20,15 @@ class XmlAttribute {
       explicit XmlAttribute(const rapidxml::xml_attribute<>* attr) : m_attr(attr) {}
 
       inline std::string name() const;
-      inline std::string value() const;
-      inline const XmlAttribute nextAttribute() const;
 
+      inline std::string getString() const;
+      int getInt() const;
+      long getLong() const;
+      float getFloat() const;
+      double getDouble() const;
+      bool getBool() const;
+
+      inline const XmlAttribute nextAttribute() const;
       inline bool isNull() const;
 
    private:
@@ -38,10 +44,12 @@ inline std::string XmlAttribute::name() const {
 }
 
 //===========================================
-// XmlAttribute::value
+// XmlAttribute::getString
 //===========================================
-inline std::string XmlAttribute::value() const {
-   if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
+inline std::string XmlAttribute::getString() const {
+   if (isNull())
+      throw XmlException("Attribute is NULL", __FILE__, __LINE__);
+
    return std::string(m_attr->value());
 }
 

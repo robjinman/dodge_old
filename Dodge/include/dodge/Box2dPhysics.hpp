@@ -21,10 +21,25 @@ class EEntityMoved;
 
 class Box2dPhysics : public EntityPhysics {
    public:
-      Box2dPhysics(Entity* entity);
-      Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
-      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options);
       Box2dPhysics(Entity* entity, const XmlNode data);
+
+      Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
+         : EntityPhysics(copy, entity),
+           m_entity(entity),
+           m_body(NULL),
+           m_opts(copy.m_opts) {}
+
+      Box2dPhysics(Entity* entity)
+         : EntityPhysics(entity),
+           m_entity(entity),
+           m_body(NULL),
+           m_opts(false, false, 1.f, 0.3f) {}
+
+      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
+         : EntityPhysics(entity, options),
+           m_entity(entity),
+           m_body(NULL),
+           m_opts(options) {}
 
       virtual void assignData(const XmlNode data);
 #ifdef DEBUG

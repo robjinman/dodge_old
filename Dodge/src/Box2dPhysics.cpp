@@ -3,13 +3,14 @@
  * Date: 2012
  */
 
+#include <ctype.h>
 #include <Box2dPhysics.hpp>
 #include <Timer.hpp>
 #include <KvpParser.hpp>
 #include <StringId.hpp>
 #include <utils/Functor.hpp>
 #include <math/fAreEqual.hpp>
-#include <math/primitives/primitives.hpp> // TODO
+#include <math/primitives/primitives.hpp>
 
 
 using namespace std;
@@ -38,50 +39,62 @@ Box2dPhysics::Box2dPhysics(Entity* entity, const XmlNode data)
      m_body(NULL),
      m_opts(false, false, 1.f, 0.3f) {
 
-   // TODO
-}
+   try {
+      XML_NODE_CHECK(data, Box2dPhysics);
 
-//===========================================
-// Box2dPhysics::Box2dPhysics
-//===========================================
-Box2dPhysics::Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
-   : EntityPhysics(copy, entity),
-     m_entity(entity),
-     m_body(NULL),
-     m_opts(copy.m_opts) {
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, dynamic);
+      m_opts.dynamic = attr.getBool();
 
-//   addToWorld();
-}
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, fixedAngle);
+      m_opts.fixedAngle = attr.getBool();
 
-//===========================================
-// Box2dPhysics::Box2dPhysics
-//===========================================
-Box2dPhysics::Box2dPhysics(Entity* entity)
-   : EntityPhysics(entity),
-     m_entity(entity),
-     m_body(NULL),
-     m_opts(false, false, 1.f, 0.3f) {
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, density);
+      m_opts.density = attr.getFloat();
 
-//   addToWorld();
-}
-
-//===========================================
-// Box2dPhysics::Box2dPhysics
-//===========================================
-Box2dPhysics::Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
-   : EntityPhysics(entity, options),
-     m_entity(entity),
-     m_body(NULL),
-     m_opts(options) {
-
-//   addToWorld();
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, friction);
+      m_opts.friction = attr.getFloat();
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Box2dPhysics ;");
+      throw;
+   }
 }
 
 //===========================================
 // Box2dPhysics::assignData
 //===========================================
 void Box2dPhysics::assignData(const XmlNode data) {
-   // TODO
+   if (data.isNull() || data.name() != "Box2dPhysics") return;
+
+   try {
+      XmlAttribute attr = data.firstAttribute();
+      if (!attr.isNull() && attr.name() == "dynamic") {
+         m_opts.dynamic = attr.getBool();
+         attr = attr.nextAttribute();
+      }
+
+      if (!attr.isNull() && attr.name() == "fixedAngle") {
+         m_opts.fixedAngle = attr.getBool();
+         attr = attr.nextAttribute();
+      }
+
+      if (!attr.isNull() && attr.name() == "density") {
+         m_opts.density = attr.getFloat();
+         attr = attr.nextAttribute();
+      }
+
+      if (!attr.isNull() && attr.name() == "friction") {
+         m_opts.friction = attr.getFloat();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Box2dPhysics ;");
+      throw;
+   }
 }
 
 #ifdef DEBUG
@@ -269,8 +282,6 @@ void Box2dPhysics::entityMovedHandler(EEvent* event) {
    if (event->getType() == entityBoundingBoxStr) entity = static_cast<EEntityBoundingBox*>(event)->entity.get();
    else if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
    else if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
-   else
-      throw PhysicsException("", __FILE__, __LINE__); //TODO
 
    if (m_ignore.find(event) == m_ignore.end()) {
       map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.find(entity);
@@ -311,15 +322,13 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       Primitive* newShape = event->newShape.get();
 
       // Update shape
-      if (oldShape == NULL || !(*oldShape == *newShape)) {
+      if (oldShape == NULL || *oldShape != *newShape) {
          for (unsigned int i = 0; i < m_numFixtures; ++i)
             m_body->DestroyFixture(m_body->GetFixtureList());
 
          primitiveToBox2dBody(*newShape, m_opts, m_body, &m_numFixtures);
       }
    }
-   else
-      throw PhysicsException("", __FILE__, __LINE__); //TODO
 
    // Wake bodies
    for (map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it)
@@ -384,6 +393,10 @@ void Box2dPhysics::update() {
          EEvent* event1 = new EEntityBoundingBox(ent->getSharedPtr(), oldBounds, ent->getBoundary());
          EEvent* event2 = new EEntityRotation(ent->getSharedPtr(), oldRot, oldRot_abs, ent->getRotation(), ent->getRotation_abs());
          EEvent* event3 = new EEntityShape(ent->getSharedPtr(), oldShape, pPrimitive_t(ent->getShape().clone()));
+
+         ent->onEvent(event1);
+         ent->onEvent(event2);
+         ent->onEvent(event3);
 
          m_eventManager.queueEvent(event1);
          m_eventManager.queueEvent(event2);

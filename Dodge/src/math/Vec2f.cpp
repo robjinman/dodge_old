@@ -25,17 +25,21 @@ Vec2f::Vec2f(const Vec2i& v) : x(v.x), y(v.y) {}
 // Vec2f::Vec2f
 //===========================================
 Vec2f::Vec2f(const XmlNode data) {
-   string msg("Error parsing XML for instance of class Vec2f");
+   try {
+      XML_NODE_CHECK(data, Vec2f);
 
-   XML_NODE_CHECK(msg, data, Vec2f);
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, x);
+      x = attr.getFloat();
 
-   XmlAttribute attr = data.firstAttribute();
-   XML_ATTR_CHECK(msg, attr, x);
-   sscanf(attr.value().data(), "%f", &x);
-
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, y);
-   sscanf(attr.value().data(), "%f", &y);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, y);
+      y = attr.getFloat();
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Vec2f; ");
+      throw;
+   }
 }
 
 //===========================================

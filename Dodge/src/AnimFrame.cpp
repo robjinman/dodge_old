@@ -15,30 +15,34 @@ namespace Dodge {
 // AnimFrame::AnimFrame
 //===========================================
 AnimFrame::AnimFrame(const XmlNode data) {
-   string msg("Error parsing XML for instance of class AnimFrame");
+   try {
+      XML_NODE_CHECK(data, AnimFrame);
 
-   XML_NODE_CHECK(msg, data, AnimFrame);
+      XmlNode node = data.firstChild();
 
-   XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, pos);
 
-   XML_NODE_CHECK(msg, node, pos);
+      pos = Vec2i(node.firstChild());
+      node = node.nextSibling();
 
-   pos = Vec2i(node.firstChild());
-   node = node.nextSibling();
+      XML_NODE_CHECK(node, dim);
 
-   XML_NODE_CHECK(msg, node, dim);
+      dim = Vec2i(node.firstChild());
+      node = node.nextSibling();
 
-   dim = Vec2i(node.firstChild());
-   node = node.nextSibling();
+      XML_NODE_CHECK(node, col);
 
-   XML_NODE_CHECK(msg, node, col);
+      col = Colour(node.firstChild());
+      node = node.nextSibling();
 
-   col = Colour(node.firstChild());
-   node = node.nextSibling();
-
-   if (!node.isNull() && node.name() == "shape") {     // TODO: PrimitiveDelta
-      PrimitiveFactory primitiveFactory;
-      shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      if (!node.isNull() && node.name() == "shape") {     // TODO: PrimitiveDelta
+         PrimitiveFactory primitiveFactory;
+         shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class AnimFrame; ");
+      throw;
    }
 }
 

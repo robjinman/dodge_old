@@ -14,24 +14,28 @@ namespace Dodge {
 // Quad::Quad
 //===========================================
 Quad::Quad(const XmlNode data) {
-   string msg("Error parsing XML for instance of class Quad");
+   try {
+      XML_NODE_CHECK(data, Quad);
 
-   XML_NODE_CHECK(msg, data, Quad);
+      clear();
+      int n = 0;
 
-   clear();
-   int n = 0;
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "Vec2f") {
+         Vec2f vert(node);
+         addVertex(vert);
 
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "Vec2f") {
-      Vec2f vert(node);
-      addVertex(vert);
+         ++n;
+         node = node.nextSibling();
+      }
 
-      ++n;
-      node = node.nextSibling();
+      if (n != 4)
+         throw XmlException("Expected 4 vertices", __FILE__, __LINE__);
    }
-
-   if (n != 4)
-      throw XmlException(msg + "; Expected 4 vertices", __FILE__, __LINE__);
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Quad; ");
+      throw;
+   }
 }
 
 //===========================================

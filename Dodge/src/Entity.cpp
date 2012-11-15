@@ -83,65 +83,68 @@ Entity::Entity(const XmlNode data)
    AssetManager assetManager;
    PrimitiveFactory primitiveFactory;
 
-   string msg("Error parsing XML for instance of class Entity");
+   try {
+      XML_NODE_CHECK(data, Entity);
 
-   XML_NODE_CHECK(msg, data, Entity);
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, type);
+      m_type = internString(attr.getString());
 
-   XmlAttribute attr = data.firstAttribute();
-   XML_ATTR_CHECK(msg, attr, type);
-   m_type = internString(attr.value());
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, name);
+      m_name = internString(attr.getString());
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, name);
-   m_name = internString(attr.value());
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, x);
+      m_transl.x = attr.getFloat();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, x);
-   sscanf(attr.value().data(), "%f", &m_transl.x);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, y);
+      m_transl.y = attr.getFloat();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, y);
-   sscanf(attr.value().data(), "%f", &m_transl.y);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, z);
+      m_z = attr.getInt();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, z);
-   sscanf(attr.value().data(), "%d", &m_z);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, rot);
+      m_rot = attr.getFloat();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, rot);
-   sscanf(attr.value().data(), "%f", &m_rot);
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, scale);
+      m_scale = Vec2f(node.firstChild());
 
-   XmlNode node = data.firstChild();
-   XML_NODE_CHECK(msg, node, scale);
-   m_scale = Vec2f(node.firstChild());
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, shape);
+      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
 
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, shape);
-   m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, children);
 
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, children);
+      XmlNode node_ = node.firstChild();
+      while (!node_.isNull() && node_.name() == "child") {
+         XmlAttribute attr = node_.firstAttribute();
 
-   XmlNode node_ = node.firstChild();
-   while (!node_.isNull() && node_.name() == "child") {
-      XmlAttribute attr = node_.firstAttribute();
+         if (!attr.isNull() && attr.name() == "ptr") {
+            long id = attr.getLong();
 
-      if (!attr.isNull() && attr.name() == "ptr") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
+            pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
 
-         pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
+            if (!child)
+               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
 
-         if (!child)
-            throw XmlException(msg + "; Bad entity asset id", __FILE__, __LINE__);
+            addChild(child);
+         }
 
-         addChild(child);
+         node_ = node_.nextSibling();
       }
 
-      node_ = node_.nextSibling();
+      ++m_count;
    }
-
-   ++m_count;
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Entity; ");
+      throw;
+   }
 }
 
 //===========================================
@@ -226,61 +229,64 @@ void Entity::assignData(const XmlNode data) {
    AssetManager assetManager;
    PrimitiveFactory primitiveFactory;
 
-   string msg("Error parsing XML for instance of class Entity");
-
-   XmlAttribute attr = data.firstAttribute();
-   if (!attr.isNull() && attr.name() == "type") {
-      m_type = internString(attr.value());
-      attr = attr.nextAttribute();
-   }
-   if (!attr.isNull() && attr.name() == "name") {
-      m_name = internString(attr.value());
-      attr = attr.nextAttribute();
-   }
-   if (!attr.isNull() && attr.name() == "x") {
-      sscanf(attr.value().data(), "%f", &m_transl.x);
-      attr = attr.nextAttribute();
-   }
-   if (!attr.isNull() && attr.name() == "y") {
-      sscanf(attr.value().data(), "%f", &m_transl.y);
-      attr = attr.nextAttribute();
-   }
-   if (!attr.isNull() && attr.name() == "z") {
-      sscanf(attr.value().data(), "%d", &m_z);
-      attr = attr.nextAttribute();
-   }
-   if (!attr.isNull() && attr.name() == "rot") {
-      sscanf(attr.value().data(), "%f", &m_rot);
-   }
-   XmlNode node = data.firstChild();
-   if (!node.isNull() && node.name() == "scale") {
-      m_scale = Vec2f(node.firstChild());
-      node = node.nextSibling();
-   }
-   if (!node.isNull() && node.name() == "shape") {
-      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
-      node = node.nextSibling();
-   }
-   if (!node.isNull() && node.name() == "children") {
-      XmlNode node_ = node.firstChild();
-
-      while (!node_.isNull() && node_.name() == "child") {
-         XmlAttribute attr = node_.firstAttribute();
-
-         if (!attr.isNull() && attr.name() == "ptr") {
-            long id = 0;
-            sscanf(attr.value().data(), "%ld", &id);
-
-            pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
-
-            if (!child)
-               throw XmlException(msg + "; Bad entity asset id", __FILE__, __LINE__);
-
-            addChild(child);
-         }
-
-         node_ = node_.nextSibling();
+   try {
+      XmlAttribute attr = data.firstAttribute();
+      if (!attr.isNull() && attr.name() == "type") {
+         m_type = internString(attr.getString());
+         attr = attr.nextAttribute();
       }
+      if (!attr.isNull() && attr.name() == "name") {
+         m_name = internString(attr.getString());
+         attr = attr.nextAttribute();
+      }
+      if (!attr.isNull() && attr.name() == "x") {
+         m_transl.x = attr.getFloat();
+         attr = attr.nextAttribute();
+      }
+      if (!attr.isNull() && attr.name() == "y") {
+         m_transl.y = attr.getFloat();
+         attr = attr.nextAttribute();
+      }
+      if (!attr.isNull() && attr.name() == "z") {
+         m_z = attr.getInt();
+         attr = attr.nextAttribute();
+      }
+      if (!attr.isNull() && attr.name() == "rot") {
+         m_rot = attr.getFloat();
+      }
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "scale") {
+         m_scale = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+      if (!node.isNull() && node.name() == "shape") {
+         m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+         node = node.nextSibling();
+      }
+      if (!node.isNull() && node.name() == "children") {
+         XmlNode node_ = node.firstChild();
+
+         while (!node_.isNull() && node_.name() == "child") {
+            XmlAttribute attr = node_.firstAttribute();
+
+            if (!attr.isNull() && attr.name() == "ptr") {
+               long id = attr.getLong();
+
+               pEntity_t child = boost::dynamic_pointer_cast<Entity>(assetManager.getAssetPointer(id));
+
+               if (!child)
+                  throw XmlException("Bad entity asset id", __FILE__, __LINE__);
+
+               addChild(child);
+            }
+
+            node_ = node_.nextSibling();
+         }
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Entity; ");
+      throw;
    }
 }
 

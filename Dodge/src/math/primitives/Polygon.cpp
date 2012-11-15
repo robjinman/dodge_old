@@ -32,20 +32,23 @@ Polygon::Polygon() : m_nVerts(0) {
 // Polygon::Polygon
 //===========================================
 Polygon::Polygon(const XmlNode data) {
-   string msg("Error parsing XML for instance of class Polygon");
+   try {
+      XML_NODE_CHECK(data, Polygon);
 
-   XML_NODE_CHECK(msg, data, Polygon);
+      clear();
 
-   clear();
-//   m_verts.resize(Polygon::MAX_VERTS);
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "Vec2f") {
+         boost::shared_ptr<Vec2f> vert(new Vec2f(node));
+         m_verts.push_back(vert);
 
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "Vec2f") {
-      boost::shared_ptr<Vec2f> vert(new Vec2f(node));
-      m_verts.push_back(vert);
-
-      ++m_nVerts;
-      node = node.nextSibling();
+         ++m_nVerts;
+         node = node.nextSibling();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Polygon; ");
+      throw;
    }
 
    restructure();

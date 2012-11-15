@@ -33,13 +33,17 @@ UiButton* UiButton::clone() const {
 // UiButton::assignData
 //===========================================
 void UiButton::assignData(const XmlNode data) {
-   string msg("Error parsing XML for instance of class UiButton");
+   try {
+      XML_NODE_CHECK(data, UiButton);
 
-   XML_NODE_CHECK(msg, data, UiButton);
-
-   XmlNode node = data.firstChild();
-   if (!node.isNull() && node.name() == "Sprite") {
-      Sprite::assignData(node);
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "Sprite") {
+         Sprite::assignData(node);
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class UiButton; ");
+      throw;
    }
 }
 

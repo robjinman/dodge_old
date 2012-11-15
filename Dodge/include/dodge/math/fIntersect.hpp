@@ -15,7 +15,7 @@ class Vec2f;
 namespace Math {
 
 
-bool intersect(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2);
+extern bool intersect(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2);
 
 
 }

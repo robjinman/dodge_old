@@ -15,21 +15,25 @@ namespace Dodge {
 // TransFrame::Transframe
 //===========================================
 TransFrame::TransFrame(const XmlNode data) {
-   string msg("Error parsing XML for instance of class TransFrame");
+   try {
+      XML_NODE_CHECK(data, TransFrame);
 
-   XML_NODE_CHECK(msg, data, TransFrame);
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, delta);
+      delta = Vec2f(node.firstChild());
 
-   XmlNode node = data.firstChild();
-   XML_NODE_CHECK(msg, node, delta);
-   delta = Vec2f(node.firstChild());
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, rot);
+      rot = node.getFloat();
 
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, rot);
-   sscanf(node.value().data(), "%f", &rot);
-
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, scale);
-   scale = Vec2f(node.firstChild());
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, scale);
+      scale = Vec2f(node.firstChild());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class TransFrame; ");
+      throw;
+   }
 }
 
 #ifdef DEBUG

@@ -15,14 +15,14 @@
 #include "XmlException.hpp"
 
 
-#define XML_NODE_CHECK(msg, node, strName) \
+#define XML_NODE_CHECK(node, strName) \
    if (node.isNull() || node.name() != #strName) { \
-      throw XmlException(msg + "; Expected '" #strName "' tag", __FILE__, __LINE__); \
+      throw XmlException("Expected '" #strName "' tag", __FILE__, __LINE__); \
    }
 
-#define XML_ATTR_CHECK(msg, attr, strName) \
+#define XML_ATTR_CHECK(attr, strName) \
    if (attr.isNull() || attr.name() != #strName) { \
-      throw XmlException(msg + "; Expected '" #strName "' attribute", __FILE__, __LINE__); \
+      throw XmlException("Expected '" #strName "' attribute", __FILE__, __LINE__); \
    }
 
 

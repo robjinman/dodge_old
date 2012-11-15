@@ -30,8 +30,7 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
       explicit PhysicalEntity(const XmlNode data)
          : Entity(data.nthChild(0)), T_PHYSICS(data.nthChild(1), this) {
 
-         std::string msg("Error parsing XML for instance of class PhysicalEntity");
-         XML_NODE_CHECK(msg, data, PhysicalEntity);
+         XML_NODE_CHECK(data, PhysicalEntity);
       }
 
       explicit PhysicalEntity(long type)

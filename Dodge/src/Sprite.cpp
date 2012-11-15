@@ -23,8 +23,7 @@ Sprite::Sprite(const XmlNode data)
      EntityAnimations(this, data.nthChild(1)),
      EntityTransformations(this, data.nthChild(2)) {
 
-   string msg("Error parsing XML for instance of class Sprite");
-   XML_NODE_CHECK(msg, data, Sprite);
+   XML_NODE_CHECK(data, Sprite);
 }
 
 //===========================================
@@ -65,20 +64,26 @@ Sprite* Sprite::clone() const {
 void Sprite::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Sprite") return;
 
-   XmlNode node = data.firstChild();
+   try {
+      XmlNode node = data.firstChild();
 
-   if (!node.isNull() && node.name() == "Entity") {
-      Entity::assignData(node);
-      node = node.nextSibling();
+      if (!node.isNull() && node.name() == "Entity") {
+         Entity::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "EntityAnimations") {
+         EntityAnimations::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "EntityTransformations") {
+         EntityTransformations::assignData(node);
+      }
    }
-
-   if (!node.isNull() && node.name() == "EntityAnimations") {
-      EntityAnimations::assignData(node);
-      node = node.nextSibling();
-   }
-
-   if (!node.isNull() && node.name() == "EntityTransformations") {
-      EntityTransformations::assignData(node);
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Sprite; ");
+      throw;
    }
 }
 

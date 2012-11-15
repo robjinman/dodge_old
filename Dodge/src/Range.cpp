@@ -24,17 +24,21 @@ Graphics2d Range::m_graphics2d = Graphics2d();
 // Range::Range
 //===========================================
 Range::Range(const XmlNode data) {
-   string msg("Error parsing XML for instance of class Range");
+   try {
+      XML_NODE_CHECK(data, Range);
 
-   XML_NODE_CHECK(msg, data, Range);
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, pos);
+      m_pos = Vec2f(node.firstChild());
 
-   XmlNode node = data.firstChild();
-   XML_NODE_CHECK(msg, node, pos);
-   m_pos = Vec2f(node.firstChild());
-
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, size);
-   m_size = Vec2f(node.firstChild());
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, size);
+      m_size = Vec2f(node.firstChild());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Range; ");
+      throw;
+   }
 }
 
 #ifdef DEBUG

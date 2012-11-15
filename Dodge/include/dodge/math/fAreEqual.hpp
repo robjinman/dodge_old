@@ -10,7 +10,11 @@
 #include "primitives/Primitive.hpp"
 
 
-bool operator==(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2);
+extern bool operator==(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2);
+
+inline bool operator!=(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2) {
+   return !(obj1 == obj2);
+}
 
 
 #endif

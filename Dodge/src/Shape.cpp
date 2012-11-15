@@ -52,8 +52,7 @@ Shape::Shape(long name, long type, unique_ptr<Primitive> shape)
 Shape::Shape(const XmlNode data)
    : Entity(data.firstChild()) {
 
-   string msg("Error parsing XML for instance of class Shape");
-   XML_NODE_CHECK(msg, data, Shape);
+   XML_NODE_CHECK(data, Shape);
 }
 
 //===========================================
@@ -77,9 +76,15 @@ Shape* Shape::clone() const {
 void Shape::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Shape") return;
 
-   XmlNode node = data.firstChild();
-   if (!node.isNull() && node.name() == "Entity") {
-      Entity::assignData(node);
+   try {
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "Entity") {
+         Entity::assignData(node);
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Shape; ");
+      throw;
    }
 }
 

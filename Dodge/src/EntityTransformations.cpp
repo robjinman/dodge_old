@@ -59,26 +59,33 @@ EntityTransformations::EntityTransformations(Entity* entity, const XmlNode data)
 
    AssetManager assetManager;
 
-   string msg("Error parsing XML for instance of class EntityTransformations");
+   try {
+      XML_NODE_CHECK(data, EntityTransformations);
 
-   XML_NODE_CHECK(msg, data, EntityTransformations);
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "transformation") {
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "proto") {
+            long id = attr.getLong();
 
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "transformation") {
-      XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "proto") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
+            pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
 
-         pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
-         m_transformations[trans->getName()] = trans;
+            if (!trans)
+               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
+
+            m_transformations[trans->getName()] = trans;
+         }
+         else {
+            pTransformation_t trans(new Transformation(node.firstChild()));
+            m_transformations[trans->getName()] = trans;
+         }
+
+         node = node.nextSibling();
       }
-      else {
-         pTransformation_t trans(new Transformation(node.firstChild()));
-         m_transformations[trans->getName()] = trans;
-      }
-
-      node = node.nextSibling();
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class EntityTransformations; ");
+      throw;
    }
 }
 
@@ -90,22 +97,31 @@ void EntityTransformations::assignData(const XmlNode data) {
 
    AssetManager assetManager;
 
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "transformation") {
-      XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "proto") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
+   try {
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "transformation") {
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "proto") {
+            long id = attr.getLong();
 
-         pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
-         m_transformations[trans->getName()] = trans;
-      }
-      else {
-         pTransformation_t trans(new Transformation(node.firstChild()));
-         m_transformations[trans->getName()] = trans;
-      }
+            pTransformation_t trans(dynamic_cast<Transformation*>(assetManager.cloneAsset(id)));
+            m_transformations[trans->getName()] = trans;
+         }
+         else {
+            pTransformation_t trans(new Transformation(node.firstChild()));
 
-      node = node.nextSibling();
+            if (!trans)
+               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
+
+            m_transformations[trans->getName()] = trans;
+         }
+
+         node = node.nextSibling();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class EntityTransformations; ");
+      throw;
    }
 }
 

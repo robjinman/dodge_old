@@ -31,28 +31,32 @@ Transformation::Transformation(const XmlNode data)
      m_frameReady(false),
      m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {
 
-   string msg("Error parsing XML for instance of class Transformation");
+   try {
+      XML_NODE_CHECK(data, Transformation);
 
-   XML_NODE_CHECK(msg, data, Transformation);
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, name);
+      m_name = internString(attr.getString());
 
-   XmlAttribute attr = data.firstAttribute();
-   XML_ATTR_CHECK(msg, attr, name);
-   m_name = internString(attr.value());
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, rate);
+      m_rate = attr.getFloat();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, rate);
-   sscanf(attr.value().data(), "%lf", &m_rate);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, smooth);
+      m_smooth = attr.getInt();
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, smooth);
-   sscanf(attr.value().data(), "%d", &m_smooth);
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "TransFrame") {
+         TransFrame frame(node);
+         m_frames.push_back(frame);
 
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "TransFrame") {
-      TransFrame frame(node);
-      m_frames.push_back(frame);
-
-      node = node.nextSibling();
+         node = node.nextSibling();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Transformation; ");
+      throw;
    }
 }
 

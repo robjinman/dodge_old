@@ -25,7 +25,10 @@ class UiButton : public Sprite, public EntityUi {
          : Sprite(data.firstChild()),
            EntityUi(this),
            m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {}
+           m_onRelease(&UiButton::void_entityPtr) {
+
+         XML_NODE_CHECK(data, UiButton);
+      }
 
       UiButton(long type, pTexture_t texture)
          : Sprite(type, texture),

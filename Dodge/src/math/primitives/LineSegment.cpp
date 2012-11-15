@@ -24,17 +24,21 @@ Renderer LineSegment::m_renderer = Renderer();
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const XmlNode data) {
-   string msg("Error parsing XML for instance of class LineSegment");
+   try {
+      XML_NODE_CHECK(data, LineSegment);
 
-   XML_NODE_CHECK(msg, data, LineSegment);
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, Vec2f);
+      m_p1 = Vec2f(node);
 
-   XmlNode node = data.firstChild();
-   XML_NODE_CHECK(msg, node, Vec2f);
-   m_p1 = Vec2f(node);
-
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, Vec2f);
-   m_p2 = Vec2f(node);
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, Vec2f);
+      m_p2 = Vec2f(node);
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class LineSegment; ");
+      throw;
+   }
 }
 
 //===========================================

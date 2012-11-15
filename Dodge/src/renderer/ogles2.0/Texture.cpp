@@ -27,16 +27,21 @@ Texture::Texture(const char* file) {
 // Texture::Texture
 //===========================================
 Texture::Texture(const XmlNode data) {
-   string msg("Error parsing XML for instance of class Texture");
+   try {
+      XML_NODE_CHECK(data, Texture);
 
-   XML_NODE_CHECK(msg, data, Texture);
+      pngInit();
 
-   pngInit();
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, path);
+      string path = attr.getString();
 
-   XmlAttribute attr = data.firstAttribute();
-   XML_ATTR_CHECK(msg, attr, path);
-
-   constructTexture(attr.value().data());
+      constructTexture(path.data());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Texture; ");
+      throw;
+   }
 }
 
 //===========================================

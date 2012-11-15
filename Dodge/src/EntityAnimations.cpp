@@ -75,50 +75,56 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
 
    AssetManager assetManager;
 
-   string msg("Error parsing XML for instance of class EntityAnimations");
+   try {
+      XML_NODE_CHECK(data, EntityAnimations);
 
-   XML_NODE_CHECK(msg, data, EntityAnimations);
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, texture);
 
-   XmlNode node = data.firstChild();
-   XML_NODE_CHECK(msg, node, texture);
-
-   XmlAttribute attr = node.firstAttribute();
-   if (!attr.isNull() && attr.name() == "ptr") {
-      long id = 0;
-      sscanf(attr.value().data(), "%ld", &id);
-      m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
-
-      if (!m_texture)
-         throw XmlException(msg + "; Bad texture asset id", __FILE__, __LINE__);
-   }
-   else {
-      m_texture = pTexture_t(new Texture(node.firstChild()));
-   }
-
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, textureSection);
-   m_texSection = Range(node.firstChild());
-
-   node = node.nextSibling();
-   XML_NODE_CHECK(msg, node, onScreenSize);
-   m_onScreenSize = Vec2f(node.firstChild());
-
-   node = node.nextSibling();
-   while (!node.isNull() && node.name() == "animation") {
       XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "proto") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
+      if (!attr.isNull() && attr.name() == "ptr") {
+         long id = attr.getLong();
+         m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
-         pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
-         m_animations[anim->getName()] = anim;
+         if (!m_texture)
+            throw XmlException("Bad texture asset id", __FILE__, __LINE__);
       }
       else {
-         pAnimation_t anim(new Animation(node.firstChild()));
-         m_animations[anim->getName()] = anim;
+         m_texture = pTexture_t(new Texture(node.firstChild()));
       }
 
       node = node.nextSibling();
+      XML_NODE_CHECK(node, textureSection);
+      m_texSection = Range(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, onScreenSize);
+      m_onScreenSize = Vec2f(node.firstChild());
+
+      node = node.nextSibling();
+      while (!node.isNull() && node.name() == "animation") {
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "proto") {
+            long id = attr.getLong();
+
+            pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
+
+            if (!anim)
+               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
+
+            m_animations[anim->getName()] = anim;
+         }
+         else {
+            pAnimation_t anim(new Animation(node.firstChild()));
+            m_animations[anim->getName()] = anim;
+         }
+
+         node = node.nextSibling();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class EntityAnimations; ");
+      throw;
    }
 }
 
@@ -130,52 +136,58 @@ void EntityAnimations::assignData(const XmlNode data) {
 
    AssetManager assetManager;
 
-   string msg("Error parsing XML for instance of class EntityAnimations");
+   try {
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "texture") {
 
-   XmlNode node = data.firstChild();
-   if (!node.isNull() && node.name() == "texture") {
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "id") {
+            long id = attr.getLong();
+            m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
-      XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "id") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
-         m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
+            if (!m_texture)
+               throw XmlException("Bad texture asset id", __FILE__, __LINE__);
+         }
+         else {
+            m_texture = pTexture_t(new Texture(node.firstChild()));
+         }
 
-         if (!m_texture)
-            throw XmlException(msg + "; Bad texture asset id", __FILE__, __LINE__);
+         node = node.nextSibling();
       }
-      else {
-         m_texture = pTexture_t(new Texture(node.firstChild()));
+
+      if (!node.isNull() && node.name() == "textureSection") {
+         m_texSection = Range(node.firstChild());
+         node = node.nextSibling();
       }
 
-      node = node.nextSibling();
+      if (!node.isNull() && node.name() == "onScreenSize") {
+         m_onScreenSize = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      while (!node.isNull() && node.name() == "animation") {
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "proto") {
+            long id = attr.getLong();
+
+            pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
+
+            if (!anim)
+               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
+
+            m_animations[anim->getName()] = anim;
+         }
+         else {
+            pAnimation_t anim(new Animation(node.firstChild()));
+            m_animations[anim->getName()] = anim;
+         }
+
+         node = node.nextSibling();
+      }
    }
-
-   if (!node.isNull() && node.name() == "textureSection") {
-      m_texSection = Range(node.firstChild());
-      node = node.nextSibling();
-   }
-
-   if (!node.isNull() && node.name() == "onScreenSize") {
-      m_onScreenSize = Vec2f(node.firstChild());
-      node = node.nextSibling();
-   }
-
-   while (!node.isNull() && node.name() == "animation") {
-      XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "proto") {
-         long id = 0;
-         sscanf(attr.value().data(), "%ld", &id);
-
-         pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
-         m_animations[anim->getName()] = anim;
-      }
-      else {
-         pAnimation_t anim(new Animation(node.firstChild()));
-         m_animations[anim->getName()] = anim;
-      }
-
-      node = node.nextSibling();
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class EntityAnimations; ");
+      throw;
    }
 }
 

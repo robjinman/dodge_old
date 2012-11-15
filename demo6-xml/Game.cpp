@@ -212,51 +212,54 @@ boost::shared_ptr<Asset> Game::constructAsset(const XmlNode data, long proto) {
 // Game::loadAssets_r
 //===========================================
 void Game::loadAssets_r(const string& file) {
-   string msg("Error loading assets from XML file");
+   try {
+      XmlDocument doc;
 
-   XmlDocument doc;
+      XmlNode decl = doc.parse(file);
+      if (decl.isNull())
+         throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
-   XmlNode decl = doc.parse(file);
-   if (decl.isNull())
-      throw XmlException(msg + "; Expected XML declaration", __FILE__, __LINE__);
+      XmlNode node = decl.nextSibling();
+      XML_NODE_CHECK(node, ASSETFILE);
 
-   XmlNode node = decl.nextSibling();
-   XML_NODE_CHECK(msg, node, ASSETFILE);
+      node = node.firstChild();
+      if (node.isNull())
+         throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
-   node = node.firstChild();
-   if (node.isNull())
-      throw XmlException(msg + "; Expected 'using' or 'assets' tag", __FILE__, __LINE__);
+      if (node.name() == "using") {
+         XmlNode node_ = node.firstChild();
+         while (!node_.isNull() && node_.name() == "file") {
+            string path = string("data/xml/").append(node_.getString());
+            loadAssets_r(path);
 
-   if (node.name() == "using") {
-      XmlNode node_ = node.firstChild();
-      while (!node_.isNull() && node_.name() == "file") {
-         string path = string("data/xml/").append(node_.value());
-         loadAssets_r(path);
+            node_ = node_.nextSibling();
+         }
 
-         node_ = node_.nextSibling();
+         node = node.nextSibling();
       }
 
-      node = node.nextSibling();
+      XML_NODE_CHECK(node, assets);
+
+      node = node.firstChild();
+      while (!node.isNull() && node.name() == "asset") {
+         XmlAttribute attr = node.firstAttribute();
+         XML_ATTR_CHECK(attr, id);
+         long id = attr.getLong();
+
+         long proto = -1;
+         attr = attr.nextAttribute();
+         if (!attr.isNull() && attr.name() == "proto")
+            proto = attr.getLong();
+
+         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto);
+         m_assetManager.addAsset(id, asset);
+
+         node = node.nextSibling();
+      }
    }
-
-   XML_NODE_CHECK(msg, node, assets);
-
-   node = node.firstChild();
-   while (!node.isNull() && node.name() == "asset") {
-      XmlAttribute attr = node.firstAttribute();
-      XML_ATTR_CHECK(msg, attr, id);
-
-      long id = 0;
-      long proto = -1;
-      sscanf(attr.value().data(), "%ld", &id);
-
-      attr = attr.nextAttribute();
-      if (!attr.isNull()) sscanf(attr.value().data(), "%ld", &proto);
-
-      boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto);
-      m_assetManager.addAsset(id, asset);
-
-      node = node.nextSibling();
+   catch (XmlException& e) {
+      e.prepend("Error loading assets from XML file; ");
+      throw;
    }
 }
 

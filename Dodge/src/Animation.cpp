@@ -43,26 +43,28 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 Animation::Animation(const XmlNode data)
    : m_state(STOPPED), m_frameReady(false) {
 
-   string msg("Error parsing XML for instance of class Animation");
+   try {
+      XML_NODE_CHECK(data, Animation);
 
-   XML_NODE_CHECK(msg, data, Animation);
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, name);
+      m_name = internString(attr.getString());
 
-   XmlAttribute attr = data.firstAttribute();
-   XML_ATTR_CHECK(msg, attr, name);
+      attr = attr.nextAttribute();
+      XML_ATTR_CHECK(attr, rate);
+      m_rate = attr.getFloat();
 
-   m_name = internString(attr.value());
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "AnimFrame") {
+         AnimFrame frame(node);
+         m_frames.push_back(frame);
 
-   attr = attr.nextAttribute();
-   XML_ATTR_CHECK(msg, attr, rate);
-
-   sscanf(attr.value().data(), "%f", &m_rate);
-
-   XmlNode node = data.firstChild();
-   while (!node.isNull() && node.name() == "AnimFrame") {
-      AnimFrame frame(node);
-      m_frames.push_back(frame);
-
-      node = node.nextSibling();
+         node = node.nextSibling();
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Animation; ");
+      throw;
    }
 }
 
