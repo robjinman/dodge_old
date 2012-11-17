@@ -7,6 +7,7 @@
 #define __PHYSICAL_SPRITE_HPP__
 
 
+#include <memory>
 #include "renderer/Texture.hpp"
 #include "Sprite.hpp"
 #include "EntityPhysics.hpp"
@@ -34,17 +35,37 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
          XML_NODE_CHECK(data, PhysicalSprite);
       }
 
-      PhysicalSprite(long type, pTexture_t texture)
-         : Sprite(type, texture), T_PHYSICS(this) {}
+      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Primitive> shape)
+         : Sprite(type, texture), T_PHYSICS(this) {
 
-      PhysicalSprite(long name, long type, pTexture_t texture)
-         : Sprite(name, type, texture), T_PHYSICS(this) {}
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
 
-      PhysicalSprite(long type, pTexture_t texture, const EntityPhysics::options_t& options)
-         : Sprite(type, texture), T_PHYSICS(this, options) {}
+      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Primitive> shape)
+         : Sprite(name, type, texture), T_PHYSICS(this) {
 
-      PhysicalSprite(long name, long type, pTexture_t texture, const EntityPhysics::options_t& options)
-         : Sprite(name, type, texture), T_PHYSICS(this, options) {}
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
+
+      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+         : Sprite(type, texture), T_PHYSICS(this, options) {
+
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
+
+      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+         : Sprite(name, type, texture), T_PHYSICS(this, options) {
+
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
 
       PhysicalSprite(const PhysicalSprite& copy)
          : Sprite(copy), T_PHYSICS(copy, this) {}

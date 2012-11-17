@@ -7,6 +7,7 @@
 #define __PHYSICAL_ENTITY_HPP__
 
 
+#include <memory>
 #include "Entity.hpp"
 #include "EntityPhysics.hpp"
 #ifdef DEBUG
@@ -33,17 +34,37 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
          XML_NODE_CHECK(data, PhysicalEntity);
       }
 
-      explicit PhysicalEntity(long type)
-         : Entity(type), T_PHYSICS(this) {}
+      explicit PhysicalEntity(long type, std::unique_ptr<Primitive> shape)
+         : Entity(type), T_PHYSICS(this) {
 
-      PhysicalEntity(long name, long type)
-         : Entity(name, type), T_PHYSICS(this) {}
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
 
-      PhysicalEntity(long type, const EntityPhysics::options_t& options)
-         : Entity(type), T_PHYSICS(this, options) {}
+      PhysicalEntity(long name, long type, std::unique_ptr<Primitive> shape)
+         : Entity(name, type), T_PHYSICS(this) {
 
-      PhysicalEntity(long name, long type, const EntityPhysics::options_t& options)
-         : Entity(name, type), T_PHYSICS(this, options) {}
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
+
+      PhysicalEntity(long type, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+         : Entity(type), T_PHYSICS(this, options) {
+
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
+
+      PhysicalEntity(long name, long type, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+         : Entity(name, type), T_PHYSICS(this, options) {
+
+         setSilent(true);
+         setShape(std::move(shape));
+         setSilent(false);
+      }
 
       PhysicalEntity(const PhysicalEntity& copy)
          : Entity(copy), T_PHYSICS(copy, this) {}

@@ -193,7 +193,7 @@ int main(int argc, char** argv) {
       computeFrameRate();
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      poly->draw(Vec2f(0.f, 0.f));
+      poly->draw();
       worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
 
       for (uint_t i = 0; i < entities.size(); ++i) {

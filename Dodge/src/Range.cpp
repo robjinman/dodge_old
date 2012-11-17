@@ -59,9 +59,8 @@ void Range::dbg_print(ostream& out, int tab) const {
 //===========================================
 // Range::dbg_draw
 //===========================================
-void Range::dbg_draw(int z, const Colour& col) const {
+void Range::dbg_draw(int z) const {
    Quad quad(m_size);
-   m_graphics2d.setFillColour(col);
    m_graphics2d.drawPrimitive(quad, m_pos.x, m_pos.y, z);
 }
 #endif

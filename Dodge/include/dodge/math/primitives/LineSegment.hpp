@@ -38,7 +38,7 @@ class LineSegment : public Primitive {
 #endif
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
-      virtual void rotate(double rads, const Vec2f& pivot);
+      virtual void rotate(float32_t rads, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 
       virtual void draw(float32_t x, float32_t y, int z, float32_t angle = 0.f,

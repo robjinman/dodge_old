@@ -43,14 +43,33 @@ class EEntityBoundingBox : public EEvent {
 };
 
 
+class EEntityTranslation : public EEvent {
+   public:
+      EEntityTranslation(pEntity_t entity_, const Vec2f& oldTransl_, const Vec2f& oldTransl_abs_,
+         const Vec2f& newTransl_, const Vec2f& newTransl_abs_)
+         : EEvent(internString("EntityTranslation")), entity(entity_), oldTransl(oldTransl_),
+           oldTransl_abs(oldTransl_abs_), newTransl(newTransl_), newTransl_abs(newTransl_abs_) {}
+
+      pEntity_t entity;
+      Vec2f oldTransl;
+      Vec2f oldTransl_abs;
+      Vec2f newTransl;
+      Vec2f newTransl_abs; 
+};
+
+
 class EEntityShape : public EEvent {
    public:
-      EEntityShape(pEntity_t entity_, pPrimitive_t oldShape_, pPrimitive_t newShape_)
-         : EEvent(internString("entityShape")), entity(entity_), oldShape(oldShape_), newShape(newShape_) {}
+      EEntityShape(pEntity_t entity_, pPrimitive_t oldShape_, float32_t oldRotation_abs_,
+         pPrimitive_t newShape_, float32_t newRotation_abs_)
+         : EEvent(internString("entityShape")), entity(entity_), oldShape(oldShape_),
+           oldRotation_abs(oldRotation_abs_), newShape(newShape_), newRotation_abs(newRotation_abs_) {}
 
       pEntity_t entity;
       pPrimitive_t oldShape;
+      float32_t oldRotation_abs;
       pPrimitive_t newShape;
+      float32_t newRotation_abs;
 };
 
 
@@ -58,8 +77,8 @@ class EEntityRotation : public EEvent {
    public:
       EEntityRotation(pEntity_t entity_, float32_t oldRotation_, float32_t oldRotation_abs_,
          float32_t newRotation_, float32_t newRotation_abs_)
-            : EEvent(internString("entityRotation")), oldRotation(oldRotation_), oldRotation_abs(oldRotation_abs_),
-              newRotation(newRotation_), newRotation_abs(newRotation_abs_) {}
+            : EEvent(internString("entityRotation")), entity(entity_), oldRotation(oldRotation_),
+              oldRotation_abs(oldRotation_abs_), newRotation(newRotation_), newRotation_abs(newRotation_abs_) {}
 
       pEntity_t entity;
       float32_t oldRotation;

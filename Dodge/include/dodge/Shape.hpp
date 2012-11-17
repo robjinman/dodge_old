@@ -22,7 +22,7 @@ class Shape : public Entity {
 
       virtual Shape* clone() const;
       virtual void assignData(const XmlNode data);
-      virtual void draw(const Vec2f& at) const;
+      virtual void draw() const;
 
    private:
       static Renderer m_renderer;

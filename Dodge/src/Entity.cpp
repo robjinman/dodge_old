@@ -11,6 +11,7 @@
 #include <AssetManager.hpp>
 #include <globals.hpp>
 #include <PrimitiveFactory.hpp>
+#include <iostream> // TODO
 
 
 using namespace std;
@@ -353,9 +354,16 @@ void Entity::translate(float32_t x, float32_t y) {
    m_boundary.setPosition(m_boundary.getPosition() + Vec2f(x, y));
 
    if (!m_silent) {
-      EEvent* event = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      onEvent(event);
-      m_eventManager.queueEvent(event);
+      Vec2f t = getTranslation_abs();
+
+      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
+      EEvent* event2 = new EEntityTranslation(shared_from_this(), m_transl - Vec2f(x, y), t - Vec2f(x, y), m_transl, t);
+
+      onEvent(event1);
+      onEvent(event2);
+
+      m_eventManager.queueEvent(event1);
+      m_eventManager.queueEvent(event2);
    }
 
    // Children must dispatch EEntityBoundingBox events too
@@ -371,6 +379,8 @@ void Entity::translate(float32_t x, float32_t y) {
 void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    float32_t oldRot = m_rot;
    float32_t oldRot_abs = getRotation_abs();
+   Vec2f oldTransl = m_transl;
+   Vec2f oldTransl_abs = getTranslation_abs();
 
    // - Find model's origin (bottom-left corner) in parent's model space (o)
    //    - This is just m_transl (despite any prior rotations)
@@ -409,12 +419,15 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
       EEvent* event2 = new EEntityRotation(shared_from_this(), oldRot, m_rot, oldRot_abs, getRotation_abs());
+      EEvent* event3 = new EEntityTranslation(shared_from_this(), oldTransl, oldTransl_abs, m_transl, getTranslation_abs());
 
       onEvent(event1);
       onEvent(event2);
+      onEvent(event3);
 
       m_eventManager.queueEvent(event1);
       m_eventManager.queueEvent(event2);
+      m_eventManager.queueEvent(event3);
    }
 }
 
@@ -424,6 +437,7 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 void Entity::setShape(std::unique_ptr<Primitive> shape) {
    Range bounds = m_boundary;
    Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
+   float32_t oldRot_abs = getRotation_abs();
 
    m_shape = std::move(shape);
    if (m_shape) m_shape->rotate(m_rot);
@@ -432,7 +446,7 @@ void Entity::setShape(std::unique_ptr<Primitive> shape) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), pPrimitive_t(m_shape->clone()));
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape->clone()), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -448,6 +462,7 @@ void Entity::setShape(std::unique_ptr<Primitive> shape) {
 void Entity::scale(float32_t x, float32_t y) {
    Range bounds = m_boundary;
    Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
+   float32_t oldRot_abs = getRotation_abs();
 
    if (m_shape) m_shape->scale(Vec2f(x, y));
    m_scale.x *= x;
@@ -456,7 +471,7 @@ void Entity::scale(float32_t x, float32_t y) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), pPrimitive_t(m_shape->clone()));
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape->clone()), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -480,7 +495,7 @@ void Entity::parentMovedHandler() {
 //===========================================
 // Entity::~Entity
 //===========================================
-Entity::~Entity() {}
+Entity::~Entity() { std::cout << "Entity::~Entity(), name = '" << getInternedString(m_name) << "'\n"; }
 
 
 }

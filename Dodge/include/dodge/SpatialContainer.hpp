@@ -28,7 +28,7 @@ class SpatialContainer {
       virtual const Range& getBoundary() const = 0;
 
 #ifdef DEBUG
-      virtual void dbg_draw(int z, const Colour& col) const = 0;
+      virtual void dbg_draw(int z) const = 0;
 #endif
 };
 

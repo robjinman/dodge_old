@@ -342,7 +342,7 @@ Vec2f Polygon::getMaximum() const {
 //===========================================
 // Polygon::rotate
 //===========================================
-void Polygon::rotate(double deg, const Vec2f& p) {
+void Polygon::rotate(float32_t deg, const Vec2f& p) {
    for (int i = 0; i < m_nVerts; ++i)
       m_verts[i]->rotate(p, deg);
 }

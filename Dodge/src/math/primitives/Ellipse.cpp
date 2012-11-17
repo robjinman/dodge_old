@@ -71,7 +71,7 @@ Vec2f Ellipse::getMaximum() const {
 //===========================================
 // Ellipse::rotate
 //===========================================
-void Ellipse::rotate(double rads, const Vec2f& pivot) {
+void Ellipse::rotate(float32_t rads, const Vec2f& pivot) {
    // TODO
 }
 

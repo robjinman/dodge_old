@@ -103,7 +103,7 @@ class Quadtree : public SpatialContainer<T> {
       //===========================================
       // Quadtree::dbg_draw
       //===========================================
-      virtual void dbg_draw(int z, const Colour& col) const {
+      virtual void dbg_draw(int z) const {
          if (hasChildren()) {
             const Vec2f& pos = m_boundary.getPosition();
             const Vec2f& sz = m_boundary.getSize();
@@ -119,13 +119,11 @@ class Quadtree : public SpatialContainer<T> {
             Vec2f l2p2(pos.x + halfSz.x, pos.y + sz.y);
             LineSegment line2(l2p1, l2p2);
 
-            m_graphics2d.setLineWidth(1);
-            m_graphics2d.setLineColour(col);
             m_graphics2d.drawPrimitive(line1, 0.f, 0.f, z);
             m_graphics2d.drawPrimitive(line2, 0.f, 0.f, z);
 
             for (int i = 0; i < 4; ++i)
-               m_children[i]->dbg_draw(z, col);
+               m_children[i]->dbg_draw(z);
          }
       }
 #endif

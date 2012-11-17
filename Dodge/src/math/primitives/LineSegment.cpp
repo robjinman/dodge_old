@@ -111,7 +111,7 @@ Vec2f LineSegment::getMaximum() const {
 //===========================================
 // LineSegment::rotate
 //===========================================
-void LineSegment::rotate(double rads, const Vec2f& pivot) {
+void LineSegment::rotate(float32_t rads, const Vec2f& pivot) {
    // TODO
 }
 

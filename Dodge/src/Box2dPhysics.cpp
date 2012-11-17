@@ -117,11 +117,6 @@ void Box2dPhysics::setEntity(Entity* entity) {
 // Box2dPhysics::addToWorld
 //===========================================
 void Box2dPhysics::addToWorld() {
-   if (m_body) {
-      m_world.DestroyBody(m_body);
-      m_numFixtures = 0;
-   }
-
    constructBody();
    m_physEnts[m_entity] = this;
    m_init = true;
@@ -155,7 +150,7 @@ void Box2dPhysics::primitiveToBox2dBody(const Primitive& shape, const EntityPhys
 
    string msg("Error constructing Box2D body from Primitive");
 
-   nFixtures = 0;
+   *nFixtures = 0;
 
    if (shape.typeId() == ellipseStr) {
       throw PhysicsException(msg + "; Ellipse not yet supported", __FILE__, __LINE__);
@@ -163,32 +158,26 @@ void Box2dPhysics::primitiveToBox2dBody(const Primitive& shape, const EntityPhys
    else if (shape.typeId() == lineSegmentStr) {
       throw PhysicsException(msg + "; LineSegment not yet supported", __FILE__, __LINE__);
    }
-   else if (shape.typeId() == polygonStr) {
+   else if (shape.typeId() == polygonStr) { // TODO: Currently assumes convex
       const Polygon& poly = static_cast<const Polygon&>(shape);
-      const vector<Polygon>& polys = poly.getConvexChildren();
 
-      if (polys.empty())
-         throw PhysicsException(msg + "; Invalid polygon", __FILE__, __LINE__);
+      b2Vec2* verts = new b2Vec2[poly.getNumVertices()];
 
-      for (uint_t p = 0; p < polys.size(); ++p) {
-         b2Vec2* verts = new b2Vec2[polys[p].getNumVertices()];
-
-         for (int i = 0; i < polys[p].getNumVertices(); ++i) {
-            verts[i] = b2Vec2(polys[p].getVertex(i).x / m_worldUnitsPerMetre,
-               polys[p].getVertex(i).y / m_worldUnitsPerMetre);
-         }
-
-         b2PolygonShape b2Poly;
-         b2Poly.Set(verts, polys[p].getNumVertices());
-
-         b2FixtureDef fdef;
-         fdef.shape = &b2Poly;
-         fdef.density = opts.density;
-         fdef.friction = opts.friction;
-
-         body->CreateFixture(&fdef);
-         ++nFixtures;
+      for (int i = 0; i < poly.getNumVertices(); ++i) {
+         verts[i] = b2Vec2(poly.getVertex(i).x / m_worldUnitsPerMetre,
+            poly.getVertex(i).y / m_worldUnitsPerMetre);
       }
+
+      b2PolygonShape b2Poly;
+      b2Poly.Set(verts, poly.getNumVertices());
+
+      b2FixtureDef fdef;
+      fdef.shape = &b2Poly;
+      fdef.density = opts.density;
+      fdef.friction = opts.friction;
+
+      body->CreateFixture(&fdef);
+      ++(*nFixtures);
    }
    else if (shape.typeId() == quadStr) {
       throw PhysicsException(msg + "; Quad not yet supported", __FILE__, __LINE__);
@@ -201,6 +190,11 @@ void Box2dPhysics::primitiveToBox2dBody(const Primitive& shape, const EntityPhys
 // Box2dPhysics::constructBody
 //===========================================
 void Box2dPhysics::constructBody() {
+   if (m_body) {
+      m_world.DestroyBody(m_body);
+      m_numFixtures = 0;
+   }
+
    b2BodyDef bdef;
 
    if (m_opts.dynamic) bdef.type = b2_dynamicBody;
@@ -264,7 +258,7 @@ void Box2dPhysics::loadSettings(const string& file) {
    m_p_iterations = atoi(parser.getValue("pIterations").data());
 
    Functor<void, TYPELIST_1(EEvent*)> fEntMovedHandler(&Box2dPhysics::entityMovedHandler);
-   m_eventManager.registerCallback(internString("entityBoundingBox"), fEntMovedHandler);
+   m_eventManager.registerCallback(internString("entityTranslation"), fEntMovedHandler);
    m_eventManager.registerCallback(internString("entityRotation"), fEntMovedHandler);
    m_eventManager.registerCallback(internString("entityShape"), fEntMovedHandler);
 }
@@ -273,15 +267,15 @@ void Box2dPhysics::loadSettings(const string& file) {
 // Box2dPhysics::entityMovedHandler
 //===========================================
 void Box2dPhysics::entityMovedHandler(EEvent* event) {
-   static long entityBoundingBoxStr = internString("entityBoundingBox");
    static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
+   static long entityTranslationStr = internString("entityTranslation");
 
    Entity* entity;
 
-   if (event->getType() == entityBoundingBoxStr) entity = static_cast<EEntityBoundingBox*>(event)->entity.get();
-   else if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
+   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
    else if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
+   else if (event->getType() == entityTranslationStr) entity = static_cast<EEntityTranslation*>(event)->entity.get();
 
    if (m_ignore.find(event) == m_ignore.end()) {
       map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.find(entity);
@@ -295,14 +289,14 @@ void Box2dPhysics::entityMovedHandler(EEvent* event) {
 // Box2dPhysics::updatePos
 //===========================================
 void Box2dPhysics::updatePos(EEvent* ev) {
-   static long entityBoundingBoxStr = internString("entityBoundingBox");
    static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
+   static long entityTranslationStr = internString("entityTranslation");
 
    if (!m_init)
       throw PhysicsException("Instance of Box2dPhysics is not initialised", __FILE__, __LINE__);
 
-   if (ev->getType() == entityBoundingBoxStr) {
+   if (ev->getType() == entityTranslationStr) {
       EEntityBoundingBox* event = static_cast<EEntityBoundingBox*>(ev);
 
       // Update position
@@ -313,13 +307,15 @@ void Box2dPhysics::updatePos(EEvent* ev) {
    }
    else if (ev->getType() == entityRotationStr) {
       EEntityRotation* event = static_cast<EEntityRotation*>(ev);
-      m_body->SetTransform(b2Vec2(m_body->GetPosition().x, m_body->GetPosition().y), DEG_TO_RAD(event->newRotation_abs));
+      m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(event->newRotation_abs));
    }
    else if (ev->getType() == entityShapeStr) {
       EEntityShape* event = static_cast<EEntityShape*>(ev);
 
-      Primitive* oldShape = event->oldShape.get();
-      Primitive* newShape = event->newShape.get();
+      unique_ptr<Primitive> oldShape(event->oldShape.get()->clone());
+      unique_ptr<Primitive> newShape(event->newShape.get()->clone());
+      oldShape->rotate(-event->oldRotation_abs);
+      newShape->rotate(-event->newRotation_abs);
 
       // Update shape
       if (oldShape == NULL || *oldShape != *newShape) {
@@ -370,17 +366,14 @@ void Box2dPhysics::update() {
       Vec2f pos(it->second->m_body->GetPosition()(0) * m_worldUnitsPerMetre,
          it->second->m_body->GetPosition()(1) * m_worldUnitsPerMetre);
 
-      double a = it->second->m_body->GetAngle();
-
-      Vec2f posDiff = ent->getTranslation_abs() - pos;
-      double aDiff = ent->getRotation_abs() - a;
-      if (!(abs(posDiff.x) >= 1 || abs(posDiff.y) >= 1 || fabs(aDiff) >= 0.01)) continue;
+      float32_t a = RAD_TO_DEG(it->second->m_body->GetAngle());
 
       try {
          Range oldBounds = ent->getBoundary();
+         Vec2f oldTransl = ent->getTranslation();
+         Vec2f oldTransl_abs = ent->getTranslation_abs();
          float32_t oldRot = ent->getRotation();
          float32_t oldRot_abs = ent->getRotation_abs();
-         pPrimitive_t oldShape(ent->getShape().clone());
 
          Vec2f relTrans = ent->getTranslation();
          Vec2f absTrans = ent->getTranslation_abs();
@@ -392,7 +385,7 @@ void Box2dPhysics::update() {
 
          EEvent* event1 = new EEntityBoundingBox(ent->getSharedPtr(), oldBounds, ent->getBoundary());
          EEvent* event2 = new EEntityRotation(ent->getSharedPtr(), oldRot, oldRot_abs, ent->getRotation(), ent->getRotation_abs());
-         EEvent* event3 = new EEntityShape(ent->getSharedPtr(), oldShape, pPrimitive_t(ent->getShape().clone()));
+         EEvent* event3 = new EEntityTranslation(ent->getSharedPtr(), oldTransl, oldTransl_abs, ent->getTranslation(), ent->getTranslation_abs());
 
          ent->onEvent(event1);
          ent->onEvent(event2);

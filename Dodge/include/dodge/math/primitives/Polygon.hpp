@@ -42,7 +42,7 @@ class Polygon : public Primitive {
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
-      virtual void rotate(double deg, const Vec2f& pivot);
+      virtual void rotate(float32_t deg, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;

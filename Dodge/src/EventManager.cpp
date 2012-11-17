@@ -34,7 +34,7 @@ void EventManager::doEvents() {
 
          for (uint_t i = 0; i < funcs.size(); ++i) {
             funcs[i](m_eventQueue.front());
-            if (m_eventQueue.empty()) return; // In case funcs[i] calls EventManager::clearAll()
+            if (m_eventQueue.empty()) return; // In case funcs[i] calls EventManager::clear()
          }
       }
 

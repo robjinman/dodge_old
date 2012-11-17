@@ -1,8 +1,9 @@
 - Complete Polygon class
 - Physics
-- Entity Placement Tool
-- Level data streaming
 - Improve Renderer efficiency
-- Advanced UI
+- Particle effects
+- Level data streaming
+- Entity Placement Tool
 - Scripted events
+- Advanced UI
 - Lua binding
