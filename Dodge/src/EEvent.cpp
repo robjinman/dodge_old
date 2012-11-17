@@ -48,8 +48,6 @@ void* EEvent::operator new(size_t size) {
 void EEvent::operator delete(void* obj, size_t size) {
 #ifdef DEFAULT_NEW
    ::operator delete(obj);
-#else
-   throw Exception("Error: Attempt to delete EEvent object, which uses stack-based allocator", __FILE__, __LINE__);
 #endif
 }
 

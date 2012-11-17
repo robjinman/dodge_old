@@ -8,6 +8,7 @@
 
 
 #include <vector>
+#include <memory>
 #include "Range.hpp"
 #include "definitions.hpp"
 #include "SpatialContainer.hpp"
@@ -128,10 +129,22 @@ class Quadtree : public SpatialContainer<T> {
       }
 #endif
 
+      //===========================================
+      // Quadtree::~Quadtree
+      //===========================================
+      virtual ~Quadtree() {
+         if (hasChildren()) {
+            for (int i = 0; i < 4; ++i) {
+               delete m_children[i];
+               m_children[i] = NULL;
+            }
+         }
+      }
+
    private:
       int m_splittingThres;
       Range m_boundary;
-      std::vector<Entry*> m_entries;
+      std::vector<std::unique_ptr<Entry> > m_entries;
       Quadtree<T>* m_children[4];
 
       // Number of entries that are fully contained within a quadrant, but
@@ -203,7 +216,6 @@ class Quadtree : public SpatialContainer<T> {
                if (getIndex(m_entries[i]->rect) != -1)
                   --m_n;
 
-               delete m_entries[i];
                m_entries.erase(m_entries.begin() + i);
 
                return true;
@@ -237,7 +249,7 @@ class Quadtree : public SpatialContainer<T> {
       // Quadtree::insert_
       //===========================================
       void insert_(T item, const Range& boundingBox) {
-         m_entries.push_back(new Entry(item, boundingBox));
+         m_entries.push_back(std::unique_ptr<Entry>(new Entry(item, boundingBox)));
       }
 
       //===========================================
@@ -272,7 +284,10 @@ class Quadtree : public SpatialContainer<T> {
       void remerge() {
          for (int i = 0; i < 4; ++i) {
             m_n += m_children[i]->m_entries.size();
-            m_entries.insert(m_entries.end(), m_children[i]->m_entries.begin(), m_children[i]->m_entries.end());
+            for (uint_t j = 0; j < m_children[i]->m_entries.size(); ++j) {
+               m_entries.push_back(std::move(m_children[i]->m_entries[j]));
+            }
+            m_children[i]->m_entries.clear();
 
             delete m_children[i];
             m_children[i] = NULL;

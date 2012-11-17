@@ -148,6 +148,7 @@ void Game::playerSetup() {
 
    pTexture_t texMan(new Texture("data/textures/man.png"));
    m_player = pSprite_t(new Sprite(internString("m_player"), internString("man"), texMan));
+   m_player->setOnScreenSize(w, h);
 
    vector<AnimFrame> aFrames;
    aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
@@ -224,8 +225,12 @@ void Game::buttonReleaseHandler(pEntity_t entity) {
 }
 
 void Game::uiSetup() {
+   float32_t w = 16.f * gGetPixelSize().x;
+   float32_t h = 16.f * gGetPixelSize().y;
+
    pTexture_t tex(new Texture("data/textures/ss8x8squares128x128y.png"));
    pUiButton_t btn(new UiButton(internString("button1"), tex));
+   btn->setOnScreenSize(w, h);
 
    vector<AnimFrame> aFrames;
    aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(16.f, 16.f), Colour(1.0, 1.0, 1.0, 1.0)));
@@ -259,9 +264,6 @@ void Game::uiSetup() {
    btn->addAnimation(btnRelease);
    btn->addAnimation(hoverOn);
    btn->addAnimation(hoverOff);
-
-   float32_t w = 16.f * gGetPixelSize().x;
-   float32_t h = 16.f * gGetPixelSize().y;
 
    btn->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
    btn->setTranslation(0.1f, 0.15f);
@@ -298,20 +300,23 @@ void Game::launch() {
       computeFrameRate();
 
       m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      m_worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
+
+      m_graphics2d.setLineWidth(1);
+      m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      m_worldSpace.dbg_draw(5);
 
       for (uint_t i = 0; i < m_entities.size(); ++i) {
          m_entities[i]->update();
-         m_entities[i]->draw(Vec2f(0.f, 0.f));
+         m_entities[i]->draw();
       }
 
       m_player->update();
-      m_player->draw(Vec2f(0.f, 0.f));
+      m_player->draw();
 
       stringstream strFr;
       strFr << "Frame Rate: " << m_frameRate << "fps";
       m_graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
-      m_graphics2d.drawText(*m_font1, strFr.str(), 0.03f, 460.f * gGetPixelSize().y, 5, 0.f, Vec2f(0.f, 0.f), Vec2f(0.15f, 0.15f));
+      m_graphics2d.drawText(*m_font1, Vec2f(0.03f, 0.05f), strFr.str(), 0.03f, 0.9f, 5);
 
       m_eventManager.doEvents();
 

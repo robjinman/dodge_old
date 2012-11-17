@@ -1,9 +1,10 @@
 - Complete Polygon class
-- Physics
-- Improve Renderer efficiency
-- Particle effects
+- Optimise code
 - Level data streaming
 - Entity Placement Tool
 - Scripted events
+- Particle effects
+- Bump mapping
 - Advanced UI
 - Lua binding
+- Destructible terrain

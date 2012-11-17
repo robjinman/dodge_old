@@ -194,7 +194,10 @@ int main(int argc, char** argv) {
 
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
       poly->draw();
-      worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
+
+      graphics2d.setLineWidth(1);
+      graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      worldSpace.dbg_draw(5);
 
       for (uint_t i = 0; i < entities.size(); ++i) {
          if (entities[i]->getTypeName() == strRectangle) {
@@ -209,8 +212,8 @@ int main(int argc, char** argv) {
             entities[i]->draw();
 
             graphics2d.setLineWidth(0);
-
-            entities[i]->getBoundary().dbg_draw(3, Colour(0.f, 1.f, 0.f, 0.5f));
+            graphics2d.setFillColour(Colour(0.f, 1.f, 0.f, 0.5f));
+            entities[i]->getBoundary().dbg_draw(3);
 
             graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
             entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 4);

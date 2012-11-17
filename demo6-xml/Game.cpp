@@ -308,7 +308,9 @@ void Game::launch() {
       computeFrameRate();
 
       m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-      m_worldSpace.dbg_draw(5, Colour(1.f, 0.f, 0.f, 1.f));
+
+      m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      m_worldSpace.dbg_draw(5);
 
       for (uint_t i = 0; i < m_items.size(); ++i) {
          m_items[i]->update();

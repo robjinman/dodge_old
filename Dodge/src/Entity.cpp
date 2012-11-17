@@ -11,7 +11,6 @@
 #include <AssetManager.hpp>
 #include <globals.hpp>
 #include <PrimitiveFactory.hpp>
-#include <iostream> // TODO
 
 
 using namespace std;
@@ -407,7 +406,7 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 
    if (m_shape) m_shape->rotate(deg);
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->m_shape->rotate(deg);
+      if ((*i)->m_shape) (*i)->m_shape->rotate(deg);
 
    Range bounds = m_boundary;
    recomputeBoundary();
@@ -471,7 +470,7 @@ void Entity::scale(float32_t x, float32_t y) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape->clone()), getRotation_abs());
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -495,7 +494,7 @@ void Entity::parentMovedHandler() {
 //===========================================
 // Entity::~Entity
 //===========================================
-Entity::~Entity() { std::cout << "Entity::~Entity(), name = '" << getInternedString(m_name) << "'\n"; }
+Entity::~Entity() {}
 
 
 }

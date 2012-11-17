@@ -8,6 +8,9 @@
 
 
 #include <vector>
+#ifdef DEBUG
+#include <ostream>
+#endif
 
 
 namespace Dodge {
@@ -30,6 +33,8 @@ class SpatialContainer {
 #ifdef DEBUG
       virtual void dbg_draw(int z) const = 0;
 #endif
+
+      virtual ~SpatialContainer() {}
 };
 
 

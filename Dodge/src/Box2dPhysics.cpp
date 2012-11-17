@@ -368,7 +368,7 @@ void Box2dPhysics::update() {
 
       float32_t a = RAD_TO_DEG(it->second->m_body->GetAngle());
 
-      try {
+      if (pos != ent->getTranslation_abs() || a != ent->getRotation_abs()) {
          Range oldBounds = ent->getBoundary();
          Vec2f oldTransl = ent->getTranslation();
          Vec2f oldTransl_abs = ent->getTranslation_abs();
@@ -384,8 +384,8 @@ void Box2dPhysics::update() {
          ent->setSilent(false);
 
          EEvent* event1 = new EEntityBoundingBox(ent->getSharedPtr(), oldBounds, ent->getBoundary());
-         EEvent* event2 = new EEntityRotation(ent->getSharedPtr(), oldRot, oldRot_abs, ent->getRotation(), ent->getRotation_abs());
-         EEvent* event3 = new EEntityTranslation(ent->getSharedPtr(), oldTransl, oldTransl_abs, ent->getTranslation(), ent->getTranslation_abs());
+         EEvent* event2 = new EEntityTranslation(ent->getSharedPtr(), oldTransl, oldTransl_abs, ent->getTranslation(), ent->getTranslation_abs());
+         EEvent* event3 = new EEntityRotation(ent->getSharedPtr(), oldRot, oldRot_abs, ent->getRotation(), ent->getRotation_abs());
 
          ent->onEvent(event1);
          ent->onEvent(event2);
@@ -398,11 +398,6 @@ void Box2dPhysics::update() {
          m_ignore.insert(event1);
          m_ignore.insert(event2);
          m_ignore.insert(event3);
-      }
-      catch (bad_alloc& e) {
-         PhysicsException ex("Error updating entity physics; ", __FILE__, __LINE__);
-         ex.append(e.what());
-         throw ex;
       }
    }
 }

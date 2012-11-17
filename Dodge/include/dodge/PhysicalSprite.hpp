@@ -130,6 +130,8 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       virtual void update() {
          Sprite::update();
       }
+
+      virtual ~PhysicalSprite() {}
 };
 
 

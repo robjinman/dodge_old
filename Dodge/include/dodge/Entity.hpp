@@ -47,14 +47,14 @@ class EEntityTranslation : public EEvent {
    public:
       EEntityTranslation(pEntity_t entity_, const Vec2f& oldTransl_, const Vec2f& oldTransl_abs_,
          const Vec2f& newTransl_, const Vec2f& newTransl_abs_)
-         : EEvent(internString("EntityTranslation")), entity(entity_), oldTransl(oldTransl_),
+         : EEvent(internString("entityTranslation")), entity(entity_), oldTransl(oldTransl_),
            oldTransl_abs(oldTransl_abs_), newTransl(newTransl_), newTransl_abs(newTransl_abs_) {}
 
       pEntity_t entity;
       Vec2f oldTransl;
       Vec2f oldTransl_abs;
       Vec2f newTransl;
-      Vec2f newTransl_abs; 
+      Vec2f newTransl_abs;
 };
 
 

@@ -129,6 +129,8 @@ class PhysicalEntity : public Entity, public T_PHYSICS {
       virtual void update() {
          Entity::update();
       }
+
+      virtual ~PhysicalEntity() {}
 };
 
 

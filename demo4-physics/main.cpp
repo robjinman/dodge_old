@@ -104,7 +104,7 @@ void btn1Click(int x, int y) {
    poly->addVertex(0.f  / 480.f, 16.f / 480.f);
 
    boost::shared_ptr<PhysicalSprite<Box2dPhysics> > sprite(
-      new PhysicalSprite<Box2dPhysics>(internString("sprite2"), internString("shape"), tex1, move(poly), EntityPhysics::options_t(true, false, 1.f, 0.3f))
+      new PhysicalSprite<Box2dPhysics>(internString("shape"), tex1, move(poly), EntityPhysics::options_t(true, false, 1.f, 0.3f))
    );
 
    sprite->setTranslation(wx, wy);
@@ -118,13 +118,11 @@ void btn1Click(int x, int y) {
 }
 
 void eraseEntity(pEntity_t entity) {
-   std::cout << "eraseEntity()\n";
-
    entity->removeFromWorld();
+   worldSpace.removeAndUntrackEntity(entity);
 
    for (uint_t i = 0; i < entities.size(); ++i) {
       if (entities[i] == entity) {
-         worldSpace.removeAndUntrackEntity(entities[i]);
          entities.erase(entities.begin() + i);
          --i;
       }
@@ -132,8 +130,6 @@ void eraseEntity(pEntity_t entity) {
 }
 
 void entityTranslationHandler(EEvent* ev) {
-   std::cout << "entityTranslationHandler()\n";
-
    EEntityTranslation* event = static_cast<EEntityTranslation*>(ev);
 
    if (event->entity->getTranslation_abs().y < -1.f) {
