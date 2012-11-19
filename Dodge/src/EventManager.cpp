@@ -38,9 +38,7 @@ void EventManager::doEvents() {
          }
       }
 
-//#ifdef DEFAULT_NEW
       delete m_eventQueue.front();
-//#endif
       m_eventQueue.pop();
    }
 

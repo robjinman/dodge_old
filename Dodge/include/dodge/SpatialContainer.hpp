@@ -26,6 +26,7 @@ class SpatialContainer {
    public:
       virtual bool insert(T item, const Range& boundingBox) = 0;
       virtual bool remove(T item, const Range& boundingBox) = 0;
+      virtual void removeAll() = 0;
       virtual int getNumEntries() const = 0;
       virtual void getEntries(const Range& region, std::vector<T>& entries) const = 0;
       virtual const Range& getBoundary() const = 0;

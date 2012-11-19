@@ -3,7 +3,6 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include <dodge/StringId.hpp>
 #include <dodge/EEvent.hpp>
 #include "Item.hpp"
 
@@ -18,8 +17,6 @@ class EPendingDeletion : public Dodge::EEvent {
    private:
       pItem_t m_item;
 };
-
-typedef boost::shared_ptr<EPendingDeletion> pEPendingDeletion_t;
 
 
 #endif

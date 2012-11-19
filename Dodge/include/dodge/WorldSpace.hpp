@@ -27,10 +27,13 @@ class WorldSpace {
 
       inline void trackEntity(pEntity_t entity);
       inline void untrackEntity(pEntity_t entity);
+      inline void untrackAll();
       inline void insertEntity(pEntity_t entity);
       inline void insertAndTrackEntity(pEntity_t entity);
       inline void removeEntity(pEntity_t entity);
       inline void removeAndUntrackEntity(pEntity_t entity);
+      inline void removeAll();
+      inline void removeAndUntrackAll();
       inline void getEntities(const Range& region, std::vector<pEntity_t>& entities) const;
 
 #ifdef DEBUG
@@ -81,6 +84,16 @@ inline void WorldSpace::untrackEntity(pEntity_t entity) {
 }
 
 //===========================================
+// WorldSpace::untrackAll
+//===========================================
+inline void WorldSpace::untrackAll() {
+   if (!m_init)
+      throw Exception("Error untracking entity; WorldSpace not initialised", __FILE__, __LINE__);
+
+   m_tracking.clear();
+}
+
+//===========================================
 // WorldSpace::insertEntity
 //===========================================
 inline void WorldSpace::insertEntity(pEntity_t entity) {
@@ -109,11 +122,29 @@ inline void WorldSpace::removeEntity(pEntity_t entity) {
 }
 
 //===========================================
+// WorldSpace::removeAll
+//===========================================
+inline void WorldSpace::removeAll() {
+   if (!m_init)
+      throw Exception("Error removing entity; WorldSpace not initialised", __FILE__, __LINE__);
+
+   m_container->removeAll();
+}
+
+//===========================================
 // WorldSpace::removeAndUntrackEntity
 //===========================================
 inline void WorldSpace::removeAndUntrackEntity(pEntity_t entity) {
    removeEntity(entity);
    untrackEntity(entity);
+}
+
+//===========================================
+// WorldSpace::removeAndUntrackAll
+//===========================================
+inline void WorldSpace::removeAndUntrackAll() {
+   removeAll();
+   untrackAll();
 }
 
 //===========================================

@@ -4,30 +4,23 @@
 
 #include <boost/shared_ptr.hpp>
 #include <dodge/Sprite.hpp>
-#include <dodge/Vec2f.hpp>
-#include <dodge/EventManager.hpp>
-#include <dodge/rapidxml/rapidxml.hpp>
+#include <dodge/xml/xml.hpp>
 
 
 class Item : public Dodge::Sprite {
    public:
-      Item()
-         : Sprite() {}
+      Item(const Dodge::XmlNode data);
+      Item(const Item& item) : Sprite(item) {}
+      Item(const Item& item, long name) : Sprite(item, name) {}
 
-      Item(const Item& item)
-         : Sprite(item) {}
-
-      virtual void draw(const Dodge::Vec2f& at) const { Dodge::Sprite::draw(at); }
-      virtual void update() { Sprite::update(); }
-
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void draw() const;
+      virtual void update();
+      virtual Item* clone() const;
+      virtual void assignData(const Dodge::XmlNode data);
 
       void setPendingDeletion();
 
       virtual ~Item() {}
-
-   private:
-      static Dodge::EventManager eventManager;
 };
 
 typedef boost::shared_ptr<Item> pItem_t;

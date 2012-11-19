@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Nodes with names that begin with an uppercase letter represent
+classes, and are passed to their respective class constructors. -->
+
+<!-- Nodes with lowercase names represent internal data members. Their
+'ptr' attribute, if they have one, means the data member is a pointer
+to the asset with id=ptr. The 'proto' attribute refers to the asset
+which the object is a copy of. -->
+
+<!-- Every asset defined at the top level is wrapped in the 'asset'
+tag and has a 'class' attribute, and an 'id' attribute which uniquely
+identifies it. -->
+
+<assets>
+   <!-- Soil -->
+   <asset class="Soil" id="50">
+      <Soil>
+         <Item>
+            <Sprite>
+               <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="2" rot="0.0">
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="1.0" y="1.0"/>
+                        <Vec2f x="1.0" y="1.0"/>
+                        <Vec2f x="1.0" y="1.0"/>
+                        <Vec2f x="1.0" y="1.0"/>
+                     </Polygon>
+                  </shape>
+               </Entity>
+               <EntityAnimations>
+                  <texture>
+                     <Texture path="data/textures/ss8x8squares128x128y.png"/>
+                  </texture>
+                  <textureSection>
+                     <Range>
+                        <Vec2f x="0" y="0"/>
+                        <Vec2f x="16" y="16"/>
+                     </Range>
+                  </textureSection>
+                  <animation>
+                     <Animation name="dissolve" rate="45.0">
+                        <AnimFrame>
+                           <pos><Vec2i x="0" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="16" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.875"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="32" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.75"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="48" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.625"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="64" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.5"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="80" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.375"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="96" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.25"/></col>
+                        </AnimFrame>
+                        <AnimFrame>
+                           <pos><Vec2i x="112" y="0"/></pos>
+                           <dim><Vec2i x="16" y="16"/></dim>
+                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.125"/></col>
+                        </AnimFrame>
+                     </Animation>
+                  </animation>
+               </EntityAnimations>
+               <EntityTransformations/>
+            </Sprite>
+         </Item>
+      </Soil>
+   </asset>
+</assets>

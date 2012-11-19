@@ -1,87 +1,73 @@
 #include <set>
-#include <dodge/Exception.hpp>
 #include <dodge/ETransFinished.hpp>
 #include <dodge/StringId.hpp>
-#include <dodge/Math.hpp>
 #include "Player.hpp"
 
 
 using namespace std;
-using namespace rapidxml;
 using namespace Dodge;
 
 
 //===========================================
-// Player::init
+// Player::Player
 //===========================================
-void Player::init() {
-   Poly poly;
-   poly.verts.push_back(Vec2f(1, -4));
-   poly.verts.push_back(Vec2f(15, -4));
-   poly.verts.push_back(Vec2f(15, 0));
-   poly.verts.push_back(Vec2f(1, 0));
-   m_footSensor.addPoly(poly);
+Player::Player(const XmlNode data)
+   : Item(data.firstChild()), Box2dPhysics(this, data) {
 
-   poly.verts.clear();
-   poly.verts.push_back(Vec2f(1, 16));
-   poly.verts.push_back(Vec2f(15, 16));
-   poly.verts.push_back(Vec2f(15, 20));
-   poly.verts.push_back(Vec2f(1, 20));
-   m_headSensor.addPoly(poly);
+   try {
+      XML_NODE_CHECK(data, Player)
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Player; ");
+      throw;
+   }
+}
 
-   poly.verts.clear();
-   poly.verts.push_back(Vec2f(-4, 1));
-   poly.verts.push_back(Vec2f(0, 1));
-   poly.verts.push_back(Vec2f(0, 15));
-   poly.verts.push_back(Vec2f(-4, 15));
-   m_leftSensor.addPoly(poly);
-
-   poly.verts.clear();
-   poly.verts.push_back(Vec2f(16, 1));
-   poly.verts.push_back(Vec2f(20, 1));
-   poly.verts.push_back(Vec2f(20, 15));
-   poly.verts.push_back(Vec2f(16, 15));
-   m_rightSensor.addPoly(poly);
-
-   poly.verts.clear();
-   poly.verts.push_back(Vec2f(1, 0));
-   poly.verts.push_back(Vec2f(15, 0));
-   poly.verts.push_back(Vec2f(15, 4));
-   poly.verts.push_back(Vec2f(1, 4));
-   m_midSensor.addPoly(poly);
+//===========================================
+// Player::clone
+//===========================================
+Player* Player::clone() const {
+   return new Player(*this);
 }
 
 //===========================================
 // Player::snapToGridH
 //===========================================
-void Player::snapToGridH(double offset) {
-   Vec2f pos = getPosition();
-   pos.x = floor((pos.x / m_grid->getCellSize().x) + 0.5) * m_grid->getCellSize().x + offset;
+void Player::snapToGridH(float32_t offset) {
+   Vec2f pos = getTranslation_abs();
+   pos.x = floor((pos.x / m_gridSize.x) + 0.5) * m_gridSize.x + offset;
 
-   setPosition(pos.x, pos.y);
+   translate(pos - getTranslation_abs());
 }
 
 //===========================================
 // Player::snapToGridV
 //===========================================
-void Player::snapToGridV(double offset) {
-   Vec2f pos = getPosition();
-   pos.y = floor((pos.y / m_grid->getCellSize().y) + 0.5) * m_grid->getCellSize().y + offset;
+void Player::snapToGridV(float32_t offset) {
+   Vec2f pos = getTranslation_abs();
+   pos.y = floor((pos.y / m_gridSize.y) + 0.5) * m_gridSize.y + offset;
 
-   setPosition(pos.x, pos.y);
+   translate(pos - getTranslation_abs());
 }
 
 //===========================================
 // Player::addToWorld
 //===========================================
 void Player::addToWorld() {
-   EntityPhysics::addToWorld();
+   Box2dPhysics::addToWorld();
+}
+
+//===========================================
+// Player::removeFromWorld
+//===========================================
+void Player::removeFromWorld() {
+   Box2dPhysics::removeFromWorld();
 }
 
 //===========================================
 // Player::update
 //===========================================
-void Player::update() {
+void Player::update() {/*
    Item::update();
 
    if (!(Math::compoundPolyOverlaps(getPosition(), m_footSensor, Vec2f(0, 0), m_zeroGRegion)
@@ -99,17 +85,17 @@ void Player::update() {
       }
 
       m_mode = DIG_MODE;
-   }
+   }*/
 }
 
 //===========================================
 // Player::onEvent
 //===========================================
-void Player::onEvent(const pEEvent_t event) {
+void Player::onEvent(const EEvent* event) {
    static long transFinishedStr = internString("transFinished");
 
    if (event->getType() == transFinishedStr) {
-      if (isStationary() && m_mode == DIG_MODE) {
+      if (/*isStationary() && */m_mode == DIG_MODE) {
          snapToGridV();
          snapToGridH();
       }
@@ -119,7 +105,7 @@ void Player::onEvent(const pEEvent_t event) {
 //===========================================
 // Player::grounded
 //===========================================
-bool Player::grounded() const {
+bool Player::grounded() const {/*
    set<pEntity_t> items;
    m_grid->surrounding(getPosition(), m_footSensor, items);
    for (set<pEntity_t>::iterator i = items.begin(); i != items.end(); ++i) {
@@ -129,7 +115,7 @@ bool Player::grounded() const {
          return true;
    }
 
-   return false;
+   return false;*/
 }
 
 //===========================================
@@ -151,7 +137,7 @@ void Player::jump() {
 //
 // 0 = left, 1 = up, 2 = right, 3 = down
 //===========================================
-void Player::move(int dir) {
+void Player::move(int dir) {/*
    static long moveLeftStr = internString("moveLeft");
    static long hitFromRightStr = internString("hitFromRight");
    static long moveRightStr = internString("moveRight");
@@ -162,7 +148,7 @@ void Player::move(int dir) {
    static long hitFromTopStr = internString("hitFromTop");
 
    if (m_mode == DIG_MODE) {
-      double dx = 0, dy = 0;
+      float32_t dx = 0, dy = 0;
       long plyrAnim = 0, eventType = 0;
       switch (dir) {
          case 0:           // Left
@@ -248,16 +234,28 @@ void Player::move(int dir) {
             }
             break;
       }
-   }
+   }*/
 }
 
 //===========================================
 // Player::assignData
 //===========================================
-void Player::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Player") != 0)
-      throw Exception("Error parsing XML for instance of class Player", __FILE__, __LINE__);
+void Player::assignData(const XmlNode data) {
+   try {
+      XML_NODE_CHECK(data, Player)
 
-   const xml_node<>* node = data->first_node();
-   if (node) Item::assignData(node);
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "Item") {
+         Item::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "Box2dPhysics") {
+         Item::assignData(node);
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Player; ");
+      throw;
+   }
 }

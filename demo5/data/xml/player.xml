@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nodes with names that begin with an uppercase letter represent
+classes, and are passed to their respective class constructors. -->
+
+<!-- Nodes with lowercase names represent internal data members. Their
+'ptr' attribute, if they have one, means the data member is a pointer
+to the asset with id=ptr. The 'proto' attribute refers to the asset
+which the object is a copy of. -->
+
+<!-- Every asset defined at the top level is wrapped in the 'asset'
+tag and has a 'class' attribute, and an 'id' attribute which uniquely
+identifies it. -->
+<ASSETFILE>
+   <assets>
+      <!-- 'man' texture -->
+      <asset id="9">
+         <Texture path="data/textures/man.png"/>
+      </asset>
+      <!-- 'player' prototype -->
+      <asset id="10">
+         <Player>
+            <Item>
+               <Sprite>
+                  <Entity type="player" name="playerProto" x="0.0" y="0.0" z="2" rot="0.0">
+                     <scale>
+                        <Vec2f x="1.0" y="1.0"/>
+                     </scale>
+                     <shape>
+                        <Polygon>
+                           <Vec2f x="0" y="0.025"/>
+                           <Vec2f x="0.04375" y="0"/>
+                           <Vec2f x="0.05625" y="0"/>
+                           <Vec2f x="0.1" y="0.025"/>
+                           <Vec2f x="0.1" y="0.1"/>
+                           <Vec2f x="0" y="0.1"/>
+                        </Polygon>
+                     </shape>
+                     <children/>
+                  </Entity>
+                  <EntityAnimations>
+                     <texture ptr="9"/>
+                     <textureSection>
+                        <Range>
+                           <pos><Vec2f x="0" y="0"/></pos>
+                           <size><Vec2f x="32" y="32"/></size>
+                        </Range>
+                     </textureSection>
+                     <onScreenSize>
+                        <Vec2f x="0.1" y="0.1"/>
+                     </onScreenSize>
+                     <animation>
+                        <Animation name="moveDown" rate="16.0">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="32"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="64"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="96"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="moveLeft" rate="16.0">
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="0"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="32"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="64"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="96"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="moveUp" rate="16.0">
+                           <AnimFrame>
+                              <pos><Vec2i x="64" y="0"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="64" y="32"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="64" y="64"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="64" y="96"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="moveRight" rate="16.0">
+                           <AnimFrame>
+                              <pos><Vec2i x="96" y="0"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="96" y="32"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="96" y="64"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="96" y="96"/></pos>
+                              <dim><Vec2i x="32" y="32"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                  </EntityAnimations>
+                  <EntityTransformations>
+                     <transformation>
+                        <Transformation name="moveDown" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="0.0" y="-0.1"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveLeft" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="-0.1" y="0.0"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveUp" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="0.0" y="0.1"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                     <transformation>
+                        <Transformation name="moveRight" rate="4.0" smooth="8">
+                           <TransFrame>
+                              <delta><Vec2f x="0.1" y="0.0"/></delta>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransFrame>
+                        </Transformation>
+                     </transformation>
+                  </EntityTransformations>
+               </Sprite>
+            </Item>
+         </Player>
+      </asset>
+   </assets>
+</ASSETFILE>

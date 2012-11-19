@@ -3,29 +3,31 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include <Dodge/core/EEvent.hpp>
-#include <Dodge/physics/EntityPhysics.hpp>
-#include "rapidxml.hpp"
+#include <dodge/EEvent.hpp>
+#include <dodge/Box2dPhysics.hpp>
+#include "dodge/xml/xml.hpp"
 #include "Item.hpp"
 
 
-class Soil : public Item, public Dodge::EntityPhysics {
+class Soil : public Item, public Dodge::Box2dPhysics {
    public:
-      Soil()
-         : Item(),
-           EntityPhysics(this, Dodge::physOpts_t(false, true, 1.0, 0.3)) {}
+      Soil(const Dodge::XmlNode data);
 
       Soil(const Soil& copy)
          : Item(copy),
-           EntityPhysics(this, Dodge::physOpts_t(false, true, 1.0, 0.3)) {}
+           Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)) {}
+
+      Soil(const Soil& copy, long name)
+         : Item(copy, name),
+           Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)) {}
 
       virtual void update();
-
+      virtual Soil* clone() const;
       virtual void addToWorld();
-      virtual void removeFromWorld() { EntityPhysics::removeFromWorld(); }
+      virtual void removeFromWorld();
 
-      virtual void onEvent(const Dodge::pEEvent_t event);
-      virtual void assignData(const rapidxml::xml_node<>* data);
+      virtual void onEvent(const Dodge::EEvent* event);
+      virtual void assignData(const Dodge::XmlNode data);
 
       virtual ~Soil() {}
 };

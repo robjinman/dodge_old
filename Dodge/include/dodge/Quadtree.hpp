@@ -65,6 +65,20 @@ class Quadtree : public SpatialContainer<T> {
       }
 
       //===========================================
+      // Quadtree::removeAll
+      //===========================================
+      virtual void removeAll() {
+         m_entries.clear();
+
+         if (hasChildren()) {
+            for (int i = 0; i < 4; ++i) {
+               delete m_children[i];
+               m_children[i] = NULL;
+            }
+         }
+      }
+
+      //===========================================
       // Quadtree::getNumEntries
       //===========================================
       virtual int getNumEntries() const {

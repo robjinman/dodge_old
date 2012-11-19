@@ -3,7 +3,6 @@
 #include <fstream>
 #include <cstring>
 #include <memory>
-#include <dodge/rapidxml/rapidxml.hpp>
 #include "EPendingDeletion.hpp"
 #include "Application.hpp"
 #include "Soil.hpp"
@@ -11,7 +10,6 @@
 
 
 using namespace std;
-using namespace rapidxml;
 using namespace Dodge;
 
 
@@ -34,8 +32,8 @@ void Application::exitDefault() {
 //===========================================
 void Application::quit() {
    m_items.clear();
-   m_eventManager.clearAll();
-   m_grid->removeAll();
+   m_eventManager.clear();
+   m_worldSpace.removeAll();
    m_player.reset();
    m_win.destroyWindow();
 
@@ -47,8 +45,8 @@ void Application::quit() {
 //===========================================
 void Application::keyDown(int key) {
    switch (key) {
-      case KEY_ESCAPE: quit(); break;
-      case KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n" << flush; break;
+      case WinIO::KEY_ESCAPE: quit(); break;
+      case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n" << flush; break;
    }
 
    m_keyState[key] = true;
@@ -65,212 +63,129 @@ void Application::keyUp(int key) {
 // Application::keyboard
 //===========================================
 void Application::keyboard() {
-   if (m_keyState[KEY_LEFT]) {
+   if (m_keyState[WinIO::KEY_LEFT]) {
       m_player->moveLeft();
    }
-   if (m_keyState[KEY_UP]) {
+   if (m_keyState[WinIO::KEY_UP]) {
       m_player->moveUp();
    }
-   if (m_keyState[KEY_RIGHT]) {
+   if (m_keyState[WinIO::KEY_RIGHT]) {
       m_player->moveRight();
    }
-   if (m_keyState[KEY_DOWN]) {
+   if (m_keyState[WinIO::KEY_DOWN]) {
       m_player->moveDown();
    }
 }
 
 //===========================================
-// Application::parseItemFile
+// Application::constructAsset
+//
+// If proto = -1 asset is *not* constructed from prototype
 //===========================================
-pItem_t Application::parseItemFile(const string& file) {
-   pItem_t item;
+boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long proto) {
+   if (data.isNull())
+      throw XmlException("Error constructing asset; XML node is empty", __FILE__, __LINE__);
 
-   ifstream fin(file);
-   if (!fin.good())
-      throw Exception("Error parsing xml file; bad file", __FILE__, __LINE__);
+   boost::shared_ptr<Asset> asset;
 
-   // Get file length
-   fin.seekg (0, ios::end);
-   int len = fin.tellg();
-   fin.seekg (0, ios::beg);
-
-   // Load data and add null byte
-   unique_ptr<char[]> buf(new char[len + 1]);
-   buf[len] = '\0';
-   fin.read(buf.get(), len);
-
-   xml_document<char> doc;
-   try {
-      doc.parse<parse_full ^ parse_comment_nodes>(buf.get());
+   if (data.name() == "Texture") {
+      asset = boost::shared_ptr<Asset>(new Texture(data));
    }
-   catch (parse_error& e) {
-      stringstream msg;
-      msg << "Error parsing xml file: " << e.what() << " at byte "
-         << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
+   else if (data.name() == "Player") {
+      if (proto == -1) {
+         asset = pPlayer_t(new Player(data));
+      }
+      else {
+         Player* player = dynamic_cast<Player*>(m_assetManager.cloneAsset(proto));
 
-      throw Exception(msg.str(), __FILE__, __LINE__);
+         if (!player)
+            throw XmlException("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
+
+         m_player = pPlayer_t(player);
+
+         m_player->assignData(data);
+         m_player->addToWorld();
+         m_worldSpace.trackEntity(m_player);
+
+         asset = m_player;
+      }
    }
+   else if (data.name() == "Soil") {
+      if (proto == -1) {
+         asset = pSoil_t(new Soil(data));
+      }
+      else {
+         pSoil_t soil(dynamic_cast<Soil*>(m_assetManager.cloneAsset(proto)));
 
-   // First node is XML declaration
-   xml_node<>* decl = doc.first_node();
-   xml_node<>* node = NULL;
+         if (!soil)
+            throw XmlException("Error constructing asset of type Soil; Bad prototype id", __FILE__, __LINE__);
 
-   if (decl) node = decl->next_sibling();
-   if (node) {
+         soil->assignData(data);
+         soil->addToWorld();
+         m_worldSpace.trackEntity(soil);
+         m_items[soil->getName()] = soil;
 
-      // Call the correct constructor
-      if (strcmp(node->name(), "Player") == 0)
-         item = pItem_t(new Player(m_grid, m_zeroGRegion));
-      else if (strcmp(node->name(), "Soil") == 0)
-         item = pItem_t(new Soil);
-      else if (strcmp(node->name(), "StopBlock") == 0)
-         item = pItem_t(new StopBlock);
-      else
-         throw Exception("Error parsing xml file; unknown class name", __FILE__, __LINE__);
-
-      item->assignData(node);
+         asset = soil;
+      }
    }
    else
-      throw Exception("Error parsing xml file", __FILE__, __LINE__);
+      throw XmlException("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
 
-   return item;
+   return asset;
 }
 
 //===========================================
-// Application::mapSetup
+// Application::loadAssets_r
 //===========================================
-void Application::mapSetup() {
+void Application::loadAssets_r(const string& file) {
    try {
-      map<long, pItem_t> prototypes;
+      XmlDocument doc;
 
-      stringstream strMap;
-      strMap << "data/xml/map" << m_currentMap << ".xml";
+      XmlNode decl = doc.parse(file);
+      if (decl.isNull())
+         throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
-      ifstream fin(strMap.str());
-      if (!fin.good())
-         throw Exception("Error parsing xml file; bad file", __FILE__, __LINE__);
+      XmlNode node = decl.nextSibling();
+      XML_NODE_CHECK(node, ASSETFILE);
 
-      // Get file length
-      fin.seekg (0, ios::end);
-      int len = fin.tellg();
-      fin.seekg (0, ios::beg);
+      node = node.firstChild();
+      if (node.isNull())
+         throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
-      // Load data and add null byte
-      unique_ptr<char[]> buf(new char[len + 1]);
-      buf[len] = '\0';
-      fin.read(buf.get(), len);
+      if (node.name() == "using") {
+         XmlNode node_ = node.firstChild();
+         while (!node_.isNull() && node_.name() == "file") {
+            string path = string("data/xml/").append(node_.getString());
+            loadAssets_r(path);
 
-      xml_document<char> doc;
-      try {
-         doc.parse<parse_full ^ parse_comment_nodes>(buf.get());
-      }
-      catch (parse_error& e) {
-         stringstream msg;
-         msg << "Error parsing xml file: " << e.what() << " at byte "
-            << e.where<char>() - buf.get() << " '" << string(e.where<char>(), 50) << "'";
-
-         throw Exception(msg.str(), __FILE__, __LINE__);
-      }
-
-      // First node is XML declaration
-      xml_node<>* decl = doc.first_node();
-      xml_node<>* node0 = NULL;
-
-      if (decl) node0 = decl->next_sibling();
-      if (!node0 || strcmp(node0->name(), "gameMap") != 0)
-         throw Exception("Error parsing xml file; expected 'gameMap'", __FILE__, __LINE__);
-
-      xml_node<>* node1 = node0->first_node();
-      if (!node1 || strcmp(node1->name(), "using") != 0)
-         throw Exception("Error parsing xml file; expected 'using'", __FILE__, __LINE__);
-
-      // Load item prototypes
-      xml_node<>* node2 = node1->first_node();
-      while (node2) {
-         if (strcmp(node2->name(), "file") == 0) {
-            string path = string("data/xml/").append(node2->value());
-
-            pItem_t proto = parseItemFile(path);
-            prototypes[proto->getDefName()] = proto;
+            node_ = node_.nextSibling();
          }
 
-         node2 = node2->next_sibling();
+         node = node.nextSibling();
       }
 
-      node1 = node1->next_sibling();
-      if (!node1 || strcmp(node1->name(), "zeroGRegion") != 0)
-         throw Exception("Error parsing xml file; expected 'zeroGRegion'", __FILE__, __LINE__);
+      XML_NODE_CHECK(node, assets);
 
-      // Load zeroGRegion
-      node2 = node1->first_node();
-      if (node2) m_zeroGRegion.assignData(node2);
+      node = node.firstChild();
+      while (!node.isNull() && node.name() == "asset") {
+         XmlAttribute attr = node.firstAttribute();
+         XML_ATTR_CHECK(attr, id);
+         long id = attr.getLong();
 
-      node1 = node1->next_sibling();
-      if (!node1 || strcmp(node1->name(), "entities") != 0)
-         throw Exception("Error parsing xml file; expected 'entities'", __FILE__, __LINE__);
+         long proto = -1;
+         attr = attr.nextAttribute();
+         if (!attr.isNull() && attr.name() == "proto")
+            proto = attr.getLong();
 
-      // Spawn instances from prototypes
-      node2 = node1->first_node();
-      while (node2) {
-         if (strcmp(node2->name(), "Player") == 0) {
-            pPlayer_t tmp(new Player(m_grid, m_zeroGRegion));
+         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto);
+         m_assetManager.addAsset(id, asset);
 
-            // Assign data and extract defName (name of prototype)
-            tmp->assignData(node2);
-
-            map<long, pItem_t>::iterator it = prototypes.find(tmp->getDefName());
-            if (it == prototypes.end())
-               throw Exception("Error parsing xml file; prototype not defined", __FILE__, __LINE__);
-
-            pPlayer_t proto = boost::static_pointer_cast<Player>(it->second);
-            m_player = pPlayer_t(new Player(*proto, m_grid, m_zeroGRegion));
-
-            // Assign data again to set differences from prototype
-            m_player->assignData(node2);
-
-            m_player->addToWorld();
-            m_grid->trackEntity(m_player);
-         }
-         else {
-            pItem_t item;
-
-            if (strcmp(node2->name(), "Soil") == 0) {
-               pSoil_t tmp(new Soil);
-               tmp->assignData(node2);
-
-               map<long, pItem_t>::iterator it = prototypes.find(tmp->getDefName());
-               if (it == prototypes.end())
-                  throw Exception("Error parsing xml file; prototype not defined", __FILE__, __LINE__);
-
-               pSoil_t proto = boost::static_pointer_cast<Soil>(it->second);
-               item = pItem_t(new Soil(*proto));
-            }
-            else if (strcmp(node2->name(), "StopBlock") == 0) {
-               pStopBlock_t tmp(new StopBlock);
-               tmp->assignData(node2);
-
-               map<long, pItem_t>::iterator it = prototypes.find(tmp->getDefName());
-               if (it == prototypes.end())
-                  throw Exception("Error parsing xml file; prototype not defined", __FILE__, __LINE__);
-
-               pStopBlock_t proto = boost::static_pointer_cast<StopBlock>(it->second);
-               item = pItem_t(new StopBlock(*proto));
-            }
-
-            item->assignData(node2);
-            m_items[item->getName()] = item;
-            item->addToWorld();
-            m_grid->addEntity(item);
-            m_grid->trackEntity(item);
-         }
-
-         node2 = node2->next_sibling();
+         node = node.nextSibling();
       }
    }
-   catch (bad_alloc& e) {
-      Exception ex("Error loading map; ", __FILE__, __LINE__);
-      ex.append(e.what());
-      throw ex;
+   catch (XmlException& e) {
+      e.prepend("Error loading assets from XML file; ");
+      throw;
    }
 }
 
@@ -291,33 +206,50 @@ void Application::computeFrameRate() {
 //===========================================
 // Application::deletePending
 //===========================================
-void Application::deletePending(pEEvent_t event) {
+void Application::deletePending(EEvent* event) {
    static long pendingDeletionStr = internString("pendingDeletion");
 
    if (event->getType() == pendingDeletionStr) {
-      pEPendingDeletion_t e = boost::static_pointer_cast<EPendingDeletion>(event);
+      EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
       pItem_t item = e->getItem();
 
-      m_grid->removeEntity(item, item->getPosition(), item->getBoundingPoly());
-      m_grid->unTrackEntity(item);
-
+      m_worldSpace.removeAndUntrackEntity(item);
       item->removeFromWorld();
-
       m_items.erase(item->getName());
    }
 }
 
 //===========================================
-// Application::drawAndUpdateItems
+// Application::draw
 //===========================================
-void Application::drawAndUpdateItems() {
-   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i) {
+void Application::draw() {
+   m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
+
+   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
+      i->second->draw();
+
+   m_player->draw();
+}
+
+//===========================================
+// Application::update
+//===========================================
+void Application::update() {
+   m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
+
+   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->update();
-      i->second->draw(Vec2f(0, 0));
-   }
 
    m_player->update();
-   m_player->draw(Vec2f(0, 0));
+}
+
+//===========================================
+// Application::onWindowResize
+//===========================================
+void Application::onWindowResize(int w, int h) {
+   Renderer renderer;
+   renderer.onWindowResize(w, h);
+   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 //===========================================
@@ -326,38 +258,32 @@ void Application::drawAndUpdateItems() {
 void Application::begin() {
    m_currentMap = 0;
 
-   initialiseAll("Shit Game", 320, 240, false);
-   m_win.registerCallback(GFXEVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
-   m_win.registerCallback(GFXEVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Application::keyDown));
-   m_win.registerCallback(GFXEVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
+   m_win.init("Shit Game", 640, 480, false);
+   m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
+   m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Application::keyDown));
+   m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
+   m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
-   m_eventManager.registerCallback(internString("pendingDeletion"),
-      Functor<void, TYPELIST_1(pEEvent_t)>(this, &Application::deletePending));
+   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
-   Renderer renderer;
+   m_graphics2d.init(640, 480);
 
-   try {
-      m_grid = pGrid_t(new Grid(320 / 16, 240 / 16, 16, 16));
-   }
-   catch (bad_alloc& e) {
-      Exception ex("Error allocating Grid object; ", __FILE__, __LINE__);
-      ex.append(e.what());
-      throw ex;
-   }
+   Box2dPhysics::loadSettings("data/physics.conf");
 
-   EntityPhysics::loadSettings("data/physics.conf");
-
-   mapSetup();
+   stringstream strMap;
+   strMap << "data/xml/map" << m_currentMap << ".xml";
+   loadAssets_r(strMap.str());
 
    while (1) {
       m_win.doEvents();
-      renderer.clear();
-      m_eventManager.doEvents();
-      renderer.drawPlainAlphaPoly(Vec2f(0, 0), m_zeroGRegion, Colour(0.3, 0.3, 0.2, 1.0), 0);
-      EntityPhysics::update();
       keyboard();
-      drawAndUpdateItems();
-      computeFrameRate();
+      update();
+      Box2dPhysics::update();
+      m_eventManager.doEvents();
+
+      draw();
       m_win.swapBuffers();
+
+      computeFrameRate();
    }
 }

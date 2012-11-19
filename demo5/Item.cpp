@@ -1,30 +1,70 @@
-#include <dodge/rapidxml/rapidxml.hpp>
+#include <dodge/EventManager.hpp>
 #include "EPendingDeletion.hpp"
 #include "Item.hpp"
 
 
 using namespace Dodge;
-using namespace rapidxml;
 
 
-EventManager Item::eventManager = EventManager();
+//===========================================
+// Item::Item
+//===========================================
+Item::Item(const XmlNode data)
+   : Sprite(data.firstChild()) {
 
+   try {
+      XML_NODE_CHECK(data, Item);
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Item; ");
+      throw;
+   }
+}
+
+//===========================================
+// Item::clone
+//===========================================
+Item* Item::clone() const {
+   return new Item(*this);
+}
+
+//===========================================
+// Item::draw
+//===========================================
+void Item::draw() const {
+   Sprite::draw();
+}
+
+//===========================================
+// Item::update
+//===========================================
+void Item::update() {
+   Sprite::update();
+}
 
 //===========================================
 // Item::setPendingDeletion
 //===========================================
 void Item::setPendingDeletion() {
-   pEPendingDeletion_t event(new EPendingDeletion(boost::static_pointer_cast<Item>(getSharedPtr())));
+   EPendingDeletion* event = new EPendingDeletion(boost::static_pointer_cast<Item>(getSharedPtr()));
+
+   EventManager eventManager;
    eventManager.queueEvent(event);
 }
 
 //===========================================
 // Item::assignData
 //===========================================
-void Item::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Item") != 0)
-      throw Exception("Error parsing XML for instance of class Item", __FILE__, __LINE__);
+void Item::assignData(const XmlNode data) {
+   try {
+      XML_NODE_CHECK(data, Item);
 
-   const xml_node<>* node = data->first_node();
-   if (node) Sprite::assignData(node);
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "Sprite")
+         Sprite::assignData(node);
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Item; ");
+      throw;
+   }
 }

@@ -1,24 +1,48 @@
-#include <Dodge/core/StringId.hpp>
-#include <Dodge/core/EAnimFinished.hpp>
+#include <dodge/StringId.hpp>
+#include <dodge/EAnimFinished.hpp>
 #include "Soil.hpp"
-#include "rapidxml.hpp"
 
 
 using namespace Dodge;
-using namespace rapidxml;
 
+
+//===========================================
+// Soil::Soil
+//===========================================
+Soil::Soil(const XmlNode data) : Item(data.firstChild()), Box2dPhysics(this, data.nthChild(1)) {
+   try {
+      XML_NODE_CHECK(data, Soil);
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Soil; ");
+   }
+}
+
+//===========================================
+// Soil::clone
+//===========================================
+Soil* Soil::clone() const {
+   return new Soil(*this);
+}
 
 //===========================================
 // Soil::addToWorld
 //===========================================
 void Soil::addToWorld() {
-   EntityPhysics::addToWorld();
+   Box2dPhysics::addToWorld();
+}
+
+//===========================================
+// Soil::removeFromWorld
+//===========================================
+void Soil::removeFromWorld() {
+   Box2dPhysics::removeFromWorld();
 }
 
 //===========================================
 // Soil::onEvent
 //===========================================
-void Soil::onEvent(const pEEvent_t event) {
+void Soil::onEvent(const EEvent* event) {
    static long hitFromLeftStr = internString("hitFromLeft");
    static long hitFromTopStr = internString("hitFromTop");
    static long hitFromRightStr = internString("hitFromRight");
@@ -31,12 +55,12 @@ void Soil::onEvent(const pEEvent_t event) {
       || event->getType() == hitFromTopStr
       || event->getType() == hitFromBottomStr) {
 
-         playAnimation(dissolveStr);
+      playAnimation(dissolveStr);
    }
    else if (event->getType() == animFinishedStr) {
-      pEAnimFinished_t e = boost::static_pointer_cast<EAnimFinished>(event);
+      const EAnimFinished* e = static_cast<const EAnimFinished*>(event);
 
-      if (e->getAnimation()->getName() == dissolveStr)
+      if (e->animation->getName() == dissolveStr)
          setPendingDeletion();
    }
 }
@@ -51,10 +75,22 @@ void Soil::update() {
 //===========================================
 // Soil::assignData
 //===========================================
-void Soil::assignData(const xml_node<>* data) {
-   if (strcmp(data->name(), "Soil") != 0)
-      throw Exception("Error parsing XML for instance of class Soil", __FILE__, __LINE__);
+void Soil::assignData(const XmlNode data) {
+   try {
+      XML_NODE_CHECK(data, Soil)
 
-   const xml_node<>* node = data->first_node();
-   if (node) Item::assignData(node);
+      XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "Soil") {
+         Item::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "Box2dPhysics") {
+         Box2dPhysics::assignData(node);
+      }
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Soil; ");
+      throw;
+   }
 }
