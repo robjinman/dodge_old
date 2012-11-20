@@ -19,13 +19,13 @@ class Player : public Item, public Dodge::Box2dPhysics {
       Player(const Player& copy, long name);
 
       void jump();
-      bool moveLeft();
-      bool moveUp();
-      bool moveRight();
-      bool moveDown();
+      inline bool moveLeft();
+      inline bool moveUp();
+      inline bool moveRight();
+      inline bool moveDown();
 
-      mode_t getMode() const;
-      dir_t facingDir() const;
+      inline mode_t getMode() const;
+      inline dir_t facingDir() const;
 
       virtual void addToWorld();
       virtual void removeFromWorld();
@@ -39,11 +39,11 @@ class Player : public Item, public Dodge::Box2dPhysics {
       virtual ~Player() {}
 
    private:
-      inline void init();
-      inline bool move(int dir);
-      inline bool grounded() const;
-      inline void snapToGridV(Dodge::float32_t offset = 0.0);
-      inline void snapToGridH(Dodge::float32_t offset = 0.0);
+      void init();
+      bool move(int dir);
+      bool grounded() const;
+      void snapToGridV(Dodge::float32_t offset = 0.0);
+      void snapToGridH(Dodge::float32_t offset = 0.0);
 
       Dodge::WorldSpace m_worldSpace;
       mode_t m_mode;
@@ -63,42 +63,42 @@ typedef boost::shared_ptr<Player> pPlayer_t;
 //===========================================
 // Player::moveLeft
 //===========================================
-inline bool moveLeft() {
+inline bool Player::moveLeft() {
    return move(0);
 }
 
 //===========================================
 // Player::moveUp
 //===========================================
-inline bool moveUp() {
+inline bool Player::moveUp() {
    return move(1);
 }
 
 //===========================================
 // Player::moveRight
 //===========================================
-inline bool moveRight() {
+inline bool Player::moveRight() {
    return move(2);
 }
 
 //===========================================
 // Player::moveDown
 //===========================================
-inline bool moveDown() {
+inline bool Player::moveDown() {
    return move(3);
 }
 
 //===========================================
 // Player::getMode
 //===========================================
-inline mode_t getMode() const {
+inline Player::mode_t Player::getMode() const {
    return m_mode;
 }
 
 //===========================================
 // Player::facingDir
 //===========================================
-inline dir_t facingDir() const {
+inline Player::dir_t Player::facingDir() const {
    return m_facing;
 }
 
