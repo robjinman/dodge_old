@@ -12,15 +12,64 @@ using namespace Dodge;
 // Player::Player
 //===========================================
 Player::Player(const XmlNode data)
-   : Item(data.firstChild()), Box2dPhysics(this, data) {
+   : Item(data.firstChild()), Box2dPhysics(this, data.nthChild(1)) {
+
+   init();
 
    try {
-      XML_NODE_CHECK(data, Player)
+      XML_NODE_CHECK(data, Player);
+
+      XmlNode node = data.nthChild(2);
+      XML_NODE_CHECK(node, gridSize);
+      m_gridSize = Vec2f(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, footSensor);
+      m_footSensor = Quad(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, headSensor);
+      m_headSensor = Quad(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, leftSensor);
+      m_leftSensor = Quad(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, rightSensor);
+      m_rightSensor = Quad(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, midSensor);
+      m_midSensor = Quad(node.firstChild());
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Player; ");
       throw;
    }
+}
+
+//===========================================
+// Player::Player
+//===========================================
+Player::Player(const Player& copy, long name)
+   : Item(copy, name),
+     Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)),
+     m_mode(DIG_MODE) {
+
+   m_gridSize = copy.m_gridSize;
+   m_footSensor = copy.m_footSensor;
+   m_headSensor = copy.m_headSensor;
+   m_leftSensor = copy.m_leftSensor;
+   m_rightSensor = copy.m_rightSensor;
+   m_midSensor = copy.m_midSensor;
+}
+
+//===========================================
+// Player::init
+//===========================================
+void Player::init() {
+   m_mode = DIG_MODE;
 }
 
 //===========================================
@@ -67,9 +116,9 @@ void Player::removeFromWorld() {
 //===========================================
 // Player::update
 //===========================================
-void Player::update() {/*
+void Player::update() {
    Item::update();
-
+/*
    if (!(Math::compoundPolyOverlaps(getPosition(), m_footSensor, Vec2f(0, 0), m_zeroGRegion)
       && Math::compoundPolyOverlaps(getPosition(), m_midSensor, Vec2f(0, 0), m_zeroGRegion))) {
 
@@ -89,13 +138,31 @@ void Player::update() {/*
 }
 
 //===========================================
+// Player::draw
+//===========================================
+void Player::draw() const {
+   Sprite::draw();
+
+   Graphics2d graphics2d;
+   graphics2d.setLineWidth(0);
+   graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+
+   Vec2f pos = getTranslation_abs();
+   graphics2d.drawPrimitive(m_footSensor, pos.x, pos.y, 9);
+   graphics2d.drawPrimitive(m_headSensor, pos.x, pos.y, 9);
+   graphics2d.drawPrimitive(m_leftSensor, pos.x, pos.y, 9);
+   graphics2d.drawPrimitive(m_rightSensor, pos.x, pos.y, 9);
+   graphics2d.drawPrimitive(m_midSensor, pos.x, pos.y, 9);
+}
+
+//===========================================
 // Player::onEvent
 //===========================================
 void Player::onEvent(const EEvent* event) {
    static long transFinishedStr = internString("transFinished");
 
    if (event->getType() == transFinishedStr) {
-      if (/*isStationary() && */m_mode == DIG_MODE) {
+      if (numActiveTransformations() == 0 && m_mode == DIG_MODE) {
          snapToGridV();
          snapToGridH();
       }
@@ -137,7 +204,7 @@ void Player::jump() {
 //
 // 0 = left, 1 = up, 2 = right, 3 = down
 //===========================================
-void Player::move(int dir) {/*
+bool Player::move(int dir) {
    static long moveLeftStr = internString("moveLeft");
    static long hitFromRightStr = internString("hitFromRight");
    static long moveRightStr = internString("moveRight");
@@ -148,30 +215,31 @@ void Player::move(int dir) {/*
    static long hitFromTopStr = internString("hitFromTop");
 
    if (m_mode == DIG_MODE) {
-      float32_t dx = 0, dy = 0;
+      Primitive* sensor = NULL;
+      dir_t facing;
       long plyrAnim = 0, eventType = 0;
       switch (dir) {
          case 0:           // Left
-            dx = -16.0;
-            dy = 0.0;
+            sensor = &m_leftSensor;
+            facing = LEFT;
             plyrAnim = moveLeftStr;
             eventType = hitFromRightStr;
             break;
          case 1:           // Up
-            dx = 0.0;
-            dy = 16.0;
+            sensor = &m_headSensor;
+            facing = UP;
             plyrAnim = moveUpStr;
             eventType = hitFromBottomStr;
             break;
          case 2:           // Right
-            dx = 16.0;
-            dy = 0.0;
+            sensor = &m_rightSensor;
+            facing = RIGHT;
             plyrAnim = moveRightStr;
             eventType = hitFromLeftStr;
             break;
          case 3:           // Down
-            dx = 0.0;
-            dy = -16.0;
+            sensor = &m_footSensor;
+            facing = DOWN;
             plyrAnim = moveDownStr;
             eventType = hitFromTopStr;
             break;
@@ -179,19 +247,26 @@ void Player::move(int dir) {/*
 
       playAnimation(plyrAnim);
 
-      if (isStationary()) {
-         applyTransformation(plyrAnim);
+      if (numActiveTransformations() == 0) {
+         playTransformation(plyrAnim);
 
-         const set<pEntity_t>& vec = m_grid->atWorldCoords(getPosition() + Vec2f(dx, dy));
-         for (set<pEntity_t>::iterator i = vec.begin(); i != vec.end(); ++i) {
-            if (i->get() == this) continue;
+         vector<pEntity_t> vec;
+         m_worldSpace.getEntities(getBoundary(), vec);
+         for (uint_t i = 0; i < vec.size(); ++i) {
+            if (vec[i].get() == this) continue;
 
-            pEEvent_t event(new EEvent(eventType));
-            (*i)->onEvent(event);
+            if (Math::overlap(*sensor, getTranslation_abs(), vec[i]->getShape(), vec[i]->getTranslation_abs())) {
+               EEvent* event = new EEvent(eventType);
+               vec[i]->onEvent(event);
+            }
          }
+
+         m_facing = facing;
+
+         return true;
       }
    }
-   else if (m_mode == PLATFORM_MODE) {
+   else if (m_mode == PLATFORM_MODE) {/*
       switch (dir) {
          case 0:
             if (Math::compoundPolyOverlaps(getPosition(), m_leftSensor, Vec2f(0, 0), m_zeroGRegion)) {
@@ -233,8 +308,10 @@ void Player::move(int dir) {/*
                move(3);
             }
             break;
-      }
-   }*/
+      }*/
+   }
+
+   return false;
 }
 
 //===========================================
@@ -251,7 +328,37 @@ void Player::assignData(const XmlNode data) {
       }
 
       if (!node.isNull() && node.name() == "Box2dPhysics") {
-         Item::assignData(node);
+         Box2dPhysics::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "gridSize") {
+         m_gridSize = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "footSensor") {
+         m_footSensor = Quad(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "headSensor") {
+         m_headSensor = Quad(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "leftSensor") {
+         m_leftSensor = Quad(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "rightSensor") {
+         m_rightSensor = Quad(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "midSensor") {
+         m_midSensor = Quad(node.firstChild());
       }
    }
    catch (XmlException& e) {

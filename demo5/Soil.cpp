@@ -80,7 +80,7 @@ void Soil::assignData(const XmlNode data) {
       XML_NODE_CHECK(data, Soil)
 
       XmlNode node = data.firstChild();
-      if (!node.isNull() && node.name() == "Soil") {
+      if (!node.isNull() && node.name() == "Item") {
          Item::assignData(node);
          node = node.nextSibling();
       }

@@ -9,13 +9,10 @@
 
 class EPendingDeletion : public Dodge::EEvent {
    public:
-      EPendingDeletion(pItem_t item)
-         : EEvent(Dodge::internString("pendingDeletion")), m_item(item) {}
+      EPendingDeletion(pItem_t item_)
+         : EEvent(Dodge::internString("pendingDeletion")), item(item_) {}
 
-      pItem_t getItem() const { return m_item; }
-
-   private:
-      pItem_t m_item;
+      pItem_t item;
 };
 
 

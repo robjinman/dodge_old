@@ -78,7 +78,7 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 // Entity::Entity
 //===========================================
 Entity::Entity(const XmlNode data)
-   : m_silent(false) {
+   : m_silent(false), m_parent(NULL) {
 
    AssetManager assetManager;
    PrimitiveFactory primitiveFactory;
@@ -145,6 +145,8 @@ Entity::Entity(const XmlNode data)
       e.prepend("Error parsing XML for instance of class Entity; ");
       throw;
    }
+
+   recomputeBoundary();
 }
 
 //===========================================
@@ -288,6 +290,8 @@ void Entity::assignData(const XmlNode data) {
       e.prepend("Error parsing XML for instance of class Entity; ");
       throw;
    }
+
+   recomputeBoundary();
 }
 
 //===========================================

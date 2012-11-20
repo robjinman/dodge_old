@@ -13,21 +13,19 @@
 class Player : public Item, public Dodge::Box2dPhysics {
    public:
       typedef enum { DIG_MODE, PLATFORM_MODE } mode_t;
+      typedef enum { LEFT, RIGHT, UP, DOWN } dir_t;
 
       Player(const Dodge::XmlNode data);
-
-      Player(const Player& copy, long name)
-         : Item(copy, name),
-           Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)),
-           m_mode(DIG_MODE) {}
+      Player(const Player& copy, long name);
 
       void jump();
-      void moveLeft() { move(0); }
-      void moveUp() { move(1); }
-      void moveRight() { move(2); }
-      void moveDown() { move(3); }
+      bool moveLeft();
+      bool moveUp();
+      bool moveRight();
+      bool moveDown();
 
-      mode_t getMode() const { return m_mode; }
+      mode_t getMode() const;
+      dir_t facingDir() const;
 
       virtual void addToWorld();
       virtual void removeFromWorld();
@@ -35,30 +33,74 @@ class Player : public Item, public Dodge::Box2dPhysics {
       virtual Player* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
       virtual void update();
+      virtual void draw() const;
       virtual void onEvent(const Dodge::EEvent* event);
 
       virtual ~Player() {}
 
    private:
-      void init();
-      void move(int dir);
-      bool grounded() const;
-      void snapToGridV(Dodge::float32_t offset = 0.0);
-      void snapToGridH(Dodge::float32_t offset = 0.0);
+      inline void init();
+      inline bool move(int dir);
+      inline bool grounded() const;
+      inline void snapToGridV(Dodge::float32_t offset = 0.0);
+      inline void snapToGridH(Dodge::float32_t offset = 0.0);
 
       Dodge::WorldSpace m_worldSpace;
       mode_t m_mode;
+      dir_t m_facing;
       Dodge::Vec2f m_gridSize;
-      Dodge::Polygon m_footSensor;
-      Dodge::Polygon m_headSensor;
-      Dodge::Polygon m_leftSensor;
-      Dodge::Polygon m_rightSensor;
-      Dodge::Polygon m_midSensor;
+      Dodge::Quad m_footSensor;
+      Dodge::Quad m_headSensor;
+      Dodge::Quad m_leftSensor;
+      Dodge::Quad m_rightSensor;
+      Dodge::Quad m_midSensor;
 
       Dodge::Timer m_jumpTimer;
 };
 
 typedef boost::shared_ptr<Player> pPlayer_t;
+
+//===========================================
+// Player::moveLeft
+//===========================================
+inline bool moveLeft() {
+   return move(0);
+}
+
+//===========================================
+// Player::moveUp
+//===========================================
+inline bool moveUp() {
+   return move(1);
+}
+
+//===========================================
+// Player::moveRight
+//===========================================
+inline bool moveRight() {
+   return move(2);
+}
+
+//===========================================
+// Player::moveDown
+//===========================================
+inline bool moveDown() {
+   return move(3);
+}
+
+//===========================================
+// Player::getMode
+//===========================================
+inline mode_t getMode() const {
+   return m_mode;
+}
+
+//===========================================
+// Player::facingDir
+//===========================================
+inline dir_t facingDir() const {
+   return m_facing;
+}
 
 
 #endif

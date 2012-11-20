@@ -43,7 +43,7 @@ XmlNode XmlDocument::parse(const string& file) {
       fin.close();
 
       stringstream msg;
-      msg << "Error parsing XML file: " << e.what() << " at byte "
+      msg << "Error parsing XML file (" << file << "): " << e.what() << " at byte "
          << e.where<char>() - m_data << " '" << string(e.where<char>(), 50) << "'";
 
       throw XmlException(msg.str(), __FILE__, __LINE__);

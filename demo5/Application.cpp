@@ -1,8 +1,5 @@
 #include <sstream>
 #include <iostream>
-#include <fstream>
-#include <cstring>
-#include <memory>
 #include "EPendingDeletion.hpp"
 #include "Application.hpp"
 #include "Soil.hpp"
@@ -44,9 +41,15 @@ void Application::quit() {
 // Application::keyDown
 //===========================================
 void Application::keyDown(int key) {
+   if (key == WinIO::KEY_LEFT || key == WinIO::KEY_RIGHT
+      || key == WinIO::KEY_UP || key == WinIO::KEY_DOWN) {
+
+      m_dirKeyStack.push_back(key);
+   }
+
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
-      case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n" << flush; break;
+      case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n"; break;
    }
 
    m_keyState[key] = true;
@@ -57,23 +60,62 @@ void Application::keyDown(int key) {
 //===========================================
 void Application::keyUp(int key) {
    m_keyState[key] = false;
+
+   // dirKeyStack is the list of currently depressed directional
+   // keys in the order they were pressed.
+   for (uint_t i = 0; i < m_dirKeyStack.size(); ++i) {
+      if (m_keyState[m_dirKeyStack[i]] == false) {
+         m_dirKeyStack.erase(m_dirKeyStack.begin() + i);
+         --i;
+      }
+   }
 }
 
 //===========================================
 // Application::keyboard
 //===========================================
 void Application::keyboard() {
-   if (m_keyState[WinIO::KEY_LEFT]) {
-      m_player->moveLeft();
+   static int missedKeypress = -1;
+
+   // Attempt to move in direction of missed keypress
+   if (missedKeypress != -1) {
+      switch (missedKeypress) {
+         case WinIO::KEY_RIGHT:  if (m_player->moveRight()) missedKeypress = -1; break;
+         case WinIO::KEY_LEFT:   if (m_player->moveLeft())  missedKeypress = -1; break;
+         case WinIO::KEY_UP:     if (m_player->moveUp())    missedKeypress = -1; break;
+         case WinIO::KEY_DOWN:   if (m_player->moveDown())  missedKeypress = -1; break;
+      }
    }
-   if (m_keyState[WinIO::KEY_UP]) {
-      m_player->moveUp();
-   }
-   if (m_keyState[WinIO::KEY_RIGHT]) {
-      m_player->moveRight();
-   }
-   if (m_keyState[WinIO::KEY_DOWN]) {
-      m_player->moveDown();
+   else {
+      // Move in the direction of most recently pressed key
+      if (m_dirKeyStack.size() > 0) {
+         switch (m_dirKeyStack.back()) {
+            case WinIO::KEY_RIGHT:
+               if (!m_player->moveRight()) {                       // If the player is already moving remember this keypress
+                  if (m_player->facingDir() != Player::RIGHT)
+                     missedKeypress = WinIO::KEY_RIGHT;
+               }
+               break;
+            case WinIO::KEY_LEFT:
+               if (!m_player->moveLeft()) {
+                  if (m_player->facingDir() != Player::LEFT)
+                     missedKeypress = WinIO::KEY_LEFT;
+               }
+               break;
+            case WinIO::KEY_UP:
+               if (!m_player->moveUp()) {
+                  if (m_player->facingDir() != Player::UP)
+                     missedKeypress = WinIO::KEY_UP;
+               }
+               break;
+            case WinIO::KEY_DOWN:
+               if (!m_player->moveDown()) {
+                  if (m_player->facingDir() != Player::DOWN)
+                     missedKeypress = WinIO::KEY_DOWN;
+               }
+               break;
+         }
+      }
    }
 }
 
@@ -105,7 +147,7 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
 
          m_player->assignData(data);
          m_player->addToWorld();
-         m_worldSpace.trackEntity(m_player);
+         m_worldSpace.insertAndTrackEntity(m_player);
 
          asset = m_player;
       }
@@ -122,7 +164,7 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
 
          soil->assignData(data);
          soil->addToWorld();
-         m_worldSpace.trackEntity(soil);
+         m_worldSpace.insertAndTrackEntity(soil);
          m_items[soil->getName()] = soil;
 
          asset = soil;
@@ -211,11 +253,10 @@ void Application::deletePending(EEvent* event) {
 
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
-      pItem_t item = e->getItem();
-
-      m_worldSpace.removeAndUntrackEntity(item);
-      item->removeFromWorld();
-      m_items.erase(item->getName());
+      m_worldSpace.removeAndUntrackEntity(e->item);
+      e->item->removeFromWorld();
+      m_items.erase(e->item->getName());
+      m_assetManager.freeAsset(e->item->getAssetId());
    }
 }
 
@@ -224,6 +265,10 @@ void Application::deletePending(EEvent* event) {
 //===========================================
 void Application::draw() {
    m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
+
+   m_graphics2d.setLineWidth(1);
+   m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+   m_worldSpace.dbg_draw(5);
 
    for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->draw();
@@ -241,6 +286,9 @@ void Application::update() {
       i->second->update();
 
    m_player->update();
+
+   pCamera_t cam = m_graphics2d.getCamera();
+   cam->setTranslation(m_player->getTranslation_abs() - cam->getViewSize() / 2.f);
 }
 
 //===========================================
@@ -264,7 +312,10 @@ void Application::begin() {
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
-   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
+   m_eventManager.registerCallback(internString("pendingDeletion"),
+      Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
+
+   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
    m_graphics2d.init(640, 480);
 

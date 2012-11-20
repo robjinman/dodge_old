@@ -17,7 +17,7 @@ Quad::Quad(const XmlNode data) {
    try {
       XML_NODE_CHECK(data, Quad);
 
-      clear();
+      Polygon::clear();
       int n = 0;
 
       XmlNode node = data.firstChild();
@@ -36,6 +36,16 @@ Quad::Quad(const XmlNode data) {
       e.prepend("Error parsing XML for instance of class Quad; ");
       throw;
    }
+}
+
+//===========================================
+// Quad::Quad
+//===========================================
+Quad::Quad() {
+   addVertex(Vec2f());
+   addVertex(Vec2f());
+   addVertex(Vec2f());
+   addVertex(Vec2f());
 }
 
 //===========================================

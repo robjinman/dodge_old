@@ -38,6 +38,7 @@ class Application {
       Dodge::Graphics2d          m_graphics2d;
       int                        m_currentMap;
       std::map<int, bool>        m_keyState;
+      std::vector<int>           m_dirKeyStack;
       Dodge::WinIO               m_win;
       Dodge::EventManager        m_eventManager;
       Dodge::WorldSpace          m_worldSpace;

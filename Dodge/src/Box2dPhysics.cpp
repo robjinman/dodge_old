@@ -59,7 +59,7 @@ Box2dPhysics::Box2dPhysics(Entity* entity, const XmlNode data)
       m_opts.friction = attr.getFloat();
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class Box2dPhysics ;");
+      e.prepend("Error parsing XML for instance of class Box2dPhysics; ");
       throw;
    }
 }

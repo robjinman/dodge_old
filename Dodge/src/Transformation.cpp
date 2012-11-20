@@ -135,18 +135,18 @@ void Transformation::update() {
    if (m_state != PLAYING) return;
    if (m_frames.empty()) return;
 
-   double time = m_timer.getTime();
-   double diff = time - m_prev;
-   double dt = 1.0 / (m_rate * static_cast<double>(m_smooth));
+   float32_t time = m_timer.getTime();
+   float32_t diff = time - m_prev;
+   float32_t dt = 1.0 / (m_rate * static_cast<float32_t>(m_smooth));
    if (diff >= dt) {
-      double extra = diff - dt;
+      float32_t extra = diff - dt;
 
-      double dx = 0, dy = 0, da = 0;
+      float32_t dx = 0, dy = 0, da = 0;
       Vec2f dScale(1, 1);
       do {
-         dx += m_frames[m_current / m_smooth].delta.x / static_cast<double>(m_smooth);
-         dy += m_frames[m_current / m_smooth].delta.y / static_cast<double>(m_smooth);
-         da += m_frames[m_current / m_smooth].rot / static_cast<double>(m_smooth);
+         dx += m_frames[m_current / m_smooth].delta.x / static_cast<float32_t>(m_smooth);
+         dy += m_frames[m_current / m_smooth].delta.y / static_cast<float32_t>(m_smooth);
+         da += m_frames[m_current / m_smooth].rot / static_cast<float32_t>(m_smooth);
 
          if (m_current % m_smooth == 0) {
             dScale.x *= m_frames[m_current / m_smooth].scale.x;

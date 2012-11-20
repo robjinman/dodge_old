@@ -14,14 +14,14 @@ identifies it. -->
    <assets>
       <!-- 'man' texture -->
       <asset id="9">
-         <Texture path="data/textures/man.png"/>
+         <Texture path="data/textures/ss8x8squares128x128g.png"/>
       </asset>
       <!-- 'player' prototype -->
       <asset id="10">
          <Player>
             <Item>
                <Sprite>
-                  <Entity type="player" name="playerProto" x="0.0" y="0.0" z="2" rot="0.0">
+                  <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
                      <scale>
                         <Vec2f x="1.0" y="1.0"/>
                      </scale>
@@ -42,7 +42,7 @@ identifies it. -->
                      <textureSection>
                         <Range>
                            <pos><Vec2f x="0" y="0"/></pos>
-                           <size><Vec2f x="32" y="32"/></size>
+                           <size><Vec2f x="16" y="16"/></size>
                         </Range>
                      </textureSection>
                      <onScreenSize>
@@ -52,22 +52,22 @@ identifies it. -->
                         <Animation name="moveDown" rate="16.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="0"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="0" y="32"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="16" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="0" y="64"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="32" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="0" y="96"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="48" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                         </Animation>
@@ -75,23 +75,23 @@ identifies it. -->
                      <animation>
                         <Animation name="moveLeft" rate="16.0">
                            <AnimFrame>
-                              <pos><Vec2i x="32" y="0"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="0" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="32" y="32"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="16" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="32" y="64"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="32" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="32" y="96"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="48" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                         </Animation>
@@ -99,23 +99,23 @@ identifies it. -->
                      <animation>
                         <Animation name="moveUp" rate="16.0">
                            <AnimFrame>
-                              <pos><Vec2i x="64" y="0"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="0" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="64" y="32"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="16" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="64" y="64"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="32" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="64" y="96"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="48" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                         </Animation>
@@ -123,23 +123,23 @@ identifies it. -->
                      <animation>
                         <Animation name="moveRight" rate="16.0">
                            <AnimFrame>
-                              <pos><Vec2i x="96" y="0"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="0" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="96" y="32"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="16" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="96" y="64"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="32" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                            <AnimFrame>
-                              <pos><Vec2i x="96" y="96"/></pos>
-                              <dim><Vec2i x="32" y="32"/></dim>
+                              <pos><Vec2i x="48" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
                               <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
                            </AnimFrame>
                         </Animation>
@@ -185,6 +185,50 @@ identifies it. -->
                   </EntityTransformations>
                </Sprite>
             </Item>
+            <Box2dPhysics dynamic="true" fixedAngle="true" density="1.0" friction="0.3"/>
+            <gridSize>
+               <Vec2f x="0.1" y="0.1"/>
+            </gridSize>
+            <footSensor>
+               <Quad>
+                  <Vec2f x="0.00625" y="-0.025"/>
+                  <Vec2f x="0.09375" y="-0.025"/>
+                  <Vec2f x="0.09375" y="0.0"/>
+                  <Vec2f x="0.00625" y="0.0"/>
+               </Quad>
+            </footSensor>
+            <headSensor>
+               <Quad>
+                  <Vec2f x="0.00625" y="0.1"/>
+                  <Vec2f x="0.09375" y="0.1"/>
+                  <Vec2f x="0.09375" y="0.125"/>
+                  <Vec2f x="0.00625" y="0.125"/>
+               </Quad>
+            </headSensor>
+            <leftSensor>
+               <Quad>
+                  <Vec2f x="-0.025" y="0.00625"/>
+                  <Vec2f x="0.0" y="0.00625"/>
+                  <Vec2f x="0.0" y="0.09375"/>
+                  <Vec2f x="-0.025" y="0.09375"/>
+               </Quad>
+            </leftSensor>
+            <rightSensor>
+               <Quad>
+                  <Vec2f x="0.1" y="0.00625"/>
+                  <Vec2f x="0.125" y="0.00625"/>
+                  <Vec2f x="0.125" y="0.09375"/>
+                  <Vec2f x="0.1" y="0.09375"/>
+               </Quad>
+            </rightSensor>
+            <midSensor>
+               <Quad>
+                  <Vec2f x="0.00625" y="0.0"/>
+                  <Vec2f x="0.09375" y="0.0"/>
+                  <Vec2f x="0.09375" y="0.025"/>
+                  <Vec2f x="0.00625" y="0.025"/>
+               </Quad>
+            </midSensor>
          </Player>
       </asset>
    </assets>
