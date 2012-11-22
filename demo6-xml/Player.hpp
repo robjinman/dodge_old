@@ -9,8 +9,12 @@
 
 class Player : public Item {
    public:
-      Player(const Dodge::XmlNode data) : Item(data.firstChild()) {}
-      Player(const Player& copy) : Item(copy) {}
+      Player(const Dodge::XmlNode data)
+         : Entity(data.firstChild().firstChild().firstChild()),
+           Item(data.firstChild()) {}
+
+      Player(const Player& copy)
+         : Entity(copy), Item(copy) {}
 
       virtual Player* clone() const;
       virtual void assignData(const Dodge::XmlNode data) ;

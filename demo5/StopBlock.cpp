@@ -7,7 +7,11 @@ using namespace Dodge;
 //===========================================
 // StopBlock::StopBlock
 //===========================================
-StopBlock::StopBlock(const XmlNode data) : Item(data.firstChild()), Box2dPhysics(this, data.nthChild(1)) {
+StopBlock::StopBlock(const XmlNode data)
+   : Entity(data.firstChild().firstChild()),
+     Item(data.firstChild()),
+     PhysicalSprite<Box2dPhysics>(data.nthChild(1)) {
+
    try {
       XML_NODE_CHECK(data, StopBlock);
    }
@@ -27,14 +31,28 @@ StopBlock* StopBlock::clone() const {
 // StopBlock::addToWorld
 //===========================================
 void StopBlock::addToWorld() {
-   Box2dPhysics::addToWorld();
+   PhysicalSprite<Box2dPhysics>::addToWorld();
 }
 
 //===========================================
 // StopBlock::removeFromWorld
 //===========================================
 void StopBlock::removeFromWorld() {
-   Box2dPhysics::removeFromWorld();
+   PhysicalSprite<Box2dPhysics>::removeFromWorld();
+}
+
+//===========================================
+// StopBlock::update
+//===========================================
+void StopBlock::update() {
+   PhysicalSprite<Box2dPhysics>::update();
+}
+
+//===========================================
+// StopBlock::draw
+//===========================================
+void StopBlock::draw() const {
+   PhysicalSprite<Box2dPhysics>::draw();
 }
 
 //===========================================
@@ -45,8 +63,14 @@ void StopBlock::assignData(const XmlNode data) {
       XML_NODE_CHECK(data, StopBlock)
 
       XmlNode node = data.firstChild();
-      if (!node.isNull() && node.name() == "StopBlock")
+      if (!node.isNull() && node.name() == "Item") {
          Item::assignData(node);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "PhysicalSprite") {
+         PhysicalSprite<Box2dPhysics>::assignData(node);
+      }
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class StopBlock; ");

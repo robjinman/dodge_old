@@ -11,9 +11,14 @@
 
 class Item : public Dodge::Sprite {
    public:
-      Item(const Dodge::XmlNode data) : Sprite(data.firstChild()) {}
-      Item(const Item& copy) : Sprite(copy) {}
-      Item(const Item& copy, long name) : Sprite(copy, name) {}
+      Item(const Dodge::XmlNode data)
+         : Entity(data.firstChild().firstChild()), Sprite(data.firstChild()) {}
+
+      Item(const Item& copy)
+         : Entity(copy), Sprite(copy) {}
+
+      Item(const Item& copy, long name)
+         : Entity(copy, name), Sprite(copy, name) {}
 
       virtual void draw() const { Dodge::Sprite::draw(); }
       virtual void update() { Sprite::update(); }

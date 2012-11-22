@@ -21,7 +21,7 @@ namespace Dodge {
 
 
 class Sprite
-   : public Entity,
+   : virtual public Entity,
      public EntityAnimations,
      public EntityTransformations {
 

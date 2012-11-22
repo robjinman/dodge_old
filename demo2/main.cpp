@@ -39,7 +39,7 @@ void keyDown(int code) {
 }
 
 void keyboard() {
-   pSprite_t mainGuy = boost::static_pointer_cast<Sprite>(entities[0]);
+   pSprite_t mainGuy = boost::dynamic_pointer_cast<Sprite>(entities[0]);
 
    if (keys[WinIO::KEY_RIGHT]) {
       mainGuy->playAnimation(internString("anim0"));

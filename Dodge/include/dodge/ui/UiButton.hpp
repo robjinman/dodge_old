@@ -22,7 +22,8 @@ namespace Dodge {
 class UiButton : public Sprite, public EntityUi {
    public:
       explicit UiButton(const XmlNode data)
-         : Sprite(data.firstChild()),
+         : Entity(data.firstChild().firstChild()),
+           Sprite(data.firstChild()),
            EntityUi(this),
            m_onClick(&UiButton::void_entityPtr),
            m_onRelease(&UiButton::void_entityPtr) {
@@ -31,7 +32,8 @@ class UiButton : public Sprite, public EntityUi {
       }
 
       UiButton(long type, pTexture_t texture)
-         : Sprite(type, texture),
+         : Entity(type),
+           Sprite(type, texture),
            EntityUi(this),
            m_state(BTN_IDLE),
            m_mouseOver(false),
@@ -40,7 +42,8 @@ class UiButton : public Sprite, public EntityUi {
            m_onRelease(&UiButton::void_entityPtr) {}
 
       UiButton(long name, long type, pTexture_t texture)
-         : Sprite(name, type, texture),
+         : Entity(name, type),
+           Sprite(name, type, texture),
            EntityUi(this),
            m_state(BTN_IDLE),
            m_mouseOver(false),
@@ -49,7 +52,8 @@ class UiButton : public Sprite, public EntityUi {
            m_onRelease(&UiButton::void_entityPtr) {}
 
       UiButton(const UiButton& copy)
-         : Sprite(copy),
+         : Entity(copy),
+           Sprite(copy),
            EntityUi(copy, this),
            m_state(BTN_IDLE),
            m_mouseOver(false),
@@ -58,7 +62,8 @@ class UiButton : public Sprite, public EntityUi {
            m_onRelease(&UiButton::void_entityPtr) {}
 
       UiButton(const UiButton& copy, long name)
-         : Sprite(copy, name),
+         : Entity(copy, name),
+           Sprite(copy, name),
            EntityUi(copy, this),
            m_state(BTN_IDLE),
            m_mouseOver(false),

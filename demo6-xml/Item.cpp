@@ -13,7 +13,7 @@ EventManager Item::eventManager = EventManager();
 // Item::setPendingDeletion
 //===========================================
 void Item::setPendingDeletion() {
-   EPendingDeletion* event = new EPendingDeletion(boost::static_pointer_cast<Item>(getSharedPtr()));
+   EPendingDeletion* event = new EPendingDeletion(boost::dynamic_pointer_cast<Item>(getSharedPtr()));
    eventManager.queueEvent(event);
 }
 

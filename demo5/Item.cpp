@@ -10,7 +10,7 @@ using namespace Dodge;
 // Item::Item
 //===========================================
 Item::Item(const XmlNode data)
-   : Sprite(data.firstChild()) {
+   : Entity(data.firstChild()) {
 
    try {
       XML_NODE_CHECK(data, Item);
@@ -29,24 +29,10 @@ Item* Item::clone() const {
 }
 
 //===========================================
-// Item::draw
-//===========================================
-void Item::draw() const {
-   Sprite::draw();
-}
-
-//===========================================
-// Item::update
-//===========================================
-void Item::update() {
-   Sprite::update();
-}
-
-//===========================================
 // Item::setPendingDeletion
 //===========================================
 void Item::setPendingDeletion() {
-   EPendingDeletion* event = new EPendingDeletion(boost::static_pointer_cast<Item>(getSharedPtr()));
+   EPendingDeletion* event = new EPendingDeletion(boost::dynamic_pointer_cast<Item>(getSharedPtr()));
 
    EventManager eventManager;
    eventManager.queueEvent(event);
@@ -60,8 +46,8 @@ void Item::assignData(const XmlNode data) {
       XML_NODE_CHECK(data, Item);
 
       XmlNode node = data.firstChild();
-      if (!node.isNull() && node.name() == "Sprite")
-         Sprite::assignData(node);
+      if (!node.isNull() && node.name() == "Entity")
+         Entity::assignData(node);
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Item; ");

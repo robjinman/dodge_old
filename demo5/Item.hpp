@@ -3,18 +3,16 @@
 
 
 #include <boost/shared_ptr.hpp>
-#include <dodge/Sprite.hpp>
+#include <dodge/Entity.hpp>
 #include <dodge/xml/xml.hpp>
 
 
-class Item : public Dodge::Sprite {
+class Item : virtual public Dodge::Entity {
    public:
       Item(const Dodge::XmlNode data);
-      Item(const Item& item) : Sprite(item) {}
-      Item(const Item& item, long name) : Sprite(item, name) {}
+      Item(const Item& item) : Entity(item) {}
+      Item(const Item& item, long name) : Entity(item, name) {}
 
-      virtual void draw() const;
-      virtual void update();
       virtual Item* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
 

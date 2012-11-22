@@ -13,7 +13,7 @@
 namespace Dodge {
 
 
-class Shape : public Entity {
+class Shape : virtual public Entity {
    public:
       explicit Shape(const XmlNode data);
       Shape(long type, std::unique_ptr<Primitive> shape);

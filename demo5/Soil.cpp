@@ -9,7 +9,11 @@ using namespace Dodge;
 //===========================================
 // Soil::Soil
 //===========================================
-Soil::Soil(const XmlNode data) : Item(data.firstChild()), Box2dPhysics(this, data.nthChild(1)) {
+Soil::Soil(const XmlNode data)
+   : Entity(data.firstChild().firstChild()),
+     Item(data.firstChild()),
+     PhysicalSprite<Box2dPhysics>(data.nthChild(1)) {
+
    try {
       XML_NODE_CHECK(data, Soil);
    }
@@ -29,14 +33,14 @@ Soil* Soil::clone() const {
 // Soil::addToWorld
 //===========================================
 void Soil::addToWorld() {
-   Box2dPhysics::addToWorld();
+   PhysicalSprite<Box2dPhysics>::addToWorld();
 }
 
 //===========================================
 // Soil::removeFromWorld
 //===========================================
 void Soil::removeFromWorld() {
-   Box2dPhysics::removeFromWorld();
+   PhysicalSprite<Box2dPhysics>::removeFromWorld();
 }
 
 //===========================================
@@ -69,7 +73,14 @@ void Soil::onEvent(const EEvent* event) {
 // Soil::update
 //===========================================
 void Soil::update() {
-   Item::update();
+   PhysicalSprite<Box2dPhysics>::update();
+}
+
+//===========================================
+// Soil::draw
+//===========================================
+void Soil::draw() const {
+   PhysicalSprite<Box2dPhysics>::draw();
 }
 
 //===========================================
@@ -85,8 +96,8 @@ void Soil::assignData(const XmlNode data) {
          node = node.nextSibling();
       }
 
-      if (!node.isNull() && node.name() == "Box2dPhysics") {
-         Box2dPhysics::assignData(node);
+      if (!node.isNull() && node.name() == "PhysicalSprite") {
+         PhysicalSprite<Box2dPhysics>::assignData(node);
       }
    }
    catch (XmlException& e) {

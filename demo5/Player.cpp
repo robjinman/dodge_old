@@ -12,7 +12,9 @@ using namespace Dodge;
 // Player::Player
 //===========================================
 Player::Player(const XmlNode data)
-   : Item(data.firstChild()), Box2dPhysics(this, data.nthChild(1)) {
+   : Entity(data.firstChild().firstChild()),
+     Item(data.firstChild()),
+     PhysicalSprite<Box2dPhysics>(data.nthChild(1)) {
 
    init();
 
@@ -53,8 +55,9 @@ Player::Player(const XmlNode data)
 // Player::Player
 //===========================================
 Player::Player(const Player& copy, long name)
-   : Item(copy, name),
-     Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)),
+   : Entity(copy, name),
+     Item(copy, name),
+     PhysicalSprite<Box2dPhysics>(copy, name),
      m_mode(DIG_MODE) {
 
    m_gridSize = copy.m_gridSize;
@@ -103,21 +106,21 @@ void Player::snapToGridV(float32_t offset) {
 // Player::addToWorld
 //===========================================
 void Player::addToWorld() {
-   Box2dPhysics::addToWorld();
+   PhysicalSprite<Box2dPhysics>::addToWorld();
 }
 
 //===========================================
 // Player::removeFromWorld
 //===========================================
 void Player::removeFromWorld() {
-   Box2dPhysics::removeFromWorld();
+   PhysicalSprite<Box2dPhysics>::removeFromWorld();
 }
 
 //===========================================
 // Player::update
 //===========================================
 void Player::update() {
-   Item::update();
+   PhysicalSprite<Box2dPhysics>::update();
 /*
    if (!(Math::compoundPolyOverlaps(getPosition(), m_footSensor, Vec2f(0, 0), m_zeroGRegion)
       && Math::compoundPolyOverlaps(getPosition(), m_midSensor, Vec2f(0, 0), m_zeroGRegion))) {
@@ -141,7 +144,7 @@ void Player::update() {
 // Player::draw
 //===========================================
 void Player::draw() const {
-   Sprite::draw();
+   PhysicalSprite<Box2dPhysics>::draw();
 
    Graphics2d graphics2d;
    graphics2d.setLineWidth(0);
@@ -327,8 +330,8 @@ void Player::assignData(const XmlNode data) {
          node = node.nextSibling();
       }
 
-      if (!node.isNull() && node.name() == "Box2dPhysics") {
-         Box2dPhysics::assignData(node);
+      if (!node.isNull() && node.name() == "PhysicalSprite") {
+         PhysicalSprite<Box2dPhysics>::assignData(node);
          node = node.nextSibling();
       }
 

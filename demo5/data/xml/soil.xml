@@ -20,21 +20,24 @@ identifies it. -->
       <asset id="50">
          <Soil>
             <Item>
+               <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="2" rot="0.0">
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0" y="0"/>
+                        <Vec2f x="0.1" y="0"/>
+                        <Vec2f x="0.1" y="0.1"/>
+                        <Vec2f x="0" y="0.1"/>
+                     </Polygon>
+                  </shape>
+                  <children/>
+               </Entity>
+            </Item>
+            <PhysicalSprite>
                <Sprite>
-                  <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="2" rot="0.0">
-                     <scale>
-                        <Vec2f x="1.0" y="1.0"/>
-                     </scale>
-                     <shape>
-                        <Polygon>
-                           <Vec2f x="0" y="0"/>
-                           <Vec2f x="0.1" y="0"/>
-                           <Vec2f x="0.1" y="0.1"/>
-                           <Vec2f x="0" y="0.1"/>
-                        </Polygon>
-                     </shape>
-                     <children/>
-                  </Entity>
+                  <Entity/>
                   <EntityAnimations>
                      <texture ptr="49"/>
                      <textureSection>
@@ -93,8 +96,8 @@ identifies it. -->
                   </EntityAnimations>
                   <EntityTransformations/>
                </Sprite>
-            </Item>
-            <Box2dPhysics dynamic="true" fixedAngle="true" density="1.0" friction="0.3"/>
+               <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
+            </PhysicalSprite>
          </Soil>
       </asset>
    </assets>

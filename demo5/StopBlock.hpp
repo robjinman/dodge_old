@@ -4,22 +4,27 @@
 
 #include <boost/shared_ptr.hpp>
 #include <dodge/Box2dPhysics.hpp>
+#include <dodge/PhysicalSprite.hpp>
 #include <dodge/xml/xml.hpp>
 #include "Item.hpp"
 
 
-class StopBlock : public Item, public Dodge::Box2dPhysics {
+class StopBlock : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
    public:
       StopBlock(const Dodge::XmlNode data);
 
       StopBlock(const StopBlock& copy, long name)
-         : Item(copy, name),
-           Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)) {}
+         : Entity(copy, name),
+           Item(copy, name),
+           PhysicalSprite<Box2dPhysics>(copy, name) {}
 
       StopBlock(const StopBlock& copy)
-         : Item(copy),
-           Box2dPhysics(this, EntityPhysics::options_t(false, true, 1.0, 0.3)) {}
+         : Entity(copy),
+           Item(copy),
+           PhysicalSprite<Box2dPhysics>(copy) {}
 
+      virtual void draw() const;
+      virtual void update();
       virtual void addToWorld();
       virtual void removeFromWorld();
       virtual StopBlock* clone() const;

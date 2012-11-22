@@ -50,6 +50,7 @@ void Application::keyDown(int key) {
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n"; break;
+      case WinIO::KEY_P: m_player->dbg_print(cout); break;
    }
 
    m_keyState[key] = true;
