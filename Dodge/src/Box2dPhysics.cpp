@@ -219,9 +219,6 @@ void Box2dPhysics::makeDynamic() {
    if (m_body->GetType() == b2_dynamicBody)
       return;
 
-   m_world.DestroyBody(m_body);
-   m_numFixtures = 0;
-
    m_opts.dynamic = true;
    constructBody();
 }
@@ -235,9 +232,6 @@ void Box2dPhysics::makeStatic() {
 
    if (m_body->GetType() != b2_dynamicBody)
       return;
-
-   m_world.DestroyBody(m_body);
-   m_numFixtures = 0;
 
    m_opts.dynamic = false;
    constructBody();

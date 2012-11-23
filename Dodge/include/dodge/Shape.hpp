@@ -19,6 +19,7 @@ class Shape : virtual public Entity {
       Shape(long type, std::unique_ptr<Primitive> shape);
       Shape(long name, long type, std::unique_ptr<Primitive> shape);
       Shape(const Shape& copy);
+      Shape(const Shape& copy, long name);
 
       virtual Shape* clone() const;
       virtual void assignData(const XmlNode data);

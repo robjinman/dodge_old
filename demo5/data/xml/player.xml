@@ -196,8 +196,8 @@ identifies it. -->
                <Quad>
                   <Vec2f x="0.00625" y="-0.025"/>
                   <Vec2f x="0.09375" y="-0.025"/>
-                  <Vec2f x="0.09375" y="0.0"/>
-                  <Vec2f x="0.00625" y="0.0"/>
+                  <Vec2f x="0.09375" y="-0.00625"/>
+                  <Vec2f x="0.00625" y="-0.00625"/>
                </Quad>
             </footSensor>
             <headSensor>
@@ -211,8 +211,8 @@ identifies it. -->
             <leftSensor>
                <Quad>
                   <Vec2f x="-0.025" y="0.00625"/>
-                  <Vec2f x="0.0" y="0.00625"/>
-                  <Vec2f x="0.0" y="0.09375"/>
+                  <Vec2f x="-0.0" y="0.00625"/>
+                  <Vec2f x="-0.0" y="0.09375"/>
                   <Vec2f x="-0.025" y="0.09375"/>
                </Quad>
             </leftSensor>
@@ -226,8 +226,8 @@ identifies it. -->
             </rightSensor>
             <midSensor>
                <Quad>
-                  <Vec2f x="0.00625" y="0.0"/>
-                  <Vec2f x="0.09375" y="0.0"/>
+                  <Vec2f x="0.00625" y="0.00625"/>
+                  <Vec2f x="0.09375" y="0.00625"/>
                   <Vec2f x="0.09375" y="0.025"/>
                   <Vec2f x="0.00625" y="0.025"/>
                </Quad>

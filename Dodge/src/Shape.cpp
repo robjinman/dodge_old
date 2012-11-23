@@ -62,6 +62,12 @@ Shape::Shape(const Shape& copy)
    : Entity(copy) {}
 
 //===========================================
+// Shape::Shape
+//===========================================
+Shape::Shape(const Shape& copy, long name)
+   : Entity(copy, name) {}
+
+//===========================================
 // Shape::clone
 //===========================================
 Shape* Shape::clone() const {

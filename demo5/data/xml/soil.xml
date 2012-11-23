@@ -12,7 +12,7 @@ tag and has a 'class' attribute, and an 'id' attribute which uniquely
 identifies it. -->
 <ASSETFILE>
    <assets>
-      <!-- 'man' texture -->
+      <!-- 'soil' texture -->
       <asset id="49">
          <Texture path="data/textures/ss8x8squares128x128y.png"/>
       </asset>

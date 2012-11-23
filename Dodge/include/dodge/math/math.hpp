@@ -9,6 +9,7 @@
 
 #include "common.hpp"
 #include "fAreEqual.hpp"
+#include "fContains.hpp"
 #include "fIntersect.hpp"
 #include "fOverlap.hpp"
 #include "primitives/primitives.hpp"

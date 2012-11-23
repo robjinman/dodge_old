@@ -197,8 +197,8 @@ Transformation::state_t EntityTransformations::getTransState(long name) const {
 // EntityTransformations::pauseTransformations
 //===========================================
 void EntityTransformations::pauseTransformations() {
-   for (unsigned int i = 0; i < m_transformations.size(); ++i)
-      m_transformations[i]->pause();
+   for (map<long, pTransformation_t>::iterator it = m_transformations.begin(); it != m_transformations.end(); ++it)
+      it->second->pause();
 }
 
 //===========================================
@@ -207,9 +207,9 @@ void EntityTransformations::pauseTransformations() {
 // Resume those which are currently paused
 //===========================================
 void EntityTransformations::resumeTransformations() {
-   for (unsigned int i = 0; i < m_transformations.size(); ++i) {
-      if (m_transformations[i]->getState() == Transformation::PAUSED)
-         m_transformations[i]->play();
+   for (map<long, pTransformation_t>::iterator it = m_transformations.begin(); it != m_transformations.end(); ++it) {
+      if (it->second->getState() == Transformation::PAUSED)
+         it->second->play();
    }
 }
 
@@ -217,8 +217,8 @@ void EntityTransformations::resumeTransformations() {
 // EntityTransformations::stopTransformations
 //===========================================
 void EntityTransformations::stopTransformations() {
-   for (unsigned int i = 0; i < m_transformations.size(); ++i)
-      m_transformations[i]->stop();
+   for (map<long, pTransformation_t>::iterator it = m_transformations.begin(); it != m_transformations.end(); ++it)
+      it->second->stop();
 }
 
 

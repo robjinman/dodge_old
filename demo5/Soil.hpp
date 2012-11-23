@@ -33,7 +33,7 @@ class Soil : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       virtual void onEvent(const Dodge::EEvent* event);
       virtual void assignData(const Dodge::XmlNode data);
 
-      virtual ~Soil() {}
+      virtual ~Soil();
 };
 
 typedef boost::shared_ptr<Soil> pSoil_t;

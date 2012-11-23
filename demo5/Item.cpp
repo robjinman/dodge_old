@@ -54,3 +54,10 @@ void Item::assignData(const XmlNode data) {
       throw;
    }
 }
+
+//===========================================
+// Item::~Item
+//===========================================
+Item::~Item() {
+   std::cout << "Item::~Item()\n" << std::flush;
+}

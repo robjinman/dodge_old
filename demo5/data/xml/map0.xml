@@ -3,12 +3,12 @@
    <using>
       <file>player.xml</file>
       <file>soil.xml</file>
+      <file>stopBlock.xml</file>
    </using>
    <assets>
-<!--
       <asset id="98">
-         <Item>
-            <Shape>
+         <GravityRegion>
+            <Item>
                <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
                   <scale>
                      <Vec2f x="1.0" y="1.0"/>
@@ -23,10 +23,13 @@
                   </shape>
                   <children/>
                </Entity>
+            </Item>
+            <Shape>
+               <Entity/>
             </Shape>
-         </Item>
+         </GravityRegion>
       </asset>
--->
+
       <asset id="99" proto="10"><Player><Item><Entity name="player" x="0.1" y="0.3"/></Item></Player></asset>
 
       <asset id="100" proto="50"><Soil><Item><Entity name="soil0,0" x="0.0" y="0.0"/></Item></Soil></asset>
@@ -71,6 +74,17 @@
       <asset id="138" proto="50"><Soil><Item><Entity name="soil18,1" x="1.8" y="0.1"/></Item></Soil></asset>
       <asset id="139" proto="50"><Soil><Item><Entity name="soil19,1" x="1.9" y="0.1"/></Item></Soil></asset>
 
+      <asset id="300" proto="150"><StopBlock><Item><Entity name="stopBlock5,1" x="0.5" y="0.1"/></Item></StopBlock></asset>
+      <asset id="301" proto="150"><StopBlock><Item><Entity name="stopBlock6,1" x="0.6" y="0.1"/></Item></StopBlock></asset>
+      <asset id="302" proto="150"><StopBlock><Item><Entity name="stopBlock7,1" x="0.7" y="0.1"/></Item></StopBlock></asset>
+      <asset id="303" proto="150"><StopBlock><Item><Entity name="stopBlock8,1" x="0.8" y="0.1"/></Item></StopBlock></asset>
+      <asset id="304" proto="150"><StopBlock><Item><Entity name="stopBlock9,1" x="0.9" y="0.1"/></Item></StopBlock></asset>
+      <asset id="305" proto="150"><StopBlock><Item><Entity name="stopBlock10,1" x="1.0" y="0.1"/></Item></StopBlock></asset>
+      <asset id="306" proto="150"><StopBlock><Item><Entity name="stopBlock11,1" x="1.1" y="0.1"/></Item></StopBlock></asset>
+      <asset id="307" proto="150"><StopBlock><Item><Entity name="stopBlock12,1" x="1.2" y="0.1"/></Item></StopBlock></asset>
+      <asset id="308" proto="150"><StopBlock><Item><Entity name="stopBlock13,1" x="1.3" y="0.1"/></Item></StopBlock></asset>
+      <asset id="309" proto="150"><StopBlock><Item><Entity name="stopBlock14,1" x="1.4" y="0.1"/></Item></StopBlock></asset>
+
       <asset id="140" proto="50"><Soil><Item><Entity name="soil0,2" x="0.0" y="0.2"/></Item></Soil></asset>
       <asset id="141" proto="50"><Soil><Item><Entity name="soil1,2" x="0.1" y="0.2"/></Item></Soil></asset>
       <asset id="142" proto="50"><Soil><Item><Entity name="soil2,2" x="0.2" y="0.2"/></Item></Soil></asset>
@@ -93,7 +107,7 @@
       <asset id="159" proto="50"><Soil><Item><Entity name="soil19,2" x="1.9" y="0.2"/></Item></Soil></asset>
 
       <asset id="160" proto="50"><Soil><Item><Entity name="soil0,3" x="0.0" y="0.3"/></Item></Soil></asset>
-      <asset id="161" proto="50"><Soil><Item><Entity name="soil1,3" x="0.1" y="0.3"/></Item></Soil></asset>
+<!--      <asset id="161" proto="50"><Soil><Item><Entity name="soil1,3" x="0.1" y="0.3"/></Item></Soil></asset> -->
       <asset id="162" proto="50"><Soil><Item><Entity name="soil2,3" x="0.2" y="0.3"/></Item></Soil></asset>
       <asset id="163" proto="50"><Soil><Item><Entity name="soil3,3" x="0.3" y="0.3"/></Item></Soil></asset>
       <asset id="164" proto="50"><Soil><Item><Entity name="soil4,3" x="0.4" y="0.3"/></Item></Soil></asset><!--

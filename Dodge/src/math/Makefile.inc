@@ -1,6 +1,7 @@
 include $(BASE_DIR)/math/primitives/Makefile.inc
-OBJS += $(BASE_DIR)/math/fAreEqual.o \
-	$(BASE_DIR)/math/common.o \
+OBJS += $(BASE_DIR)/math/common.o \
+	$(BASE_DIR)/math/fAreEqual.o \
+	$(BASE_DIR)/math/fContains.o \
 	$(BASE_DIR)/math/fIntersect.o \
 	$(BASE_DIR)/math/fOverlap.o \
 	$(BASE_DIR)/math/Vec2i.o \

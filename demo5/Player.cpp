@@ -120,13 +120,28 @@ void Player::removeFromWorld() {
 // Player::update
 //===========================================
 void Player::update() {
-   PhysicalSprite<Box2dPhysics>::update();
-/*
-   if (!(Math::compoundPolyOverlaps(getPosition(), m_footSensor, Vec2f(0, 0), m_zeroGRegion)
-      && Math::compoundPolyOverlaps(getPosition(), m_midSensor, Vec2f(0, 0), m_zeroGRegion))) {
+   static long gravityRegionStr = internString("gravityRegion");
 
+   PhysicalSprite<Box2dPhysics>::update();
+
+   bool b = false;
+   vector<pEntity_t> vec;
+   m_worldSpace.getEntities(Range(getBoundary()), vec);
+   for (uint_t i = 0; i < vec.size(); ++i) {
+      if (vec[i]->getTypeName() == gravityRegionStr) {
+         if (Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_footSensor, getTranslation_abs())
+            || Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_midSensor, getTranslation_abs())) {
+
+            b = true;
+            break;
+         }
+      }
+   }
+
+   if (b) {
       if (m_mode == DIG_MODE) {
          makeDynamic();
+         stopTransformations();
       }
 
       m_mode = PLATFORM_MODE;
@@ -137,7 +152,7 @@ void Player::update() {
       }
 
       m_mode = DIG_MODE;
-   }*/
+   }
 }
 
 //===========================================
@@ -175,17 +190,21 @@ void Player::onEvent(const EEvent* event) {
 //===========================================
 // Player::grounded
 //===========================================
-bool Player::grounded() const {/*
-   set<pEntity_t> items;
-   m_grid->surrounding(getPosition(), m_footSensor, items);
-   for (set<pEntity_t>::iterator i = items.begin(); i != items.end(); ++i) {
-      if (i->get() == this) continue;
+bool Player::grounded() const {
+   static long gravityRegionStr = internString("gravityRegion");
 
-      if (Math::compoundPolyOverlaps(getPosition(), m_footSensor, (*i)->getPosition(), (*i)->getBoundingPoly()))
+   vector<pEntity_t> vec;
+   m_worldSpace.getEntities(getBoundary(), vec);
+
+   for (uint_t i = 0; i < vec.size(); ++i) {
+      if (vec[i].get() == this) continue;
+      if (vec[i]->getTypeName() == gravityRegionStr) continue;
+
+      if (Math::overlap(m_footSensor, getTranslation_abs(), vec[i]->getShape(), vec[i]->getTranslation_abs()))
          return true;
    }
 
-   return false;*/
+   return false;
 }
 
 //===========================================
@@ -197,7 +216,7 @@ void Player::jump() {
    if (grounded() && m_jumpTimer.getTime() > 0.2) {
       stopAnimation();
       playAnimation(jumpStr);
-      applyLinearImpulse(Vec2f(0.0, 0.06), Vec2f(0.0, 0.0));
+      applyLinearImpulse(Vec2f(0.0, 1.0), Vec2f(0.0, 0.0));
       m_jumpTimer.reset();
    }
 }
@@ -208,6 +227,7 @@ void Player::jump() {
 // 0 = left, 1 = up, 2 = right, 3 = down
 //===========================================
 bool Player::move(int dir) {
+   static long gravityRegionStr = internString("gravityRegion");
    static long moveLeftStr = internString("moveLeft");
    static long hitFromRightStr = internString("hitFromRight");
    static long moveRightStr = internString("moveRight");
@@ -269,10 +289,22 @@ bool Player::move(int dir) {
          return true;
       }
    }
-   else if (m_mode == PLATFORM_MODE) {/*
+   else if (m_mode == PLATFORM_MODE) {
       switch (dir) {
-         case 0:
-            if (Math::compoundPolyOverlaps(getPosition(), m_leftSensor, Vec2f(0, 0), m_zeroGRegion)) {
+         case 0: {
+            bool b = false;
+            vector<pEntity_t> vec;
+            m_worldSpace.getEntities(Range(getBoundary()), vec);
+            for (uint_t i = 0; i < vec.size(); ++i) {
+               if (vec[i]->getTypeName() == gravityRegionStr) {
+                  if (!Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_leftSensor, getTranslation_abs())) {
+                     b = true;
+                     break;
+                  }
+               }
+            }
+
+            if (b) {
                m_mode = DIG_MODE;
                snapToGridV();
                makeStatic();
@@ -281,15 +313,27 @@ bool Player::move(int dir) {
             }
             else {
                playAnimation(moveLeftStr);
-               if (getLinearVelocity().x > -1.0)
-                  applyForce(Vec2f(-0.2, 0.0), Vec2f(0.0, 0.0));
+               applyForce(Vec2f(-2.8, 0.0), Vec2f(0.0, 0.0));
             }
-            break;
+         }
+         break;
          case 1:
             jump();
             break;
-         case 2:
-            if (Math::compoundPolyOverlaps(getPosition(), m_rightSensor, Vec2f(0, 0), m_zeroGRegion)) {
+         case 2: {
+            bool b = false;
+            vector<pEntity_t> vec;
+            m_worldSpace.getEntities(Range(getBoundary()), vec);
+            for (uint_t i = 0; i < vec.size(); ++i) {
+               if (vec[i]->getTypeName() == gravityRegionStr) {
+                  if (!Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_rightSensor, getTranslation_abs())) {
+                     b = true;
+                     break;
+                  }
+               }
+            }
+
+            if (b) {
                m_mode = DIG_MODE;
                snapToGridV();
                makeStatic();
@@ -298,20 +342,34 @@ bool Player::move(int dir) {
             }
             else {
                playAnimation(moveRightStr);
-               if (getLinearVelocity().x < 1.0)
-                  applyForce(Vec2f(0.2, 0.0), Vec2f(0.0, 0.0));
+               applyForce(Vec2f(2.8, 0.0), Vec2f(0.0, 0.0));
             }
-            break;
-         case 3:
-            if (Math::compoundPolyOverlaps(getPosition(), m_footSensor, Vec2f(0, 0), m_zeroGRegion)) {
+         }
+         break;
+         case 3: {
+            bool b = false;
+            vector<pEntity_t> vec;
+            m_worldSpace.getEntities(Range(getBoundary()), vec);
+            for (uint_t i = 0; i < vec.size(); ++i) {
+               if (vec[i]->getTypeName() == gravityRegionStr) {
+                  if (!Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_footSensor, getTranslation_abs())) {
+                     b = true;
+                     break;
+                  }
+               }
+            }
+
+            if (b) {
                m_mode = DIG_MODE;
                snapToGridH();
                makeStatic();
                snapToGridV();
                move(3);
             }
-            break;
-      }*/
+         }
+         break;
+      }
+      return true;
    }
 
    return false;

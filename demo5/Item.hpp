@@ -18,7 +18,7 @@ class Item : virtual public Dodge::Entity {
 
       void setPendingDeletion();
 
-      virtual ~Item() {}
+      virtual ~Item();
 };
 
 typedef boost::shared_ptr<Item> pItem_t;

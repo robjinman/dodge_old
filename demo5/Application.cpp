@@ -4,6 +4,7 @@
 #include "Application.hpp"
 #include "Soil.hpp"
 #include "StopBlock.hpp"
+#include "GravityRegion.hpp"
 
 
 using namespace std;
@@ -153,6 +154,17 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
          asset = m_player;
       }
    }
+   else if (data.name() == "GravityRegion") {
+      if (proto == -1) {
+         pGravityRegion_t grav(new GravityRegion(data));
+
+         grav->addToWorld();
+         m_worldSpace.insertAndTrackEntity(grav);
+         m_items[grav->getName()] = grav;
+
+         asset = grav;
+      }
+   }
    else if (data.name() == "Soil") {
       if (proto == -1) {
          asset = pSoil_t(new Soil(data));
@@ -169,6 +181,24 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
          m_items[soil->getName()] = soil;
 
          asset = soil;
+      }
+   }
+   else if (data.name() == "StopBlock") {
+      if (proto == -1) {
+         asset = pStopBlock_t(new StopBlock(data));
+      }
+      else {
+         pStopBlock_t block(dynamic_cast<StopBlock*>(m_assetManager.cloneAsset(proto)));
+
+         if (!block)
+            throw XmlException("Error constructing asset of type StopBlock; Bad prototype id", __FILE__, __LINE__);
+
+         block->assignData(data);
+         block->addToWorld();
+         m_worldSpace.insertAndTrackEntity(block);
+         m_items[block->getName()] = block;
+
+         asset = block;
       }
    }
    else

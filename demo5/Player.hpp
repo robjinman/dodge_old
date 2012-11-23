@@ -42,6 +42,7 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
    private:
       void init();
       bool move(int dir);
+      bool overlapsGravityRegion(const Dodge::Primitive& shape, const Dodge::Vec2f& pos) const;
       bool grounded() const;
       void snapToGridV(Dodge::float32_t offset = 0.0);
       void snapToGridH(Dodge::float32_t offset = 0.0);

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nodes with names that begin with an uppercase letter represent
+classes, and are passed to their respective class constructors. -->
+
+<!-- Nodes with lowercase names represent internal data members. Their
+'ptr' attribute, if they have one, means the data member is a pointer
+to the asset with id=ptr. The 'proto' attribute refers to the asset
+which the object is a copy of. -->
+
+<!-- Every asset defined at the top level is wrapped in the 'asset'
+tag and has a 'class' attribute, and an 'id' attribute which uniquely
+identifies it. -->
+<ASSETFILE>
+   <assets>
+      <!-- 'stopBlock' prototype -->
+      <asset id="150">
+         <StopBlock>
+            <Item>
+               <Entity type="stopBlock" name="stopBlockProto" x="0.0" y="0.0" z="2" rot="0.0">
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0" y="0"/>
+                        <Vec2f x="0.1" y="0"/>
+                        <Vec2f x="0.1" y="0.1"/>
+                        <Vec2f x="0" y="0.1"/>
+                     </Polygon>
+                  </shape>
+                  <children/>
+               </Entity>
+            </Item>
+            <PhysicalEntity>
+               <Entity/>
+               <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
+            </PhysicalEntity>
+         </StopBlock>
+      </asset>
+   </assets>
+</ASSETFILE>

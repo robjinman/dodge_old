@@ -105,3 +105,10 @@ void Soil::assignData(const XmlNode data) {
       throw;
    }
 }
+
+//===========================================
+// Soil::~Soil
+//===========================================
+Soil::~Soil() {
+   std::cout << "Soil::~Soil()\n" << std::flush;
+}
