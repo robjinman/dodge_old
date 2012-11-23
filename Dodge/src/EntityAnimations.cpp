@@ -8,6 +8,7 @@
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
 #include "EAnimFinished.hpp"
+#include "EventManager.hpp"
 #include "AssetManager.hpp"
 
 
@@ -267,8 +268,11 @@ void EntityAnimations::update() {
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {
+               EventManager eventManager;
+
                EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), it->second);
                m_entity->onEvent(event);
+               eventManager.queueEvent(event);
             }
             catch (bad_alloc& e) {
                Exception ex("Error updating EntityAnimations; ", __FILE__, __LINE__);

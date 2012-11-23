@@ -23,7 +23,7 @@
 namespace Dodge {
 
 
-class Animation : public Asset {
+class Animation : virtual public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 

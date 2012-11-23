@@ -109,6 +109,4 @@ void Soil::assignData(const XmlNode data) {
 //===========================================
 // Soil::~Soil
 //===========================================
-Soil::~Soil() {
-   std::cout << "Soil::~Soil()\n" << std::flush;
-}
+Soil::~Soil() {}

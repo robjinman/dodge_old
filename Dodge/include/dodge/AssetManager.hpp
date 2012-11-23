@@ -33,7 +33,8 @@ class AssetManager {
 // AssetManager::addAsset
 //===========================================
 void AssetManager::addAsset(long name, boost::shared_ptr<Asset> obj) {
-   m_assets[name] = std::move(obj);
+   obj->m_id = name;
+   m_assets[name] = obj;
 }
 
 //===========================================

@@ -19,7 +19,7 @@ namespace Dodge {
 
 
 // PNG/OGLES2 implementation
-class Texture : public Asset {
+class Texture : virtual public Asset {
    public:
       Texture(const XmlNode data);
       Texture(const char* file);

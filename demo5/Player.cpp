@@ -138,7 +138,7 @@ void Player::update() {
       }
    }
 
-   if (b) {
+   if (b && numActiveTransformations() == 0) {
       if (m_mode == DIG_MODE) {
          makeDynamic();
          stopTransformations();
@@ -160,7 +160,7 @@ void Player::update() {
 //===========================================
 void Player::draw() const {
    PhysicalSprite<Box2dPhysics>::draw();
-
+/*
    Graphics2d graphics2d;
    graphics2d.setLineWidth(0);
    graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
@@ -170,7 +170,7 @@ void Player::draw() const {
    graphics2d.drawPrimitive(m_headSensor, pos.x, pos.y, 9);
    graphics2d.drawPrimitive(m_leftSensor, pos.x, pos.y, 9);
    graphics2d.drawPrimitive(m_rightSensor, pos.x, pos.y, 9);
-   graphics2d.drawPrimitive(m_midSensor, pos.x, pos.y, 9);
+   graphics2d.drawPrimitive(m_midSensor, pos.x, pos.y, 9);*/
 }
 
 //===========================================

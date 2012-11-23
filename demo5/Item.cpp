@@ -58,6 +58,4 @@ void Item::assignData(const XmlNode data) {
 //===========================================
 // Item::~Item
 //===========================================
-Item::~Item() {
-   std::cout << "Item::~Item()\n" << std::flush;
-}
+Item::~Item() {}

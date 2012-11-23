@@ -11,6 +11,8 @@ namespace Dodge {
 
 
 class Asset {
+   friend class AssetManager;
+
    public:
       virtual Asset* clone() const = 0;
       inline long getAssetId() const;

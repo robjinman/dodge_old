@@ -32,6 +32,7 @@ void Application::quit() {
    m_items.clear();
    m_eventManager.clear();
    m_worldSpace.removeAll();
+   m_assetManager.freeAllAssets();
    m_player.reset();
    m_win.destroyWindow();
 
@@ -284,6 +285,7 @@ void Application::deletePending(EEvent* event) {
 
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
+
       m_worldSpace.removeAndUntrackEntity(e->item);
       e->item->removeFromWorld();
       m_items.erase(e->item->getName());
@@ -296,11 +298,11 @@ void Application::deletePending(EEvent* event) {
 //===========================================
 void Application::draw() {
    m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-
+/*
    m_graphics2d.setLineWidth(1);
    m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
    m_worldSpace.dbg_draw(5);
-
+*/
    for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->draw();
 

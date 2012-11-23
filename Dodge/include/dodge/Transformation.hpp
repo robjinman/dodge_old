@@ -24,7 +24,7 @@ namespace Dodge {
 
 class Entity;
 
-class Transformation : public Asset {
+class Transformation : virtual public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 

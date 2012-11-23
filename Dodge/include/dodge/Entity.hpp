@@ -88,7 +88,7 @@ class EEntityRotation : public EEvent {
 };
 
 
-class Entity : public Asset, public boost::enable_shared_from_this<Entity> {
+class Entity : virtual public Asset, virtual public boost::enable_shared_from_this<Entity> {
    public:
       explicit Entity(const XmlNode data);
       explicit Entity(long type);
