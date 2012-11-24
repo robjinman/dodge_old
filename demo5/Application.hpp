@@ -16,6 +16,12 @@ class Application {
       void onExit(Functor<void, TYPELIST_0()> callBack);
       void begin();
 
+#ifdef DEBUG
+      static const Dodge::byte_t DBG_DRAW_WORLDSPACE = 1 << 0;
+
+      Dodge::byte_t dbg_flags;
+#endif
+
    private:
       void quit();
       void keyDown(int key);

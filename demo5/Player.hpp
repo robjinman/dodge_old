@@ -39,10 +39,15 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
 
       virtual ~Player() {}
 
+#ifdef DEBUG
+      static const Dodge::byte_t DBG_DRAW_SENSORS = 1 << 0;
+      static const Dodge::byte_t DBG_DRAW_SHAPE =   1 << 1;
+
+      Dodge::byte_t dbg_flags;
+#endif
+
    private:
-      void init();
       bool move(int dir);
-      bool overlapsGravityRegion(const Dodge::Primitive& shape, const Dodge::Vec2f& pos) const;
       bool grounded() const;
       void snapToGridV(Dodge::float32_t offset = 0.0);
       void snapToGridH(Dodge::float32_t offset = 0.0);
@@ -57,7 +62,13 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       Dodge::Quad m_rightSensor;
       Dodge::Quad m_midSensor;
 
+      Dodge::float32_t m_speed;
+      Dodge::float32_t m_acc;
+
       Dodge::Timer m_jumpTimer;
+
+      Dodge::float32_t m_modeLocked;
+      Dodge::Timer m_modeLockTimer;
 };
 
 typedef boost::shared_ptr<Player> pPlayer_t;

@@ -27,8 +27,10 @@ identifies it. -->
                   <shape>
                      <Polygon>
                         <Vec2f x="0" y="0.025"/>
+                        <Vec2f x="0.021875" y="0.00625"/>
                         <Vec2f x="0.04375" y="0"/>
                         <Vec2f x="0.05625" y="0"/>
+                        <Vec2f x="0.078125" y="0.00625"/>
                         <Vec2f x="0.1" y="0.025"/>
                         <Vec2f x="0.1" y="0.1"/>
                         <Vec2f x="0" y="0.1"/>
@@ -189,6 +191,8 @@ identifies it. -->
                </Sprite>
                <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
             </PhysicalSprite>
+            <speed>1.8</speed>
+            <acceleration>0.45</acceleration>
             <gridSize>
                <Vec2f x="0.1" y="0.1"/>
             </gridSize>

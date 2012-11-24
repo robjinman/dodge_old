@@ -51,8 +51,13 @@ void Application::keyDown(int key) {
 
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
+#ifdef DEBUG
       case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n"; break;
       case WinIO::KEY_P: m_player->dbg_print(cout); break;
+      case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
+      case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
+      case WinIO::KEY_3: dbg_flags ^= DBG_DRAW_WORLDSPACE; break;
+#endif
    }
 
    m_keyState[key] = true;
@@ -298,11 +303,15 @@ void Application::deletePending(EEvent* event) {
 //===========================================
 void Application::draw() {
    m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-/*
-   m_graphics2d.setLineWidth(1);
-   m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
-   m_worldSpace.dbg_draw(5);
-*/
+
+#ifdef DEBUG
+   if (dbg_flags & DBG_DRAW_WORLDSPACE) {
+      m_graphics2d.setLineWidth(1);
+      m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      m_worldSpace.dbg_draw(5);
+   }
+#endif
+
    for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->draw();
 
