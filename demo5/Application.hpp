@@ -35,6 +35,7 @@ class Application {
       void exitDefault();
 
       boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto, bool addToWorld);
+      pItem_t constructItem(const Dodge::XmlNode data) const;
       void loadAssets_r(const std::string& file, int depth = 0);
       void loadMapSettings(const Dodge::XmlNode data);
       void loadMap();

@@ -33,7 +33,7 @@ GLint Renderer::m_vertCount = -1;
 GLint Renderer::m_colCount = -1;
 GLint Renderer::m_texCoordCount = -1;
 GLint Renderer::m_primitiveType = GL_TRIANGLES;
-boost::shared_ptr<Renderer::Brush> Renderer::m_brush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
+boost::shared_ptr<RenderBrush> Renderer::m_brush = boost::shared_ptr<RenderBrush>(new RenderBrush);
 boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
 
 

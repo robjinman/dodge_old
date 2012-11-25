@@ -132,7 +132,7 @@ Entity::Entity(const XmlNode data)
          if (!attr.isNull() && attr.name() == "ptr") {
             long id = attr.getLong();
 
-            boost::shared_ptr<Renderer::Brush> brush = boost::dynamic_pointer_cast<Renderer::Brush>(assetManager.getAssetPointer(id));
+            boost::shared_ptr<RenderBrush> brush = boost::dynamic_pointer_cast<RenderBrush>(assetManager.getAssetPointer(id));
 
             if (!brush)
                throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
@@ -140,7 +140,7 @@ Entity::Entity(const XmlNode data)
             m_renderBrush = brush;
          }
          else
-            m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush(node.firstChild()));
+            m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush(node.firstChild()));
 
          node = node.nextSibling();
       }
@@ -313,7 +313,7 @@ void Entity::assignData(const XmlNode data) {
          if (!attr.isNull() && attr.name() == "ptr") {
             long id = attr.getLong();
 
-            boost::shared_ptr<Renderer::Brush> brush = boost::dynamic_pointer_cast<Renderer::Brush>(assetManager.getAssetPointer(id));
+            boost::shared_ptr<RenderBrush> brush = boost::dynamic_pointer_cast<RenderBrush>(assetManager.getAssetPointer(id));
 
             if (!brush)
                throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
@@ -321,7 +321,7 @@ void Entity::assignData(const XmlNode data) {
             m_renderBrush = brush;
          }
          else
-            m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush(node.firstChild()));
+            m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush(node.firstChild()));
 
          node = node.nextSibling();
       }

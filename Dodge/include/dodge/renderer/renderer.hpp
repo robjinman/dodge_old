@@ -14,3 +14,4 @@
 #endif
 #include "Camera.hpp"
 #include "Font.hpp"
+#include "RenderBrush.hpp"

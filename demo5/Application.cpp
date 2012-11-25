@@ -158,6 +158,20 @@ void Application::loadMapSettings(const XmlNode data) {
 }
 
 //===========================================
+// Application::constructItem
+//===========================================
+boost::shared_ptr<Item> Application::constructItem(const XmlNode data) const {
+   if (data.name() == "Player") return pItem_t(new Player(data));
+   if (data.name() == "Soil") return pItem_t(new Soil(data));
+   if (data.name() == "CShape") return pItem_t(new CShape(data));
+   if (data.name() == "CSprite") return pItem_t(new CSprite(data));
+   if (data.name() == "CPhysicalEntity") return pItem_t(new CPhysicalEntity(data));
+   if (data.name() == "CPhysicalSprite") return pItem_t(new CPhysicalSprite(data));
+
+   throw Exception("Unrecognised item type", __FILE__, __LINE__);
+}
+
+//===========================================
 // Application::constructAsset
 //
 // If proto = -1 asset is *not* constructed from prototype
@@ -168,20 +182,22 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
 
    boost::shared_ptr<Asset> asset;
 
+   // Construct non-Item assets
    if (data.name() == "Texture") {
       asset = boost::shared_ptr<Asset>(new Texture(data));
    }
-   else if (data.name() == "Player") {
+   // Construct Items
+   else {
       pItem_t item;
 
       if (proto == -1) {
-         asset = item = pPlayer_t(new Player(data));
+         asset = item = constructItem(data);
       }
       else {
-         asset = item = pPlayer_t(dynamic_cast<Player*>(m_assetManager.cloneAsset(proto)));
+         asset = item = pItem_t(dynamic_cast<Item*>(m_assetManager.cloneAsset(proto)));
 
          if (!item)
-            throw XmlException("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
+            throw XmlException("Error constructing asset; Bad prototype id", __FILE__, __LINE__);
 
          item->assignData(data);
       }
@@ -189,116 +205,13 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
       if (addToWorld) {
          item->addToWorld();
          m_worldSpace.insertAndTrackEntity(item);
-         m_player = boost::static_pointer_cast<Player>(item);
+
+         if (data.name() == "Player")
+            m_player = boost::dynamic_pointer_cast<Player>(item);
+         else
+            m_items[item->getName()] = item;
       }
    }
-   else if (data.name() == "Soil") {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = pSoil_t(new Soil(data));
-      }
-      else {
-         asset = item = pSoil_t(dynamic_cast<Soil*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset of type Soil; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-         m_items[item->getName()] = item;
-      }
-   }
-   else if (data.name() == "CShape") {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = pCShape_t(new CShape(data));
-      }
-      else {
-         asset = item = pCShape_t(dynamic_cast<CShape*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset of type CShape; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-         m_items[item->getName()] = item;
-      }
-   }
-   else if (data.name() == "CSprite") {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = pCSprite_t(new CSprite(data));
-      }
-      else {
-         asset = item = pCSprite_t(dynamic_cast<CSprite*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset of type CSprite; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-         m_items[item->getName()] = item;
-      }
-   }
-   else if (data.name() == "CPhysicalEntity") {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = pCPhysicalEntity_t(new CPhysicalEntity(data));
-      }
-      else {
-         asset = item = pCPhysicalEntity_t(dynamic_cast<CPhysicalEntity*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset of type CPhysicalEntity; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-         m_items[item->getName()] = item;
-      }
-   }
-   else if (data.name() == "CPhysicalSprite") {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = pCPhysicalSprite_t(new CPhysicalSprite(data));
-      }
-      else {
-         asset = item = pCPhysicalSprite_t(dynamic_cast<CPhysicalSprite*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset of type CPhysicalSprite; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-         m_items[item->getName()] = item;
-      }
-   }
-   else
-      throw XmlException("Error constructing entity; Unrecognised type", __FILE__, __LINE__);
 
    return asset;
 }
@@ -476,7 +389,7 @@ void Application::loadMap() {
             item->setTranslation(x, y);
 
             item->addToWorld();
-            m_worldSpace.insertAndTrackEntity(item);
+            m_worldSpace.trackEntity(item);
             m_items[item->getName()] = item;
          }
       }

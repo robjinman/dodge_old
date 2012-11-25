@@ -274,7 +274,7 @@ bool Player::move(int dir) {
 
    if (m_mode == DIG_MODE) {
       Primitive* sensor = NULL;
-      dir_t facing;
+      dir_t facing = LEFT;
       long plyrAnim = 0, eventType = 0;
       switch (dir) {
          case 0:           // Left

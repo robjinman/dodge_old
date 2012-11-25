@@ -14,6 +14,7 @@
 #include <cstring>
 #include <boost/shared_ptr.hpp>
 #include "Colour.hpp"
+#include "../RenderBrush.hpp"
 #include "../Camera.hpp"
 #include "../../Asset.hpp"
 #include "../../GL_CHECK.hpp"
@@ -44,79 +45,6 @@ class Renderer {
          NONTEXTURED_NONALPHA
       };
 
-      class Brush : virtual public Asset {
-         public:
-            Brush()
-               : m_fillColour(1.f, 1.f, 1.f, 1.f), m_lineColour(0.f, 0.f, 0.f, 1.f), m_lineWidth(1) {}
-
-            Brush(const Brush& copy) {
-               m_fillColour = copy.m_fillColour;
-               m_lineColour = copy.m_lineColour;
-               m_lineWidth = copy.m_lineWidth;
-            }
-
-            Brush(const Colour& fCol, const Colour& lCol, int_t lineW) {
-               setFillColour(fCol);
-               setLineColour(lCol);
-               m_lineWidth = lineW;
-            }
-
-            Brush(const XmlNode data) {
-               try {
-                  XML_NODE_CHECK(data, RenderBrush);
-
-                  XmlNode node = data.firstChild();
-                  XML_NODE_CHECK(node, fillColour);
-                  m_fillColour = Colour(node.firstChild());
-
-                  node = node.nextSibling();
-                  XML_NODE_CHECK(node, lineColour);
-                  m_lineColour = Colour(node.firstChild());
-
-                  node = node.nextSibling();
-                  XML_NODE_CHECK(node, lineWidth);
-                  m_lineWidth = node.getInt();
-               }
-               catch (XmlException& e) {
-                  e.prepend("Error parsing XML for instance of type RenderBrush");
-                  throw;
-               }
-            }
-
-            virtual Brush* clone() const {
-               return new Brush(*this);
-            }
-
-            void setFillColour(const Colour& fCol) {
-               m_fillColour = fCol;
-            }
-
-            void setLineColour(const Colour& lCol) {
-               m_lineColour = lCol;
-            }
-
-            void setLineWidth(int_t w) {
-               m_lineWidth = w;
-            }
-
-            const Colour& getFillColour() const {
-               return m_fillColour;
-            }
-
-            const Colour& getLineColour() const {
-               return m_lineColour;
-            }
-
-            int_t getLineWidth() const {
-               return m_lineWidth;
-            }
-
-         private:
-            Colour m_fillColour;
-            Colour m_lineColour;
-            int_t m_lineWidth;
-      };
-
       enum primitive_t {
          TRIANGLES,
          LINES,
@@ -128,9 +56,9 @@ class Renderer {
       void setMode(mode_t mode);
 
       inline void attachCamera(boost::shared_ptr<Camera> camera);
-      inline void attachBrush(boost::shared_ptr<Brush> brush);
+      inline void attachBrush(boost::shared_ptr<RenderBrush> brush);
 
-      inline const Brush& getBrush() const;
+      inline const RenderBrush& getBrush() const;
       inline const Camera& getCamera() const;
 
       void onWindowResize(int_t w, int_t h);
@@ -175,7 +103,7 @@ class Renderer {
 
       static GLint m_primitiveType;
 
-      static boost::shared_ptr<Brush> m_brush;
+      static boost::shared_ptr<RenderBrush> m_brush;
       static boost::shared_ptr<Camera> m_camera;
 };
 
@@ -201,7 +129,7 @@ inline GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
 //===========================================
 // Renderer::attachBrush
 //===========================================
-inline void Renderer::attachBrush(boost::shared_ptr<Brush> brush) {
+inline void Renderer::attachBrush(boost::shared_ptr<RenderBrush> brush) {
    m_brush = brush;
 }
 
@@ -215,7 +143,7 @@ inline void Renderer::attachCamera(boost::shared_ptr<Camera> camera) {
 //===========================================
 // Renderer::getBrush
 //===========================================
-inline const Renderer::Brush& Renderer::getBrush() const {
+inline const RenderBrush& Renderer::getBrush() const {
    return *m_brush;
 }
 

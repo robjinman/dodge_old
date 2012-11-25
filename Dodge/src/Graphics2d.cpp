@@ -20,7 +20,7 @@ namespace Dodge {
 bool Graphics2d::m_init = false;
 Renderer Graphics2d::m_renderer = Renderer();
 pCamera_t Graphics2d::m_camera = pCamera_t();
-boost::shared_ptr<Renderer::Brush> Graphics2d::m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
+boost::shared_ptr<RenderBrush> Graphics2d::m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush);
 
 
 //===========================================

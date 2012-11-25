@@ -20,6 +20,7 @@
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"
 #include "renderer/Renderer.hpp"
+#include "renderer/RenderBrush.hpp"
 #include "xml/xml.hpp"
 #include "Asset.hpp"
 
@@ -135,8 +136,8 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void scale(const Vec2f& s);
       void setShape(std::unique_ptr<Primitive> shape);
 
-      inline void setRenderBrush(boost::shared_ptr<Renderer::Brush> brush);
-      inline boost::shared_ptr<Renderer::Brush> getRenderBrush() const;
+      inline void setRenderBrush(boost::shared_ptr<RenderBrush> brush);
+      inline boost::shared_ptr<RenderBrush> getRenderBrush() const;
 
       // Relative to parent (parent's model space)
       inline Vec2f getTranslation() const;
@@ -188,7 +189,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       Entity* m_parent;
       std::set<pEntity_t> m_children;
 
-      mutable boost::shared_ptr<Renderer::Brush> m_renderBrush;
+      mutable boost::shared_ptr<RenderBrush> m_renderBrush;
 
       static int m_count;
       static long generateName();
@@ -377,16 +378,16 @@ inline float32_t Entity::getRotation_abs() const {
 //===========================================
 // Entity::setRenderBrush
 //===========================================
-inline void Entity::setRenderBrush(boost::shared_ptr<Renderer::Brush> brush) {
+inline void Entity::setRenderBrush(boost::shared_ptr<RenderBrush> brush) {
    m_renderBrush = brush;
 }
 
 //===========================================
 // Entity::getRenderBrush
 //===========================================
-inline boost::shared_ptr<Renderer::Brush> Entity::getRenderBrush() const {
+inline boost::shared_ptr<RenderBrush> Entity::getRenderBrush() const {
    if (!m_renderBrush)
-      m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush);
+      m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush);
 
    return m_renderBrush;
 }

@@ -9,7 +9,7 @@
 
 #include "renderer/Renderer.hpp"
 #include "renderer/Camera.hpp"
-#include "renderer/Colour.hpp"
+#include "renderer/RenderBrush.hpp"
 #include "math/Vec2i.hpp"
 #include "math/Vec2f.hpp"
 #include "math/primitives/Primitive.hpp"
@@ -48,7 +48,7 @@ class Graphics2d {
    private:
       static bool m_init;
       static Renderer m_renderer;
-      static boost::shared_ptr<Renderer::Brush> m_renderBrush;
+      static boost::shared_ptr<RenderBrush> m_renderBrush;
       static pCamera_t m_camera;
 };
 
