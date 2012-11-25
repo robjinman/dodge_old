@@ -1,256 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- All assets in this file are instantiated (are visible in the game world).
+Prototype definitions should go in separate files. -->
 <ASSETFILE>
    <using>
+<!--      <file>movingPlatform.xml</file> -->
       <file>player.xml</file>
       <file>soil.xml</file>
+      <file>stationaryPlatform.xml</file>
       <file>stopBlock.xml</file>
    </using>
+   <settings>
+      <bgColour><Colour r="0.075" g="0.05" b="0.02" a="1.0"/></bgColour>
+      <dimensions><Vec2f x="2.6" y="1.4"/></dimensions>
+      <fillerTile id="50"/>
+   </settings>
    <assets>
       <asset id="98">
-         <GravityRegion>
+         <CShape>
             <Item>
                <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
                   <shape>
                      <Polygon>
                         <Vec2f x="0.0" y="0.0"/>
-                        <Vec2f x="1.0" y="0.0"/>
-                        <Vec2f x="1.0" y="0.6"/>
-                        <Vec2f x="0.0" y="0.6"/>
+                        <Vec2f x="1.5" y="0.0"/>
+                        <Vec2f x="1.5" y="0.9"/>
+                        <Vec2f x="0.0" y="0.9"/>
                      </Polygon>
                   </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
                   <children/>
                </Entity>
             </Item>
             <Shape>
                <Entity/>
             </Shape>
-         </GravityRegion>
+         </CShape>
       </asset>
 
-      <asset id="99" proto="10"><Player><Item><Entity name="player" x="0.1" y="0.3"/></Item></Player></asset>
+      <asset id="97">
+         <CSprite>
+            <Item>
+               <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <children/>
+               </Entity>
+            </Item>
+            <Sprite>
+               <Entity/>
+               <EntityAnimations>
+                  <texture>
+                     <Texture path="data/textures/cave01.png"/>
+                  </texture>
+                  <textureSection>
+                     <Range>
+                        <pos><Vec2f x="0" y="0"/></pos>
+                        <size><Vec2f x="400" y="256"/></size>
+                     </Range>
+                  </textureSection>
+                  <onScreenSize>
+                     <Vec2f x="1.5" y="0.9"/>
+                  </onScreenSize>
+               </EntityAnimations>
+               <EntityTransformations/>
+            </Sprite>
+         </CSprite>
+      </asset>
 
-      <asset id="100" proto="50"><Soil><Item><Entity name="soil0,0" x="0.0" y="0.0"/></Item></Soil></asset>
-      <asset id="101" proto="50"><Soil><Item><Entity name="soil1,0" x="0.1" y="0.0"/></Item></Soil></asset>
-      <asset id="102" proto="50"><Soil><Item><Entity name="soil2,0" x="0.2" y="0.0"/></Item></Soil></asset>
-      <asset id="103" proto="50"><Soil><Item><Entity name="soil3,0" x="0.3" y="0.0"/></Item></Soil></asset>
-      <asset id="104" proto="50"><Soil><Item><Entity name="soil4,0" x="0.4" y="0.0"/></Item></Soil></asset>
-      <asset id="105" proto="50"><Soil><Item><Entity name="soil5,0" x="0.5" y="0.0"/></Item></Soil></asset>
-      <asset id="106" proto="50"><Soil><Item><Entity name="soil6,0" x="0.6" y="0.0"/></Item></Soil></asset>
-      <asset id="107" proto="50"><Soil><Item><Entity name="soil7,0" x="0.7" y="0.0"/></Item></Soil></asset>
-      <asset id="108" proto="50"><Soil><Item><Entity name="soil8,0" x="0.8" y="0.0"/></Item></Soil></asset>
-      <asset id="109" proto="50"><Soil><Item><Entity name="soil9,0" x="0.9" y="0.0"/></Item></Soil></asset>
-      <asset id="110" proto="50"><Soil><Item><Entity name="soil10,0" x="1.0" y="0.0"/></Item></Soil></asset>
-      <asset id="111" proto="50"><Soil><Item><Entity name="soil11,0" x="1.1" y="0.0"/></Item></Soil></asset>
-      <asset id="112" proto="50"><Soil><Item><Entity name="soil12,0" x="1.2" y="0.0"/></Item></Soil></asset>
-      <asset id="113" proto="50"><Soil><Item><Entity name="soil13,0" x="1.3" y="0.0"/></Item></Soil></asset>
-      <asset id="114" proto="50"><Soil><Item><Entity name="soil14,0" x="1.4" y="0.0"/></Item></Soil></asset>
-      <asset id="115" proto="50"><Soil><Item><Entity name="soil15,0" x="1.5" y="0.0"/></Item></Soil></asset>
-      <asset id="116" proto="50"><Soil><Item><Entity name="soil16,0" x="1.6" y="0.0"/></Item></Soil></asset>
-      <asset id="117" proto="50"><Soil><Item><Entity name="soil17,0" x="1.7" y="0.0"/></Item></Soil></asset>
-      <asset id="118" proto="50"><Soil><Item><Entity name="soil18,0" x="1.8" y="0.0"/></Item></Soil></asset>
-      <asset id="119" proto="50"><Soil><Item><Entity name="soil19,0" x="1.9" y="0.0"/></Item></Soil></asset>
+      <asset id="99" proto="10"><Player><Item><Entity name="player" x="0.1" y="0.3" z="8"/></Item></Player></asset>
 
-      <asset id="120" proto="50"><Soil><Item><Entity name="soil0,1" x="0.0" y="0.1"/></Item></Soil></asset>
-      <asset id="121" proto="50"><Soil><Item><Entity name="soil1,1" x="0.1" y="0.1"/></Item></Soil></asset>
-      <asset id="122" proto="50"><Soil><Item><Entity name="soil2,1" x="0.2" y="0.1"/></Item></Soil></asset>
-      <asset id="123" proto="50"><Soil><Item><Entity name="soil3,1" x="0.3" y="0.1"/></Item></Soil></asset>
-      <asset id="124" proto="50"><Soil><Item><Entity name="soil4,1" x="0.4" y="0.1"/></Item></Soil></asset>
-      <asset id="125" proto="50"><Soil><Item><Entity name="soil5,1" x="0.5" y="0.1"/></Item></Soil></asset>
-      <asset id="126" proto="50"><Soil><Item><Entity name="soil6,1" x="0.6" y="0.1"/></Item></Soil></asset>
-      <asset id="127" proto="50"><Soil><Item><Entity name="soil7,1" x="0.7" y="0.1"/></Item></Soil></asset>
-      <asset id="128" proto="50"><Soil><Item><Entity name="soil8,1" x="0.8" y="0.1"/></Item></Soil></asset>
-      <asset id="129" proto="50"><Soil><Item><Entity name="soil9,1" x="0.9" y="0.1"/></Item></Soil></asset>
-      <asset id="130" proto="50"><Soil><Item><Entity name="soil10,1" x="1.0" y="0.1"/></Item></Soil></asset>
-      <asset id="131" proto="50"><Soil><Item><Entity name="soil11,1" x="1.1" y="0.1"/></Item></Soil></asset>
-      <asset id="132" proto="50"><Soil><Item><Entity name="soil12,1" x="1.2" y="0.1"/></Item></Soil></asset>
-      <asset id="133" proto="50"><Soil><Item><Entity name="soil13,1" x="1.3" y="0.1"/></Item></Soil></asset>
-      <asset id="134" proto="50"><Soil><Item><Entity name="soil14,1" x="1.4" y="0.1"/></Item></Soil></asset>
-      <asset id="135" proto="50"><Soil><Item><Entity name="soil15,1" x="1.5" y="0.1"/></Item></Soil></asset>
-      <asset id="136" proto="50"><Soil><Item><Entity name="soil16,1" x="1.6" y="0.1"/></Item></Soil></asset>
-      <asset id="137" proto="50"><Soil><Item><Entity name="soil17,1" x="1.7" y="0.1"/></Item></Soil></asset>
-      <asset id="138" proto="50"><Soil><Item><Entity name="soil18,1" x="1.8" y="0.1"/></Item></Soil></asset>
-      <asset id="139" proto="50"><Soil><Item><Entity name="soil19,1" x="1.9" y="0.1"/></Item></Soil></asset>
+      <asset id="400" proto="1000"><CPhysicalSprite><Item><Entity name="platform1" x="0.7" y="0.35" rot="10"/></Item></CPhysicalSprite></asset>
+      <asset id="401" proto="1000"><CPhysicalSprite><Item><Entity name="platform2" x="1.1" y="0.5" rot="-5"><scale><Vec2f x="1.9" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="402" proto="1000"><CPhysicalSprite><Item><Entity name="platform3" x="1.4" y="0.68"><scale><Vec2f x="1.1" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="403" proto="1000"><CPhysicalSprite><Item><Entity name="platform4" x="0.7" y="0.8"><scale><Vec2f x="1.3" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
 
-      <asset id="300" proto="150"><StopBlock><Item><Entity name="stopBlock5,1" x="0.5" y="0.1"/></Item></StopBlock></asset>
-      <asset id="301" proto="150"><StopBlock><Item><Entity name="stopBlock6,1" x="0.6" y="0.1"/></Item></StopBlock></asset>
-      <asset id="302" proto="150"><StopBlock><Item><Entity name="stopBlock7,1" x="0.7" y="0.1"/></Item></StopBlock></asset>
-      <asset id="303" proto="150"><StopBlock><Item><Entity name="stopBlock8,1" x="0.8" y="0.1"/></Item></StopBlock></asset>
-      <asset id="304" proto="150"><StopBlock><Item><Entity name="stopBlock9,1" x="0.9" y="0.1"/></Item></StopBlock></asset>
-      <asset id="305" proto="150"><StopBlock><Item><Entity name="stopBlock10,1" x="1.0" y="0.1"/></Item></StopBlock></asset>
-      <asset id="306" proto="150"><StopBlock><Item><Entity name="stopBlock11,1" x="1.1" y="0.1"/></Item></StopBlock></asset>
-      <asset id="307" proto="150"><StopBlock><Item><Entity name="stopBlock12,1" x="1.2" y="0.1"/></Item></StopBlock></asset>
-      <asset id="308" proto="150"><StopBlock><Item><Entity name="stopBlock13,1" x="1.3" y="0.1"/></Item></StopBlock></asset>
-      <asset id="309" proto="150"><StopBlock><Item><Entity name="stopBlock14,1" x="1.4" y="0.1"/></Item></StopBlock></asset>
-
-      <asset id="140" proto="50"><Soil><Item><Entity name="soil0,2" x="0.0" y="0.2"/></Item></Soil></asset>
-      <asset id="141" proto="50"><Soil><Item><Entity name="soil1,2" x="0.1" y="0.2"/></Item></Soil></asset>
-      <asset id="142" proto="50"><Soil><Item><Entity name="soil2,2" x="0.2" y="0.2"/></Item></Soil></asset>
-      <asset id="143" proto="50"><Soil><Item><Entity name="soil3,2" x="0.3" y="0.2"/></Item></Soil></asset>
-      <asset id="144" proto="50"><Soil><Item><Entity name="soil4,2" x="0.4" y="0.2"/></Item></Soil></asset><!--
-      <asset id="145" proto="50"><Soil><Item><Entity name="soil5,2" x="0.5" y="0.2"/></Item></Soil></asset>
-      <asset id="146" proto="50"><Soil><Item><Entity name="soil6,2" x="0.6" y="0.2"/></Item></Soil></asset>
-      <asset id="147" proto="50"><Soil><Item><Entity name="soil7,2" x="0.7" y="0.2"/></Item></Soil></asset>
-      <asset id="148" proto="50"><Soil><Item><Entity name="soil8,2" x="0.8" y="0.2"/></Item></Soil></asset>
-      <asset id="149" proto="50"><Soil><Item><Entity name="soil9,2" x="0.9" y="0.2"/></Item></Soil></asset>
-      <asset id="150" proto="50"><Soil><Item><Entity name="soil10,2" x="1.0" y="0.2"/></Item></Soil></asset>
-      <asset id="151" proto="50"><Soil><Item><Entity name="soil11,2" x="1.1" y="0.2"/></Item></Soil></asset>
-      <asset id="152" proto="50"><Soil><Item><Entity name="soil12,2" x="1.2" y="0.2"/></Item></Soil></asset>
-      <asset id="153" proto="50"><Soil><Item><Entity name="soil13,2" x="1.3" y="0.2"/></Item></Soil></asset>
-      <asset id="154" proto="50"><Soil><Item><Entity name="soil14,2" x="1.4" y="0.2"/></Item></Soil></asset>-->
-      <asset id="155" proto="50"><Soil><Item><Entity name="soil15,2" x="1.5" y="0.2"/></Item></Soil></asset>
-      <asset id="156" proto="50"><Soil><Item><Entity name="soil16,2" x="1.6" y="0.2"/></Item></Soil></asset>
-      <asset id="157" proto="50"><Soil><Item><Entity name="soil17,2" x="1.7" y="0.2"/></Item></Soil></asset>
-      <asset id="158" proto="50"><Soil><Item><Entity name="soil18,2" x="1.8" y="0.2"/></Item></Soil></asset>
-      <asset id="159" proto="50"><Soil><Item><Entity name="soil19,2" x="1.9" y="0.2"/></Item></Soil></asset>
-
-      <asset id="160" proto="50"><Soil><Item><Entity name="soil0,3" x="0.0" y="0.3"/></Item></Soil></asset>
-<!--      <asset id="161" proto="50"><Soil><Item><Entity name="soil1,3" x="0.1" y="0.3"/></Item></Soil></asset> -->
-      <asset id="162" proto="50"><Soil><Item><Entity name="soil2,3" x="0.2" y="0.3"/></Item></Soil></asset>
-      <asset id="163" proto="50"><Soil><Item><Entity name="soil3,3" x="0.3" y="0.3"/></Item></Soil></asset>
-      <asset id="164" proto="50"><Soil><Item><Entity name="soil4,3" x="0.4" y="0.3"/></Item></Soil></asset><!--
-      <asset id="165" proto="50"><Soil><Item><Entity name="soil5,3" x="0.5" y="0.3"/></Item></Soil></asset>
-      <asset id="166" proto="50"><Soil><Item><Entity name="soil6,3" x="0.6" y="0.3"/></Item></Soil></asset>
-      <asset id="167" proto="50"><Soil><Item><Entity name="soil7,3" x="0.7" y="0.3"/></Item></Soil></asset>
-      <asset id="168" proto="50"><Soil><Item><Entity name="soil8,3" x="0.8" y="0.3"/></Item></Soil></asset>
-      <asset id="169" proto="50"><Soil><Item><Entity name="soil9,3" x="0.9" y="0.3"/></Item></Soil></asset>
-      <asset id="170" proto="50"><Soil><Item><Entity name="soil10,3" x="1.0" y="0.3"/></Item></Soil></asset>
-      <asset id="171" proto="50"><Soil><Item><Entity name="soil11,3" x="1.1" y="0.3"/></Item></Soil></asset>
-      <asset id="172" proto="50"><Soil><Item><Entity name="soil12,3" x="1.2" y="0.3"/></Item></Soil></asset>
-      <asset id="173" proto="50"><Soil><Item><Entity name="soil13,3" x="1.3" y="0.3"/></Item></Soil></asset>
-      <asset id="174" proto="50"><Soil><Item><Entity name="soil14,3" x="1.4" y="0.3"/></Item></Soil></asset>-->
-      <asset id="175" proto="50"><Soil><Item><Entity name="soil15,3" x="1.5" y="0.3"/></Item></Soil></asset>
-      <asset id="176" proto="50"><Soil><Item><Entity name="soil16,3" x="1.6" y="0.3"/></Item></Soil></asset>
-      <asset id="177" proto="50"><Soil><Item><Entity name="soil17,3" x="1.7" y="0.3"/></Item></Soil></asset>
-      <asset id="178" proto="50"><Soil><Item><Entity name="soil18,3" x="1.8" y="0.3"/></Item></Soil></asset>
-      <asset id="179" proto="50"><Soil><Item><Entity name="soil19,3" x="1.9" y="0.3"/></Item></Soil></asset>
-
-      <asset id="180" proto="50"><Soil><Item><Entity name="soil0,4" x="0.0" y="0.4"/></Item></Soil></asset>
-      <asset id="181" proto="50"><Soil><Item><Entity name="soil1,4" x="0.1" y="0.4"/></Item></Soil></asset>
-      <asset id="182" proto="50"><Soil><Item><Entity name="soil2,4" x="0.2" y="0.4"/></Item></Soil></asset>
-      <asset id="183" proto="50"><Soil><Item><Entity name="soil3,4" x="0.3" y="0.4"/></Item></Soil></asset>
-      <asset id="184" proto="50"><Soil><Item><Entity name="soil4,4" x="0.4" y="0.4"/></Item></Soil></asset><!--
-      <asset id="185" proto="50"><Soil><Item><Entity name="soil5,4" x="0.5" y="0.4"/></Item></Soil></asset>
-      <asset id="186" proto="50"><Soil><Item><Entity name="soil6,4" x="0.6" y="0.4"/></Item></Soil></asset>
-      <asset id="187" proto="50"><Soil><Item><Entity name="soil7,4" x="0.7" y="0.4"/></Item></Soil></asset>
-      <asset id="188" proto="50"><Soil><Item><Entity name="soil8,4" x="0.8" y="0.4"/></Item></Soil></asset>
-      <asset id="189" proto="50"><Soil><Item><Entity name="soil9,4" x="0.9" y="0.4"/></Item></Soil></asset>
-      <asset id="190" proto="50"><Soil><Item><Entity name="soil10,4" x="1.0" y="0.4"/></Item></Soil></asset>
-      <asset id="191" proto="50"><Soil><Item><Entity name="soil11,4" x="1.1" y="0.4"/></Item></Soil></asset>
-      <asset id="192" proto="50"><Soil><Item><Entity name="soil12,4" x="1.2" y="0.4"/></Item></Soil></asset>
-      <asset id="193" proto="50"><Soil><Item><Entity name="soil13,4" x="1.3" y="0.4"/></Item></Soil></asset>
-      <asset id="194" proto="50"><Soil><Item><Entity name="soil14,4" x="1.4" y="0.4"/></Item></Soil></asset>-->
-      <asset id="195" proto="50"><Soil><Item><Entity name="soil15,4" x="1.5" y="0.4"/></Item></Soil></asset>
-      <asset id="196" proto="50"><Soil><Item><Entity name="soil16,4" x="1.6" y="0.4"/></Item></Soil></asset>
-      <asset id="197" proto="50"><Soil><Item><Entity name="soil17,4" x="1.7" y="0.4"/></Item></Soil></asset>
-      <asset id="198" proto="50"><Soil><Item><Entity name="soil18,4" x="1.8" y="0.4"/></Item></Soil></asset>
-      <asset id="199" proto="50"><Soil><Item><Entity name="soil19,4" x="1.9" y="0.4"/></Item></Soil></asset>
-
-      <asset id="200" proto="50"><Soil><Item><Entity name="soil0,5" x="0.0" y="0.5"/></Item></Soil></asset>
-      <asset id="201" proto="50"><Soil><Item><Entity name="soil1,5" x="0.1" y="0.5"/></Item></Soil></asset>
-      <asset id="202" proto="50"><Soil><Item><Entity name="soil2,5" x="0.2" y="0.5"/></Item></Soil></asset>
-      <asset id="203" proto="50"><Soil><Item><Entity name="soil3,5" x="0.3" y="0.5"/></Item></Soil></asset>
-      <asset id="204" proto="50"><Soil><Item><Entity name="soil4,5" x="0.4" y="0.5"/></Item></Soil></asset><!--
-      <asset id="205" proto="50"><Soil><Item><Entity name="soil5,5" x="0.5" y="0.5"/></Item></Soil></asset>
-      <asset id="206" proto="50"><Soil><Item><Entity name="soil6,5" x="0.6" y="0.5"/></Item></Soil></asset>
-      <asset id="207" proto="50"><Soil><Item><Entity name="soil7,5" x="0.7" y="0.5"/></Item></Soil></asset>
-      <asset id="208" proto="50"><Soil><Item><Entity name="soil8,5" x="0.8" y="0.5"/></Item></Soil></asset>
-      <asset id="209" proto="50"><Soil><Item><Entity name="soil9,5" x="0.9" y="0.5"/></Item></Soil></asset>
-      <asset id="210" proto="50"><Soil><Item><Entity name="soil10,5" x="1.0" y="0.5"/></Item></Soil></asset>
-      <asset id="211" proto="50"><Soil><Item><Entity name="soil11,5" x="1.1" y="0.5"/></Item></Soil></asset>
-      <asset id="212" proto="50"><Soil><Item><Entity name="soil12,5" x="1.2" y="0.5"/></Item></Soil></asset>
-      <asset id="213" proto="50"><Soil><Item><Entity name="soil13,5" x="1.3" y="0.5"/></Item></Soil></asset>
-      <asset id="214" proto="50"><Soil><Item><Entity name="soil14,5" x="1.4" y="0.5"/></Item></Soil></asset>-->
-      <asset id="215" proto="50"><Soil><Item><Entity name="soil15,5" x="1.5" y="0.5"/></Item></Soil></asset>
-      <asset id="216" proto="50"><Soil><Item><Entity name="soil16,5" x="1.6" y="0.5"/></Item></Soil></asset>
-      <asset id="217" proto="50"><Soil><Item><Entity name="soil17,5" x="1.7" y="0.5"/></Item></Soil></asset>
-      <asset id="218" proto="50"><Soil><Item><Entity name="soil18,5" x="1.8" y="0.5"/></Item></Soil></asset>
-      <asset id="219" proto="50"><Soil><Item><Entity name="soil19,5" x="1.9" y="0.5"/></Item></Soil></asset>
-
-      <asset id="220" proto="50"><Soil><Item><Entity name="soil0,6" x="0.0" y="0.6"/></Item></Soil></asset>
-      <asset id="221" proto="50"><Soil><Item><Entity name="soil1,6" x="0.1" y="0.6"/></Item></Soil></asset>
-      <asset id="222" proto="50"><Soil><Item><Entity name="soil2,6" x="0.2" y="0.6"/></Item></Soil></asset>
-      <asset id="223" proto="50"><Soil><Item><Entity name="soil3,6" x="0.3" y="0.6"/></Item></Soil></asset>
-      <asset id="224" proto="50"><Soil><Item><Entity name="soil4,6" x="0.4" y="0.6"/></Item></Soil></asset><!--
-      <asset id="225" proto="50"><Soil><Item><Entity name="soil5,6" x="0.5" y="0.6"/></Item></Soil></asset>
-      <asset id="226" proto="50"><Soil><Item><Entity name="soil6,6" x="0.6" y="0.6"/></Item></Soil></asset>
-      <asset id="227" proto="50"><Soil><Item><Entity name="soil7,6" x="0.7" y="0.6"/></Item></Soil></asset>
-      <asset id="228" proto="50"><Soil><Item><Entity name="soil8,6" x="0.8" y="0.6"/></Item></Soil></asset>
-      <asset id="229" proto="50"><Soil><Item><Entity name="soil9,6" x="0.9" y="0.6"/></Item></Soil></asset>
-      <asset id="230" proto="50"><Soil><Item><Entity name="soil10,6" x="1.0" y="0.6"/></Item></Soil></asset>
-      <asset id="231" proto="50"><Soil><Item><Entity name="soil11,6" x="1.1" y="0.6"/></Item></Soil></asset>
-      <asset id="232" proto="50"><Soil><Item><Entity name="soil12,6" x="1.2" y="0.6"/></Item></Soil></asset>
-      <asset id="233" proto="50"><Soil><Item><Entity name="soil13,6" x="1.3" y="0.6"/></Item></Soil></asset>
-      <asset id="234" proto="50"><Soil><Item><Entity name="soil14,6" x="1.4" y="0.6"/></Item></Soil></asset>-->
-      <asset id="235" proto="50"><Soil><Item><Entity name="soil15,6" x="1.5" y="0.6"/></Item></Soil></asset>
-      <asset id="236" proto="50"><Soil><Item><Entity name="soil16,6" x="1.6" y="0.6"/></Item></Soil></asset>
-      <asset id="237" proto="50"><Soil><Item><Entity name="soil17,6" x="1.7" y="0.6"/></Item></Soil></asset>
-      <asset id="238" proto="50"><Soil><Item><Entity name="soil18,6" x="1.8" y="0.6"/></Item></Soil></asset>
-      <asset id="239" proto="50"><Soil><Item><Entity name="soil19,6" x="1.9" y="0.6"/></Item></Soil></asset>
-
-      <asset id="240" proto="50"><Soil><Item><Entity name="soil0,7" x="0.0" y="0.7"/></Item></Soil></asset>
-      <asset id="241" proto="50"><Soil><Item><Entity name="soil1,7" x="0.1" y="0.7"/></Item></Soil></asset>
-      <asset id="242" proto="50"><Soil><Item><Entity name="soil2,7" x="0.2" y="0.7"/></Item></Soil></asset>
-      <asset id="243" proto="50"><Soil><Item><Entity name="soil3,7" x="0.3" y="0.7"/></Item></Soil></asset>
-      <asset id="244" proto="50"><Soil><Item><Entity name="soil4,7" x="0.4" y="0.7"/></Item></Soil></asset><!--
-      <asset id="245" proto="50"><Soil><Item><Entity name="soil5,7" x="0.5" y="0.7"/></Item></Soil></asset>
-      <asset id="246" proto="50"><Soil><Item><Entity name="soil6,7" x="0.6" y="0.7"/></Item></Soil></asset>
-      <asset id="247" proto="50"><Soil><Item><Entity name="soil7,7" x="0.7" y="0.7"/></Item></Soil></asset>
-      <asset id="248" proto="50"><Soil><Item><Entity name="soil8,7" x="0.8" y="0.7"/></Item></Soil></asset>
-      <asset id="249" proto="50"><Soil><Item><Entity name="soil9,7" x="0.9" y="0.7"/></Item></Soil></asset>
-      <asset id="250" proto="50"><Soil><Item><Entity name="soil10,7" x="1.0" y="0.7"/></Item></Soil></asset>
-      <asset id="251" proto="50"><Soil><Item><Entity name="soil11,7" x="1.1" y="0.7"/></Item></Soil></asset>
-      <asset id="252" proto="50"><Soil><Item><Entity name="soil12,7" x="1.2" y="0.7"/></Item></Soil></asset>
-      <asset id="253" proto="50"><Soil><Item><Entity name="soil13,7" x="1.3" y="0.7"/></Item></Soil></asset>
-      <asset id="254" proto="50"><Soil><Item><Entity name="soil14,7" x="1.4" y="0.7"/></Item></Soil></asset>-->
-      <asset id="255" proto="50"><Soil><Item><Entity name="soil15,7" x="1.5" y="0.7"/></Item></Soil></asset>
-      <asset id="256" proto="50"><Soil><Item><Entity name="soil16,7" x="1.6" y="0.7"/></Item></Soil></asset>
-      <asset id="257" proto="50"><Soil><Item><Entity name="soil17,7" x="1.7" y="0.7"/></Item></Soil></asset>
-      <asset id="258" proto="50"><Soil><Item><Entity name="soil18,7" x="1.8" y="0.7"/></Item></Soil></asset>
-      <asset id="259" proto="50"><Soil><Item><Entity name="soil19,7" x="1.9" y="0.7"/></Item></Soil></asset>
-
-      <asset id="260" proto="50"><Soil><Item><Entity name="soil0,8" x="0.0" y="0.8"/></Item></Soil></asset>
-      <asset id="261" proto="50"><Soil><Item><Entity name="soil1,8" x="0.1" y="0.8"/></Item></Soil></asset>
-      <asset id="262" proto="50"><Soil><Item><Entity name="soil2,8" x="0.2" y="0.8"/></Item></Soil></asset>
-      <asset id="263" proto="50"><Soil><Item><Entity name="soil3,8" x="0.3" y="0.8"/></Item></Soil></asset>
-      <asset id="264" proto="50"><Soil><Item><Entity name="soil4,8" x="0.4" y="0.8"/></Item></Soil></asset>
-      <asset id="265" proto="50"><Soil><Item><Entity name="soil5,8" x="0.5" y="0.8"/></Item></Soil></asset>
-      <asset id="266" proto="50"><Soil><Item><Entity name="soil6,8" x="0.6" y="0.8"/></Item></Soil></asset>
-      <asset id="267" proto="50"><Soil><Item><Entity name="soil7,8" x="0.7" y="0.8"/></Item></Soil></asset>
-      <asset id="268" proto="50"><Soil><Item><Entity name="soil8,8" x="0.8" y="0.8"/></Item></Soil></asset>
-      <asset id="269" proto="50"><Soil><Item><Entity name="soil9,8" x="0.9" y="0.8"/></Item></Soil></asset>
-      <asset id="270" proto="50"><Soil><Item><Entity name="soil10,8" x="1.0" y="0.8"/></Item></Soil></asset>
-      <asset id="271" proto="50"><Soil><Item><Entity name="soil11,8" x="1.1" y="0.8"/></Item></Soil></asset>
-      <asset id="272" proto="50"><Soil><Item><Entity name="soil12,8" x="1.2" y="0.8"/></Item></Soil></asset>
-      <asset id="273" proto="50"><Soil><Item><Entity name="soil13,8" x="1.3" y="0.8"/></Item></Soil></asset>
-      <asset id="274" proto="50"><Soil><Item><Entity name="soil14,8" x="1.4" y="0.8"/></Item></Soil></asset>
-      <asset id="275" proto="50"><Soil><Item><Entity name="soil15,8" x="1.5" y="0.8"/></Item></Soil></asset>
-      <asset id="276" proto="50"><Soil><Item><Entity name="soil16,8" x="1.6" y="0.8"/></Item></Soil></asset>
-      <asset id="277" proto="50"><Soil><Item><Entity name="soil17,8" x="1.7" y="0.8"/></Item></Soil></asset>
-      <asset id="278" proto="50"><Soil><Item><Entity name="soil18,8" x="1.8" y="0.8"/></Item></Soil></asset>
-      <asset id="279" proto="50"><Soil><Item><Entity name="soil19,8" x="1.9" y="0.8"/></Item></Soil></asset>
-
-      <asset id="280" proto="50"><Soil><Item><Entity name="soil0,9" x="0.0" y="0.9"/></Item></Soil></asset>
-      <asset id="281" proto="50"><Soil><Item><Entity name="soil1,9" x="0.1" y="0.9"/></Item></Soil></asset>
-      <asset id="282" proto="50"><Soil><Item><Entity name="soil2,9" x="0.2" y="0.9"/></Item></Soil></asset>
-      <asset id="283" proto="50"><Soil><Item><Entity name="soil3,9" x="0.3" y="0.9"/></Item></Soil></asset>
-      <asset id="284" proto="50"><Soil><Item><Entity name="soil4,9" x="0.4" y="0.9"/></Item></Soil></asset>
-      <asset id="285" proto="50"><Soil><Item><Entity name="soil5,9" x="0.5" y="0.9"/></Item></Soil></asset>
-      <asset id="286" proto="50"><Soil><Item><Entity name="soil6,9" x="0.6" y="0.9"/></Item></Soil></asset>
-      <asset id="287" proto="50"><Soil><Item><Entity name="soil7,9" x="0.7" y="0.9"/></Item></Soil></asset>
-      <asset id="288" proto="50"><Soil><Item><Entity name="soil8,9" x="0.8" y="0.9"/></Item></Soil></asset>
-      <asset id="289" proto="50"><Soil><Item><Entity name="soil9,9" x="0.9" y="0.9"/></Item></Soil></asset>
-      <asset id="290" proto="50"><Soil><Item><Entity name="soil10,9" x="1.0" y="0.9"/></Item></Soil></asset>
-      <asset id="291" proto="50"><Soil><Item><Entity name="soil11,9" x="1.1" y="0.9"/></Item></Soil></asset>
-      <asset id="292" proto="50"><Soil><Item><Entity name="soil12,9" x="1.2" y="0.9"/></Item></Soil></asset>
-      <asset id="293" proto="50"><Soil><Item><Entity name="soil13,9" x="1.3" y="0.9"/></Item></Soil></asset>
-      <asset id="294" proto="50"><Soil><Item><Entity name="soil14,9" x="1.4" y="0.9"/></Item></Soil></asset>
-      <asset id="295" proto="50"><Soil><Item><Entity name="soil15,9" x="1.5" y="0.9"/></Item></Soil></asset>
-      <asset id="296" proto="50"><Soil><Item><Entity name="soil16,9" x="1.6" y="0.9"/></Item></Soil></asset>
-      <asset id="297" proto="50"><Soil><Item><Entity name="soil17,9" x="1.7" y="0.9"/></Item></Soil></asset>
-      <asset id="298" proto="50"><Soil><Item><Entity name="soil18,9" x="1.8" y="0.9"/></Item></Soil></asset>
-      <asset id="299" proto="50"><Soil><Item><Entity name="soil19,9" x="1.9" y="0.9"/></Item></Soil></asset>
+      <asset id="300" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock0" x="0.5" y="0.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="301" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock1" x="0.4" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="302" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock2" x="2.0" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="304" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock3" x="0.5" y="1.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
    </assets>
 </ASSETFILE>

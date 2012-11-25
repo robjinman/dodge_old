@@ -1,38 +1,38 @@
-#include "GravityRegion.hpp"
+#include "CShape.hpp"
 
 
 using namespace Dodge;
 
 
 //===========================================
-// GravityRegion::GravityRegion
+// CShape::CShape
 //===========================================
-GravityRegion::GravityRegion(const XmlNode data)
+CShape::CShape(const XmlNode data)
    : Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      Shape(data.nthChild(1)) {
 
    try {
-      XML_NODE_CHECK(data, GravityRegion);
+      XML_NODE_CHECK(data, CShape);
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class GravityRegion; ");
+      e.prepend("Error parsing XML for instance of class CShape; ");
    }
 }
 
 //===========================================
-// GravityRegion::GravityRegion
+// CShape::CShape
 //===========================================
-GravityRegion* GravityRegion::clone() const {
-   return new GravityRegion(*this);
+CShape* CShape::clone() const {
+   return new CShape(*this);
 }
 
 //===========================================
-// GravityRegion::assignData
+// CShape::assignData
 //===========================================
-void GravityRegion::assignData(const XmlNode data) {
+void CShape::assignData(const XmlNode data) {
    try {
-      XML_NODE_CHECK(data, GravityRegion)
+      XML_NODE_CHECK(data, CShape)
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "Item") {
@@ -45,7 +45,7 @@ void GravityRegion::assignData(const XmlNode data) {
       }
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class GravityRegion; ");
+      e.prepend("Error parsing XML for instance of class CShape; ");
       throw;
    }
 }

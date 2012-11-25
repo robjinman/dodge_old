@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nodes with names that begin with an uppercase letter represent
+classes, and are passed to their respective class constructors. -->
+
+<!-- Nodes with lowercase names represent internal data members. Their
+'ptr' attribute, if they have one, means the data member is a pointer
+to the asset with id=ptr. The 'proto' attribute refers to the asset
+which the object is a copy of. -->
+
+<!-- Every asset defined at the top level is wrapped in the 'asset'
+tag and has a 'class' attribute, and an 'id' attribute which uniquely
+identifies it. -->
+<ASSETFILE>
+   <assets>
+      <asset id="1000">
+         <CPhysicalSprite>
+            <Item>
+               <Entity type="stationaryPlatform" name="stationaryPlatformProto" x="0.0" y="0.0" z="3" rot="0.0">
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0.0" y="0.0"/>
+                        <Vec2f x="0.4" y="0.0"/>
+                        <Vec2f x="0.4" y="0.05"/>
+                        <Vec2f x="0.0" y="0.05"/>
+                     </Polygon>
+                  </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <children/>
+               </Entity>
+            </Item>
+            <PhysicalSprite>
+               <Sprite>
+                  <Entity/>
+                  <EntityAnimations>
+                     <texture><Texture path="data/textures/platform1.png"/></texture>
+                     <textureSection>
+                        <Range>
+                           <pos><Vec2f x="0" y="0"/></pos>
+                           <size><Vec2f x="64" y="16"/></size>
+                        </Range>
+                     </textureSection>
+                     <onScreenSize>
+                        <Vec2f x="0.4" y="0.05"/>
+                     </onScreenSize>
+                  </EntityAnimations>
+                  <EntityTransformations/>
+               </Sprite>
+               <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
+            </PhysicalSprite>
+         </CPhysicalSprite>
+      </asset>
+   </assets>
+</ASSETFILE>

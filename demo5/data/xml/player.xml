@@ -21,9 +21,6 @@ identifies it. -->
          <Player>
             <Item>
                <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
                   <shape>
                      <Polygon>
                         <Vec2f x="0" y="0.025"/>
@@ -36,6 +33,9 @@ identifies it. -->
                         <Vec2f x="0" y="0.1"/>
                      </Polygon>
                   </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
                   <children/>
                </Entity>
             </Item>
@@ -54,7 +54,7 @@ identifies it. -->
                         <Vec2f x="0.1" y="0.1"/>
                      </onScreenSize>
                      <animation>
-                        <Animation name="moveDown" rate="16.0">
+                        <Animation name="moveDown" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="0"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -78,7 +78,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveLeft" rate="16.0">
+                        <Animation name="moveLeft" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="16"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -102,7 +102,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveUp" rate="16.0">
+                        <Animation name="moveUp" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="32"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -126,7 +126,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveRight" rate="16.0">
+                        <Animation name="moveRight" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="48"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -149,10 +149,34 @@ identifies it. -->
                            </AnimFrame>
                         </Animation>
                      </animation>
+                     <animation>
+                        <Animation name="jump" rate="16.0">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="64"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="16" y="64"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="64"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="48" y="64"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
                   </EntityAnimations>
                   <EntityTransformations>
                      <transformation>
-                        <Transformation name="moveDown" rate="4.0" smooth="8">
+                        <Transformation name="moveDown" rate="6.0" smooth="8">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="-0.1"/></delta>
                               <rot>0.0</rot>
@@ -161,7 +185,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveLeft" rate="4.0" smooth="8">
+                        <Transformation name="moveLeft" rate="6.0" smooth="8">
                            <TransFrame>
                               <delta><Vec2f x="-0.1" y="0.0"/></delta>
                               <rot>0.0</rot>
@@ -170,7 +194,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveUp" rate="4.0" smooth="8">
+                        <Transformation name="moveUp" rate="6.0" smooth="8">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="0.1"/></delta>
                               <rot>0.0</rot>
@@ -179,7 +203,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveRight" rate="4.0" smooth="8">
+                        <Transformation name="moveRight" rate="6.0" smooth="8">
                            <TransFrame>
                               <delta><Vec2f x="0.1" y="0.0"/></delta>
                               <rot>0.0</rot>
@@ -192,7 +216,7 @@ identifies it. -->
                <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
             </PhysicalSprite>
             <speed>1.8</speed>
-            <acceleration>0.45</acceleration>
+            <acceleration>0.6</acceleration>
             <gridSize>
                <Vec2f x="0.1" y="0.1"/>
             </gridSize>
@@ -232,8 +256,8 @@ identifies it. -->
                <Quad>
                   <Vec2f x="0.00625" y="0.00625"/>
                   <Vec2f x="0.09375" y="0.00625"/>
-                  <Vec2f x="0.09375" y="0.025"/>
-                  <Vec2f x="0.00625" y="0.025"/>
+                  <Vec2f x="0.09375" y="0.09375"/>
+                  <Vec2f x="0.00625" y="0.09375"/>
                </Quad>
             </midSensor>
          </Player>

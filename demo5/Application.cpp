@@ -3,8 +3,10 @@
 #include "EPendingDeletion.hpp"
 #include "Application.hpp"
 #include "Soil.hpp"
-#include "StopBlock.hpp"
-#include "GravityRegion.hpp"
+#include "CPhysicalEntity.hpp"
+#include "CPhysicalSprite.hpp"
+#include "CShape.hpp"
+#include "CSprite.hpp"
 
 
 using namespace std;
@@ -128,11 +130,39 @@ void Application::keyboard() {
 }
 
 //===========================================
+// Application::loadMapSettings
+//===========================================
+void Application::loadMapSettings(const XmlNode data) {
+   try {
+      XML_NODE_CHECK(data, settings);
+
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, bgColour);
+      m_bgColour = Colour(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, dimensions);
+      m_mapSize = Vec2f(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, fillerTile);
+
+      XmlAttribute attr = node.firstAttribute();
+      XML_ATTR_CHECK(attr, id);
+      m_fillerTileId = attr.getLong();
+   }
+   catch (XmlException& e) {
+      e.prepend("Error loading map settings; ");
+      throw;
+   }
+}
+
+//===========================================
 // Application::constructAsset
 //
 // If proto = -1 asset is *not* constructed from prototype
 //===========================================
-boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long proto) {
+boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long proto, bool addToWorld) {
    if (data.isNull())
       throw XmlException("Error constructing asset; XML node is empty", __FILE__, __LINE__);
 
@@ -142,69 +172,129 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
       asset = boost::shared_ptr<Asset>(new Texture(data));
    }
    else if (data.name() == "Player") {
+      pItem_t item;
+
       if (proto == -1) {
-         asset = pPlayer_t(new Player(data));
+         asset = item = pPlayer_t(new Player(data));
       }
       else {
-         Player* player = dynamic_cast<Player*>(m_assetManager.cloneAsset(proto));
+         asset = item = pPlayer_t(dynamic_cast<Player*>(m_assetManager.cloneAsset(proto)));
 
-         if (!player)
+         if (!item)
             throw XmlException("Error constructing asset of type Player; Bad prototype id", __FILE__, __LINE__);
 
-         m_player = pPlayer_t(player);
-
-         m_player->assignData(data);
-         m_player->addToWorld();
-         m_worldSpace.insertAndTrackEntity(m_player);
-
-         asset = m_player;
+         item->assignData(data);
       }
-   }
-   else if (data.name() == "GravityRegion") {
-      if (proto == -1) {
-         pGravityRegion_t grav(new GravityRegion(data));
 
-         grav->addToWorld();
-         m_worldSpace.insertAndTrackEntity(grav);
-         m_items[grav->getName()] = grav;
-
-         asset = grav;
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_player = boost::static_pointer_cast<Player>(item);
       }
    }
    else if (data.name() == "Soil") {
+      pItem_t item;
+
       if (proto == -1) {
-         asset = pSoil_t(new Soil(data));
+         asset = item = pSoil_t(new Soil(data));
       }
       else {
-         pSoil_t soil(dynamic_cast<Soil*>(m_assetManager.cloneAsset(proto)));
+         asset = item = pSoil_t(dynamic_cast<Soil*>(m_assetManager.cloneAsset(proto)));
 
-         if (!soil)
+         if (!item)
             throw XmlException("Error constructing asset of type Soil; Bad prototype id", __FILE__, __LINE__);
 
-         soil->assignData(data);
-         soil->addToWorld();
-         m_worldSpace.insertAndTrackEntity(soil);
-         m_items[soil->getName()] = soil;
+         item->assignData(data);
+      }
 
-         asset = soil;
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_items[item->getName()] = item;
       }
    }
-   else if (data.name() == "StopBlock") {
+   else if (data.name() == "CShape") {
+      pItem_t item;
+
       if (proto == -1) {
-         asset = pStopBlock_t(new StopBlock(data));
+         asset = item = pCShape_t(new CShape(data));
       }
       else {
-         pStopBlock_t block(dynamic_cast<StopBlock*>(m_assetManager.cloneAsset(proto)));
+         asset = item = pCShape_t(dynamic_cast<CShape*>(m_assetManager.cloneAsset(proto)));
 
-         if (!block)
-            throw XmlException("Error constructing asset of type StopBlock; Bad prototype id", __FILE__, __LINE__);
+         if (!item)
+            throw XmlException("Error constructing asset of type CShape; Bad prototype id", __FILE__, __LINE__);
 
-         block->assignData(data);
-         block->addToWorld();
-         m_worldSpace.insertAndTrackEntity(block);
-         m_items[block->getName()] = block;
+         item->assignData(data);
+      }
 
-         asset = block;
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_items[item->getName()] = item;
+      }
+   }
+   else if (data.name() == "CSprite") {
+      pItem_t item;
+
+      if (proto == -1) {
+         asset = item = pCSprite_t(new CSprite(data));
+      }
+      else {
+         asset = item = pCSprite_t(dynamic_cast<CSprite*>(m_assetManager.cloneAsset(proto)));
+
+         if (!item)
+            throw XmlException("Error constructing asset of type CSprite; Bad prototype id", __FILE__, __LINE__);
+
+         item->assignData(data);
+      }
+
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_items[item->getName()] = item;
+      }
+   }
+   else if (data.name() == "CPhysicalEntity") {
+      pItem_t item;
+
+      if (proto == -1) {
+         asset = item = pCPhysicalEntity_t(new CPhysicalEntity(data));
+      }
+      else {
+         asset = item = pCPhysicalEntity_t(dynamic_cast<CPhysicalEntity*>(m_assetManager.cloneAsset(proto)));
+
+         if (!item)
+            throw XmlException("Error constructing asset of type CPhysicalEntity; Bad prototype id", __FILE__, __LINE__);
+
+         item->assignData(data);
+      }
+
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_items[item->getName()] = item;
+      }
+   }
+   else if (data.name() == "CPhysicalSprite") {
+      pItem_t item;
+
+      if (proto == -1) {
+         asset = item = pCPhysicalSprite_t(new CPhysicalSprite(data));
+      }
+      else {
+         asset = item = pCPhysicalSprite_t(dynamic_cast<CPhysicalSprite*>(m_assetManager.cloneAsset(proto)));
+
+         if (!item)
+            throw XmlException("Error constructing asset of type CPhysicalSprite; Bad prototype id", __FILE__, __LINE__);
+
+         item->assignData(data);
+      }
+
+      if (addToWorld) {
+         item->addToWorld();
+         m_worldSpace.insertAndTrackEntity(item);
+         m_items[item->getName()] = item;
       }
    }
    else
@@ -216,7 +306,7 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
 //===========================================
 // Application::loadAssets_r
 //===========================================
-void Application::loadAssets_r(const string& file) {
+void Application::loadAssets_r(const string& file, int depth) {
    try {
       XmlDocument doc;
 
@@ -229,17 +319,22 @@ void Application::loadAssets_r(const string& file) {
 
       node = node.firstChild();
       if (node.isNull())
-         throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
+         throw XmlException("Expected 'using', 'settings', or 'assets' tag", __FILE__, __LINE__);
 
       if (node.name() == "using") {
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
             string path = string("data/xml/").append(node_.getString());
-            loadAssets_r(path);
+            loadAssets_r(path, depth + 1);
 
             node_ = node_.nextSibling();
          }
 
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "settings") {
+         loadMapSettings(node);
          node = node.nextSibling();
       }
 
@@ -256,7 +351,7 @@ void Application::loadAssets_r(const string& file) {
          if (!attr.isNull() && attr.name() == "proto")
             proto = attr.getLong();
 
-         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto);
+         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto, depth == 0 ? true : false);
          m_assetManager.addAsset(id, asset);
 
          node = node.nextSibling();
@@ -302,7 +397,7 @@ void Application::deletePending(EEvent* event) {
 // Application::draw
 //===========================================
 void Application::draw() {
-   m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
+   m_graphics2d.clear(m_bgColour);
 
 #ifdef DEBUG
    if (dbg_flags & DBG_DRAW_WORLDSPACE) {
@@ -343,6 +438,52 @@ void Application::onWindowResize(int w, int h) {
 }
 
 //===========================================
+// Application::loadMap
+//===========================================
+void Application::loadMap() {
+   static long stopBlockStr = internString("stopBlock");
+
+   stringstream strMap;
+   strMap << "data/xml/map" << m_currentMap << ".xml";
+   loadAssets_r(strMap.str());
+
+   pItem_t filler = boost::dynamic_pointer_cast<Item>(m_assetManager.getAssetPointer(m_fillerTileId));
+
+   float32_t w = filler->getBoundary().getSize().x;
+   float32_t h = filler->getBoundary().getSize().y;
+
+   unique_ptr<Primitive> shape(filler->getShape().clone());
+   shape->scale(Vec2f(0.9f, 0.9f));
+
+   for (float32_t x = 0.f; x < m_mapSize.x; x += w) {
+      for (float32_t y = 0.f; y < m_mapSize.y; y += h) {
+
+         vector<pEntity_t> vec;
+         m_worldSpace.getEntities(filler->getBoundary(), vec);
+         bool clear = true;
+         for (uint_t i = 0; i < vec.size(); ++i) {
+            if (!vec[i]->hasShape()) continue;
+            if (vec[i]->getTypeName() == stopBlockStr) continue;
+
+            if (Math::overlap(*shape, Vec2f(x + 0.005, y + 0.005), vec[i]->getShape(), vec[i]->getTranslation_abs())) {
+               clear = false;
+               break;
+            }
+         }
+
+         if (clear) {
+            pItem_t item(filler->clone());
+            item->setTranslation(x, y);
+
+            item->addToWorld();
+            m_worldSpace.insertAndTrackEntity(item);
+            m_items[item->getName()] = item;
+         }
+      }
+   }
+}
+
+//===========================================
 // Application::begin
 //===========================================
 void Application::begin() {
@@ -363,9 +504,7 @@ void Application::begin() {
 
    Box2dPhysics::loadSettings("data/physics.conf");
 
-   stringstream strMap;
-   strMap << "data/xml/map" << m_currentMap << ".xml";
-   loadAssets_r(strMap.str());
+   loadMap();
 
    while (1) {
       m_win.doEvents();

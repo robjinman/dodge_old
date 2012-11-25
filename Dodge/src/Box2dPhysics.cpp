@@ -261,14 +261,14 @@ void Box2dPhysics::loadSettings(const string& file) {
 // Box2dPhysics::entityMovedHandler
 //===========================================
 void Box2dPhysics::entityMovedHandler(EEvent* event) {
-   static long entityRotationStr = internString("entityRotation");
+//   static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
 
    Entity* entity;
 
-   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
-   else if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
+//   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
+/*   else*/ if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
    else if (event->getType() == entityTranslationStr) entity = static_cast<EEntityTranslation*>(event)->entity.get();
 
    if (m_ignore.find(event) == m_ignore.end()) {
@@ -283,7 +283,7 @@ void Box2dPhysics::entityMovedHandler(EEvent* event) {
 // Box2dPhysics::updatePos
 //===========================================
 void Box2dPhysics::updatePos(EEvent* ev) {
-   static long entityRotationStr = internString("entityRotation");
+//   static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
 
@@ -298,11 +298,11 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       float32_t y = event->newBoundingBox.getPosition().y;
 
       m_body->SetTransform(b2Vec2(x / m_worldUnitsPerMetre, y / m_worldUnitsPerMetre), m_body->GetAngle());
-   }
+   }/*
    else if (ev->getType() == entityRotationStr) {
       EEntityRotation* event = static_cast<EEntityRotation*>(ev);
       m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(event->newRotation_abs));
-   }
+   }*/
    else if (ev->getType() == entityShapeStr) {
       EEntityShape* event = static_cast<EEntityShape*>(ev);
 

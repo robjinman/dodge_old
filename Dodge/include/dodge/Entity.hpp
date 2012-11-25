@@ -147,6 +147,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline float32_t getRotation_abs() const;
       Vec2f getTranslation_abs() const;
 
+      inline bool hasShape() const;
       inline const Primitive& getShape() const;
       inline long getName() const;
       inline long getTypeName() const;
@@ -398,9 +399,19 @@ inline const Range& Entity::getBoundary() const {
 }
 
 //===========================================
+// Entity::hasShape
+//===========================================
+inline bool Entity::hasShape() const {
+   return m_shape ? true : false;
+}
+
+//===========================================
 // Entity::getShape
 //===========================================
 inline const Primitive& Entity::getShape() const {
+   if (!m_shape)
+      throw Exception("Error returning entity's shape; Entity does not have a shape", __FILE__, __LINE__);
+
    return *m_shape;
 }
 

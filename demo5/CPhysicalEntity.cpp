@@ -1,66 +1,69 @@
-#include "StopBlock.hpp"
+#include "CPhysicalEntity.hpp"
 
 
 using namespace Dodge;
 
 
 //===========================================
-// StopBlock::StopBlock
+// CPhysicalEntity::CPhysicalEntity
 //===========================================
-StopBlock::StopBlock(const XmlNode data)
+CPhysicalEntity::CPhysicalEntity(const XmlNode data)
    : Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      PhysicalEntity<Box2dPhysics>(data.nthChild(1)) {
 
    try {
-      XML_NODE_CHECK(data, StopBlock);
+      XML_NODE_CHECK(data, CPhysicalEntity);
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class StopBlock; ");
+      e.prepend("Error parsing XML for instance of class CPhysicalEntity; ");
    }
 }
 
 //===========================================
-// StopBlock::clone
+// CPhysicalEntity::clone
 //===========================================
-StopBlock* StopBlock::clone() const {
-   return new StopBlock(*this);
+CPhysicalEntity* CPhysicalEntity::clone() const {
+   return new CPhysicalEntity(*this);
 }
 
 //===========================================
-// StopBlock::addToWorld
+// CPhysicalEntity::addToWorld
 //===========================================
-void StopBlock::addToWorld() {
+void CPhysicalEntity::addToWorld() {
    PhysicalEntity<Box2dPhysics>::addToWorld();
+   Item::addToWorld();
 }
 
 //===========================================
-// StopBlock::removeFromWorld
+// CPhysicalEntity::removeFromWorld
 //===========================================
-void StopBlock::removeFromWorld() {
+void CPhysicalEntity::removeFromWorld() {
    PhysicalEntity<Box2dPhysics>::removeFromWorld();
+   Item::removeFromWorld();
 }
 
 //===========================================
-// StopBlock::update
+// CPhysicalEntity::update
 //===========================================
-void StopBlock::update() {
+void CPhysicalEntity::update() {
    PhysicalEntity<Box2dPhysics>::update();
+   Item::update();
 }
 
 //===========================================
-// StopBlock::draw
+// CPhysicalEntity::draw
 //===========================================
-void StopBlock::draw() const {
+void CPhysicalEntity::draw() const {
    PhysicalEntity<Box2dPhysics>::draw();
 }
 
 //===========================================
-// StopBlock::assignData
+// CPhysicalEntity::assignData
 //===========================================
-void StopBlock::assignData(const XmlNode data) {
+void CPhysicalEntity::assignData(const XmlNode data) {
    try {
-      XML_NODE_CHECK(data, StopBlock)
+      XML_NODE_CHECK(data, CPhysicalEntity)
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "Item") {
@@ -73,7 +76,7 @@ void StopBlock::assignData(const XmlNode data) {
       }
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class StopBlock; ");
+      e.prepend("Error parsing XML for instance of class CPhysicalEntity; ");
       throw;
    }
 }

@@ -14,12 +14,9 @@ identifies it. -->
    <assets>
       <!-- 'stopBlock' prototype -->
       <asset id="150">
-         <StopBlock>
+         <CPhysicalEntity>
             <Item>
                <Entity type="stopBlock" name="stopBlockProto" x="0.0" y="0.0" z="2" rot="0.0">
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
                   <shape>
                      <Polygon>
                         <Vec2f x="0" y="0"/>
@@ -28,6 +25,9 @@ identifies it. -->
                         <Vec2f x="0" y="0.1"/>
                      </Polygon>
                   </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
                   <children/>
                </Entity>
             </Item>
@@ -35,7 +35,7 @@ identifies it. -->
                <Entity/>
                <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
             </PhysicalEntity>
-         </StopBlock>
+         </CPhysicalEntity>
       </asset>
    </assets>
 </ASSETFILE>

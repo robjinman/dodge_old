@@ -135,6 +135,7 @@ void Player::snapToGridV(float32_t offset) {
 //===========================================
 void Player::addToWorld() {
    PhysicalSprite<Box2dPhysics>::addToWorld();
+   Item::addToWorld();
 }
 
 //===========================================
@@ -142,6 +143,7 @@ void Player::addToWorld() {
 //===========================================
 void Player::removeFromWorld() {
    PhysicalSprite<Box2dPhysics>::removeFromWorld();
+   Item::removeFromWorld();
 }
 
 //===========================================
@@ -151,6 +153,7 @@ void Player::update() {
    static long gravityRegionStr = internString("gravityRegion");
 
    PhysicalSprite<Box2dPhysics>::update();
+   Item::update();
 
    if (m_modeLockTimer.getTime() > m_modeLocked) {
       bool b = false;
@@ -158,9 +161,7 @@ void Player::update() {
       m_worldSpace.getEntities(Range(getBoundary()), vec);
       for (uint_t i = 0; i < vec.size(); ++i) {
          if (vec[i]->getTypeName() == gravityRegionStr) {
-            if (Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_footSensor, getTranslation_abs())
-               || Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_midSensor, getTranslation_abs())) {
-
+            if (Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_midSensor, getTranslation_abs())) {
                b = true;
                break;
             }
@@ -218,16 +219,7 @@ void Player::draw() const {
 //===========================================
 // Player::onEvent
 //===========================================
-void Player::onEvent(const EEvent* event) {
-   static long transFinishedStr = internString("transFinished");
-
-   if (event->getType() == transFinishedStr) {
-      if (numActiveTransformations() == 0 && m_mode == DIG_MODE) {
-//         snapToGridV();
-//         snapToGridH();
-      }
-   }
-}
+void Player::onEvent(const EEvent* event) {}
 
 //===========================================
 // Player::grounded
@@ -241,6 +233,7 @@ bool Player::grounded() const {
    for (uint_t i = 0; i < vec.size(); ++i) {
       if (vec[i].get() == this) continue;
       if (vec[i]->getTypeName() == gravityRegionStr) continue;
+      if (!vec[i]->hasShape()) continue;
 
       if (Math::overlap(m_footSensor, getTranslation_abs(), vec[i]->getShape(), vec[i]->getTranslation_abs()))
          return true;
@@ -315,10 +308,15 @@ bool Player::move(int dir) {
       if (numActiveTransformations() == 0) {
          playTransformation(plyrAnim);
 
+         Vec2f min = sensor->getMinimum();
+         Vec2f pos = getTranslation_abs() + min;
+         Range range(pos, sensor->getMaximum() - min);
+
          vector<pEntity_t> vec;
-         m_worldSpace.getEntities(getBoundary(), vec);
+         m_worldSpace.getEntities(range, vec);
          for (uint_t i = 0; i < vec.size(); ++i) {
             if (vec[i].get() == this) continue;
+            if (!vec[i]->hasShape()) continue;
 
             if (Math::overlap(*sensor, getTranslation_abs(), vec[i]->getShape(), vec[i]->getTranslation_abs())) {
                EEvent* event = new EEvent(eventType);
@@ -365,9 +363,36 @@ bool Player::move(int dir) {
             }
          }
          break;
-         case 1:
-            jump();
-            break;
+         case 1: {
+            bool b = false;
+            vector<pEntity_t> vec;
+            m_worldSpace.getEntities(Range(getBoundary()), vec);
+            for (uint_t i = 0; i < vec.size(); ++i) {
+               if (vec[i]->getTypeName() == gravityRegionStr) {
+                  if (!Math::contains(vec[i]->getShape(), vec[i]->getTranslation_abs(), m_headSensor, getTranslation_abs())) {
+                     b = true;
+                     break;
+                  }
+               }
+            }
+
+            if (b) {
+               m_mode = DIG_MODE;
+               makeStatic();
+
+               snapToGridV();
+               snapToGridH();
+
+               m_modeLocked = 0.2;
+               m_modeLockTimer.reset();
+
+               move(0);
+            }
+            else {
+               jump();
+            }
+         }
+         break;
          case 2: {
             bool b = false;
             vector<pEntity_t> vec;

@@ -34,8 +34,10 @@ class Application {
 
       void exitDefault();
 
-      boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto);
-      void loadAssets_r(const std::string& file);
+      boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto, bool addToWorld);
+      void loadAssets_r(const std::string& file, int depth = 0);
+      void loadMapSettings(const Dodge::XmlNode data);
+      void loadMap();
 
       void computeFrameRate();
 
@@ -52,6 +54,10 @@ class Application {
       std::map<long, pItem_t>    m_items;
       pPlayer_t                  m_player;
       Dodge::float32_t           m_frameRate;
+
+      Dodge::Colour m_bgColour;
+      Dodge::Vec2f m_mapSize;
+      long m_fillerTileId;
 };
 
 

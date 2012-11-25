@@ -84,6 +84,8 @@ Entity::Entity(const XmlNode data)
    PrimitiveFactory primitiveFactory;
 
    try {
+      setSilent(true);
+
       XML_NODE_CHECK(data, Entity);
 
       XmlAttribute attr = data.firstAttribute();
@@ -108,19 +110,42 @@ Entity::Entity(const XmlNode data)
 
       attr = attr.nextAttribute();
       XML_ATTR_CHECK(attr, rot);
-      m_rot = attr.getFloat();
+      float32_t rot = attr.getFloat();
 
       XmlNode node = data.firstChild();
+      if (!node.isNull() && node.name() == "shape") {
+         m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+         node = node.nextSibling();
+      }
+
+      m_rot = 0;
+      setRotation(rot);
+
       XML_NODE_CHECK(node, scale);
-      m_scale = Vec2f(node.firstChild());
+      m_scale = Vec2f(1.f, 1.f);
+      setScale(Vec2f(node.firstChild()));
 
       node = node.nextSibling();
-      XML_NODE_CHECK(node, shape);
-      m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      if (!node.isNull() && node.name() == "renderBrush") {
+         XmlAttribute attr = node.firstAttribute();
 
-      node = node.nextSibling();
+         if (!attr.isNull() && attr.name() == "ptr") {
+            long id = attr.getLong();
+
+            boost::shared_ptr<Renderer::Brush> brush = boost::dynamic_pointer_cast<Renderer::Brush>(assetManager.getAssetPointer(id));
+
+            if (!brush)
+               throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
+
+            m_renderBrush = brush;
+         }
+         else
+            m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush(node.firstChild()));
+
+         node = node.nextSibling();
+      }
+
       XML_NODE_CHECK(node, children);
-
       XmlNode node_ = node.firstChild();
       while (!node_.isNull() && node_.name() == "child") {
          XmlAttribute attr = node_.firstAttribute();
@@ -138,6 +163,8 @@ Entity::Entity(const XmlNode data)
 
          node_ = node_.nextSibling();
       }
+
+      setSilent(false);
 
       ++m_count;
    }
@@ -232,39 +259,73 @@ void Entity::assignData(const XmlNode data) {
    PrimitiveFactory primitiveFactory;
 
    try {
+      bool silent = isSilent();
+      setSilent(true);
+
       XmlAttribute attr = data.firstAttribute();
       if (!attr.isNull() && attr.name() == "type") {
          m_type = internString(attr.getString());
          attr = attr.nextAttribute();
       }
+
       if (!attr.isNull() && attr.name() == "name") {
          m_name = internString(attr.getString());
          attr = attr.nextAttribute();
       }
+
+      Vec2f transl = m_transl;
+
       if (!attr.isNull() && attr.name() == "x") {
-         m_transl.x = attr.getFloat();
+         transl.x = attr.getFloat();
          attr = attr.nextAttribute();
       }
+
       if (!attr.isNull() && attr.name() == "y") {
-         m_transl.y = attr.getFloat();
+         transl.y = attr.getFloat();
          attr = attr.nextAttribute();
       }
+
+      setTranslation(transl);
+
       if (!attr.isNull() && attr.name() == "z") {
          m_z = attr.getInt();
          attr = attr.nextAttribute();
       }
-      if (!attr.isNull() && attr.name() == "rot") {
-         m_rot = attr.getFloat();
-      }
+
       XmlNode node = data.firstChild();
-      if (!node.isNull() && node.name() == "scale") {
-         m_scale = Vec2f(node.firstChild());
-         node = node.nextSibling();
-      }
       if (!node.isNull() && node.name() == "shape") {
          m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
          node = node.nextSibling();
       }
+
+      if (!node.isNull() && node.name() == "scale") {
+         setScale(Vec2f(node.firstChild()));
+         node = node.nextSibling();
+      }
+
+      if (!attr.isNull() && attr.name() == "rot") {
+         setRotation(attr.getFloat());
+      }
+
+      if (!node.isNull() && node.name() == "renderBrush") {
+         XmlAttribute attr = node.firstAttribute();
+
+         if (!attr.isNull() && attr.name() == "ptr") {
+            long id = attr.getLong();
+
+            boost::shared_ptr<Renderer::Brush> brush = boost::dynamic_pointer_cast<Renderer::Brush>(assetManager.getAssetPointer(id));
+
+            if (!brush)
+               throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
+
+            m_renderBrush = brush;
+         }
+         else
+            m_renderBrush = boost::shared_ptr<Renderer::Brush>(new Renderer::Brush(node.firstChild()));
+
+         node = node.nextSibling();
+      }
+
       if (!node.isNull() && node.name() == "children") {
          XmlNode node_ = node.firstChild();
 
@@ -285,6 +346,8 @@ void Entity::assignData(const XmlNode data) {
             node_ = node_.nextSibling();
          }
       }
+
+      setSilent(silent);
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Entity; ");

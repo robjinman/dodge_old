@@ -15,7 +15,9 @@
 #include <boost/shared_ptr.hpp>
 #include "Colour.hpp"
 #include "../Camera.hpp"
+#include "../../Asset.hpp"
 #include "../../GL_CHECK.hpp"
+#include "../../xml/xml.hpp"
 #include "../../definitions.hpp"
 
 
@@ -42,15 +44,47 @@ class Renderer {
          NONTEXTURED_NONALPHA
       };
 
-      class Brush {
+      class Brush : virtual public Asset {
          public:
             Brush()
                : m_fillColour(1.f, 1.f, 1.f, 1.f), m_lineColour(0.f, 0.f, 0.f, 1.f), m_lineWidth(1) {}
+
+            Brush(const Brush& copy) {
+               m_fillColour = copy.m_fillColour;
+               m_lineColour = copy.m_lineColour;
+               m_lineWidth = copy.m_lineWidth;
+            }
 
             Brush(const Colour& fCol, const Colour& lCol, int_t lineW) {
                setFillColour(fCol);
                setLineColour(lCol);
                m_lineWidth = lineW;
+            }
+
+            Brush(const XmlNode data) {
+               try {
+                  XML_NODE_CHECK(data, RenderBrush);
+
+                  XmlNode node = data.firstChild();
+                  XML_NODE_CHECK(node, fillColour);
+                  m_fillColour = Colour(node.firstChild());
+
+                  node = node.nextSibling();
+                  XML_NODE_CHECK(node, lineColour);
+                  m_lineColour = Colour(node.firstChild());
+
+                  node = node.nextSibling();
+                  XML_NODE_CHECK(node, lineWidth);
+                  m_lineWidth = node.getInt();
+               }
+               catch (XmlException& e) {
+                  e.prepend("Error parsing XML for instance of type RenderBrush");
+                  throw;
+               }
+            }
+
+            virtual Brush* clone() const {
+               return new Brush(*this);
             }
 
             void setFillColour(const Colour& fCol) {
