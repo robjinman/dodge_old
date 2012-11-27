@@ -14,7 +14,7 @@
 #include "Animation.hpp"
 #include "Entity.hpp"
 #include "renderer/Texture.hpp"
-#include "Graphics2d.hpp"
+#include "renderer/Renderer.hpp"
 #include "Range.hpp"
 
 
@@ -29,9 +29,11 @@ class EntityAnimations {
          : m_entity(entity),
            m_texture(texture),
            m_texSection(),
-           m_activeAnim() {}
+           m_activeAnim() { init(); }
 
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
+
+      void init();
 
       virtual void assignData(const XmlNode data);
 
@@ -71,8 +73,9 @@ class EntityAnimations {
       Vec2f m_onScreenSize;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
+      Renderer::pModel_t m_model;
 
-      static Graphics2d m_graphics2d;
+      static Renderer m_renderer;
 };
 
 //===========================================

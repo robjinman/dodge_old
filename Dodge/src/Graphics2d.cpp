@@ -49,21 +49,9 @@ void Graphics2d::drawImage(const Texture& image, const Range& src, const Range& 
 
    float32_t w = dest.getSize().x;
    float32_t h = dest.getSize().y;
-
-   m_renderer.setMode(Renderer::TEXTURED_ALPHA);
-
    float32_t fZ = static_cast<float32_t>(z);
    float32_t imgW = image.getWidth();
    float32_t imgH = image.getHeight();
-
-   Renderer::vertexElement_t verts[] = {
-      w, 0.f, fZ,      // Bottom right
-      w, h, fZ,        // Top right
-      0.f, 0.f, fZ,    // Bottom left
-      w, h, fZ,        // Top right
-      0.f, h, fZ,      // Top left
-      0.f, 0.f, fZ     // Bottom left
-   };
 
    float32_t tX1 = src.getPosition().x / imgW;
    float32_t tX2 = (src.getPosition().x + src.getSize().x) / imgW;
@@ -74,33 +62,37 @@ void Graphics2d::drawImage(const Texture& image, const Range& src, const Range& 
    tY1 = 1.f - tY1;
    tY2 = 1.f - tY2;
 
-   Renderer::texCoordElement_t texCoords[] = {
-      tX2, tY1,  // Bottom right
-      tX2, tY2,  // Top right
-      tX1, tY1,  // Bottom left
-      tX2, tY2,  // Top right
-      tX1, tY2,  // Top left
-      tX1, tY1   // Bottom left
+   Renderer::vvvtt_t verts[] = {
+      {w,   0.0,  fZ,    tX2, tY1},
+      {w,   h,    fZ,    tX2, tY2},
+      {0.0, 0.0,  fZ,    tX1, tY1},
+      {w,   h,    fZ,    tX2, tY2},
+      {0.0, h,    fZ,    tX1, tY2},
+      {0.0, 0.0,  fZ,    tX1, tY1}
    };
+
+   boost::shared_ptr<Renderer::Model> model(new Renderer::Model(Renderer::TEXTURED_ALPHA, false));
+
+   model->primitiveType = Renderer::TRIANGLES;
+   model->texHandle = image.getHandle();
+   model->verts = new Renderer::vvvtt_t[6];
+   model->n = 6;
+
+   memcpy(model->verts, verts, 6 * sizeof(Renderer::vvvtt_t));
 
    matrix44f_c rotation;
    matrix44f_c translation;
-   matrix44f_c modelView;
+   matrix44f_c mv;
 
    // TODO: use pivot
    float32_t rads = DEG_TO_RAD(angle);
    matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
    matrix_translation(translation, dest.getPosition().x, dest.getPosition().y, 0.f);
-   modelView = translation * rotation;
+   mv = translation * rotation;
 
-   m_renderer.setMatrix(modelView.data());
-   m_renderer.setActiveTexture(image.getHandle());
-   m_renderer.setGeometry(verts, Renderer::TRIANGLES, 6);
-   m_renderer.setTextureCoords(texCoords, 6);
+   memcpy(model->matrix, mv.data(), 16 * sizeof(Renderer::matrixElement_t));
 
-//   setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
-   m_renderer.attachBrush(m_renderBrush);
-   m_renderer.render();
+   m_renderer.stageModel(model);
 }
 
 //===========================================

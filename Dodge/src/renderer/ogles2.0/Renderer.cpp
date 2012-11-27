@@ -20,21 +20,17 @@ namespace Dodge {
 
 map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds = map<Renderer::mode_t, GLint>();
 Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
-matrix44f_c Renderer::m_mv = matrix44f_c();
+bool Renderer::m_init = false;
+Renderer::SceneGraph Renderer::m_sceneGraph = Renderer::SceneGraph();
+boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
+boost::shared_ptr<RenderBrush> Renderer::m_brush = boost::shared_ptr<RenderBrush>(new RenderBrush);
 GLint Renderer::m_locPosition = -1;
 GLint Renderer::m_locColour = -1;
+GLint Renderer::m_locBUniColour = -1;
+GLint Renderer::m_locUniColour = -1;
 GLint Renderer::m_locTexCoord = -1;
-GLint Renderer::m_locMVP = -1;
-bool Renderer::m_init = false;
-bool Renderer::m_geometrySet = false;
-bool Renderer::m_coloursSet = false;
-bool Renderer::m_texCoordsSet = false;
-GLint Renderer::m_vertCount = -1;
-GLint Renderer::m_colCount = -1;
-GLint Renderer::m_texCoordCount = -1;
-GLint Renderer::m_primitiveType = GL_TRIANGLES;
-boost::shared_ptr<RenderBrush> Renderer::m_brush = boost::shared_ptr<RenderBrush>(new RenderBrush);
-boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
+GLint Renderer::m_locMV = -1;
+GLint Renderer::m_locP = -1;
 
 
 //===========================================
@@ -71,7 +67,7 @@ void Renderer::onWindowResize(int_t w, int_t h) {
 //===========================================
 void Renderer::setMode(mode_t mode) {
    if (!m_init)
-      throw Exception("Error setting render mode; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error setting render mode; Renderer not initialised", __FILE__, __LINE__);
 
    if (mode == m_mode) return;
 
@@ -80,12 +76,20 @@ void Renderer::setMode(mode_t mode) {
          map<mode_t, GLint>::iterator it = m_shaderProgIds.find(TEXTURED_ALPHA);
          assert(it != m_shaderProgIds.end());
 
+         GL_CHECK(glUseProgram(it->second));
+
          m_locPosition = GL_CHECK(glGetAttribLocation(it->second, "av4position"));
          m_locColour = GL_CHECK(glGetAttribLocation(it->second, "av4colour"));
          m_locTexCoord = GL_CHECK(glGetAttribLocation(it->second, "av2texcoord"));
-         m_locMVP = GL_CHECK(glGetUniformLocation(it->second, "mvp"));
 
-         GL_CHECK(glUseProgram(it->second));
+         m_locBUniColour = GL_CHECK(glGetUniformLocation(it->second, "bUniColour"));
+         m_locUniColour = GL_CHECK(glGetUniformLocation(it->second, "uniColour"));
+         m_locMV = GL_CHECK(glGetUniformLocation(it->second, "mv"));
+         m_locP = GL_CHECK(glGetUniformLocation(it->second, "p"));
+
+         GL_CHECK(glEnableVertexAttribArray(m_locPosition));
+         GL_CHECK(glEnableVertexAttribArray(m_locColour));
+         GL_CHECK(glEnableVertexAttribArray(m_locTexCoord));
 
          GL_CHECK(glEnable(GL_BLEND));
          GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -95,19 +99,25 @@ void Renderer::setMode(mode_t mode) {
          map<mode_t, GLint>::iterator it = m_shaderProgIds.find(NONTEXTURED_ALPHA);
          assert(it != m_shaderProgIds.end());
 
+         GL_CHECK(glUseProgram(it->second));
+
          m_locPosition = GL_CHECK(glGetAttribLocation(it->second, "av4position"));
          m_locColour = GL_CHECK(glGetAttribLocation(it->second, "av4colour"));
-         m_locTexCoord = -1;
-         m_locMVP = GL_CHECK(glGetUniformLocation(it->second, "mvp"));
 
-         GL_CHECK(glUseProgram(it->second));
+         m_locBUniColour = GL_CHECK(glGetUniformLocation(it->second, "bUniColour"));
+         m_locUniColour = GL_CHECK(glGetUniformLocation(it->second, "uniColour"));
+         m_locMV = GL_CHECK(glGetUniformLocation(it->second, "mv"));
+         m_locP = GL_CHECK(glGetUniformLocation(it->second, "p"));
+
+         GL_CHECK(glEnableVertexAttribArray(m_locPosition));
+         GL_CHECK(glEnableVertexAttribArray(m_locColour));
 
          GL_CHECK(glEnable(GL_BLEND));
          GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
       }
       break;
       default:
-         throw Exception("Could not set rendering mode; mode not supported", __FILE__, __LINE__);
+         throw Exception("Could not set rendering mode; Mode not supported", __FILE__, __LINE__);
    }
 
    m_mode = mode;
@@ -133,12 +143,20 @@ void Renderer::constructTexturedShaderProg() {
       "attribute vec4 av4position;                       \n"
       "attribute vec4 av4colour;                         \n"
       "attribute vec2 av2texcoord;                       \n"
-      "uniform mat4 mvp;                                 \n"
+      "uniform bool bUniColour;                          \n"
+      "uniform vec4 uniColour;                           \n"
+      "uniform mat4 mv;                                  \n"
+      "uniform mat4 p;                                   \n"
       "varying vec4 vv4colour;                           \n"
       "varying vec2 vv2texcoord;                         \n"
       "void main() {                                     \n"
-	   "   vv4colour = av4colour;                         \n"
-	   "   gl_Position = mvp * av4position;               \n"
+      "   if (bUniColour) {                              \n"
+      "      vv4colour = uniColour;                      \n"
+      "   }                                              \n"
+      "   else {                                         \n"
+	   "      vv4colour = av4colour;                      \n"
+      "   }                                              \n"
+	   "   gl_Position = p * mv * av4position;            \n"
       "   vv2texcoord = av2texcoord;                     \n"
       "}                                                 \n";
 
@@ -172,11 +190,19 @@ void Renderer::constructNonTexturedShaderProg() {
       "precision mediump float;                          \n"
       "attribute vec4 av4position;                       \n"
       "attribute vec4 av4colour;                         \n"
-      "uniform mat4 mvp;                                 \n"
+      "uniform bool bUniColour;                          \n"
+      "uniform vec4 uniColour;                           \n"
+      "uniform mat4 mv;                                  \n"
+      "uniform mat4 p;                                   \n"
       "varying vec4 vv4colour;                           \n"
       "void main() {                                     \n"
-	   "   vv4colour = av4colour;                         \n"
-	   "   gl_Position = mvp * av4position;               \n"
+      "   if (bUniColour) {                              \n"
+      "      vv4colour = uniColour;                      \n"
+      "   }                                              \n"
+      "   else {                                         \n"
+	   "      vv4colour = av4colour;                      \n"
+      "   }                                              \n"
+	   "   gl_Position = p * mv * av4position;            \n"
       "}                                                 \n";
 
    newShaderFromSource(vertShader, GL_VERTEX_SHADER, prog);
@@ -193,11 +219,6 @@ void Renderer::constructNonTexturedShaderProg() {
 
    GL_CHECK(glLinkProgram(prog));
    m_shaderProgIds[NONTEXTURED_ALPHA] = prog;
-
-   m_locPosition = GL_CHECK(glGetAttribLocation(prog, "av4position"));
-   m_locColour = GL_CHECK(glGetAttribLocation(prog, "av4colour"));
-   m_locTexCoord = -1;
-   m_locMVP = GL_CHECK(glGetUniformLocation(prog, "mvp"));
 }
 
 //===========================================
@@ -217,21 +238,9 @@ void Renderer::newShaderFromSource(const char** shaderSrc, GLint type, GLint pro
    GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
 
    if(success != GL_TRUE)
-      throw Exception("Could not process shader; error in source", __FILE__, __LINE__);
+      throw Exception("Could not process shader; Error in source", __FILE__, __LINE__);
 
    GL_CHECK(glAttachShader(prog, shader));
-}
-
-//===========================================
-// Renderer::setMatrix
-//===========================================
-void Renderer::setMatrix(const matrixElement_t* modelView) {
-   if (!m_init)
-      throw Exception("Error setting render matrix; renderer not initialised", __FILE__, __LINE__);
-
-   matrixf_c mv(modelView, 4, 4);
-   mv.transpose();
-   m_mv = mv;
 }
 
 //===========================================
@@ -239,7 +248,7 @@ void Renderer::setMatrix(const matrixElement_t* modelView) {
 //===========================================
 Renderer::textureHandle_t Renderer::newTexture(const textureData_t* texture, int_t width, int_t height) {
    if (!m_init)
-      throw Exception("Error creating texture; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error creating texture; Renderer not initialised", __FILE__, __LINE__);
 
    GLuint texId;
 
@@ -253,64 +262,64 @@ Renderer::textureHandle_t Renderer::newTexture(const textureData_t* texture, int
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-   return static_cast<textureHandle_t>(texId);
+   return texId;
 }
 
 //===========================================
-// Renderer::setActiveTexture
+// Renderer::stageModel
 //===========================================
-void Renderer::setActiveTexture(textureHandle_t texId) {
+void Renderer::stageModel(pModel_t model) {
    if (!m_init)
-      throw Exception("Error setting active texture; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error staging model for rendering; Renderer not initialised", __FILE__, __LINE__);
 
-   glBindTexture(GL_TEXTURE_2D, static_cast<textureHandle_t>(texId));
+   model->lineWidth = m_brush->getLineWidth();
+   if (!model->colData) {
+      if (model->primitiveType == LINES)
+         model->colour = m_brush->getLineColour();
+      else
+         model->colour = m_brush->getFillColour();
+   }
+
+   m_sceneGraph.insert(model);
 }
 
 //===========================================
-// Renderer::setGeometry
+// Renderer::bufferModel
 //===========================================
-void Renderer::setGeometry(const vertexElement_t* verts, primitive_t primitiveType, int_t count) {
+void Renderer::bufferModel(pModel_t model) {
    if (!m_init)
-      throw Exception("Error setting render geometry; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error constructing VBO; Renderer not initialised", __FILE__, __LINE__);
 
-   if (isSupportedPrimitive(primitiveType))
-      m_primitiveType = primitiveToGLType(primitiveType);
-   else
-      throw Exception("Error setting renderable geometry; primitive not supported", __FILE__, __LINE__);
+   GL_CHECK(glGenBuffers(1, &model->handle));
+   GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
 
-   GL_CHECK(glEnableVertexAttribArray(m_locPosition));
-   GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, 0, verts));
+   size_t vertSize = 0;
+   if (model->colData) {
+      switch (model->renderMode) {
+         case TEXTURED_ALPHA:       vertSize = sizeof(vvvttcccc_t);  break;
+         case NONTEXTURED_ALPHA:    vertSize = sizeof(vvvcccc_t);    break;
+         default:
+            throw Exception("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
+      }
+   }
+   else {
+      switch (model->renderMode) {
+         case TEXTURED_ALPHA:       vertSize = sizeof(vvvtt_t);  break;
+         case NONTEXTURED_ALPHA:    vertSize = sizeof(vvv_t);    break;
+         default:
+            throw Exception("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
+      }
+   }
 
-   m_vertCount = count;
-   m_geometrySet = true;
+   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->n * vertSize, model->verts, GL_STATIC_DRAW));
 }
 
 //===========================================
-// Renderer::setColours
+// Renderer::freeBufferedModel
 //===========================================
-void Renderer::setColours(const colourElement_t* colours, int_t count) {
-   if (!m_init)
-      throw Exception("Error setting render colours; renderer not initialised", __FILE__, __LINE__);
-
-   GL_CHECK(glEnableVertexAttribArray(m_locColour));
-   GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, 0, colours));
-
-   m_colCount = count;
-   m_coloursSet = true;
-}
-
-//===========================================
-// Renderer::setTextureCoords
-//===========================================
-void Renderer::setTextureCoords(const texCoordElement_t* texCoords, int_t count) {
-   if (!m_init)
-      throw Exception("Error setting texture coords; renderer not initialised", __FILE__, __LINE__);
-
-   GL_CHECK(glEnableVertexAttribArray(m_locTexCoord));
-   GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, texCoords));
-
-   m_texCoordCount = count;
-   m_texCoordsSet = true;
+void Renderer::freeBufferedModel(pModel_t model) {
+   GL_CHECK(glDeleteBuffers(1, &model->handle));
+   model->handle = 0;
 }
 
 //===========================================
@@ -318,62 +327,98 @@ void Renderer::setTextureCoords(const texCoordElement_t* texCoords, int_t count)
 //===========================================
 void Renderer::render() {
    if (!m_init)
-      throw Exception("Error rendering geometry; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error rendering geometry; Renderer not initialised", __FILE__, __LINE__);
 
-   if (!m_geometrySet)
-      throw Exception("Error rendering geometry; geometry not set", __FILE__, __LINE__);
+   for (SceneGraph::iterator i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
+      pModel_t model = *i;
 
-   if (m_coloursSet) {
-      if (m_colCount != m_vertCount)
-         throw Exception("Error rendering geometry; mismatch in array sizes", __FILE__, __LINE__);
-   }
-   else {
-      // Use colours from m_brush
+      if (model->verts == NULL) continue;
 
-      StackAllocator::marker_t marker = gMemStack.getMarker();
-      GLfloat* colours = static_cast<GLfloat*>(gMemStack.alloc(4 * m_vertCount * sizeof(GLfloat)));
+      setMode(model->renderMode);
 
-      const Colour* col;
-      if (m_primitiveType == LINES)
-         col = &m_brush->getLineColour();
-      else
-         col = &m_brush->getFillColour();
+      GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->matrix));
+      GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, m_camera->getMatrix().data()));
 
-      for (int_t i = 0; i < m_vertCount; ++i) {
-         colours[i * 4 + 0] = col->r;
-         colours[i * 4 + 1] = col->g;
-         colours[i * 4 + 2] = col->b;
-         colours[i * 4 + 3] = col->a;
+
+      // If model contains per-vertex colour data
+      if (model->colData) {
+         GL_CHECK(glUniform1i(m_locBUniColour, 0));
+         GL_CHECK(glEnableVertexAttribArray(m_locColour));
+      }
+      else {
+         GL_CHECK(glDisableVertexAttribArray(m_locColour));
+         GL_CHECK(glUniform1i(m_locBUniColour, 1));
+         GL_CHECK(glUniform4f(m_locUniColour, model->colour.r, model->colour.g, model->colour.b, model->colour.a));
       }
 
-      setColours(colours, m_vertCount);
 
-      gMemStack.freeToMarker(marker);
+      if (model->primitiveType == LINES) {
+         if (model->lineWidth != 0)
+            GL_CHECK(glLineWidth(model->lineWidth));
+      }
+
+
+      switch (model->renderMode) {
+         case TEXTURED_ALPHA: {
+            GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->texHandle));
+
+            vvvttcccc_t* verts = reinterpret_cast<vvvttcccc_t*>(model->verts);
+            int_t stride = model->colData ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
+
+            if (model->handle == 0) {
+               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
+               GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
+
+               if (model->colData)
+                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
+            }
+            else {
+               GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+
+               GLuint offset = 0;
+
+               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+               offset += 3 * sizeof(vertexElement_t);
+
+               GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+               offset += 2 * sizeof(texCoordElement_t);
+
+               if (model->colData)
+                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+            }
+         }
+         break;
+         case NONTEXTURED_ALPHA: {
+            vvvcccc_t* verts = reinterpret_cast<vvvcccc_t*>(model->verts);
+            int_t stride = model->colData ? sizeof(vvvcccc_t) : sizeof(vvv_t);
+
+            if (model->handle == 0) {
+               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
+
+               if (model->colData)
+                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
+            }
+            else {
+               GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+
+               GLuint offset = 0;
+
+               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+               offset += 3 * sizeof(vertexElement_t);
+
+               if (model->colData)
+                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+            }
+         }
+         break;
+         default:
+            throw Exception("Error rendering geometry; Render mode not supported", __FILE__, __LINE__);
+      }
+
+      GL_CHECK(glDrawArrays(primitiveToGLType(model->primitiveType), 0, model->n));
    }
 
-   if (m_texCoordsSet && (m_texCoordCount != m_vertCount))
-      throw Exception("Error rendering geometry; mismatch in array sizes", __FILE__, __LINE__);
-
-   if (m_primitiveType == LINES && m_brush->getLineWidth() == 0) return;
-
-   // Compute MVP matrix
-   matrixf_c P(m_camera->getMatrix().data(), 4, 4);
-   P.transpose();
-   matrix44f_c mvp = P * m_mv;
-
-   GL_CHECK(glUniformMatrix4fv(m_locMVP, 1, GL_FALSE, mvp.data()));
-
-   if (m_brush->getLineWidth() != 0)
-      GL_CHECK(glLineWidth(m_brush->getLineWidth()));
-
-   GL_CHECK(glDrawArrays(m_primitiveType, 0, m_vertCount));
-
-   // Supplying colour information is optional in all shaders
-//   GL_CHECK(glDisableVertexAttribArray(m_locColour));
-
-   m_geometrySet = false;
-   m_coloursSet = false;
-   m_texCoordsSet = false;
+   m_sceneGraph.clear();
 }
 
 //===========================================
@@ -381,7 +426,7 @@ void Renderer::render() {
 //===========================================
 void Renderer::clear() {
    if (!m_init)
-      throw Exception("Error clearing rendering surface; renderer not initialised", __FILE__, __LINE__);
+      throw Exception("Error clearing rendering surface; Renderer not initialised", __FILE__, __LINE__);
 
    GL_CHECK(glClearColor(m_brush->getFillColour().r, m_brush->getFillColour().g, m_brush->getFillColour().b, m_brush->getFillColour().a));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));

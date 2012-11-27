@@ -206,7 +206,7 @@ void Polygon::insertVertex(int idx, const Vec2f& vert) {
 //===========================================
 // Polygon::drawHollow
 //===========================================
-void Polygon::drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
+void Polygon::drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
    m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
 
    int n = m_nVerts;
@@ -237,13 +237,13 @@ void Polygon::drawHollow(float32_t x, float32_t y, int z, float32_t angle, const
 
       m_renderer.setGeometry(verts, Renderer::LINES, 2);
       m_renderer.render();
-   }
+   }*/
 }
 
 //===========================================
 // Polygon::drawSolid
 //===========================================
-void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
+void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
    if (m_children.size() == 0) {
       m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
       int n = m_nVerts;
@@ -291,20 +291,20 @@ void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const 
    else {
       for (uint_t i = 0; i < m_children.size(); ++i)
          m_children[i].draw(x, y, z, angle, pivot);
-   }
+   }*/
 }
 
 //===========================================
 // Polygon::draw
 //===========================================
-void Polygon::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
+void Polygon::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
    const RenderBrush& brush = m_renderer.getBrush();
 
    if (brush.getFillColour().a != 0.f)
       drawSolid(x, y, z, angle, pivot);
 
    if (brush.getLineColour().a != 0.f && brush.getLineWidth() > 0)
-      drawHollow(x, y, z, angle, pivot);
+      drawHollow(x, y, z, angle, pivot);*/
 }
 
 //===========================================

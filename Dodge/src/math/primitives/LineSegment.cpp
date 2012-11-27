@@ -77,49 +77,58 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
 // LineSegment::draw
 //===========================================
 void LineSegment::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-   m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
 
-   Renderer::vertexElement_t verts[] = {
-      x + m_p1.x, y + m_p1.y, static_cast<float32_t>(z),
-      x + m_p2.x, y + m_p2.y, static_cast<float32_t>(z)
+   Renderer::pModel_t model(new Renderer::Model(Renderer::NONTEXTURED_ALPHA, false));
+   model->primitiveType = Renderer::LINES;
+   model->verts = new Renderer::vvv_t[2];
+   model->n = 2;
+
+   Vec2f p1 = Vec2f(x, y) + m_p1;
+   Vec2f p2 = Vec2f(x, y) + m_p2;
+
+   p1.rotate(pivot, angle);
+   p2.rotate(pivot, angle);
+
+   Renderer::vvv_t verts[] = {
+      {p1.x, p1.y, static_cast<float32_t>(z)},
+      {p2.x, p2.y, static_cast<float32_t>(z)}
    };
 
-   matrix44f_c mv;
-   identity_transform(mv);
+   memcpy(model->verts, verts, 2 * sizeof(Renderer::vvv_t));
 
-   m_renderer.setMatrix(mv.data());
-   m_renderer.setGeometry(verts, Renderer::LINES, 2);
-   m_renderer.render();
+   m_renderer.stageModel(model);
 }
 
 //===========================================
 // LineSegment::getMinimum
 //===========================================
 Vec2f LineSegment::getMinimum() const {
-   // TODO
-   return Vec2f(0.f, 0.f);
+   return Vec2f(m_p1.x < m_p2.x ? m_p1.x : m_p2.x, m_p1.y < m_p2.y ? m_p1.y : m_p2.y);
 }
 
 //===========================================
 // LineSegment::getMaximum
 //===========================================
 Vec2f LineSegment::getMaximum() const {
-   // TODO
-   return Vec2f(0.f, 0.f);
+   return Vec2f(m_p1.x > m_p2.x ? m_p1.x : m_p2.x, m_p1.y > m_p2.y ? m_p1.y : m_p2.y);
 }
 
 //===========================================
 // LineSegment::rotate
 //===========================================
 void LineSegment::rotate(float32_t rads, const Vec2f& pivot) {
-   // TODO
+   m_p1.rotate(pivot, rads);
+   m_p2.rotate(pivot, rads);
 }
 
 //===========================================
 // LineSegment::scale
 //===========================================
 void LineSegment::scale(const Vec2f& sv) {
-   // TODO
+   m_p1.x *= sv.x;
+   m_p1.y *= sv.y;
+   m_p2.x *= sv.x;
+   m_p2.y *= sv.y;
 }
 
 

@@ -310,11 +310,12 @@ void Application::deletePending(EEvent* event) {
 // Application::draw
 //===========================================
 void Application::draw() {
-   m_graphics2d.clear(m_bgColour);
+   Renderer renderer;
+   renderer.clear();
 
 #ifdef DEBUG
    if (dbg_flags & DBG_DRAW_WORLDSPACE) {
-      m_graphics2d.setLineWidth(1);
+      m_graphics2d.setLineWidth(2);
       m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
       m_worldSpace.dbg_draw(5);
    }
@@ -419,6 +420,7 @@ void Application::begin() {
 
    loadMap();
 
+   Renderer renderer;
    while (1) {
       m_win.doEvents();
       keyboard();
@@ -427,6 +429,8 @@ void Application::begin() {
       m_eventManager.doEvents();
 
       draw();
+
+      renderer.render();
       m_win.swapBuffers();
 
       computeFrameRate();
