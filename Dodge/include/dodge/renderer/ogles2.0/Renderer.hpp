@@ -12,12 +12,16 @@
 #include <set>
 #include <map>
 #include <cstring>
+#include <mutex>
+#include <thread>
+#include <atomic>
 #include <boost/shared_ptr.hpp>
+#include <boost/variant.hpp>
 #include "Colour.hpp"
+#include "../../WinIO.hpp"
 #include "../RenderBrush.hpp"
 #include "../Camera.hpp"
 #include "../../Asset.hpp"
-#include "../../GL_CHECK.hpp"
 #include "../../xml/xml.hpp"
 #include "../../definitions.hpp"
 
@@ -42,6 +46,7 @@ class Renderer {
          UNDEFINED,
          TEXTURED_ALPHA,
          NONTEXTURED_ALPHA
+         // ...
       };
 
       enum primitive_t {
@@ -104,6 +109,9 @@ class Renderer {
                  renderMode(kind),
                  colData(perVertexColours) {}
 
+            void unlock() const { m_mutex.unlock(); }
+            void lock() const { m_mutex.lock(); }
+
             primitive_t primitiveType;
             void* verts;
             int_t n;
@@ -134,29 +142,46 @@ class Renderer {
 
             Colour colour;
             int_t lineWidth;
+
+            mutable std::mutex m_mutex;
       };
 
       typedef boost::shared_ptr<Model> pModel_t;
 
-      void init(const char* optsFile = NULL);
-
-      textureHandle_t newTexture(const textureData_t* texture, int_t width, int_t height);
+      void setBgColour(const Colour& col);
 
       inline void attachCamera(boost::shared_ptr<Camera> camera);
-      inline const Camera& getCamera() const;
+      inline Camera& getCamera() const;
 
       inline void attachBrush(boost::shared_ptr<RenderBrush> brush);
-      inline const RenderBrush& getBrush() const;
+      inline RenderBrush& getBrush() const;
 
       void onWindowResize(int_t w, int_t h);
+      void newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
 
       void bufferModel(pModel_t model);
       void freeBufferedModel(pModel_t model);
 
-      void stageModel(pModel_t model);
-      void render();
+      void stageModel(const pModel_t model);
+      void unStageModel(const pModel_t model);
+#ifdef DEBUG
+      inline long getFrameRate() const;
+#endif
+      void start();
+      void stop();
 
-      void clear();
+      void checkForErrors();
+
+      enum exceptionType_t {
+         UNKNOWN_EXCEPTION,
+         RENDERER_EXCEPTION
+         // ...
+      };
+
+      struct exceptionWrapper_t {
+         exceptionType_t type;
+         void* data;
+      };
 
    private:
 
@@ -204,14 +229,63 @@ class Renderer {
             container_t m_container;
       };
 
+      typedef enum {
+         MSG_TEX_HANDLE_REQ,
+         MSG_VP_RESIZE_REQ,
+         MSG_CONSTRUCT_VBO
+         // ...
+      } msgType_t;
+
+      struct msgTexHandleReq_t {
+         const textureData_t* texData;
+         int_t w;
+         int_t h;
+
+         textureHandle_t* retVal;
+      };
+
+      struct msgVpResizeReq_t {
+         int_t w;
+         int_t h;
+      };
+
+      struct msgConstructVbo_t {
+         pModel_t model;
+      };
+
+      typedef boost::variant<
+         msgTexHandleReq_t,
+         msgVpResizeReq_t,
+         msgConstructVbo_t
+         // ...
+      > msgData_t;
+
+      struct Message {
+         Message(msgType_t type_, msgData_t data_)
+            : type(type_), data(data_) {}
+
+         msgType_t type;
+         msgData_t data;
+      };
+
+      static void renderLoop();
+
+      void init();
+      void clear();
       void setMode(mode_t mode);
       void constructShaderProgs();
       void constructTexturedShaderProg();
       void constructNonTexturedShaderProg();
       inline bool isSupportedPrimitive(primitive_t primitiveType) const;
-      inline GLint primitiveToGLType(primitive_t primitiveType) const;
-
+      GLint primitiveToGLType(primitive_t primitiveType) const;
       void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
+      void processMsg(const Message& msg);
+      textureHandle_t loadTexture(const textureData_t* texture, int_t w, int_t h);
+      void constructVBO(pModel_t model);
+      void queueMsg(Message msg);
+#ifdef DEBUG
+      void computeFrameRate();
+#endif
 
       static std::map<mode_t, GLint> m_shaderProgIds;
 
@@ -223,13 +297,45 @@ class Renderer {
       static GLint m_locMV;
       static GLint m_locP;
 
-      static bool m_init;
+      static std::atomic<bool> m_init;
       static mode_t m_mode;
 
       static SceneGraph m_sceneGraph;
+      static std::mutex m_sceneGraphMutex;
+
       static boost::shared_ptr<RenderBrush> m_brush;
+      static std::mutex m_brushMutex;
+
       static boost::shared_ptr<Camera> m_camera;
+      static std::mutex m_cameraMutex;
+
+      static std::atomic<bool> m_running;
+      static std::thread* m_thread;
+
+      static std::vector<Message> m_msgQueue;
+      static std::mutex m_msgQueueMutex;
+
+      static std::atomic<bool> m_msgQueueEmpty;
+
+      static Colour m_bgColour;
+      static std::mutex m_bgColourMutex;
+
+      static exceptionWrapper_t m_exception;
+      static std::atomic<bool> m_errorPending;
+
+#ifdef DEBUG
+      static std::atomic<long> m_frameRate;
+#endif
 };
+
+#ifdef DEBUG
+//===========================================
+// Renderer::getFrameRate
+//===========================================
+inline long Renderer::getFrameRate() const {
+   return m_frameRate;
+}
+#endif
 
 //===========================================
 // Renderer::isSupportedPrimitive
@@ -239,43 +345,43 @@ inline bool Renderer::isSupportedPrimitive(primitive_t primitiveType) const {
 }
 
 //===========================================
-// Renderer::primitiveToGLType
-//===========================================
-inline GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
-   switch (primitiveType) {
-      case TRIANGLES: return GL_TRIANGLES;
-      case LINES: return GL_LINES;
-      default:
-         throw Exception("Primitive not supported", __FILE__, __LINE__);
-   }
-}
-
-//===========================================
 // Renderer::attachCamera
 //===========================================
 inline void Renderer::attachCamera(boost::shared_ptr<Camera> camera) {
+   m_cameraMutex.lock();
    m_camera = camera;
+   m_cameraMutex.unlock();
 }
 
 //===========================================
 // Renderer::getCamera
 //===========================================
-inline const Camera& Renderer::getCamera() const {
-   return *m_camera;
+inline Camera& Renderer::getCamera() const {
+   m_cameraMutex.lock();
+   Camera& cpy = *m_camera;
+   m_cameraMutex.unlock();
+
+   return cpy;
 }
 
 //===========================================
 // Renderer::attachBrush
 //===========================================
 inline void Renderer::attachBrush(boost::shared_ptr<RenderBrush> brush) {
+   m_brushMutex.lock();
    m_brush = brush;
+   m_brushMutex.unlock();
 }
 
 //===========================================
 // Renderer::getBrush
 //===========================================
-inline const RenderBrush& Renderer::getBrush() const {
-   return *m_brush;
+inline RenderBrush& Renderer::getBrush() const {
+   m_brushMutex.lock();
+   RenderBrush& cpy = *m_brush;
+   m_brushMutex.unlock();
+
+   return cpy;
 }
 
 

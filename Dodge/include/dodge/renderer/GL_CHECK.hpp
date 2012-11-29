@@ -8,7 +8,7 @@
 
 
 #include <sstream>
-#include "Exception.hpp"
+#include "RendererException.hpp"
 
 
 #define GL_CHECK(x) \
@@ -18,7 +18,7 @@
       if(glError != GL_NO_ERROR) { \
          std::stringstream msg; \
          msg << "Program received OpenGL error (code = 0x" << std::hex << glError << ")"; \
-         throw Exception(msg.str(), __FILE__, __LINE__); \
+         throw RendererException(msg.str(), __FILE__, __LINE__); \
       } \
    }
 

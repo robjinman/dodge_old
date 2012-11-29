@@ -21,7 +21,6 @@
 #include "EntityPhysics.hpp"
 #include "EventManager.hpp"
 #include "Exception.hpp"
-#include "GL_CHECK.hpp"
 #include "globals.hpp"
 #include "Graphics2d.hpp"
 #include "math/math.hpp"

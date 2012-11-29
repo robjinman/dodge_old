@@ -59,7 +59,7 @@ void Texture::constructTexture(const char* file) {
    PNG_CHECK(png_close_file(&m_png));
 
    Renderer renderer;
-   m_handle = renderer.newTexture(m_data, m_png.width, m_png.height);
+   renderer.newTexture(m_data, m_png.width, m_png.height, &m_handle);
 }
 
 //===========================================

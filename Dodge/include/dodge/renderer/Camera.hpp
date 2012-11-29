@@ -2,6 +2,7 @@
 #define __CAMERA_HPP__
 
 
+#include <mutex>
 #include <boost/shared_ptr.hpp>
 #include <cml/cml.h>
 #include "../definitions.hpp"
@@ -26,13 +27,15 @@ class Camera {
       inline void translate_x(float32_t dx);
       inline void translate_y(float32_t dy);
 
-      inline const cml::matrix44f_c& getMatrix() const;
+      inline void getMatrix(cml::matrix44f_c& matrix) const;
       Vec2f getTranslation() const;
-      inline const Vec2f& getViewSize() const;
+      inline Vec2f getViewSize() const;
 
    private:
       cml::matrix44f_c m_matrix;
       Vec2f m_viewSize;
+
+      mutable std::mutex m_mutex;
 };
 
 typedef boost::shared_ptr<Camera> pCamera_t;
@@ -55,36 +58,48 @@ inline void Camera::translate(const Vec2f& ds) {
 // Camera::translate
 //===========================================
 inline void Camera::translate(float32_t dx, float32_t dy) {
+   m_mutex.lock();
    m_matrix.data()[12] -= dx;
    m_matrix.data()[13] -= dy;
+   m_mutex.unlock();
 }
 
 //===========================================
 // Camera::translate_x
 //===========================================
 inline void Camera::translate_x(float32_t dx) {
+   m_mutex.lock();
    m_matrix.data()[12] -= dx;
+   m_mutex.unlock();
 }
 
 //===========================================
 // Camera::translate_y
 //===========================================
 inline void Camera::translate_y(float32_t dy) {
+   m_mutex.lock();
    m_matrix.data()[13] -= dy;
+   m_mutex.unlock();
 }
 
 //===========================================
 // Camera::getMatrix
 //===========================================
-inline const cml::matrix44f_c& Camera::getMatrix() const {
-   return m_matrix;
+inline void Camera::getMatrix(cml::matrix44f_c& matrix) const {
+   m_mutex.lock();
+   matrix = m_matrix;
+   m_mutex.unlock();
 }
 
 //===========================================
 // Camera::getViewSize
 //===========================================
-inline const Vec2f& Camera::getViewSize() const {
-   return m_viewSize;
+inline Vec2f Camera::getViewSize() const {
+   m_mutex.lock();
+   Vec2f cpy = m_viewSize;
+   m_mutex.unlock();
+
+   return cpy;
 }
 
 

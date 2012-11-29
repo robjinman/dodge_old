@@ -23,6 +23,8 @@ namespace Dodge {
 
 
 class WinIO {
+   friend class Renderer;
+
    public:
       enum keyCode_t {
          KEY_BACKSPACE = 65288,
@@ -154,6 +156,13 @@ class WinIO {
       void swapBuffers();
 
    private:
+      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr); // TODO: why is this static?
+
+      Window createXWindow(const char* title, int width, int height, Display* display,
+         EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual);
+
+      void createGLContext();
+
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;
       static callbackMap_t m_callbacks;
@@ -166,14 +175,10 @@ class WinIO {
       static Colormap m_colorMap;
       static XVisualInfo* m_pVisual;
 
+      static EGLConfig m_eglConfig;
       static EGLDisplay m_eglDisplay;
       static EGLContext m_eglContext;
       static EGLSurface m_eglSurface;
-
-      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr);
-
-      Window createXWindow(const char* title, int width, int height, Display* display,
-         EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual);
 
       static bool m_init;
 };

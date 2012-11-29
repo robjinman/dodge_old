@@ -23,6 +23,7 @@ XVisualInfo* WinIO::m_pVisual = NULL;
 EGLDisplay WinIO::m_eglDisplay = EGLDisplay();
 EGLContext WinIO::m_eglContext = EGLContext();
 EGLSurface WinIO::m_eglSurface = EGLSurface();
+EGLConfig WinIO::m_eglConfig = EGLConfig();
 
 WinIO::callbackMap_t WinIO::m_callbacks = WinIO::callbackMap_t();
 int WinIO::m_width = 0;
@@ -39,6 +40,8 @@ bool WinIO::m_init = false;
 void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    if (fullscreen) throw Exception("Fullscreen mode not supported", __FILE__, __LINE__);
 
+   XInitThreads();
+
    m_width = w;
    m_height = h;
 
@@ -50,12 +53,6 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
       EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,  // For OpenGLES1.x, set to EGL_OPENGL_ES_BIT
       EGL_NONE
    };
-   EGLint aEGLContextAttributes[] = {
-      EGL_CONTEXT_CLIENT_VERSION, 2,            // For OpenGLES1.x, set to 1
-      EGL_NONE
-   };
-   EGLConfig eglConfig[1];
-   EGLint nConfigs;
 
    m_display = XOpenDisplay(NULL);
    if (m_display == NULL)
@@ -63,9 +60,11 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
 
    m_eglDisplay = EGL_CHECK(eglGetDisplay(m_display));
    EGL_CHECK(eglInitialize(m_eglDisplay, NULL, NULL));
-   EGL_CHECK(eglChooseConfig(m_eglDisplay, aEGLAttributes, eglConfig, 1, &nConfigs));
 
-   m_win = createXWindow(winTitle.data(), w, h, m_display, m_eglDisplay, eglConfig[0], &m_colorMap, &m_pVisual);
+   EGLint nConfigs;
+   EGL_CHECK(eglChooseConfig(m_eglDisplay, aEGLAttributes, &m_eglConfig, 1, &nConfigs));
+
+   m_win = createXWindow(winTitle.data(), w, h, m_display, m_eglDisplay, m_eglConfig, &m_colorMap, &m_pVisual);
    if (!m_win) {
       eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
       eglTerminate(m_eglDisplay);
@@ -79,15 +78,26 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    Atom wmDelete = XInternAtom(m_display, "WM_DELETE_WINDOW", True);
    XSetWMProtocols(m_display, m_win, &wmDelete, 1);
 
-   m_eglSurface = EGL_CHECK(eglCreateWindowSurface(m_eglDisplay, eglConfig[0], m_win, 0));
-   m_eglContext = EGL_CHECK(eglCreateContext(m_eglDisplay, eglConfig[0], EGL_NO_CONTEXT, aEGLContextAttributes));
-   EGL_CHECK(eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext));
+   m_eglSurface = EGL_CHECK(eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_win, 0));
 
    // No VSync
    XSynchronize(m_display, False);
    eglSwapInterval(m_eglDisplay, 0);
 
    m_init = true;
+}
+
+//===========================================
+// WinIO::createGLContext
+//===========================================
+void WinIO::createGLContext() {
+   EGLint aEGLContextAttributes[] = {
+      EGL_CONTEXT_CLIENT_VERSION, 2,            // For OpenGLES1.x, set to 1
+      EGL_NONE
+   };
+
+   m_eglContext = EGL_CHECK(eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, aEGLContextAttributes));
+   EGL_CHECK(eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext));
 }
 
 //===========================================

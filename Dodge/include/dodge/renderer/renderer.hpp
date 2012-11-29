@@ -6,6 +6,8 @@
 #include "Camera.hpp"
 #include "Colour.hpp"
 #include "Font.hpp"
+#include "GL_CHECK.hpp"
 #include "RenderBrush.hpp"
 #include "Renderer.hpp"
+#include "RendererException.hpp"
 #include "Texture.hpp"

@@ -6,9 +6,10 @@
 #include <fstream>
 #include <cstdlib>
 #include <cassert>
-#include <Exception.hpp>
 #include <renderer/ogles2.0/Renderer.hpp>
-#include <globals.hpp>
+#include <renderer/RendererException.hpp>
+#include <renderer/GL_CHECK.hpp>
+#include <Timer.hpp>
 
 
 using namespace cml;
@@ -18,12 +19,15 @@ using namespace std;
 namespace Dodge {
 
 
-map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds = map<Renderer::mode_t, GLint>();
+atomic<bool> Renderer::m_running(false);
+map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds;;
 Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
-bool Renderer::m_init = false;
-Renderer::SceneGraph Renderer::m_sceneGraph = Renderer::SceneGraph();
+Renderer::SceneGraph Renderer::m_sceneGraph;
+mutex Renderer::m_sceneGraphMutex;
 boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
+mutex Renderer::m_cameraMutex;
 boost::shared_ptr<RenderBrush> Renderer::m_brush = boost::shared_ptr<RenderBrush>(new RenderBrush);
+mutex Renderer::m_brushMutex;
 GLint Renderer::m_locPosition = -1;
 GLint Renderer::m_locColour = -1;
 GLint Renderer::m_locBUniColour = -1;
@@ -31,44 +35,85 @@ GLint Renderer::m_locUniColour = -1;
 GLint Renderer::m_locTexCoord = -1;
 GLint Renderer::m_locMV = -1;
 GLint Renderer::m_locP = -1;
+thread* Renderer::m_thread = NULL;
+std::vector<Renderer::Message> Renderer::m_msgQueue;;
+mutex Renderer::m_msgQueueMutex;
+atomic<bool> Renderer::m_msgQueueEmpty(true);
+Colour Renderer::m_bgColour;
+mutex Renderer::m_bgColourMutex;
+Renderer::exceptionWrapper_t Renderer::m_exception = { UNKNOWN_EXCEPTION, NULL };
+atomic<bool> Renderer::m_errorPending(false);
+#ifdef DEBUG
+atomic<long> Renderer::m_frameRate(0);
+#endif
 
 
 //===========================================
 // Renderer::init
 //===========================================
-void Renderer::init(const char* optsFile) {
-   if (m_init) return;
-   m_init = true;
+void Renderer::init() {
+   GL_CHECK(glFrontFace(GL_CCW));
+   GL_CHECK(glEnable(GL_CULL_FACE));
+   GL_CHECK(glEnable(GL_DEPTH_TEST));
+   GL_CHECK(glEnable(GL_STENCIL_TEST));
 
-   try {
-      GL_CHECK(glFrontFace(GL_CCW));
-      GL_CHECK(glEnable(GL_CULL_FACE));
-      GL_CHECK(glEnable(GL_DEPTH_TEST));
-      GL_CHECK(glEnable(GL_STENCIL_TEST));
+   constructShaderProgs();
+   setMode(TEXTURED_ALPHA);
+}
 
-      constructShaderProgs();
-      setMode(TEXTURED_ALPHA);
-   }
-   catch (...) {
-      m_init = false;
-      throw;
+//===========================================
+// Renderer::start
+//===========================================
+void Renderer::start() {
+   if (!m_thread) {
+      m_running = true;
+      m_thread = new thread(Renderer::renderLoop);
    }
 }
 
 //===========================================
-// Renderer::onWindowResize
+// Renderer::stop
 //===========================================
-void Renderer::onWindowResize(int_t w, int_t h) {
-   GL_CHECK(glViewport(0, 0, w, h));
+void Renderer::stop() {
+   m_running = false;
+   m_thread->join();
+   delete m_thread;
+   m_thread = NULL;
+}
+
+//===========================================
+// Renderer::checkForErrors
+//===========================================
+void Renderer::checkForErrors() {
+   if (m_errorPending) {
+      switch (m_exception.type) {
+         case RENDERER_EXCEPTION: {
+            RendererException* ptr = reinterpret_cast<RendererException*>(m_exception.data);
+            throw *ptr;
+         }
+         break;
+         default:
+            throw RendererException("An unknown error occured", __FILE__, __LINE__);
+      }
+   }
+}
+
+//===========================================
+// Renderer::primitiveToGLType
+//===========================================
+GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
+   switch (primitiveType) {
+      case TRIANGLES: return GL_TRIANGLES;
+      case LINES: return GL_LINES;
+      default:
+         throw RendererException("Primitive type not supported", __FILE__, __LINE__);
+   }
 }
 
 //===========================================
 // Renderer::setMode
 //===========================================
 void Renderer::setMode(mode_t mode) {
-   if (!m_init)
-      throw Exception("Error setting render mode; Renderer not initialised", __FILE__, __LINE__);
-
    if (mode == m_mode) return;
 
    switch (mode) {
@@ -117,7 +162,7 @@ void Renderer::setMode(mode_t mode) {
       }
       break;
       default:
-         throw Exception("Could not set rendering mode; Mode not supported", __FILE__, __LINE__);
+         throw RendererException("Could not set rendering mode; Mode not supported", __FILE__, __LINE__);
    }
 
    m_mode = mode;
@@ -154,9 +199,9 @@ void Renderer::constructTexturedShaderProg() {
       "      vv4colour = uniColour;                      \n"
       "   }                                              \n"
       "   else {                                         \n"
-	   "      vv4colour = av4colour;                      \n"
+      "      vv4colour = av4colour;                      \n"
       "   }                                              \n"
-	   "   gl_Position = p * mv * av4position;            \n"
+      "   gl_Position = p * mv * av4position;            \n"
       "   vv2texcoord = av2texcoord;                     \n"
       "}                                                 \n";
 
@@ -200,9 +245,9 @@ void Renderer::constructNonTexturedShaderProg() {
       "      vv4colour = uniColour;                      \n"
       "   }                                              \n"
       "   else {                                         \n"
-	   "      vv4colour = av4colour;                      \n"
+      "      vv4colour = av4colour;                      \n"
       "   }                                              \n"
-	   "   gl_Position = p * mv * av4position;            \n"
+      "   gl_Position = p * mv * av4position;            \n"
       "}                                                 \n";
 
    newShaderFromSource(vertShader, GL_VERTEX_SHADER, prog);
@@ -238,18 +283,15 @@ void Renderer::newShaderFromSource(const char** shaderSrc, GLint type, GLint pro
    GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
 
    if(success != GL_TRUE)
-      throw Exception("Could not process shader; Error in source", __FILE__, __LINE__);
+      throw RendererException("Could not process shader; Error in source", __FILE__, __LINE__);
 
    GL_CHECK(glAttachShader(prog, shader));
 }
 
 //===========================================
-// Renderer::newTexture
+// Renderer::loadTexture
 //===========================================
-Renderer::textureHandle_t Renderer::newTexture(const textureData_t* texture, int_t width, int_t height) {
-   if (!m_init)
-      throw Exception("Error creating texture; Renderer not initialised", __FILE__, __LINE__);
-
+Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height) {
    GLuint texId;
 
    GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
@@ -269,8 +311,11 @@ Renderer::textureHandle_t Renderer::newTexture(const textureData_t* texture, int
 // Renderer::stageModel
 //===========================================
 void Renderer::stageModel(pModel_t model) {
-   if (!m_init)
-      throw Exception("Error staging model for rendering; Renderer not initialised", __FILE__, __LINE__);
+   if (!m_running)
+      throw RendererException("Error staging model; Renderer not running", __FILE__, __LINE__);
+
+   model->lock();
+   m_brushMutex.lock();
 
    model->lineWidth = m_brush->getLineWidth();
    if (!model->colData) {
@@ -280,15 +325,28 @@ void Renderer::stageModel(pModel_t model) {
          model->colour = m_brush->getFillColour();
    }
 
+   m_brushMutex.unlock();
+   model->unlock();
+
+   m_sceneGraphMutex.lock();
    m_sceneGraph.insert(model);
+   m_sceneGraphMutex.unlock();
 }
 
 //===========================================
-// Renderer::bufferModel
+// Renderer::setBgColour
 //===========================================
-void Renderer::bufferModel(pModel_t model) {
-   if (!m_init)
-      throw Exception("Error constructing VBO; Renderer not initialised", __FILE__, __LINE__);
+void Renderer::setBgColour(const Colour& col) {
+   m_bgColourMutex.lock();
+   m_bgColour = col;
+   m_bgColourMutex.unlock();
+}
+
+//===========================================
+// Renderer::constructVBO
+//===========================================
+void Renderer::constructVBO(pModel_t model) {
+   model->lock();
 
    GL_CHECK(glGenBuffers(1, &model->handle));
    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
@@ -299,7 +357,7 @@ void Renderer::bufferModel(pModel_t model) {
          case TEXTURED_ALPHA:       vertSize = sizeof(vvvttcccc_t);  break;
          case NONTEXTURED_ALPHA:    vertSize = sizeof(vvvcccc_t);    break;
          default:
-            throw Exception("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
+            throw RendererException("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
       }
    }
    else {
@@ -307,128 +365,270 @@ void Renderer::bufferModel(pModel_t model) {
          case TEXTURED_ALPHA:       vertSize = sizeof(vvvtt_t);  break;
          case NONTEXTURED_ALPHA:    vertSize = sizeof(vvv_t);    break;
          default:
-            throw Exception("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
+            throw RendererException("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
       }
    }
 
    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->n * vertSize, model->verts, GL_STATIC_DRAW));
+
+   model->unlock();
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(pModel_t model) {
+   model->lock();
+
    GL_CHECK(glDeleteBuffers(1, &model->handle));
    model->handle = 0;
+
+   model->unlock();
 }
 
 //===========================================
-// Renderer::render
+// Renderer::queueMsg
 //===========================================
-void Renderer::render() {
-   if (!m_init)
-      throw Exception("Error rendering geometry; Renderer not initialised", __FILE__, __LINE__);
+void Renderer::queueMsg(Message msg) {
+   m_msgQueueMutex.lock();
 
-   for (SceneGraph::iterator i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
-      pModel_t model = *i;
+   m_msgQueueEmpty = false;
+   m_msgQueue.push_back(msg);
 
-      if (model->verts == NULL) continue;
+   m_msgQueueMutex.unlock();
+}
 
-      setMode(model->renderMode);
+//===========================================
+// Renderer::newTexture
+//===========================================
+void Renderer::newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
+   msgTexHandleReq_t data = { texture, width, height, handle };
+   queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
 
-      GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->matrix));
-      GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, m_camera->getMatrix().data()));
+   // Hang until message is processed
+   while (!m_msgQueueEmpty) { if (m_errorPending) break; }
+}
 
+//===========================================
+// Renderer::bufferModel
+//===========================================
+void Renderer::bufferModel(pModel_t model) {
+   msgConstructVbo_t data = { model };
+   queueMsg(Message(MSG_CONSTRUCT_VBO, data));
+}
 
-      // If model contains per-vertex colour data
-      if (model->colData) {
-         GL_CHECK(glUniform1i(m_locBUniColour, 0));
-         GL_CHECK(glEnableVertexAttribArray(m_locColour));
-      }
-      else {
-         GL_CHECK(glDisableVertexAttribArray(m_locColour));
-         GL_CHECK(glUniform1i(m_locBUniColour, 1));
-         GL_CHECK(glUniform4f(m_locUniColour, model->colour.r, model->colour.g, model->colour.b, model->colour.a));
-      }
+//===========================================
+// Renderer::onWindowResize
+//===========================================
+void Renderer::onWindowResize(int_t x, int_t y) {
+   msgVpResizeReq_t data = { x, y };
+   queueMsg(Message(MSG_VP_RESIZE_REQ, data));
+}
 
-
-      if (model->primitiveType == LINES) {
-         if (model->lineWidth != 0)
-            GL_CHECK(glLineWidth(model->lineWidth));
-      }
-
-
-      switch (model->renderMode) {
-         case TEXTURED_ALPHA: {
-            GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->texHandle));
-
-            vvvttcccc_t* verts = reinterpret_cast<vvvttcccc_t*>(model->verts);
-            int_t stride = model->colData ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
-
-            if (model->handle == 0) {
-               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
-               GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
-
-               if (model->colData)
-                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
-            }
-            else {
-               GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
-
-               GLuint offset = 0;
-
-               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-               offset += 3 * sizeof(vertexElement_t);
-
-               GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-               offset += 2 * sizeof(texCoordElement_t);
-
-               if (model->colData)
-                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-            }
+//===========================================
+// Renderer::processMsg
+//===========================================
+void Renderer::processMsg(const Message& msg) {
+   try {
+      switch (msg.type) {
+         case MSG_TEX_HANDLE_REQ: {
+            msgTexHandleReq_t dat = boost::get<msgTexHandleReq_t>(msg.data);
+            *dat.retVal = loadTexture(dat.texData, dat.w, dat.h);
          }
          break;
-         case NONTEXTURED_ALPHA: {
-            vvvcccc_t* verts = reinterpret_cast<vvvcccc_t*>(model->verts);
-            int_t stride = model->colData ? sizeof(vvvcccc_t) : sizeof(vvv_t);
-
-            if (model->handle == 0) {
-               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
-
-               if (model->colData)
-                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
-            }
-            else {
-               GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
-
-               GLuint offset = 0;
-
-               GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-               offset += 3 * sizeof(vertexElement_t);
-
-               if (model->colData)
-                  GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-            }
+         case MSG_VP_RESIZE_REQ: {
+            msgVpResizeReq_t dat = boost::get<msgVpResizeReq_t>(msg.data);
+            GL_CHECK(glViewport(0, 0, dat.w, dat.h));
          }
          break;
-         default:
-            throw Exception("Error rendering geometry; Render mode not supported", __FILE__, __LINE__);
+         case MSG_CONSTRUCT_VBO: {
+            msgConstructVbo_t dat = boost::get<msgConstructVbo_t>(msg.data);
+            constructVBO(dat.model);
+         }
+         break;
       }
-
-      GL_CHECK(glDrawArrays(primitiveToGLType(model->primitiveType), 0, model->n));
    }
+   catch (boost::bad_get& e) {
+      RendererException ex("Error processing request; ", __FILE__, __LINE__);
+      ex.append(e.what());
+      throw ex;
+   }
+}
 
-   m_sceneGraph.clear();
+#ifdef DEBUG
+//===========================================
+// Renderer::computeFrameRate
+//===========================================
+void Renderer::computeFrameRate() {
+   static Timer timer;
+   static long i = 0;
+   i++;
+
+   if (i % 10 == 0) {
+      m_frameRate = 10.0 / timer.getTime();
+      timer.reset();
+   }
+}
+#endif
+
+//===========================================
+// Renderer::renderLoop
+//===========================================
+void Renderer::renderLoop() {
+   Renderer renderer;
+
+   try {
+      WinIO win;
+      win.createGLContext();
+
+      renderer.init();
+
+      while (m_running) {
+         renderer.clear();
+
+         // Check for pending messages
+         m_msgQueueMutex.lock();
+         for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
+            renderer.processMsg(*i);
+         }
+         m_msgQueue.clear();
+         m_msgQueueEmpty = true;
+         m_msgQueueMutex.unlock();
+
+
+         m_sceneGraphMutex.lock();
+         for (auto i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
+            pModel_t model = *i;
+            model->lock();
+
+            if (model->verts == NULL) {
+               model->unlock();
+               continue;
+            }
+
+            renderer.setMode(model->renderMode);
+
+            GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->matrix));
+
+            cml::matrix44f_c P;
+
+            m_cameraMutex.lock();
+            m_camera->getMatrix(P);
+            m_cameraMutex.unlock();
+
+            GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, P.data()));
+
+
+            // If model contains per-vertex colour data
+            if (model->colData) {
+               GL_CHECK(glUniform1i(m_locBUniColour, 0));
+               GL_CHECK(glEnableVertexAttribArray(m_locColour));
+            }
+            else {
+               GL_CHECK(glDisableVertexAttribArray(m_locColour));
+               GL_CHECK(glUniform1i(m_locBUniColour, 1));
+               GL_CHECK(glUniform4f(m_locUniColour, model->colour.r, model->colour.g, model->colour.b, model->colour.a));
+            }
+
+
+            if (model->primitiveType == LINES) {
+               if (model->lineWidth != 0)
+                  GL_CHECK(glLineWidth(model->lineWidth));
+            }
+
+
+            switch (model->renderMode) {
+               case TEXTURED_ALPHA: {
+                  GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->texHandle));
+
+                  vvvttcccc_t* verts = reinterpret_cast<vvvttcccc_t*>(model->verts);
+                  int_t stride = model->colData ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
+
+                  if (model->handle == 0) {
+                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
+                     GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
+
+                     if (model->colData)
+                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
+                  }
+                  else {
+                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+
+                     GLuint offset = 0;
+
+                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+                     offset += 3 * sizeof(vertexElement_t);
+
+                     GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+                     offset += 2 * sizeof(texCoordElement_t);
+
+                     if (model->colData)
+                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+                  }
+               }
+               break;
+               case NONTEXTURED_ALPHA: {
+                  vvvcccc_t* verts = reinterpret_cast<vvvcccc_t*>(model->verts);
+                  int_t stride = model->colData ? sizeof(vvvcccc_t) : sizeof(vvv_t);
+
+                  if (model->handle == 0) {
+                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
+
+                     if (model->colData)
+                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
+                  }
+                  else {
+                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+
+                     GLuint offset = 0;
+
+                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+                     offset += 3 * sizeof(vertexElement_t);
+
+                     if (model->colData)
+                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+                  }
+               }
+               break;
+               default:
+                  throw RendererException("Error rendering geometry; Render mode not supported", __FILE__, __LINE__);
+            }
+
+            GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->primitiveType), 0, model->n));
+
+            model->unlock();
+         }
+         m_sceneGraphMutex.unlock();
+
+         win.swapBuffers();
+
+#ifdef DEBUG
+         renderer.computeFrameRate();
+#endif
+      }
+   }
+   catch (RendererException& e) {
+      e.prepend("Exception caught in render loop; ");
+      renderer.m_exception = e.constructWrapper();
+      renderer.m_errorPending = true;
+
+      // Wait for imminent death
+      while (1) {}
+   }
+   catch (...) {
+      renderer.m_errorPending = true;
+      while (1) {}
+   }
 }
 
 //===========================================
 // Renderer::clear
 //===========================================
 void Renderer::clear() {
-   if (!m_init)
-      throw Exception("Error clearing rendering surface; Renderer not initialised", __FILE__, __LINE__);
+   m_bgColourMutex.lock();
+   GL_CHECK(glClearColor(m_bgColour.r, m_bgColour.g, m_bgColour.b, m_bgColour.a));
+   m_bgColourMutex.unlock();
 
-   GL_CHECK(glClearColor(m_brush->getFillColour().r, m_brush->getFillColour().g, m_brush->getFillColour().b, m_brush->getFillColour().a));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 

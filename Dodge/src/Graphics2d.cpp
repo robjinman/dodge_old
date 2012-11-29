@@ -31,7 +31,6 @@ void Graphics2d::init(int w, int h) {
 
    m_camera = pCamera_t(new Camera(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f));
 
-   m_renderer.init();
    m_renderer.attachCamera(m_camera);
 }
 
@@ -141,9 +140,9 @@ void Graphics2d::clear(const Colour& col) const {
    if (!m_init)
       throw Exception("Error clearing screen; Graphics2d not initialised", __FILE__, __LINE__);
 
-   setFillColour(col);
-   m_renderer.attachBrush(m_renderBrush);
-   m_renderer.clear();
+//   setFillColour(col);
+//   m_renderer.attachBrush(m_renderBrush);
+//   m_renderer.clear();
 }
 
 
