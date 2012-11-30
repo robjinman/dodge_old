@@ -20,7 +20,7 @@ namespace Dodge {
 
 
 atomic<bool> Renderer::m_running(false);
-map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds;;
+map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds;
 Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
 Renderer::SceneGraph Renderer::m_sceneGraph;
 mutex Renderer::m_sceneGraphMutex;
@@ -36,7 +36,7 @@ GLint Renderer::m_locTexCoord = -1;
 GLint Renderer::m_locMV = -1;
 GLint Renderer::m_locP = -1;
 thread* Renderer::m_thread = NULL;
-std::vector<Renderer::Message> Renderer::m_msgQueue;;
+std::vector<Renderer::Message> Renderer::m_msgQueue;
 mutex Renderer::m_msgQueueMutex;
 atomic<bool> Renderer::m_msgQueueEmpty(true);
 Colour Renderer::m_bgColour;
@@ -311,9 +311,6 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 // Renderer::stageModel
 //===========================================
 void Renderer::stageModel(pModel_t model) {
-   if (!m_running)
-      throw RendererException("Error staging model; Renderer not running", __FILE__, __LINE__);
-
    model->lock();
    m_brushMutex.lock();
 
@@ -326,10 +323,20 @@ void Renderer::stageModel(pModel_t model) {
    }
 
    m_brushMutex.unlock();
-   model->unlock();
 
    m_sceneGraphMutex.lock();
    m_sceneGraph.insert(model);
+   m_sceneGraphMutex.unlock();
+
+   model->unlock();
+}
+
+//===========================================
+// Renderer::unStageModel
+//===========================================
+void Renderer::unStageModel(pModel_t model) {
+   m_sceneGraphMutex.lock();
+   m_sceneGraph.remove(model);
    m_sceneGraphMutex.unlock();
 }
 

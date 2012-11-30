@@ -1,8 +1,6 @@
-#include <map>
 #include <vector>
 #include <dodge/dodge.hpp>
 #include <iostream>
-#include <unistd.h>
 
 
 using namespace std;
@@ -11,20 +9,17 @@ using namespace cml;
 
 
 WinIO win;
-map<int, bool> keyState;
-double frameRate;
 Renderer renderer;
-Graphics2d graphics2d;
+
 std::vector<boost::shared_ptr<Renderer::Model> > models;
-
-boost::shared_ptr<RenderBrush> brush1;
-boost::shared_ptr<RenderBrush> brush2;
-
-matrix44f_c I;
-
 
 pTexture_t tex0;
 pTexture_t tex1;
+
+boost::shared_ptr<RenderBrush> brush1(new RenderBrush(Colour(1.0, 0.0, 0.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
+boost::shared_ptr<RenderBrush> brush2(new RenderBrush(Colour(0.0, 0.0, 1.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
+
+double frameRate;
 
 
 void quit() {
@@ -40,14 +35,6 @@ void keyDown(int key) {
          cout << "Frame rate (render loop): " << renderer.getFrameRate() << "fps\n" << flush;
       break;
    }
-
-   keyState[key] = true;
-}
-
-void keyUp(int key) { keyState[key] = false; }
-
-void keyboard() {
-
 }
 
 void computeFrameRate() {
@@ -68,25 +55,16 @@ void onWindowResize(int w, int h) {
 }
 
 void constructModels() {
-//   float32_t w = 0.02;
-//   float32_t h = 0.02;
    float32_t w = 0.1;
    float32_t h = 0.1;
+
+   matrix44f_c I;
+   identity_transform(I);
 
    bool b = false;
    for (float32_t x = 0.f; x < 1.2f; x += w) {
       for (float32_t y = 0.f; y < 0.9f; y += h) {
          b = !b;
-/*
-         Renderer::vvvttcccc_t verts[] = {
-            {x + w,   y,       1.0,    1.0, 0.0,    1.0, 0.0, 0.0, 1.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0,    0.0, 1.0, 0.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0,    0.0, 0.0, 1.0, 1.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0,    1.0, 0.0, 0.0, 1.0},
-            {x    ,   y + h,   1.0,    0.0, 1.0,    0.0, 1.0, 0.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0,    0.0, 0.0, 1.0, 1.0}
-         };
-*/
 
          Renderer::vvvtt_t verts[] = {
             {x + w,   y,       1.0,    1.0, 0.0},
@@ -96,16 +74,7 @@ void constructModels() {
             {x    ,   y + h,   1.0,    0.0, 1.0},
             {x    ,   y,       1.0,    0.0, 0.0}
          };
-/*
-         Renderer::vvv_t verts[] = {
-            {x + w,   y,       1.0},
-            {x + w,   y + h,   1.0},
-            {x    ,   y,       1.0},
-            {x + w,   y + h,   1.0},
-            {x    ,   y + h,   1.0},
-            {x    ,   y,       1.0}
-         };
-*/
+
          boost::shared_ptr<Renderer::Model> model(new Renderer::Model(Renderer::TEXTURED_ALPHA, false));
 
          model->primitiveType = Renderer::TRIANGLES;
@@ -127,33 +96,35 @@ void constructModels() {
 }
 
 int main() {
-   win.init("Demo8 - renderer", 640, 480, false);
-   win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
-   win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
-   win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
-   win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
+   try {
+      win.init("Demo8 - renderer", 640, 480, false);
+      win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
+      win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
+      win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
-   renderer.start();
+      renderer.start();
 
-   pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
-   renderer.attachCamera(camera);
+      pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
+      renderer.attachCamera(camera);
 
-   identity_transform(I);
+      renderer.setBgColour(Colour(1.0, 1.0, 0.0, 1.0));
 
-   tex0 = pTexture_t(new Texture("0.png"));
-   tex1 = pTexture_t(new Texture("1.png"));
+      tex0 = pTexture_t(new Texture("0.png"));
+      tex1 = pTexture_t(new Texture("1.png"));
 
-   brush1 = boost::shared_ptr<RenderBrush>(new RenderBrush(Colour(1.0, 0.0, 0.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
-   brush2 = boost::shared_ptr<RenderBrush>(new RenderBrush(Colour(0.0, 0.0, 1.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
+      constructModels();
 
-   renderer.setBgColour(Colour(1.0, 1.0, 0.0, 1.0));
-   constructModels();
+      while (1) {
+         win.doEvents();
+         computeFrameRate();
+         renderer.checkForErrors();
+      }
+   }
+   catch (Exception& e) {
+      e.prepend("An error occurred; ");
+      cerr << e.what() << flush;
 
-   while (1) {
-      win.doEvents();
-      keyboard();
-      computeFrameRate();
-      renderer.checkForErrors();
+      quit();
    }
 
    return 0;

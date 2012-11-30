@@ -192,7 +192,7 @@ class Renderer {
          private:
             typedef std::pair<mode_t, textureHandle_t> key_t;
             typedef std::pair<key_t, pModel_t> entry_t;
-            typedef std::multiset<entry_t> container_t;
+            typedef std::set<entry_t> container_t;
 
          public:
             class iterator {
@@ -219,6 +219,18 @@ class Renderer {
 
             void insert(pModel_t model) {
                m_container.insert(entry_t(key_t(model->renderMode, model->texHandle), model));
+            }
+
+            void remove(pModel_t model) {
+               if (m_container.erase(entry_t(key_t(model->renderMode, model->texHandle), model)) == 0) {
+
+                  for (auto i = m_container.begin(); i != m_container.end(); ++i) {
+                     if (i->second == model) {
+                        m_container.erase(i);
+                        break;
+                     }
+                  }
+               }
             }
 
             void clear() { m_container.clear(); }
