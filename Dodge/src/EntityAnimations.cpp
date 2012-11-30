@@ -209,9 +209,9 @@ void EntityAnimations::assignData(const XmlNode data) {
 }
 
 //===========================================
-// EntityAnimations::draw
+// EntityAnimations::render
 //===========================================
-void EntityAnimations::draw() const {
+void EntityAnimations::render() const {
    Vec2f pos = m_entity->getTranslation_abs();
 
    float32_t x = pos.x;
@@ -262,6 +262,13 @@ void EntityAnimations::draw() const {
    memcpy(m_model->matrix, mv.data(), 16 * sizeof(Renderer::matrixElement_t));
 
    m_renderer.stageModel(m_model);
+}
+
+//===========================================
+// EntityAnimations::unrender
+//===========================================
+void EntityAnimations::unrender() const {
+   m_renderer.unstageModel(m_model);
 }
 
 //===========================================

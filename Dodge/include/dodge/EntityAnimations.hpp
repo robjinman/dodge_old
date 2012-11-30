@@ -54,7 +54,10 @@ class EntityAnimations {
       inline bool playAnimation();
       inline void pauseAnimation();
       inline void stopAnimation();
-      virtual void draw() const;
+
+      virtual void render() const;
+      virtual void unrender() const;
+
       virtual void update();
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
