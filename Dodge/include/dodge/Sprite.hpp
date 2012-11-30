@@ -41,7 +41,9 @@ class Sprite
       virtual Sprite* clone() const;
       virtual void assignData(const XmlNode data);
 
-      virtual void draw() const;
+      virtual void render() const;
+      virtual void unrender() const;
+
       virtual void update();
 
 #ifdef DEBUG

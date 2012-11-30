@@ -85,10 +85,10 @@ void constructModels() {
          memcpy(model->verts, verts, 6 * sizeof(Renderer::vvvtt_t));
          memcpy(model->matrix, I.data(), 16 * sizeof(Renderer::matrixElement_t));
 
-         renderer.bufferModel(model);
+         renderer.bufferModel(model.get());
 
          renderer.attachBrush(b ? brush1 : brush2);
-         renderer.stageModel(model);
+         renderer.stageModel(model.get());
 
          models.push_back(model);
       }

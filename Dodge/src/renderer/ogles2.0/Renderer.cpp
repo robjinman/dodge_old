@@ -332,9 +332,9 @@ void Renderer::stageModel(pModel_t model) {
 }
 
 //===========================================
-// Renderer::unStageModel
+// Renderer::unstageModel
 //===========================================
-void Renderer::unStageModel(pModel_t model) {
+void Renderer::unstageModel(pModel_t model) {
    m_sceneGraphMutex.lock();
    m_sceneGraph.remove(model);
    m_sceneGraphMutex.unlock();

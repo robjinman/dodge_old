@@ -146,7 +146,7 @@ class Renderer {
             mutable std::mutex m_mutex;
       };
 
-      typedef boost::shared_ptr<Model> pModel_t;
+      typedef Model* pModel_t;
 
       void setBgColour(const Colour& col);
 
@@ -163,7 +163,7 @@ class Renderer {
       void freeBufferedModel(pModel_t model);
 
       void stageModel(const pModel_t model);
-      void unStageModel(const pModel_t model);
+      void unstageModel(const pModel_t model);
 #ifdef DEBUG
       inline long getFrameRate() const;
 #endif

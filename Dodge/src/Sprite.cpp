@@ -102,10 +102,17 @@ void Sprite::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
-// Sprite::draw
+// Sprite::render
 //===========================================
-void Sprite::draw() const {
-   EntityAnimations::draw();
+void Sprite::render() const {
+   EntityAnimations::render();
+}
+
+//===========================================
+// Sprite::unrender
+//===========================================
+void Sprite::unrender() const {
+   EntityAnimations::unrender();
 }
 
 //===========================================
