@@ -3,7 +3,6 @@
  * Date: 2012
  */
 
-#include <fstream>
 #include <cstdlib>
 #include <cassert>
 #include <renderer/ogles2.0/Renderer.hpp>
@@ -26,8 +25,6 @@ Renderer::SceneGraph Renderer::m_sceneGraph;
 mutex Renderer::m_sceneGraphMutex;
 boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
 mutex Renderer::m_cameraMutex;
-boost::shared_ptr<RenderBrush> Renderer::m_brush = boost::shared_ptr<RenderBrush>(new RenderBrush);
-mutex Renderer::m_brushMutex;
 GLint Renderer::m_locPosition = -1;
 GLint Renderer::m_locColour = -1;
 GLint Renderer::m_locBUniColour = -1;
@@ -311,24 +308,9 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 // Renderer::stageModel
 //===========================================
 void Renderer::stageModel(pModel_t model) {
-   model->lock();
-   m_brushMutex.lock();
-
-   model->lineWidth = m_brush->getLineWidth();
-   if (!model->colData) {
-      if (model->primitiveType == LINES)
-         model->colour = m_brush->getLineColour();
-      else
-         model->colour = m_brush->getFillColour();
-   }
-
-   m_brushMutex.unlock();
-
    m_sceneGraphMutex.lock();
    m_sceneGraph.insert(model);
    m_sceneGraphMutex.unlock();
-
-   model->unlock();
 }
 
 //===========================================
@@ -619,12 +601,13 @@ void Renderer::renderLoop() {
       renderer.m_exception = e.constructWrapper();
       renderer.m_errorPending = true;
 
-      // Wait for imminent death
-      while (1) {}
+      // Await imminent death
+      while (m_running) {}
    }
    catch (...) {
+      renderer.m_exception = { UNKNOWN_EXCEPTION, NULL };
       renderer.m_errorPending = true;
-      while (1) {}
+      while (m_running) {}
    }
 }
 

@@ -105,7 +105,7 @@ inline void Graphics2d::drawPrimitive(const Primitive& primitive, float32_t x, f
    if (!m_init)
       throw Exception("Error drawing primitive; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderer.attachBrush(m_renderBrush);
+//   m_renderer.attachBrush(m_renderBrush);
    primitive.draw(x, y, z, angle, pivot);
 }
 

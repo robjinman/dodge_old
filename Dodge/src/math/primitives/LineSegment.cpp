@@ -77,7 +77,7 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
 // LineSegment::draw
 //===========================================
 void LineSegment::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-
+/*
    Renderer::pModel_t model(new Renderer::Model(Renderer::NONTEXTURED_ALPHA, false));
    model->primitiveType = Renderer::LINES;
    model->verts = new Renderer::vvv_t[2];
@@ -96,7 +96,7 @@ void LineSegment::draw(float32_t x, float32_t y, int z, float32_t angle, const V
 
    memcpy(model->verts, verts, 2 * sizeof(Renderer::vvv_t));
 
-   m_renderer.stageModel(model);
+   m_renderer.stageModel(model);*/
 }
 
 //===========================================

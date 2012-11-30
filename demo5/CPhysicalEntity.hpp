@@ -24,7 +24,9 @@ class CPhysicalEntity : public Item, public Dodge::PhysicalEntity<Dodge::Box2dPh
            Item(copy, name),
            PhysicalEntity<Box2dPhysics>(copy, name) {}
 
-      virtual void draw() const;
+      virtual void render() const;
+      virtual void unrender() const;
+
       virtual void update();
       virtual CPhysicalEntity* clone() const;
       virtual void addToWorld();

@@ -18,8 +18,12 @@ CSprite::CSprite(const Dodge::XmlNode data)
    }
 }
 
-void CSprite::draw() const {
-   Sprite::draw();
+void CSprite::render() const {
+   Sprite::render();
+}
+
+void CSprite::unrender() const {
+   Sprite::unrender();
 }
 
 void CSprite::update() {

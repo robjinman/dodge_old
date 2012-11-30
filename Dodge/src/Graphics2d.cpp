@@ -41,7 +41,7 @@ void Graphics2d::init(int w, int h) {
 // dest: Destination rectangle in world coords
 //===========================================
 void Graphics2d::drawImage(const Texture& image, const Range& src, const Range& dest, int z,
-   float32_t angle, const Vec2f& pivot) const {
+   float32_t angle, const Vec2f& pivot) const {/*
 
    if (!m_init)
       throw Exception("Error drawing image; Graphics2d not initialised", __FILE__, __LINE__);
@@ -91,7 +91,7 @@ void Graphics2d::drawImage(const Texture& image, const Range& src, const Range& 
 
    memcpy(model->matrix, mv.data(), 16 * sizeof(Renderer::matrixElement_t));
 
-   m_renderer.stageModel(model);
+   m_renderer.stageModel(model);*/
 }
 
 //===========================================

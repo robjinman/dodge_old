@@ -31,6 +31,9 @@ void Application::exitDefault() {
 // Application::quit
 //===========================================
 void Application::quit() {
+   Renderer renderer;
+   renderer.stop();
+
    m_items.clear();
    m_eventManager.clear();
    m_worldSpace.removeAll();
@@ -205,6 +208,7 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
       if (addToWorld) {
          item->addToWorld();
          m_worldSpace.insertAndTrackEntity(item);
+         item->render();
 
          if (data.name() == "Player")
             m_player = boost::dynamic_pointer_cast<Player>(item);
@@ -299,6 +303,7 @@ void Application::deletePending(EEvent* event) {
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
 
+      e->item->unrender();
       m_worldSpace.removeAndUntrackEntity(e->item);
       e->item->removeFromWorld();
       m_items.erase(e->item->getName());
@@ -309,7 +314,7 @@ void Application::deletePending(EEvent* event) {
 //===========================================
 // Application::draw
 //===========================================
-void Application::draw() {
+void Application::draw() {/*
    Renderer renderer;
    renderer.clear();
 
@@ -324,7 +329,7 @@ void Application::draw() {
    for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->draw();
 
-   m_player->draw();
+   m_player->draw();*/
 }
 
 //===========================================
@@ -391,6 +396,7 @@ void Application::loadMap() {
 
             item->addToWorld();
             m_worldSpace.trackEntity(item);
+            item->render();
             m_items[item->getName()] = item;
          }
       }
@@ -409,6 +415,9 @@ void Application::begin() {
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
+   Renderer renderer;
+   renderer.start();
+
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
 
@@ -420,7 +429,6 @@ void Application::begin() {
 
    loadMap();
 
-   Renderer renderer;
    while (1) {
       m_win.doEvents();
       keyboard();
@@ -430,7 +438,7 @@ void Application::begin() {
 
       draw();
 
-      renderer.render();
+      renderer.checkForErrors();
       m_win.swapBuffers();
 
       computeFrameRate();

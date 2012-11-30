@@ -186,11 +186,11 @@ void Player::update() {
 }
 
 //===========================================
-// Player::draw
+// Player::render
 //===========================================
-void Player::draw() const {
-   PhysicalSprite<Box2dPhysics>::draw();
-
+void Player::render() const {
+   PhysicalSprite<Box2dPhysics>::render();
+/*
 #ifdef DEBUG
    if (dbg_flags & DBG_DRAW_SENSORS) {
       Graphics2d graphics2d;
@@ -214,6 +214,13 @@ void Player::draw() const {
       graphics2d.drawPrimitive(getShape(), pos.x, pos.y, 9);
    }
 #endif
+*/}
+
+//===========================================
+// Player::unrender
+//===========================================
+void Player::unrender() const {
+   PhysicalSprite<Box2dPhysics>::unrender();
 }
 
 //===========================================

@@ -80,10 +80,17 @@ void Soil::update() {
 }
 
 //===========================================
-// Soil::draw
+// Soil::render
 //===========================================
-void Soil::draw() const {
-   Sprite::draw();
+void Soil::render() const {
+   Sprite::render();
+}
+
+//===========================================
+// Soil::unrender
+//===========================================
+void Soil::unrender() const {
+   Sprite::unrender();
 }
 
 //===========================================

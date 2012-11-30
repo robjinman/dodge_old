@@ -8,22 +8,20 @@ using namespace Dodge;
 using namespace cml;
 
 
+typedef Renderer::Model Model;
+typedef boost::shared_ptr<Model> pModel_t;
+
 WinIO win;
 Renderer renderer;
-
-std::vector<boost::shared_ptr<Renderer::Model> > models;
-
 pTexture_t tex0;
 pTexture_t tex1;
-
-boost::shared_ptr<RenderBrush> brush1(new RenderBrush(Colour(1.0, 0.0, 0.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
-boost::shared_ptr<RenderBrush> brush2(new RenderBrush(Colour(0.0, 0.0, 1.0, 1.0), Colour(0.0, 0.0, 0.0, 0.0), 0));
-
+std::vector<pModel_t> models;
 double frameRate;
 
 
 void quit() {
    renderer.stop();
+   win.destroyWindow();
    exit(0);
 }
 
@@ -75,22 +73,18 @@ void constructModels() {
             {x    ,   y,       1.0,    0.0, 0.0}
          };
 
-         boost::shared_ptr<Renderer::Model> model(new Renderer::Model(Renderer::TEXTURED_ALPHA, false));
+         Colour col = b ? Colour(1.0, 0.0, 0.0, 1.0) : Colour(0.0, 0.0, 1.0, 1.0);
 
-         model->primitiveType = Renderer::TRIANGLES;
+         pModel_t model(new Model(Renderer::TEXTURED_ALPHA, false));
+         models.push_back(model);
+
+         model->setVerts(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
          model->texHandle = b ? tex0->getHandle() : tex1->getHandle();
-         model->verts = new Renderer::vvvtt_t[6];
-         model->n = 6;
-
-         memcpy(model->verts, verts, 6 * sizeof(Renderer::vvvtt_t));
-         memcpy(model->matrix, I.data(), 16 * sizeof(Renderer::matrixElement_t));
+         model->colour = col;
+         model->setMatrix(I.data());
 
          renderer.bufferModel(model.get());
-
-         renderer.attachBrush(b ? brush1 : brush2);
          renderer.stageModel(model.get());
-
-         models.push_back(model);
       }
    }
 }

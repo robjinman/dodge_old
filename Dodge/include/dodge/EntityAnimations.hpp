@@ -29,11 +29,10 @@ class EntityAnimations {
          : m_entity(entity),
            m_texture(texture),
            m_texSection(),
-           m_activeAnim() { init(); }
+           m_activeAnim(),
+           m_model(Renderer::TEXTURED_ALPHA, false) {}
 
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
-
-      void init();
 
       virtual void assignData(const XmlNode data);
 
@@ -70,13 +69,15 @@ class EntityAnimations {
       inline std::map<long, pAnimation_t>& getAnimations();
 
    private:
+      void updateModel();
+
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;
       Vec2f m_onScreenSize;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
-      Renderer::pModel_t m_model;
+      mutable Renderer::Model m_model;
 
       static Renderer m_renderer;
 };

@@ -24,7 +24,9 @@ class CPhysicalSprite : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPh
            Item(copy, name),
            PhysicalSprite<Box2dPhysics>(copy, name) {}
 
-      virtual void draw() const;
+      virtual void render() const;
+      virtual void unrender() const;
+
       virtual void update();
       virtual CPhysicalSprite* clone() const;
       virtual void addToWorld();

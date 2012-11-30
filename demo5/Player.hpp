@@ -34,7 +34,10 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       virtual Player* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
       virtual void update();
-      virtual void draw() const;
+
+      virtual void render() const;
+      virtual void unrender() const;
+
       virtual void onEvent(const Dodge::EEvent* event);
 
       virtual ~Player() {}

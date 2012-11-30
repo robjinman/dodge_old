@@ -49,12 +49,13 @@ void EntityAnimations::dbg_print(ostream& out, int tab) const {
 // Construct deep copy.
 //===========================================
 EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
-   : m_entity(entity), m_activeAnim() {
+   : m_entity(entity),
+     m_activeAnim(),
+     m_model(Renderer::TEXTURED_ALPHA, false) {
 
    m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
    m_texture = copy.m_texture;
-   init();
 
    try {
       map<long, pAnimation_t>::const_iterator it = copy.m_animations.begin();
@@ -75,7 +76,9 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 // EntityAnimations::EntityAnimations
 //===========================================
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
-   : m_entity(entity), m_activeAnim() {
+   : m_entity(entity),
+     m_activeAnim(),
+     m_model(Renderer::TEXTURED_ALPHA, false) {
 
    AssetManager assetManager;
 
@@ -130,19 +133,6 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       e.prepend("Error parsing XML for instance of class EntityAnimations; ");
       throw;
    }
-
-   init();
-}
-
-//===========================================
-// EntityAnimations::init
-//===========================================
-void EntityAnimations::init() {
-   m_model = Renderer::pModel_t(new Renderer::Model(Renderer::TEXTURED_ALPHA, false));
-
-   m_model->primitiveType = Renderer::TRIANGLES;
-   m_model->verts = new Renderer::vvvtt_t[6];
-   m_model->n = 6;
 }
 
 //===========================================
@@ -212,63 +202,14 @@ void EntityAnimations::assignData(const XmlNode data) {
 // EntityAnimations::render
 //===========================================
 void EntityAnimations::render() const {
-   Vec2f pos = m_entity->getTranslation_abs();
-
-   float32_t x = pos.x;
-   float32_t y = pos.y;
-   int z = m_entity->getZ();
-
-   float32_t angle = m_entity->getRotation_abs();
-
-   m_renderer.attachBrush(m_entity->getRenderBrush());
-
-   float32_t w = m_onScreenSize.x * m_entity->getScale().x;
-   float32_t h = m_onScreenSize.y * m_entity->getScale().y;
-   float32_t fZ = static_cast<float32_t>(z);
-
-   float32_t imgW = m_texture->getWidth();
-   float32_t imgH = m_texture->getHeight();
-
-   float32_t tX1 = m_texSection.getPosition().x / imgW;
-   float32_t tX2 = (m_texSection.getPosition().x + m_texSection.getSize().x) / imgW;
-   float32_t tY1 = m_texSection.getPosition().y / imgH;
-   float32_t tY2 = (m_texSection.getPosition().y + m_texSection.getSize().y) / imgH;
-
-   // Flip texture vertically
-   tY1 = 1.f - tY1;
-   tY2 = 1.f - tY2;
-
-   Renderer::vvvtt_t verts[] = {
-      {w,   0.0,  fZ,    tX2, tY1},
-      {w,   h,    fZ,    tX2, tY2},
-      {0.0, 0.0,  fZ,    tX1, tY1},
-      {w,   h,    fZ,    tX2, tY2},
-      {0.0, h,    fZ,    tX1, tY2},
-      {0.0, 0.0,  fZ,    tX1, tY1}
-   };
-
-   m_model->texHandle = m_texture->getHandle();
-   memcpy(m_model->verts, verts, 6 * sizeof(Renderer::vvvtt_t));
-
-   matrix44f_c rotation;
-   matrix44f_c translation;
-   matrix44f_c mv;
-
-   float32_t rads = DEG_TO_RAD(angle);
-   matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
-   matrix_translation(translation, x, y, 0.f);
-   mv = translation * rotation;
-
-   memcpy(m_model->matrix, mv.data(), 16 * sizeof(Renderer::matrixElement_t));
-
-   m_renderer.stageModel(m_model);
+   m_renderer.stageModel(&m_model);
 }
 
 //===========================================
 // EntityAnimations::unrender
 //===========================================
 void EntityAnimations::unrender() const {
-   m_renderer.unstageModel(m_model);
+   m_renderer.unstageModel(&m_model);
 }
 
 //===========================================
@@ -314,6 +255,58 @@ void EntityAnimations::removeAnimation(long anim) {
 }
 
 //===========================================
+// EntityAnimations::updateModel
+//===========================================
+void EntityAnimations::updateModel() {
+   Vec2f pos = m_entity->getTranslation_abs();
+
+   float32_t x = pos.x;
+   float32_t y = pos.y;
+   int z = m_entity->getZ();
+
+   float32_t angle = m_entity->getRotation_abs();
+
+   matrix44f_c rotation;
+   matrix44f_c translation;
+   matrix44f_c mv;
+
+   float32_t rads = DEG_TO_RAD(angle);
+   matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
+   matrix_translation(translation, x, y, 0.f);
+   mv = translation * rotation;
+
+   float32_t w = m_onScreenSize.x * m_entity->getScale().x;
+   float32_t h = m_onScreenSize.y * m_entity->getScale().y;
+   float32_t fZ = static_cast<float32_t>(z);
+
+   float32_t imgW = m_texture->getWidth();
+   float32_t imgH = m_texture->getHeight();
+
+   float32_t tX1 = m_texSection.getPosition().x / imgW;
+   float32_t tX2 = (m_texSection.getPosition().x + m_texSection.getSize().x) / imgW;
+   float32_t tY1 = m_texSection.getPosition().y / imgH;
+   float32_t tY2 = (m_texSection.getPosition().y + m_texSection.getSize().y) / imgH;
+
+   // Flip texture vertically
+   tY1 = 1.f - tY1;
+   tY2 = 1.f - tY2;
+
+   Renderer::vvvtt_t verts[] = {
+      {w,   0.0,  fZ,    tX2, tY1},
+      {w,   h,    fZ,    tX2, tY2},
+      {0.0, 0.0,  fZ,    tX1, tY1},
+      {w,   h,    fZ,    tX2, tY2},
+      {0.0, h,    fZ,    tX1, tY2},
+      {0.0, 0.0,  fZ,    tX1, tY1}
+   };
+
+   m_model.setVerts(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
+   m_model.setMatrix(mv.data());
+   m_model.colour = m_entity->getRenderBrush()->getFillColour();
+   m_model.texHandle = m_texture->getHandle();
+}
+
+//===========================================
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
@@ -345,6 +338,8 @@ void EntityAnimations::update() {
 
       ++it;
    }
+
+   updateModel();
 }
 
 //===========================================

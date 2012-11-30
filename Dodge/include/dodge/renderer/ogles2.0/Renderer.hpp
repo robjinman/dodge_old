@@ -15,14 +15,10 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
-#include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 #include "Colour.hpp"
-#include "../../WinIO.hpp"
-#include "../RenderBrush.hpp"
 #include "../Camera.hpp"
-#include "../../Asset.hpp"
-#include "../../xml/xml.hpp"
+#include "../../WinIO.hpp"
 #include "../../definitions.hpp"
 
 
@@ -31,6 +27,12 @@ namespace Dodge {
 
 // OpenGL ES 2.0 implementation
 class Renderer {
+   public:
+      class Model;
+
+   private:
+      typedef Model* pModel_t;
+
    public:
       typedef GLint int_t;
       typedef GLfloat float_t;
@@ -97,14 +99,16 @@ class Renderer {
 
          public:
             Model(mode_t kind, bool perVertexColours)
-               : primitiveType(TRIANGLES),
-                 verts(NULL),
-                 n(0),
-                 matrix({1.f, 0.f, 0.f, 0.f,
+               : matrix({1.f, 0.f, 0.f, 0.f,
                          0.f, 1.f, 0.f, 0.f,
                          0.f, 0.f, 1.f, 0.f,
                          0.f, 0.f, 0.f, 1.f}),
                  texHandle(0),
+                 lineWidth(1),
+                 primitiveType(TRIANGLES),
+                 verts(NULL),
+                 n(0),
+                 bytes(0),
                  handle(0),
                  renderMode(kind),
                  colData(perVertexColours) {}
@@ -112,49 +116,51 @@ class Renderer {
             void unlock() const { m_mutex.unlock(); }
             void lock() const { m_mutex.lock(); }
 
+            void setVerts(primitive_t primitiveType_, const void* verts_, int_t n_, size_t vertSz) {
+               primitiveType = primitiveType;
+
+               if (bytes != n_ * vertSz) {
+                  bytes = n_ * vertSz;
+
+                  if (verts) deleteVerts();
+                  verts = new byte_t[bytes];
+               }
+
+               n = n_;
+               memcpy(verts, verts_, bytes);
+            }
+
+            void setMatrix(const matrixElement_t* mat) {
+               memcpy(matrix, mat, 16 * sizeof(matrixElement_t));
+            }
+
+            matrixElement_t matrix[16];
+            textureHandle_t texHandle;
+            Colour colour;
+            int_t lineWidth;
+
+            void deleteVerts() {
+               delete[] reinterpret_cast<byte_t*>(verts);
+            }
+
+            ~Model() { deleteVerts(); }
+
+         private:
             primitive_t primitiveType;
             void* verts;
             int_t n;
-            matrixElement_t matrix[16];
-            textureHandle_t texHandle;
-
-            ~Model() {
-               if (colData) {
-                  switch (renderMode) {
-                     case TEXTURED_ALPHA:    delete[] reinterpret_cast<vvvttcccc_t*>(verts); break;
-                     case NONTEXTURED_ALPHA: delete[] reinterpret_cast<vvvcccc_t*>(verts);   break;
-                     default: break;
-                  }
-               }
-               else {
-                  switch (renderMode) {
-                     case TEXTURED_ALPHA:    delete[] reinterpret_cast<vvvtt_t*>(verts); break;
-                     case NONTEXTURED_ALPHA: delete[] reinterpret_cast<vvv_t*>(verts);   break;
-                     default: break;
-                  }
-               }
-            }
-
-         private:
+            size_t bytes;
             modelHandle_t handle;
             mode_t renderMode;
             bool colData;
 
-            Colour colour;
-            int_t lineWidth;
-
             mutable std::mutex m_mutex;
       };
 
-      typedef Model* pModel_t;
-
       void setBgColour(const Colour& col);
 
-      inline void attachCamera(boost::shared_ptr<Camera> camera);
+      inline void attachCamera(pCamera_t camera);
       inline Camera& getCamera() const;
-
-      inline void attachBrush(boost::shared_ptr<RenderBrush> brush);
-      inline RenderBrush& getBrush() const;
 
       void onWindowResize(int_t w, int_t h);
       void newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
@@ -315,10 +321,7 @@ class Renderer {
       static SceneGraph m_sceneGraph;
       static std::mutex m_sceneGraphMutex;
 
-      static boost::shared_ptr<RenderBrush> m_brush;
-      static std::mutex m_brushMutex;
-
-      static boost::shared_ptr<Camera> m_camera;
+      static pCamera_t m_camera;
       static std::mutex m_cameraMutex;
 
       static std::atomic<bool> m_running;
@@ -359,7 +362,7 @@ inline bool Renderer::isSupportedPrimitive(primitive_t primitiveType) const {
 //===========================================
 // Renderer::attachCamera
 //===========================================
-inline void Renderer::attachCamera(boost::shared_ptr<Camera> camera) {
+inline void Renderer::attachCamera(pCamera_t camera) {
    m_cameraMutex.lock();
    m_camera = camera;
    m_cameraMutex.unlock();
@@ -372,26 +375,6 @@ inline Camera& Renderer::getCamera() const {
    m_cameraMutex.lock();
    Camera& cpy = *m_camera;
    m_cameraMutex.unlock();
-
-   return cpy;
-}
-
-//===========================================
-// Renderer::attachBrush
-//===========================================
-inline void Renderer::attachBrush(boost::shared_ptr<RenderBrush> brush) {
-   m_brushMutex.lock();
-   m_brush = brush;
-   m_brushMutex.unlock();
-}
-
-//===========================================
-// Renderer::getBrush
-//===========================================
-inline RenderBrush& Renderer::getBrush() const {
-   m_brushMutex.lock();
-   RenderBrush& cpy = *m_brush;
-   m_brushMutex.unlock();
 
    return cpy;
 }

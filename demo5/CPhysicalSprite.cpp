@@ -52,10 +52,17 @@ void CPhysicalSprite::update() {
 }
 
 //===========================================
-// CPhysicalSprite::draw
+// CPhysicalSprite::render
 //===========================================
-void CPhysicalSprite::draw() const {
-   PhysicalSprite<Box2dPhysics>::draw();
+void CPhysicalSprite::render() const {
+   PhysicalSprite<Box2dPhysics>::render();
+}
+
+//===========================================
+// CPhysicalSprite::unrender
+//===========================================
+void CPhysicalSprite::unrender() const {
+   PhysicalSprite<Box2dPhysics>::unrender();
 }
 
 //===========================================
