@@ -89,6 +89,11 @@ void Renderer::checkForErrors() {
             throw *ptr;
          }
          break;
+         case EXCEPTION: {
+            Exception* ptr = reinterpret_cast<Exception*>(m_exception.data);
+            throw *ptr;
+         }
+         break;
          default:
             throw RendererException("An unknown error occured", __FILE__, __LINE__);
       }
@@ -339,26 +344,7 @@ void Renderer::constructVBO(pModel_t model) {
 
    GL_CHECK(glGenBuffers(1, &model->handle));
    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
-
-   size_t vertSize = 0;
-   if (model->colData) {
-      switch (model->renderMode) {
-         case TEXTURED_ALPHA:       vertSize = sizeof(vvvttcccc_t);  break;
-         case NONTEXTURED_ALPHA:    vertSize = sizeof(vvvcccc_t);    break;
-         default:
-            throw RendererException("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
-      }
-   }
-   else {
-      switch (model->renderMode) {
-         case TEXTURED_ALPHA:       vertSize = sizeof(vvvtt_t);  break;
-         case NONTEXTURED_ALPHA:    vertSize = sizeof(vvv_t);    break;
-         default:
-            throw RendererException("Error constructing VBO; Render mode not supported", __FILE__, __LINE__);
-      }
-   }
-
-   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->n * vertSize, model->verts, GL_STATIC_DRAW));
+   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->bytes, model->verts, GL_STATIC_DRAW));
 
    model->unlock();
 }
@@ -475,6 +461,7 @@ void Renderer::renderLoop() {
       while (m_running) {
          renderer.clear();
 
+
          // Check for pending messages
          m_msgQueueMutex.lock();
          for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
@@ -483,6 +470,13 @@ void Renderer::renderLoop() {
          m_msgQueue.clear();
          m_msgQueueEmpty = true;
          m_msgQueueMutex.unlock();
+
+
+         cml::matrix44f_c P;
+
+         m_cameraMutex.lock();
+         m_camera->getMatrix(P);
+         m_cameraMutex.unlock();
 
 
          m_sceneGraphMutex.lock();
@@ -498,14 +492,13 @@ void Renderer::renderLoop() {
             renderer.setMode(model->renderMode);
 
             GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->matrix));
-
-            cml::matrix44f_c P;
-
-            m_cameraMutex.lock();
-            m_camera->getMatrix(P);
-            m_cameraMutex.unlock();
-
             GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, P.data()));
+
+
+            if (model->primitiveType == LINES) {
+               if (model->lineWidth != 0)
+                  GL_CHECK(glLineWidth(model->lineWidth));
+            }
 
 
             // If model contains per-vertex colour data
@@ -517,12 +510,6 @@ void Renderer::renderLoop() {
                GL_CHECK(glDisableVertexAttribArray(m_locColour));
                GL_CHECK(glUniform1i(m_locBUniColour, 1));
                GL_CHECK(glUniform4f(m_locUniColour, model->colour.r, model->colour.g, model->colour.b, model->colour.a));
-            }
-
-
-            if (model->primitiveType == LINES) {
-               if (model->lineWidth != 0)
-                  GL_CHECK(glLineWidth(model->lineWidth));
             }
 
 
@@ -599,6 +586,14 @@ void Renderer::renderLoop() {
    catch (RendererException& e) {
       e.prepend("Exception caught in render loop; ");
       renderer.m_exception = e.constructWrapper();
+      renderer.m_errorPending = true;
+
+      // Await imminent death
+      while (m_running) {}
+   }
+   catch (Exception& e) {
+      e.prepend("Exception caught in render loop; ");
+      renderer.m_exception = { EXCEPTION, new Exception(e) };
       renderer.m_errorPending = true;
 
       // Await imminent death

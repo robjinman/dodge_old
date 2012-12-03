@@ -17,6 +17,7 @@
 #include <atomic>
 #include <boost/variant.hpp>
 #include "Colour.hpp"
+#include "../RenderBrush.hpp"
 #include "../Camera.hpp"
 #include "../../WinIO.hpp"
 #include "../../definitions.hpp"
@@ -113,11 +114,20 @@ class Renderer {
                  renderMode(kind),
                  colData(perVertexColours) {}
 
+            Model(const Model& cpy) {
+               copyData(cpy);
+            }
+
+            Model& operator=(const Model& rhs) {
+               copyData(rhs);
+               return *this;
+            }
+
             void unlock() const { m_mutex.unlock(); }
             void lock() const { m_mutex.lock(); }
 
             void setVerts(primitive_t primitiveType_, const void* verts_, int_t n_, size_t vertSz) {
-               primitiveType = primitiveType;
+               primitiveType = primitiveType_;
 
                if (bytes != n_ * vertSz) {
                   bytes = n_ * vertSz;
@@ -155,6 +165,20 @@ class Renderer {
             bool colData;
 
             mutable std::mutex m_mutex;
+
+            void copyData(const Model& cpy) {
+               setMatrix(cpy.matrix);
+               texHandle = cpy.texHandle;
+               colour = cpy.colour;
+               lineWidth = cpy.lineWidth;
+               primitiveType = cpy.primitiveType;
+               memcpy(verts, cpy.verts, cpy.bytes);
+               n = cpy.n;
+               bytes = cpy.bytes;
+               handle = cpy.handle;
+               renderMode = cpy.renderMode;
+               colData = cpy.colData;
+            }
       };
 
       void setBgColour(const Colour& col);
@@ -180,6 +204,7 @@ class Renderer {
 
       enum exceptionType_t {
          UNKNOWN_EXCEPTION,
+         EXCEPTION,
          RENDERER_EXCEPTION
          // ...
       };

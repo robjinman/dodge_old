@@ -57,7 +57,10 @@ void Application::keyDown(int key) {
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
 #ifdef DEBUG
-      case WinIO::KEY_F: cout << "Frame rate: " << m_frameRate << "fps\n"; break;
+      case WinIO::KEY_F:
+         cout << "Frame rate (main thread): " << m_frameRate << "fps\n";
+         cout << "Frame rate (renderer): " << m_renderer.getFrameRate() << "fps\n";
+      break;
       case WinIO::KEY_P: m_player->dbg_print(cout); break;
       case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
@@ -312,27 +315,6 @@ void Application::deletePending(EEvent* event) {
 }
 
 //===========================================
-// Application::draw
-//===========================================
-void Application::draw() {/*
-   Renderer renderer;
-   renderer.clear();
-
-#ifdef DEBUG
-   if (dbg_flags & DBG_DRAW_WORLDSPACE) {
-      m_graphics2d.setLineWidth(2);
-      m_graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
-      m_worldSpace.dbg_draw(5);
-   }
-#endif
-
-   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
-      i->second->draw();
-
-   m_player->draw();*/
-}
-
-//===========================================
 // Application::update
 //===========================================
 void Application::update() {
@@ -351,8 +333,7 @@ void Application::update() {
 // Application::onWindowResize
 //===========================================
 void Application::onWindowResize(int w, int h) {
-   Renderer renderer;
-   renderer.onWindowResize(w, h);
+   m_renderer.onWindowResize(w, h);
    m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
@@ -415,8 +396,7 @@ void Application::begin() {
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
-   Renderer renderer;
-   renderer.start();
+   m_renderer.start();
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
@@ -435,10 +415,7 @@ void Application::begin() {
       update();
       Box2dPhysics::update();
       m_eventManager.doEvents();
-
-      draw();
-
-      renderer.checkForErrors();
+      m_renderer.checkForErrors();
       m_win.swapBuffers();
 
       computeFrameRate();
