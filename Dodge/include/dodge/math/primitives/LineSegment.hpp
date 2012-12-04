@@ -10,21 +10,23 @@
 #include "Primitive.hpp"
 #include "../../definitions.hpp"
 #include "../Vec2f.hpp"
-#include "../../renderer/Renderer.hpp"
+#include "../../renderer/Model.hpp"
 
 
 namespace Dodge {
 
+
+class Renderer;
 
 class LineSegment : public Primitive {
    public:
       explicit LineSegment(const XmlNode data);
 
       LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
-         : m_p1(p1x, p1y), m_p2(p2x, p2y) {}
+         : m_p1(p1x, p1y), m_p2(p2x, p2y), m_model(Renderer::NONTEXTURED_ALPHA, false) {}
 
       LineSegment(const Vec2f& p1, const Vec2f& p2)
-         : m_p1(p1), m_p2(p2) {}
+         : m_p1(p1), m_p2(p2), m_model(Renderer::NONTEXTURED_ALPHA, false) {}
 
       inline void setPoint1(float32_t x, float32_t y);
       inline void setPoint2(float32_t x, float32_t y);
@@ -41,8 +43,13 @@ class LineSegment : public Primitive {
       virtual void rotate(float32_t rads, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 
-      virtual void draw(float32_t x, float32_t y, int z, float32_t angle = 0.f,
-         const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
+      virtual void setFillColour(const Colour& colour) {}
+      virtual void setLineColour(const Colour& colour);
+      virtual void setLineWidth(int lineWidth);
+
+      virtual void setRenderTransform(float32_t x, float32_t y, int z) const;
+      virtual void render() const;
+      virtual void unrender() const;
 
       inline bool operator==(const LineSegment& rhs) const;
       inline bool operator!=(const LineSegment& rhs) const;
@@ -51,8 +58,9 @@ class LineSegment : public Primitive {
       virtual ~LineSegment() {}
 
    private:
-      Vec2f m_p1;
+      Vec2f m_p1; // TODO: remove
       Vec2f m_p2;
+      mutable Model m_model;
 
       static Renderer m_renderer;
 };

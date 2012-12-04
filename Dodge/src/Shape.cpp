@@ -94,13 +94,5 @@ void Shape::assignData(const XmlNode data) {
    }
 }
 
-//===========================================
-// Shape::draw
-//===========================================
-void Shape::draw() const {
-//   m_renderer.attachBrush(getRenderBrush());
-   getShape().draw(getTranslation().x, getTranslation().y, getZ());
-}
-
 
 }

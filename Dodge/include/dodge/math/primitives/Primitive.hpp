@@ -9,14 +9,15 @@
 #include "../../xml/xml.hpp"
 #include "../Vec2f.hpp"
 #include "../../Asset.hpp"
+#include "../../renderer/Colour.hpp"
 
 
 namespace Dodge {
 
 
-// A primitive is a shape that does not have any explicit position defined -- though
+// A primitive is a shape that does not have any explicit position defined (though
 // some primitives such as polygons, which are represented as sequences of vertices,
-// will have an implicit position because all vertices can be moved.
+// will have an implicit position because all vertices can be moved).
 class Primitive : virtual public Asset {
    public:
       virtual long typeId() const = 0;
@@ -30,9 +31,13 @@ class Primitive : virtual public Asset {
       virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f)) = 0;
       virtual void scale(const Vec2f& sv) = 0;
 
-      // Pivot is offset from (x, y), about which the rotation is applied
-      virtual void draw(float32_t x, float32_t y, int z, float32_t angle = 0.f,
-         const Vec2f& pivot = Vec2f(0.f, 0.f)) const = 0;
+      virtual void setFillColour(const Colour& colour) = 0;
+      virtual void setLineColour(const Colour& colour) = 0;
+      virtual void setLineWidth(int lineWidth) = 0;
+
+      virtual void setRenderTransform(float32_t x, float32_t y, int z) const = 0;
+      virtual void render() const = 0;
+      virtual void unrender() const = 0;
 
       virtual ~Primitive() {};
 };

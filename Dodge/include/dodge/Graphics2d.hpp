@@ -31,9 +31,6 @@ class Graphics2d {
       inline void setLineColour(const Colour& colour) const;
       inline void setLineWidth(int width) const;
 
-      inline void drawPrimitive(const Primitive& primitive, float32_t x, float32_t y, int z,
-         float32_t angle = 0.f, const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
-
       void drawImage(const Texture& image, const Range& src, const Range& dest, int z,
          float32_t angle = 0.f, const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
 
@@ -94,19 +91,6 @@ inline void Graphics2d::setCamera(pCamera_t camera) {
 //===========================================
 inline pCamera_t Graphics2d::getCamera() const {
    return m_camera;
-}
-
-//===========================================
-// Graphics2d::drawPrimitive
-//===========================================
-inline void Graphics2d::drawPrimitive(const Primitive& primitive, float32_t x, float32_t y, int z,
-   float32_t angle, const Vec2f& pivot) const {
-
-   if (!m_init)
-      throw Exception("Error drawing primitive; Graphics2d not initialised", __FILE__, __LINE__);
-
-//   m_renderer.attachBrush(m_renderBrush);
-   primitive.draw(x, y, z, angle, pivot);
 }
 
 

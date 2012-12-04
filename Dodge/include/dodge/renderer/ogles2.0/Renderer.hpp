@@ -26,14 +26,11 @@
 namespace Dodge {
 
 
+class Model;
+class SceneGraph;
+
 // OpenGL ES 2.0 implementation
 class Renderer {
-   public:
-      class Model;
-
-   private:
-      typedef Model* pModel_t;
-
    public:
       typedef GLint int_t;
       typedef GLfloat float_t;
@@ -95,92 +92,6 @@ class Renderer {
          colourElement_t c4;
       };
 
-      class Model {
-         friend class Renderer;
-
-         public:
-            Model(mode_t kind, bool perVertexColours)
-               : matrix({1.f, 0.f, 0.f, 0.f,
-                         0.f, 1.f, 0.f, 0.f,
-                         0.f, 0.f, 1.f, 0.f,
-                         0.f, 0.f, 0.f, 1.f}),
-                 texHandle(0),
-                 lineWidth(1),
-                 primitiveType(TRIANGLES),
-                 verts(NULL),
-                 n(0),
-                 bytes(0),
-                 handle(0),
-                 renderMode(kind),
-                 colData(perVertexColours) {}
-
-            Model(const Model& cpy) {
-               copyData(cpy);
-            }
-
-            Model& operator=(const Model& rhs) {
-               copyData(rhs);
-               return *this;
-            }
-
-            void unlock() const { m_mutex.unlock(); }
-            void lock() const { m_mutex.lock(); }
-
-            void setVerts(primitive_t primitiveType_, const void* verts_, int_t n_, size_t vertSz) {
-               primitiveType = primitiveType_;
-
-               if (bytes != n_ * vertSz) {
-                  bytes = n_ * vertSz;
-
-                  if (verts) deleteVerts();
-                  verts = new byte_t[bytes];
-               }
-
-               n = n_;
-               memcpy(verts, verts_, bytes);
-            }
-
-            void setMatrix(const matrixElement_t* mat) {
-               memcpy(matrix, mat, 16 * sizeof(matrixElement_t));
-            }
-
-            matrixElement_t matrix[16];
-            textureHandle_t texHandle;
-            Colour colour;
-            int_t lineWidth;
-
-            void deleteVerts() {
-               delete[] reinterpret_cast<byte_t*>(verts);
-            }
-
-            ~Model() { deleteVerts(); }
-
-         private:
-            primitive_t primitiveType;
-            void* verts;
-            int_t n;
-            size_t bytes;
-            modelHandle_t handle;
-            mode_t renderMode;
-            bool colData;
-
-            mutable std::mutex m_mutex;
-
-            void copyData(const Model& cpy) {
-               setMatrix(cpy.matrix);
-               texHandle = cpy.texHandle;
-               colour = cpy.colour;
-               lineWidth = cpy.lineWidth;
-               primitiveType = cpy.primitiveType;
-               memcpy(verts, cpy.verts, cpy.bytes);
-               n = cpy.n;
-               bytes = cpy.bytes;
-               handle = cpy.handle;
-               renderMode = cpy.renderMode;
-               colData = cpy.colData;
-            }
-      };
-
       void setBgColour(const Colour& col);
 
       inline void attachCamera(pCamera_t camera);
@@ -189,11 +100,11 @@ class Renderer {
       void onWindowResize(int_t w, int_t h);
       void newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
 
-      void bufferModel(pModel_t model);
-      void freeBufferedModel(pModel_t model);
+      void bufferModel(Model* model);
+      void freeBufferedModel(Model* model);
 
-      void stageModel(const pModel_t model);
-      void unstageModel(const pModel_t model);
+      void stageModel(const Model* model);
+      void unstageModel(const Model* model);
 #ifdef DEBUG
       inline long getFrameRate() const;
 #endif
@@ -215,63 +126,6 @@ class Renderer {
       };
 
    private:
-
-      // Stores model pointers in order; first by render mode and then by texture handle.
-      class SceneGraph {
-         friend class iterator;
-
-         private:
-            typedef std::pair<mode_t, textureHandle_t> key_t;
-            typedef std::pair<key_t, pModel_t> entry_t;
-            typedef std::set<entry_t> container_t;
-
-         public:
-            class iterator {
-               friend class SceneGraph;
-
-               public:
-                  pModel_t operator*() { return m_i->second; }
-                  pModel_t operator->() { return m_i->second; }
-                  bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
-                  bool operator==(const iterator& rhs) const { return m_i == rhs.m_i; }
-
-                  iterator& operator++() {
-                     ++m_i;
-                     return *this;
-                  }
-
-               private:
-                  iterator(SceneGraph* sg, SceneGraph::container_t::iterator i)
-                     : m_sg(sg), m_i(i) {}
-
-                  SceneGraph* m_sg;
-                  SceneGraph::container_t::iterator m_i;
-            };
-
-            void insert(pModel_t model) {
-               m_container.insert(entry_t(key_t(model->renderMode, model->texHandle), model));
-            }
-
-            void remove(pModel_t model) {
-               if (m_container.erase(entry_t(key_t(model->renderMode, model->texHandle), model)) == 0) {
-
-                  for (auto i = m_container.begin(); i != m_container.end(); ++i) {
-                     if (i->second == model) {
-                        m_container.erase(i);
-                        break;
-                     }
-                  }
-               }
-            }
-
-            void clear() { m_container.clear(); }
-            iterator begin() { return iterator(this, m_container.begin()); }
-            iterator end() { return iterator(this, m_container.end()); }
-
-         private:
-            container_t m_container;
-      };
-
       typedef enum {
          MSG_TEX_HANDLE_REQ,
          MSG_VP_RESIZE_REQ,
@@ -293,7 +147,7 @@ class Renderer {
       };
 
       struct msgConstructVbo_t {
-         pModel_t model;
+         Model* model;
       };
 
       typedef boost::variant<
@@ -324,7 +178,7 @@ class Renderer {
       void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
       void processMsg(const Message& msg);
       textureHandle_t loadTexture(const textureData_t* texture, int_t w, int_t h);
-      void constructVBO(pModel_t model);
+      void constructVBO(Model* model);
       void queueMsg(Message msg);
 #ifdef DEBUG
       void computeFrameRate();

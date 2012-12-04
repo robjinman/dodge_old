@@ -23,7 +23,9 @@ class Shape : virtual public Entity {
 
       virtual Shape* clone() const;
       virtual void assignData(const XmlNode data);
-      virtual void draw() const;
+
+//      virtual void render() const;
+//      virtual void unrender() const;
 
    private:
       static Renderer m_renderer;

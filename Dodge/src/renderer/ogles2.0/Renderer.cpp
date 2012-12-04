@@ -7,6 +7,8 @@
 #include <cassert>
 #include <renderer/ogles2.0/Renderer.hpp>
 #include <renderer/RendererException.hpp>
+#include <renderer/Model.hpp>
+#include <renderer/SceneGraph.hpp>
 #include <renderer/GL_CHECK.hpp>
 #include <Timer.hpp>
 
@@ -21,7 +23,7 @@ namespace Dodge {
 atomic<bool> Renderer::m_running(false);
 map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds;
 Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
-Renderer::SceneGraph Renderer::m_sceneGraph;
+SceneGraph Renderer::m_sceneGraph;
 mutex Renderer::m_sceneGraphMutex;
 boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
 mutex Renderer::m_cameraMutex;
@@ -312,7 +314,7 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 //===========================================
 // Renderer::stageModel
 //===========================================
-void Renderer::stageModel(pModel_t model) {
+void Renderer::stageModel(const Model* model) {
    m_sceneGraphMutex.lock();
    m_sceneGraph.insert(model);
    m_sceneGraphMutex.unlock();
@@ -321,7 +323,7 @@ void Renderer::stageModel(pModel_t model) {
 //===========================================
 // Renderer::unstageModel
 //===========================================
-void Renderer::unstageModel(pModel_t model) {
+void Renderer::unstageModel(const Model* model) {
    m_sceneGraphMutex.lock();
    m_sceneGraph.remove(model);
    m_sceneGraphMutex.unlock();
@@ -339,26 +341,26 @@ void Renderer::setBgColour(const Colour& col) {
 //===========================================
 // Renderer::constructVBO
 //===========================================
-void Renderer::constructVBO(pModel_t model) {
-   model->lock();
+void Renderer::constructVBO(Model* model) {
+   model->m_mutex.lock();
 
-   GL_CHECK(glGenBuffers(1, &model->handle));
-   GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
-   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->bytes, model->verts, GL_STATIC_DRAW));
+   GL_CHECK(glGenBuffers(1, &model->m_handle));
+   GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->m_handle));
+   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->m_bytes, model->m_verts, GL_STATIC_DRAW));
 
-   model->unlock();
+   model->m_mutex.unlock();
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
-void Renderer::freeBufferedModel(pModel_t model) {
-   model->lock();
+void Renderer::freeBufferedModel(Model* model) {
+   model->m_mutex.lock();
 
-   GL_CHECK(glDeleteBuffers(1, &model->handle));
-   model->handle = 0;
+   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
+   model->m_handle = 0;
 
-   model->unlock();
+   model->m_mutex.unlock();
 }
 
 //===========================================
@@ -387,7 +389,7 @@ void Renderer::newTexture(const textureData_t* texture, int_t width, int_t heigh
 //===========================================
 // Renderer::bufferModel
 //===========================================
-void Renderer::bufferModel(pModel_t model) {
+void Renderer::bufferModel(Model* model) {
    msgConstructVbo_t data = { model };
    queueMsg(Message(MSG_CONSTRUCT_VBO, data));
 }
@@ -481,54 +483,54 @@ void Renderer::renderLoop() {
 
          m_sceneGraphMutex.lock();
          for (auto i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
-            pModel_t model = *i;
-            model->lock();
+            const Model* model = *i;
+            model->m_mutex.lock();
 
-            if (model->verts == NULL) {
-               model->unlock();
+            if (model->m_verts == NULL) {
+               model->m_mutex.unlock();
                continue;
             }
 
-            renderer.setMode(model->renderMode);
+            renderer.setMode(model->m_renderMode);
 
-            GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->matrix));
+            GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->m_matrix));
             GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, P.data()));
 
 
-            if (model->primitiveType == LINES) {
-               if (model->lineWidth != 0)
-                  GL_CHECK(glLineWidth(model->lineWidth));
+            if (model->m_primitiveType == LINES) {
+               if (model->m_lineWidth != 0)
+                  GL_CHECK(glLineWidth(model->m_lineWidth));
             }
 
 
             // If model contains per-vertex colour data
-            if (model->colData) {
+            if (model->m_colData) {
                GL_CHECK(glUniform1i(m_locBUniColour, 0));
                GL_CHECK(glEnableVertexAttribArray(m_locColour));
             }
             else {
                GL_CHECK(glDisableVertexAttribArray(m_locColour));
                GL_CHECK(glUniform1i(m_locBUniColour, 1));
-               GL_CHECK(glUniform4f(m_locUniColour, model->colour.r, model->colour.g, model->colour.b, model->colour.a));
+               GL_CHECK(glUniform4f(m_locUniColour, model->m_colour.r, model->m_colour.g, model->m_colour.b, model->m_colour.a));
             }
 
 
-            switch (model->renderMode) {
+            switch (model->m_renderMode) {
                case TEXTURED_ALPHA: {
-                  GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->texHandle));
+                  GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->m_texHandle));
 
-                  vvvttcccc_t* verts = reinterpret_cast<vvvttcccc_t*>(model->verts);
-                  int_t stride = model->colData ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
+                  vvvttcccc_t* verts = reinterpret_cast<vvvttcccc_t*>(model->m_verts);
+                  int_t stride = model->m_colData ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
 
-                  if (model->handle == 0) {
+                  if (model->m_handle == 0) {
                      GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
                      GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
 
-                     if (model->colData)
+                     if (model->m_colData)
                         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
                   }
                   else {
-                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->m_handle));
 
                      GLuint offset = 0;
 
@@ -538,30 +540,30 @@ void Renderer::renderLoop() {
                      GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
                      offset += 2 * sizeof(texCoordElement_t);
 
-                     if (model->colData)
+                     if (model->m_colData)
                         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
                   }
                }
                break;
                case NONTEXTURED_ALPHA: {
-                  vvvcccc_t* verts = reinterpret_cast<vvvcccc_t*>(model->verts);
-                  int_t stride = model->colData ? sizeof(vvvcccc_t) : sizeof(vvv_t);
+                  vvvcccc_t* verts = reinterpret_cast<vvvcccc_t*>(model->m_verts);
+                  int_t stride = model->m_colData ? sizeof(vvvcccc_t) : sizeof(vvv_t);
 
-                  if (model->handle == 0) {
+                  if (model->m_handle == 0) {
                      GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
 
-                     if (model->colData)
+                     if (model->m_colData)
                         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
                   }
                   else {
-                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->handle));
+                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->m_handle));
 
                      GLuint offset = 0;
 
                      GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
                      offset += 3 * sizeof(vertexElement_t);
 
-                     if (model->colData)
+                     if (model->m_colData)
                         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
                   }
                }
@@ -570,9 +572,9 @@ void Renderer::renderLoop() {
                   throw RendererException("Error rendering geometry; Render mode not supported", __FILE__, __LINE__);
             }
 
-            GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->primitiveType), 0, model->n));
+            GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->m_primitiveType), 0, model->m_n));
 
-            model->unlock();
+            model->m_mutex.unlock();
          }
          m_sceneGraphMutex.unlock();
 

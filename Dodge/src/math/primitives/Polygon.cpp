@@ -295,19 +295,6 @@ void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const 
 }
 
 //===========================================
-// Polygon::draw
-//===========================================
-void Polygon::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
-   const RenderBrush& brush = m_renderer.getBrush();
-
-   if (brush.getFillColour().a != 0.f)
-      drawSolid(x, y, z, angle, pivot);
-
-   if (brush.getLineColour().a != 0.f && brush.getLineWidth() > 0)
-      drawHollow(x, y, z, angle, pivot);*/
-}
-
-//===========================================
 // Polygon::getMinimum
 //===========================================
 Vec2f Polygon::getMinimum() const {

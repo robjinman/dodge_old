@@ -8,14 +8,9 @@ using namespace Dodge;
 using namespace cml;
 
 
-typedef Model Model;
-typedef boost::shared_ptr<Model> pModel_t;
-
 WinIO win;
 Renderer renderer;
-pTexture_t tex0;
-pTexture_t tex1;
-std::vector<pModel_t> models;
+std::vector<pPrimitive_t> shapes;
 double frameRate;
 
 
@@ -52,46 +47,9 @@ void onWindowResize(int w, int h) {
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
-void constructModels() {
-   float32_t w = 0.1;
-   float32_t h = 0.1;
-
-   matrix44f_c I;
-   identity_transform(I);
-
-   bool b = false;
-   for (float32_t x = 0.f; x < 1.2f; x += w) {
-      for (float32_t y = 0.f; y < 0.9f; y += h) {
-         b = !b;
-
-         Renderer::vvvtt_t verts[] = {
-            {x + w,   y,       1.0,    1.0, 0.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0},
-            {x    ,   y + h,   1.0,    0.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0}
-         };
-
-         Colour col = b ? Colour(1.0, 0.0, 0.0, 1.0) : Colour(0.0, 0.0, 1.0, 1.0);
-
-         pModel_t model(new Model(Renderer::TEXTURED_ALPHA, false));
-         models.push_back(model);
-
-         model->setVertices(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
-         model->setTextureHandle(b ? tex0->getHandle() : tex1->getHandle());
-         model->setColour(col);
-         model->setMatrix(I.data());
-
-         renderer.bufferModel(model.get());
-         renderer.stageModel(model.get());
-      }
-   }
-}
-
 int main() {
    try {
-      win.init("Demo8 - renderer", 640, 480, false);
+      win.init("Demo9 - renderer", 640, 480, false);
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
       win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
@@ -103,10 +61,10 @@ int main() {
 
       renderer.setBgColour(Colour(1.0, 1.0, 0.0, 1.0));
 
-      tex0 = pTexture_t(new Texture("0.png"));
-      tex1 = pTexture_t(new Texture("1.png"));
-
-      constructModels();
+      pPrimitive_t shape(new LineSegment(Vec2f(0.f, 0.f), Vec2f(1.f, 1.f)));
+      shape->setLineWidth(4);
+      shape->setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      shape->render();
 
       while (1) {
          win.doEvents();

@@ -38,7 +38,7 @@ class WorldSpace {
 
 #ifdef DEBUG
       inline int dbg_getNumEntities() const;
-      inline void dbg_draw(int z) const;
+//      inline void dbg_draw(int z) const;
 #endif
 
    private:
@@ -168,12 +168,12 @@ inline int WorldSpace::dbg_getNumEntities() const{
 //===========================================
 // WorldSpace::dbg_draw
 //===========================================
-inline void WorldSpace::dbg_draw(int z) const {
+/*inline void WorldSpace::dbg_draw(int z) const {
    if (!m_init)
       throw Exception("Error drawing WorldSpace; WorldSpace not initialised", __FILE__, __LINE__);
 
    m_container->dbg_draw(z);
-}
+}*/
 #endif
 
 

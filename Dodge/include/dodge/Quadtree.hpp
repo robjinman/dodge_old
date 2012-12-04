@@ -118,6 +118,7 @@ class Quadtree : public SpatialContainer<T> {
       //===========================================
       // Quadtree::dbg_draw
       //===========================================
+/*
       virtual void dbg_draw(int z) const {
          if (hasChildren()) {
             const Vec2f& pos = m_boundary.getPosition();
@@ -140,7 +141,7 @@ class Quadtree : public SpatialContainer<T> {
             for (int i = 0; i < 4; ++i)
                m_children[i]->dbg_draw(z);
          }
-      }
+      }*/
 #endif
 
       //===========================================

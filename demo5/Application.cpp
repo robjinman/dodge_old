@@ -397,6 +397,7 @@ void Application::begin() {
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
    m_renderer.start();
+   m_renderer.setBgColour(Colour(1.f, 1.f, 0.f, 1.f));
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));

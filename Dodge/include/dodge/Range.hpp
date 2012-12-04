@@ -33,7 +33,9 @@ class Range {
 
 #ifdef DEBUG
       void dbg_print(std::ostream& out, int tab) const;
-      void dbg_draw(int z) const;
+
+//      void dbg_render() const;
+//      void dbg_unrender() const;
 #endif
 
       inline void setPosition(float32_t x, float32_t y);

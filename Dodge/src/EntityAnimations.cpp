@@ -300,10 +300,10 @@ void EntityAnimations::updateModel() {
       {0.0, 0.0,  fZ,    tX1, tY1}
    };
 
-   m_model.setVerts(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
+   m_model.setVertices(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
    m_model.setMatrix(mv.data());
-   m_model.colour = m_entity->getRenderBrush()->getFillColour();
-   m_model.texHandle = m_texture->getHandle();
+   m_model.setColour(m_entity->getRenderBrush()->getFillColour());
+   m_model.setTextureHandle(m_texture->getHandle());
 }
 
 //===========================================

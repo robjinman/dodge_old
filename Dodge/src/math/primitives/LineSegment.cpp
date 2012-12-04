@@ -8,6 +8,7 @@
 #include <Exception.hpp>
 #include <math/primitives/LineSegment.hpp>
 #include <StringId.hpp>
+#include <renderer/Renderer.hpp>
 
 
 using namespace cml;
@@ -23,7 +24,9 @@ Renderer LineSegment::m_renderer = Renderer();
 //===========================================
 // LineSegment::LineSegment
 //===========================================
-LineSegment::LineSegment(const XmlNode data) {
+LineSegment::LineSegment(const XmlNode data)
+   : m_model(Renderer::NONTEXTURED_ALPHA, false) {
+
    try {
       XML_NODE_CHECK(data, LineSegment);
 
@@ -74,29 +77,40 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
-// LineSegment::draw
+// LineSegment::setLineColour
 //===========================================
-void LineSegment::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-/*
-   Renderer::pModel_t model(new Renderer::Model(Renderer::NONTEXTURED_ALPHA, false));
-   model->primitiveType = Renderer::LINES;
-   model->verts = new Renderer::vvv_t[2];
-   model->n = 2;
+void LineSegment::setLineColour(const Colour& colour) {
+   m_model.setColour(colour);
+}
 
-   Vec2f p1 = Vec2f(x, y) + m_p1;
-   Vec2f p2 = Vec2f(x, y) + m_p2;
+//===========================================
+// LineSegment::setLineWidth
+//===========================================
+void LineSegment::setLineWidth(int lineWidth) {
+   m_model.setLineWidth(lineWidth);
+}
 
-   p1.rotate(pivot, angle);
-   p2.rotate(pivot, angle);
+//===========================================
+// LineSegment::setRenderTransform
+//===========================================
+void LineSegment::setRenderTransform(float32_t x, float32_t y, int z) const {
+   m_model.setMatrixElement(12, x);
+   m_model.setMatrixElement(13, y);
+   m_model.setMatrixElement(14, static_cast<float32_t>(z));
+}
 
-   Renderer::vvv_t verts[] = {
-      {p1.x, p1.y, static_cast<float32_t>(z)},
-      {p2.x, p2.y, static_cast<float32_t>(z)}
-   };
+//===========================================
+// LineSegment::render
+//===========================================
+void LineSegment::render() const {
+   m_renderer.stageModel(&m_model);
+}
 
-   memcpy(model->verts, verts, 2 * sizeof(Renderer::vvv_t));
-
-   m_renderer.stageModel(model);*/
+//===========================================
+// LineSegment::unrender
+//===========================================
+void LineSegment::unrender() const {
+   m_renderer.unstageModel(&m_model);
 }
 
 //===========================================

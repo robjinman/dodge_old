@@ -46,13 +46,6 @@ void Ellipse::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
-// Ellipse::draw
-//===========================================
-void Ellipse::draw(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {
-   // TODO
-}
-
-//===========================================
 // Ellipse::getMinimum
 //===========================================
 Vec2f Ellipse::getMinimum() const {

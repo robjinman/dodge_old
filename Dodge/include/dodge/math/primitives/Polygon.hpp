@@ -48,8 +48,13 @@ class Polygon : public Primitive {
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif
 
-      virtual void draw(float32_t x, float32_t y, int z, float32_t angle = 0.f,
-         const Vec2f& pivot = Vec2f(0.f, 0.f)) const;
+      virtual void setFillColour(const Colour& colour) {} // TODO
+      virtual void setLineColour(const Colour& colour) {}
+      virtual void setLineWidth(int lineWidth) {}
+
+      virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
+      virtual void render() const {}
+      virtual void unrender() const {}
 
       bool operator==(const Polygon& rhs) const;
       bool operator!=(const Polygon& rhs) const;
