@@ -31,7 +31,7 @@ class EntityAnimations {
            m_texture(texture),
            m_texSection(),
            m_activeAnim(),
-           m_model(Renderer::TEXTURED_ALPHA, false) {}
+           m_model(Renderer::TRIANGLES) {}
 
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
 
@@ -78,7 +78,7 @@ class EntityAnimations {
       Vec2f m_onScreenSize;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
-      mutable Model m_model;
+      mutable PlainTexturedAlphaModel m_model;
 
       static Renderer m_renderer;
 };

@@ -11,7 +11,7 @@ class SceneGraph {
 
    private:
       typedef std::pair<Renderer::mode_t, Renderer::textureHandle_t> key_t;
-      typedef std::pair<key_t, const Model*> entry_t;
+      typedef std::pair<key_t, const IModel*> entry_t;
       typedef std::set<entry_t> container_t;
 
    public:
@@ -19,8 +19,8 @@ class SceneGraph {
          friend class SceneGraph;
 
          public:
-            const Model* operator*() { return m_i->second; }
-            const Model* operator->() { return m_i->second; }
+            const IModel* operator*() { return m_i->second; }
+            const IModel* operator->() { return m_i->second; }
             bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
             bool operator==(const iterator& rhs) const { return m_i == rhs.m_i; }
 
@@ -37,11 +37,11 @@ class SceneGraph {
             SceneGraph::container_t::iterator m_i;
       };
 
-      void insert(const Model* model) {
+      void insert(const IModel* model) {
          m_container.insert(entry_t(key_t(model->getRenderMode(), model->getTextureHandle()), model));
       }
 
-      void remove(const Model* model) {
+      void remove(const IModel* model) {
          if (m_container.erase(entry_t(key_t(model->getRenderMode(), model->getTextureHandle()), model)) == 0) {
 
             for (auto i = m_container.begin(); i != m_container.end(); ++i) {

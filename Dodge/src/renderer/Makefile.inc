@@ -6,5 +6,4 @@ else
 	endif
 endif
 OBJS += $(BASE_DIR)/renderer/Camera.o \
-	$(BASE_DIR)/renderer/Model.o \
 	$(BASE_DIR)/renderer/RenderBrush.o

@@ -23,10 +23,10 @@ class LineSegment : public Primitive {
       explicit LineSegment(const XmlNode data);
 
       LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
-         : m_p1(p1x, p1y), m_p2(p2x, p2y), m_model(Renderer::NONTEXTURED_ALPHA, false) {}
+         : m_p1(p1x, p1y), m_p2(p2x, p2y), m_model(Renderer::LINES) {}
 
       LineSegment(const Vec2f& p1, const Vec2f& p2)
-         : m_p1(p1), m_p2(p2), m_model(Renderer::NONTEXTURED_ALPHA, false) {}
+         : m_p1(p1), m_p2(p2), m_model(Renderer::LINES) {}
 
       inline void setPoint1(float32_t x, float32_t y);
       inline void setPoint2(float32_t x, float32_t y);
@@ -60,7 +60,7 @@ class LineSegment : public Primitive {
    private:
       Vec2f m_p1; // TODO: remove
       Vec2f m_p2;
-      mutable Model m_model;
+      mutable PlainNonTexturedAlphaModel m_model;
 
       static Renderer m_renderer;
 };

@@ -51,7 +51,7 @@ void EntityAnimations::dbg_print(ostream& out, int tab) const {
 EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
    : m_entity(entity),
      m_activeAnim(),
-     m_model(Renderer::TEXTURED_ALPHA, false) {
+     m_model(Renderer::TRIANGLES) {
 
    m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
@@ -78,7 +78,7 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    : m_entity(entity),
      m_activeAnim(),
-     m_model(Renderer::TEXTURED_ALPHA, false) {
+     m_model(Renderer::TRIANGLES) {
 
    AssetManager assetManager;
 
@@ -291,7 +291,7 @@ void EntityAnimations::updateModel() {
    tY1 = 1.f - tY1;
    tY2 = 1.f - tY2;
 
-   Renderer::vvvtt_t verts[] = {
+   vvvtt_t verts[] = {
       {w,   0.0,  fZ,    tX2, tY1},
       {w,   h,    fZ,    tX2, tY2},
       {0.0, 0.0,  fZ,    tX1, tY1},
@@ -300,7 +300,7 @@ void EntityAnimations::updateModel() {
       {0.0, 0.0,  fZ,    tX1, tY1}
    };
 
-   m_model.setVertices(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
+   m_model.setVertices(0, verts, 6);
    m_model.setMatrix(mv.data());
    m_model.setColour(m_entity->getRenderBrush()->getFillColour());
    m_model.setTextureHandle(m_texture->getHandle());

@@ -26,7 +26,7 @@
 namespace Dodge {
 
 
-class Model;
+class IModel;
 class SceneGraph;
 
 // OpenGL ES 2.0 implementation
@@ -56,42 +56,6 @@ class Renderer {
          TRIANGLE_STRIP
       };
 
-      struct vvvtt_t {
-         vertexElement_t v1;
-         vertexElement_t v2;
-         vertexElement_t v3;
-         texCoordElement_t t1;
-         texCoordElement_t t2;
-      };
-
-      struct vvv_t {
-         vertexElement_t v1;
-         vertexElement_t v2;
-         vertexElement_t v3;
-      };
-
-      struct vvvttcccc_t {
-         vertexElement_t v1;
-         vertexElement_t v2;
-         vertexElement_t v3;
-         texCoordElement_t t1;
-         texCoordElement_t t2;
-         colourElement_t c1;
-         colourElement_t c2;
-         colourElement_t c3;
-         colourElement_t c4;
-      };
-
-      struct vvvcccc_t {
-         vertexElement_t v1;
-         vertexElement_t v2;
-         vertexElement_t v3;
-         colourElement_t c1;
-         colourElement_t c2;
-         colourElement_t c3;
-         colourElement_t c4;
-      };
-
       void setBgColour(const Colour& col);
 
       inline void attachCamera(pCamera_t camera);
@@ -100,11 +64,11 @@ class Renderer {
       void onWindowResize(int_t w, int_t h);
       void newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
 
-      void bufferModel(Model* model);
-      void freeBufferedModel(Model* model);
+      void bufferModel(IModel* model);
+      void freeBufferedModel(IModel* model);
 
-      void stageModel(const Model* model);
-      void unstageModel(const Model* model);
+      void stageModel(const IModel* model);
+      void unstageModel(const IModel* model);
 #ifdef DEBUG
       inline long getFrameRate() const;
 #endif
@@ -147,7 +111,7 @@ class Renderer {
       };
 
       struct msgConstructVbo_t {
-         Model* model;
+         IModel* model;
       };
 
       typedef boost::variant<
@@ -178,7 +142,7 @@ class Renderer {
       void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
       void processMsg(const Message& msg);
       textureHandle_t loadTexture(const textureData_t* texture, int_t w, int_t h);
-      void constructVBO(Model* model);
+      void constructVBO(IModel* model);
       void queueMsg(Message msg);
 #ifdef DEBUG
       void computeFrameRate();

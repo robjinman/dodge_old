@@ -25,7 +25,7 @@ Renderer LineSegment::m_renderer = Renderer();
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const XmlNode data)
-   : m_model(Renderer::NONTEXTURED_ALPHA, false) {
+   : m_model(Renderer::LINES) {
 
    try {
       XML_NODE_CHECK(data, LineSegment);
