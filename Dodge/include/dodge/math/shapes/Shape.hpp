@@ -15,8 +15,8 @@
 namespace Dodge {
 
 
-// A primitive is a shape that does not have any explicit position defined (though
-// some primitives such as polygons, which are represented as sequences of vertices,
+// A shape is a shape that does not have any explicit position defined (though
+// some shapes such as polygons, which are represented as sequences of vertices,
 // will have an implicit position because all vertices can be moved).
 class Shape : virtual public Asset {
    public:

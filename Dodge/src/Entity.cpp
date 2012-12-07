@@ -81,7 +81,7 @@ Entity::Entity(const XmlNode data)
    : m_silent(false), m_parent(NULL) {
 
    AssetManager assetManager;
-   ShapeFactory primitiveFactory;
+   ShapeFactory shapeFactory;
 
    try {
       setSilent(true);
@@ -114,7 +114,7 @@ Entity::Entity(const XmlNode data)
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "shape") {
-         m_shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
+         m_shape = unique_ptr<Shape>(shapeFactory.create(node.firstChild()));
          node = node.nextSibling();
       }
 
@@ -252,7 +252,7 @@ void Entity::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Entity") return;
 
    AssetManager assetManager;
-   ShapeFactory primitiveFactory;
+   ShapeFactory shapeFactory;
 
    try {
       bool silent = isSilent();
@@ -290,7 +290,7 @@ void Entity::assignData(const XmlNode data) {
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "shape") {
-         m_shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
+         m_shape = unique_ptr<Shape>(shapeFactory.create(node.firstChild()));
          node = node.nextSibling();
       }
 

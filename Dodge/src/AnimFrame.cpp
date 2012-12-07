@@ -36,8 +36,8 @@ AnimFrame::AnimFrame(const XmlNode data) {
       node = node.nextSibling();
 
       if (!node.isNull() && node.name() == "shape") {     // TODO: ShapeDelta
-         ShapeFactory primitiveFactory;
-         shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
+         ShapeFactory shapeFactory;
+         shape = unique_ptr<Shape>(shapeFactory.create(node.firstChild()));
       }
    }
    catch (XmlException& e) {

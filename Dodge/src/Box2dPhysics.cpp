@@ -138,9 +138,9 @@ void Box2dPhysics::removeFromWorld() {
 }
 
 //===========================================
-// Box2dPhysics::primitiveToBox2dBody
+// Box2dPhysics::shapeToBox2dBody
 //===========================================
-void Box2dPhysics::primitiveToBox2dBody(const Shape& shape, const EntityPhysics::options_t& opts,
+void Box2dPhysics::shapeToBox2dBody(const Shape& shape, const EntityPhysics::options_t& opts,
    b2Body* body, uint_t* nFixtures) const {
 
    static long ellipseStr = internString("Ellipse");
@@ -183,7 +183,7 @@ void Box2dPhysics::primitiveToBox2dBody(const Shape& shape, const EntityPhysics:
       throw PhysicsException(msg + "; Quad not yet supported", __FILE__, __LINE__);
    }
    else
-      throw PhysicsException(msg + "Unknown primitive type", __FILE__, __LINE__);
+      throw PhysicsException(msg + "Unknown shape type", __FILE__, __LINE__);
 }
 
 //===========================================
@@ -206,7 +206,7 @@ void Box2dPhysics::constructBody() {
    m_body = m_world.CreateBody(&bdef);
 
    const Shape& entShape = m_entity->getShape();
-   primitiveToBox2dBody(entShape, m_opts, m_body, &m_numFixtures);
+   shapeToBox2dBody(entShape, m_opts, m_body, &m_numFixtures);
 }
 
 //===========================================
@@ -316,7 +316,7 @@ void Box2dPhysics::updatePos(EEvent* ev) {
          for (unsigned int i = 0; i < m_numFixtures; ++i)
             m_body->DestroyFixture(m_body->GetFixtureList());
 
-         primitiveToBox2dBody(*newShape, m_opts, m_body, &m_numFixtures);
+         shapeToBox2dBody(*newShape, m_opts, m_body, &m_numFixtures);
       }
    }
 
