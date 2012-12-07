@@ -343,6 +343,7 @@ void Renderer::renderLoop() {
             renderer.setMode(model->getRenderMode());
 
             m_activeShaderProg->sendData(model, P);
+
             GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
          }
          m_sceneGraphMutex.unlock();
