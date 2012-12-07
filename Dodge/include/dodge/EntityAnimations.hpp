@@ -25,14 +25,7 @@ namespace Dodge {
 class EntityAnimations {
    public:
       EntityAnimations(Entity* entity, const XmlNode data);
-
-      EntityAnimations(Entity* entity, pTexture_t texture)
-         : m_entity(entity),
-           m_texture(texture),
-           m_texSection(),
-           m_activeAnim(),
-           m_model(Renderer::TRIANGLES) {}
-
+      EntityAnimations(Entity* entity, pTexture_t texture);
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
 
       virtual void assignData(const XmlNode data);

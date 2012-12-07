@@ -20,7 +20,6 @@
 #include "math/primitives/Primitive.hpp"
 #include "Range.hpp"
 #include "renderer/Renderer.hpp"
-#include "renderer/RenderBrush.hpp"
 #include "xml/xml.hpp"
 #include "Asset.hpp"
 
@@ -136,9 +135,6 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void scale(const Vec2f& s);
       void setShape(std::unique_ptr<Primitive> shape);
 
-      inline void setRenderBrush(boost::shared_ptr<RenderBrush> brush);
-      inline boost::shared_ptr<RenderBrush> getRenderBrush() const;
-
       // Relative to parent (parent's model space)
       inline Vec2f getTranslation() const;
       inline int getZ() const;
@@ -154,6 +150,13 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline long getTypeName() const;
       inline const Vec2f& getScale() const;
       inline const Range& getBoundary() const;
+
+      inline void setFillColour(const Colour& colour);
+      inline void setLineColour(const Colour& colour);
+      inline void setLineWidth(Renderer::int_t lineWidth);
+      inline const Colour& getFillColour() const;
+      inline const Colour& getLineColour() const;
+      inline Renderer::int_t getLineWidth() const;
 
       inline pEntity_t getSharedPtr();
 
@@ -188,10 +191,12 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       std::unique_ptr<Primitive> m_shape; // Bounding polygon/shape
       Range m_boundary;
 
+      Colour m_fillColour;
+      Colour m_lineColour;
+      Renderer::int_t m_lineWidth;
+
       Entity* m_parent;
       std::set<pEntity_t> m_children;
-
-      mutable boost::shared_ptr<RenderBrush> m_renderBrush;
 
       static int m_count;
       static long generateName();
@@ -378,23 +383,6 @@ inline float32_t Entity::getRotation_abs() const {
 }
 
 //===========================================
-// Entity::setRenderBrush
-//===========================================
-inline void Entity::setRenderBrush(boost::shared_ptr<RenderBrush> brush) {
-   m_renderBrush = brush;
-}
-
-//===========================================
-// Entity::getRenderBrush
-//===========================================
-inline boost::shared_ptr<RenderBrush> Entity::getRenderBrush() const {
-   if (!m_renderBrush)
-      m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush);
-
-   return m_renderBrush;
-}
-
-//===========================================
 // Entity::getBoundary
 //===========================================
 inline const Range& Entity::getBoundary() const {
@@ -437,6 +425,48 @@ inline long Entity::getTypeName() const {
 //===========================================
 inline const Vec2f& Entity::getScale() const {
    return m_scale;
+}
+
+//===========================================
+// Entity::setFillColour
+//===========================================
+inline void Entity::setFillColour(const Colour& colour) {
+   m_fillColour = colour;
+}
+
+//===========================================
+// Entity::setLineColour
+//===========================================
+inline void Entity::setLineColour(const Colour& colour) {
+   m_lineColour = colour;
+}
+
+//===========================================
+// Entity::setLineWidth
+//===========================================
+inline void Entity::setLineWidth(Renderer::int_t lineWidth) {
+   m_lineWidth = lineWidth;
+}
+
+//===========================================
+// Entity::getFillColour
+//===========================================
+inline const Colour& Entity::getFillColour() const {
+   return m_fillColour;
+}
+
+//===========================================
+// Entity::getLineColour
+//===========================================
+inline const Colour& Entity::getLineColour() const {
+   return m_lineColour;
+}
+
+//===========================================
+// Entity::getLineWidth
+//===========================================
+inline Renderer::int_t Entity::getLineWidth() const {
+   return m_lineWidth;
 }
 
 

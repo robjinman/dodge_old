@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __RENDERER_EXCEPTION_HPP__
 #define __RENDERER_EXCEPTION_HPP__
 

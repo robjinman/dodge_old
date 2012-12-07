@@ -8,7 +8,6 @@
 #include "Font.hpp"
 #include "GL_CHECK.hpp"
 #include "Model.hpp"
-#include "RenderBrush.hpp"
 #include "Renderer.hpp"
 #include "RendererException.hpp"
 #include "SceneGraph.hpp"

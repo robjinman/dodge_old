@@ -17,7 +17,6 @@
 #include <atomic>
 #include <boost/variant.hpp>
 #include "Colour.hpp"
-#include "../RenderBrush.hpp"
 #include "../Camera.hpp"
 #include "../../WinIO.hpp"
 #include "../../definitions.hpp"

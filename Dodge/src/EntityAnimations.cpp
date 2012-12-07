@@ -45,6 +45,16 @@ void EntityAnimations::dbg_print(ostream& out, int tab) const {
 
 //===========================================
 // EntityAnimations::EntityAnimations
+//===========================================
+EntityAnimations::EntityAnimations(Entity* entity, pTexture_t texture)
+   : m_entity(entity),
+     m_texture(texture),
+     m_texSection(),
+     m_activeAnim(),
+     m_model(Renderer::TRIANGLES) {}
+
+//===========================================
+// EntityAnimations::EntityAnimations
 //
 // Construct deep copy.
 //===========================================
@@ -57,18 +67,11 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
    m_texSection = copy.m_texSection;
    m_texture = copy.m_texture;
 
-   try {
-      map<long, pAnimation_t>::const_iterator it = copy.m_animations.begin();
-      while (it != copy.m_animations.end()) {
-         pAnimation_t anim(new Animation(*(it->second)));
-         m_animations[it->first] = anim;
-         ++it;
-      }
-   }
-   catch (bad_alloc& e) {
-      Exception ex("Error constructing EntityAnimations; ", __FILE__, __LINE__);
-      ex.append(e.what());
-      throw ex;
+   map<long, pAnimation_t>::const_iterator it = copy.m_animations.begin();
+   while (it != copy.m_animations.end()) {
+      pAnimation_t anim(new Animation(*(it->second)));
+      m_animations[it->first] = anim;
+      ++it;
    }
 }
 
@@ -302,7 +305,7 @@ void EntityAnimations::updateModel() {
 
    m_model.setVertices(0, verts, 6);
    m_model.setMatrix(mv.data());
-   m_model.setColour(m_entity->getRenderBrush()->getFillColour());
+   m_model.setColour(m_entity->getFillColour());
    m_model.setTextureHandle(m_texture->getHandle());
 }
 
@@ -317,7 +320,7 @@ void EntityAnimations::update() {
       const AnimFrame* frame = it->second->getCurrentFrame();
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
-         m_entity->getRenderBrush()->setFillColour(frame->col);
+         m_entity->setFillColour(frame->col);
          if (frame->shape) m_entity->setShape(unique_ptr<Primitive>(frame->shape->clone())); // TODO: PrimitiveDelta
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {

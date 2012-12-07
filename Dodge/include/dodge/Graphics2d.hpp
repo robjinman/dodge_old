@@ -9,7 +9,6 @@
 
 #include "renderer/Renderer.hpp"
 #include "renderer/Camera.hpp"
-#include "renderer/RenderBrush.hpp"
 #include "math/Vec2i.hpp"
 #include "math/Vec2f.hpp"
 #include "math/primitives/Primitive.hpp"
@@ -45,8 +44,11 @@ class Graphics2d {
    private:
       static bool m_init;
       static Renderer m_renderer;
-      static boost::shared_ptr<RenderBrush> m_renderBrush;
       static pCamera_t m_camera;
+
+      static Colour m_fillColour;
+      static Colour m_lineColour;
+      static Renderer::int_t m_lineWidth;
 };
 
 //===========================================
@@ -56,7 +58,7 @@ inline void Graphics2d::setFillColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting fill colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->setFillColour(colour);
+   m_fillColour = colour;
 }
 
 //===========================================
@@ -66,7 +68,7 @@ inline void Graphics2d::setLineColour(const Colour& colour) const {
    if (!m_init)
       throw Exception("Error setting line colour; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->setLineColour(colour);
+   m_lineColour = colour;
 }
 
 //===========================================
@@ -76,7 +78,7 @@ inline void Graphics2d::setLineWidth(Renderer::int_t width) const {
    if (!m_init)
       throw Exception("Error setting line width; Graphics2d not initialised", __FILE__, __LINE__);
 
-   m_renderBrush->setLineWidth(width);
+   m_lineWidth = width;
 }
 
 //===========================================

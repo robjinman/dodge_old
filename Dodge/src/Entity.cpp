@@ -126,25 +126,18 @@ Entity::Entity(const XmlNode data)
       setScale(Vec2f(node.firstChild()));
 
       node = node.nextSibling();
-      if (!node.isNull() && node.name() == "renderBrush") {
-         XmlAttribute attr = node.firstAttribute();
+      XML_NODE_CHECK(node, fillColour);
+      m_fillColour = Colour(node.firstChild());
 
-         if (!attr.isNull() && attr.name() == "ptr") {
-            long id = attr.getLong();
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, lineColour);
+      m_lineColour = Colour(node.firstChild());
 
-            boost::shared_ptr<RenderBrush> brush = boost::dynamic_pointer_cast<RenderBrush>(assetManager.getAssetPointer(id));
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, lineWidth);
+      m_lineWidth = node.getInt();
 
-            if (!brush)
-               throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
-
-            m_renderBrush = brush;
-         }
-         else
-            m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush(node.firstChild()));
-
-         node = node.nextSibling();
-      }
-
+      node = node.nextSibling();
       XML_NODE_CHECK(node, children);
       XmlNode node_ = node.firstChild();
       while (!node_.isNull() && node_.name() == "child") {
@@ -232,6 +225,9 @@ void Entity::deepCopy(const Entity& copy) {
    m_type = copy.m_type;
    m_silent = copy.m_silent;
    m_scale = copy.m_scale;
+   m_fillColour = copy.m_fillColour;
+   m_lineColour = copy.m_lineColour;
+   m_lineWidth = copy.m_lineWidth;
    m_transl = copy.m_transl;
    m_z = copy.m_z;
    m_rot = copy.m_rot;
@@ -307,22 +303,18 @@ void Entity::assignData(const XmlNode data) {
          setRotation(attr.getFloat());
       }
 
-      if (!node.isNull() && node.name() == "renderBrush") {
-         XmlAttribute attr = node.firstAttribute();
+      if (!node.isNull() && node.name() == "fillColour") {
+         m_fillColour = Colour(node.firstChild());
+         node = node.nextSibling();
+      }
 
-         if (!attr.isNull() && attr.name() == "ptr") {
-            long id = attr.getLong();
+      if (!node.isNull() && node.name() == "lineColour") {
+         m_lineColour = Colour(node.firstChild());
+         node = node.nextSibling();
+      }
 
-            boost::shared_ptr<RenderBrush> brush = boost::dynamic_pointer_cast<RenderBrush>(assetManager.getAssetPointer(id));
-
-            if (!brush)
-               throw XmlException("Bad RenderBrush asset id", __FILE__, __LINE__);
-
-            m_renderBrush = brush;
-         }
-         else
-            m_renderBrush = boost::shared_ptr<RenderBrush>(new RenderBrush(node.firstChild()));
-
+      if (!node.isNull() && node.name() == "lineWidth") {
+         m_lineWidth = node.getInt();
          node = node.nextSibling();
       }
 
@@ -537,7 +529,9 @@ void Entity::scale(float32_t x, float32_t y) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
+
+      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs,
+         pPrimitive_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);

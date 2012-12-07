@@ -41,7 +41,7 @@ void ShaderProgram::newShaderFromSource(const char** shaderSrc, GLint type, GLin
    GL_CHECK(glCompileShader(shader));
    GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
 
-   if(success != GL_TRUE)
+   if (success != GL_TRUE)
       throw RendererException("Could not process shader; Error in source", __FILE__, __LINE__);
 
    GL_CHECK(glAttachShader(prog, shader));
