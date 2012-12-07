@@ -18,11 +18,11 @@ namespace Dodge {
 // A primitive is a shape that does not have any explicit position defined (though
 // some primitives such as polygons, which are represented as sequences of vertices,
 // will have an implicit position because all vertices can be moved).
-class Primitive : virtual public Asset {
+class Shape : virtual public Asset {
    public:
       virtual long typeId() const = 0;
 
-      virtual Primitive* clone() const = 0;
+      virtual Shape* clone() const = 0;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const = 0;
 #endif
@@ -39,10 +39,10 @@ class Primitive : virtual public Asset {
       virtual void render() const = 0;
       virtual void unrender() const = 0;
 
-      virtual ~Primitive() {};
+      virtual ~Shape() {};
 };
 
-typedef boost::shared_ptr<Primitive> pPrimitive_t;
+typedef boost::shared_ptr<Shape> pShape_t;
 
 
 }

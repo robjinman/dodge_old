@@ -321,7 +321,7 @@ void EntityAnimations::update() {
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
          m_entity->setFillColour(frame->col);
-         if (frame->shape) m_entity->setShape(unique_ptr<Primitive>(frame->shape->clone())); // TODO: PrimitiveDelta
+         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {

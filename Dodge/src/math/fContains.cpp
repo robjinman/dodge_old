@@ -8,9 +8,9 @@
 #include <math/common.hpp>
 #include <math/fContains.hpp>
 #include <math/fIntersect.hpp>
-#include <math/primitives/LineSegment.hpp>
-#include <math/primitives/Ellipse.hpp>
-#include <math/primitives/Polygon.hpp>
+#include <math/shapes/LineSegment.hpp>
+#include <math/shapes/Ellipse.hpp>
+#include <math/shapes/Polygon.hpp>
 #include <math/Vec2f.hpp>
 #include <globals.hpp>
 #include <Exception.hpp>
@@ -25,14 +25,14 @@ namespace Math {
 namespace {
 
 
-typedef bool (*funcPtr_t)(const Primitive&, const Vec2f&, const Primitive&, const Vec2f&);
+typedef bool (*funcPtr_t)(const Shape&, const Vec2f&, const Shape&, const Vec2f&);
 typedef std::map<std::pair<long, long>, funcPtr_t> dispatchTable_t;
 
 
 //===========================================
 // lsegLsegContains
 //===========================================
-bool lsegLsegContains(const Primitive& lseg1, const Vec2f& pos1, const Primitive& lseg2, const Vec2f& pos2) {
+bool lsegLsegContains(const Shape& lseg1, const Vec2f& pos1, const Shape& lseg2, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -40,7 +40,7 @@ bool lsegLsegContains(const Primitive& lseg1, const Vec2f& pos1, const Primitive
 //===========================================
 // lsegEllipseContains
 //===========================================
-bool lsegEllipseContains(const Primitive& lseg, const Vec2f& pos1, const Primitive& elps, const Vec2f& pos2) {
+bool lsegEllipseContains(const Shape& lseg, const Vec2f& pos1, const Shape& elps, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -48,7 +48,7 @@ bool lsegEllipseContains(const Primitive& lseg, const Vec2f& pos1, const Primiti
 //===========================================
 // lsegPolyContains
 //===========================================
-bool lsegPolyContains(const Primitive& lseg, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool lsegPolyContains(const Shape& lseg, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -56,7 +56,7 @@ bool lsegPolyContains(const Primitive& lseg, const Vec2f& pos1, const Primitive&
 //===========================================
 // ellipseEllipseContains
 //===========================================
-bool ellipseEllipseContains(const Primitive& elps1, const Vec2f& pos1, const Primitive& elps2, const Vec2f& pos2) {
+bool ellipseEllipseContains(const Shape& elps1, const Vec2f& pos1, const Shape& elps2, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -64,7 +64,7 @@ bool ellipseEllipseContains(const Primitive& elps1, const Vec2f& pos1, const Pri
 //===========================================
 // ellipsePolyContains
 //===========================================
-bool ellipsePolyContains(const Primitive& elps, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool ellipsePolyContains(const Shape& elps, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -72,7 +72,7 @@ bool ellipsePolyContains(const Primitive& elps, const Vec2f& pos1, const Primiti
 //===========================================
 // polyPolyContains
 //===========================================
-bool polyPolyContains(const Primitive& poly1_, const Vec2f& pos1, const Primitive& poly2_, const Vec2f& pos2) {
+bool polyPolyContains(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_, const Vec2f& pos2) {
    const Polygon& poly1 = static_cast<const Polygon&>(poly1_);
    const Polygon& poly2 = static_cast<const Polygon&>(poly2_);
 
@@ -140,12 +140,12 @@ dispatchTable_t* initDispatchTable() {
 //===========================================
 // Math::contains
 //===========================================
-bool contains(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2) {
+bool contains(const Shape& obj1, const Vec2f& pos1, const Shape& obj2, const Vec2f& pos2) {
    static unique_ptr<dispatchTable_t> tbl(initDispatchTable());
 
    dispatchTable_t::iterator it = tbl->find(makePair(obj1.typeId(), obj2.typeId()));
    if (it == tbl->end())
-      throw Exception("Error in Math::contains(); Unrecognised primitive types", __FILE__, __LINE__);
+      throw Exception("Error in Math::contains(); Unrecognised shape types", __FILE__, __LINE__);
 
    return it->second(obj1, pos1, obj2, pos2);
 }

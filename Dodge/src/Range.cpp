@@ -5,7 +5,7 @@
 
 #include <Range.hpp>
 #ifdef DEBUG
-   #include <math/primitives/Quad.hpp>
+   #include <math/shapes/Quad.hpp>
 #endif
 
 

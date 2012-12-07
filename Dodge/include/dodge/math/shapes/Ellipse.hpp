@@ -7,13 +7,13 @@
 #define __ELLIPSE_HPP__
 
 
-#include "Primitive.hpp"
+#include "Shape.hpp"
 
 
 namespace Dodge {
 
 
-class Ellipse : public Primitive {
+class Ellipse : public Shape {
    public:
       explicit Ellipse(const XmlNode data);
 

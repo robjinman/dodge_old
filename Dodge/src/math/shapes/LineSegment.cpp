@@ -6,7 +6,7 @@
 #include <cstring>
 #include <cml/cml.h>
 #include <Exception.hpp>
-#include <math/primitives/LineSegment.hpp>
+#include <math/shapes/LineSegment.hpp>
 #include <StringId.hpp>
 #include <renderer/Renderer.hpp>
 

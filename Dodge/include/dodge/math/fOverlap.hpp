@@ -9,13 +9,13 @@
 
 namespace Dodge {
 
-class Primitive;
+class Shape;
 class Vec2f;
 
 namespace Math {
 
 
-extern bool overlap(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2);
+extern bool overlap(const Shape& obj1, const Vec2f& pos1, const Shape& obj2, const Vec2f& pos2);
 
 
 }

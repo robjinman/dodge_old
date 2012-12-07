@@ -10,7 +10,7 @@
 #include <StringId.hpp>
 #include <utils/Functor.hpp>
 #include <math/fAreEqual.hpp>
-#include <math/primitives/primitives.hpp>
+#include <math/shapes/shapes.hpp>
 
 
 using namespace std;
@@ -140,7 +140,7 @@ void Box2dPhysics::removeFromWorld() {
 //===========================================
 // Box2dPhysics::primitiveToBox2dBody
 //===========================================
-void Box2dPhysics::primitiveToBox2dBody(const Primitive& shape, const EntityPhysics::options_t& opts,
+void Box2dPhysics::primitiveToBox2dBody(const Shape& shape, const EntityPhysics::options_t& opts,
    b2Body* body, uint_t* nFixtures) const {
 
    static long ellipseStr = internString("Ellipse");
@@ -148,7 +148,7 @@ void Box2dPhysics::primitiveToBox2dBody(const Primitive& shape, const EntityPhys
    static long polygonStr = internString("Polygon");
    static long quadStr = internString("Quad");
 
-   string msg("Error constructing Box2D body from Primitive");
+   string msg("Error constructing Box2D body from Shape");
 
    *nFixtures = 0;
 
@@ -205,7 +205,7 @@ void Box2dPhysics::constructBody() {
 
    m_body = m_world.CreateBody(&bdef);
 
-   const Primitive& entShape = m_entity->getShape();
+   const Shape& entShape = m_entity->getShape();
    primitiveToBox2dBody(entShape, m_opts, m_body, &m_numFixtures);
 }
 
@@ -306,8 +306,8 @@ void Box2dPhysics::updatePos(EEvent* ev) {
    else if (ev->getType() == entityShapeStr) {
       EEntityShape* event = static_cast<EEntityShape*>(ev);
 
-      unique_ptr<Primitive> oldShape(event->oldShape.get()->clone());
-      unique_ptr<Primitive> newShape(event->newShape.get()->clone());
+      unique_ptr<Shape> oldShape(event->oldShape.get()->clone());
+      unique_ptr<Shape> newShape(event->newShape.get()->clone());
       oldShape->rotate(-event->oldRotation_abs);
       newShape->rotate(-event->newRotation_abs);
 

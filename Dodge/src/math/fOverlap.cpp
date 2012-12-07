@@ -7,9 +7,9 @@
 #include <map>
 #include <math/common.hpp>
 #include <math/fOverlap.hpp>
-#include <math/primitives/LineSegment.hpp>
-#include <math/primitives/Ellipse.hpp>
-#include <math/primitives/Polygon.hpp>
+#include <math/shapes/LineSegment.hpp>
+#include <math/shapes/Ellipse.hpp>
+#include <math/shapes/Polygon.hpp>
 #include <math/Vec2f.hpp>
 #include <globals.hpp>
 #include <Exception.hpp>
@@ -24,14 +24,14 @@ namespace Math {
 namespace {
 
 
-typedef bool (*funcPtr_t)(const Primitive&, const Vec2f&, const Primitive&, const Vec2f&);
+typedef bool (*funcPtr_t)(const Shape&, const Vec2f&, const Shape&, const Vec2f&);
 typedef std::map<std::pair<long, long>, funcPtr_t> dispatchTable_t;
 
 
 //===========================================
 // lsegLsegOverlap
 //===========================================
-bool lsegLsegOverlap(const Primitive& lseg1, const Vec2f& pos1, const Primitive& lseg2, const Vec2f& pos2) {
+bool lsegLsegOverlap(const Shape& lseg1, const Vec2f& pos1, const Shape& lseg2, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -39,7 +39,7 @@ bool lsegLsegOverlap(const Primitive& lseg1, const Vec2f& pos1, const Primitive&
 //===========================================
 // lsegEllipseOverlap
 //===========================================
-bool lsegEllipseOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitive& elps, const Vec2f& pos2) {
+bool lsegEllipseOverlap(const Shape& lseg, const Vec2f& pos1, const Shape& elps, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -47,7 +47,7 @@ bool lsegEllipseOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitiv
 //===========================================
 // lsegPolyOverlap
 //===========================================
-bool lsegPolyOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool lsegPolyOverlap(const Shape& lseg, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -55,7 +55,7 @@ bool lsegPolyOverlap(const Primitive& lseg, const Vec2f& pos1, const Primitive& 
 //===========================================
 // ellipseEllipseOverlap
 //===========================================
-bool ellipseEllipseOverlap(const Primitive& elps1, const Vec2f& pos1, const Primitive& elps2, const Vec2f& pos2) {
+bool ellipseEllipseOverlap(const Shape& elps1, const Vec2f& pos1, const Shape& elps2, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -63,7 +63,7 @@ bool ellipseEllipseOverlap(const Primitive& elps1, const Vec2f& pos1, const Prim
 //===========================================
 // ellipsePolyOverlap
 //===========================================
-bool ellipsePolyOverlap(const Primitive& elps, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool ellipsePolyOverlap(const Shape& elps, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -71,7 +71,7 @@ bool ellipsePolyOverlap(const Primitive& elps, const Vec2f& pos1, const Primitiv
 //===========================================
 // polyPolyOverlap
 //===========================================
-bool polyPolyOverlap(const Primitive& poly1_, const Vec2f& pos1, const Primitive& poly2_, const Vec2f& pos2) {
+bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_, const Vec2f& pos2) {
    const Polygon& poly1 = static_cast<const Polygon&>(poly1_);
    const Polygon& poly2 = static_cast<const Polygon&>(poly2_);
 
@@ -187,12 +187,12 @@ dispatchTable_t* initDispatchTable() {
 //===========================================
 // Math::overlap
 //===========================================
-bool overlap(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2) {
+bool overlap(const Shape& obj1, const Vec2f& pos1, const Shape& obj2, const Vec2f& pos2) {
    static unique_ptr<dispatchTable_t> tbl(initDispatchTable());
 
    dispatchTable_t::iterator it = tbl->find(makePair(obj1.typeId(), obj2.typeId()));
    if (it == tbl->end())
-      throw Exception("Error in Math::overlap(); unrecognised primitive types", __FILE__, __LINE__);
+      throw Exception("Error in Math::overlap(); unrecognised shape types", __FILE__, __LINE__);
 
    return it->second(obj1, pos1, obj2, pos2);
 }

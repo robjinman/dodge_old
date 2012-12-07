@@ -1,6 +1,6 @@
 #include <cstring>
 #include <Exception.hpp>
-#include <math/primitives/Quad.hpp>
+#include <math/shapes/Quad.hpp>
 #include <StringId.hpp>
 
 

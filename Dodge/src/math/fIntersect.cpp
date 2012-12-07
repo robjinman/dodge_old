@@ -7,9 +7,9 @@
 #include <map>
 #include <math/common.hpp>
 #include <math/fIntersect.hpp>
-#include <math/primitives/LineSegment.hpp>
-#include <math/primitives/Ellipse.hpp>
-#include <math/primitives/Polygon.hpp>
+#include <math/shapes/LineSegment.hpp>
+#include <math/shapes/Ellipse.hpp>
+#include <math/shapes/Polygon.hpp>
 #include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
@@ -23,14 +23,14 @@ namespace Math {
 namespace {
 
 
-typedef bool (*funcPtr_t)(const Primitive&, const Vec2f&, const Primitive&, const Vec2f&);
+typedef bool (*funcPtr_t)(const Shape&, const Vec2f&, const Shape&, const Vec2f&);
 typedef std::map<std::pair<long, long>, funcPtr_t> dispatchTable_t;
 
 
 //===========================================
 // lsegLsegIntersect
 //===========================================
-bool lsegLsegIntersect(const Primitive& lseg1, const Vec2f& pos1, const Primitive& lseg2, const Vec2f& pos2) {
+bool lsegLsegIntersect(const Shape& lseg1, const Vec2f& pos1, const Shape& lseg2, const Vec2f& pos2) {
    const LineSegment& l1 = static_cast<const LineSegment&>(lseg1);
    const LineSegment& l2 = static_cast<const LineSegment&>(lseg2);
 
@@ -51,7 +51,7 @@ bool lsegLsegIntersect(const Primitive& lseg1, const Vec2f& pos1, const Primitiv
 //===========================================
 // lsegEllipseIntersect
 //===========================================
-bool lsegEllipseIntersect(const Primitive& lseg, const Vec2f& pos1, const Primitive& elps, const Vec2f& pos2) {
+bool lsegEllipseIntersect(const Shape& lseg, const Vec2f& pos1, const Shape& elps, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -59,7 +59,7 @@ bool lsegEllipseIntersect(const Primitive& lseg, const Vec2f& pos1, const Primit
 //===========================================
 // lsegPolyIntersect
 //===========================================
-bool lsegPolyIntersect(const Primitive& lseg, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool lsegPolyIntersect(const Shape& lseg, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -67,7 +67,7 @@ bool lsegPolyIntersect(const Primitive& lseg, const Vec2f& pos1, const Primitive
 //===========================================
 // ellipseEllipseIntersect
 //===========================================
-bool ellipseEllipseIntersect(const Primitive& elps1, const Vec2f& pos1, const Primitive& elps2, const Vec2f& pos2) {
+bool ellipseEllipseIntersect(const Shape& elps1, const Vec2f& pos1, const Shape& elps2, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -75,7 +75,7 @@ bool ellipseEllipseIntersect(const Primitive& elps1, const Vec2f& pos1, const Pr
 //===========================================
 // ellipsePolyIntersect
 //===========================================
-bool ellipsePolyIntersect(const Primitive& elps, const Vec2f& pos1, const Primitive& poly, const Vec2f& pos2) {
+bool ellipsePolyIntersect(const Shape& elps, const Vec2f& pos1, const Shape& poly, const Vec2f& pos2) {
    // TODO
    return false;
 }
@@ -83,7 +83,7 @@ bool ellipsePolyIntersect(const Primitive& elps, const Vec2f& pos1, const Primit
 //===========================================
 // polyPolyIntersect
 //===========================================
-bool polyPolyIntersect(const Primitive& poly1_, const Vec2f& pos1, const Primitive& poly2_, const Vec2f& pos2) {
+bool polyPolyIntersect(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_, const Vec2f& pos2) {
    const Polygon& poly1 = static_cast<const Polygon&>(poly1_);
    const Polygon& poly2 = static_cast<const Polygon&>(poly2_);
 
@@ -143,12 +143,12 @@ dispatchTable_t* initDispatchTable() {
 //===========================================
 // Math::intersect
 //===========================================
-bool intersect(const Primitive& obj1, const Vec2f& pos1, const Primitive& obj2, const Vec2f& pos2) {
+bool intersect(const Shape& obj1, const Vec2f& pos1, const Shape& obj2, const Vec2f& pos2) {
    static unique_ptr<dispatchTable_t> tbl(initDispatchTable());
 
    dispatchTable_t::iterator it = tbl->find(makePair(obj1.typeId(), obj2.typeId()));
    if (it == tbl->end())
-      throw Exception("Error in Math::intersect(); unrecognised primitive types", __FILE__, __LINE__);
+      throw Exception("Error in Math::intersect(); unrecognised shape types", __FILE__, __LINE__);
 
    return it->second(obj1, pos1, obj2, pos2);
 }

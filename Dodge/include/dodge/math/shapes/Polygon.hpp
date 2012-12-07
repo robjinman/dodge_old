@@ -9,7 +9,7 @@
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "Primitive.hpp"
+#include "Shape.hpp"
 #include "../Vec2f.hpp"
 #include "../../Exception.hpp"
 #include "../../renderer/Renderer.hpp"
@@ -18,7 +18,7 @@
 namespace Dodge {
 
 
-class Polygon : public Primitive {
+class Polygon : public Shape {
    public:
       Polygon();
       explicit Polygon(const XmlNode data);

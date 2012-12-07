@@ -7,9 +7,9 @@
 #include <map>
 #include <math/common.hpp>
 #include <math/fAreEqual.hpp>
-#include <math/primitives/LineSegment.hpp>
-#include <math/primitives/Ellipse.hpp>
-#include <math/primitives/Polygon.hpp>
+#include <math/shapes/LineSegment.hpp>
+#include <math/shapes/Ellipse.hpp>
+#include <math/shapes/Polygon.hpp>
 #include <math/Vec2f.hpp>
 #include <Exception.hpp>
 #include <StringId.hpp>
@@ -22,56 +22,56 @@ using namespace std;
 namespace {
 
 
-typedef bool (*funcPtr_t)(const Primitive&, const Primitive&);
+typedef bool (*funcPtr_t)(const Shape&, const Shape&);
 typedef std::map<std::pair<long, long>, funcPtr_t> dispatchTable_t;
 
 
 //===========================================
 // lsegLsegAreEqual
 //===========================================
-bool lsegLsegAreEqual(const Primitive& lseg1, const Primitive& lseg2) {
+bool lsegLsegAreEqual(const Shape& lseg1, const Shape& lseg2) {
    return static_cast<const LineSegment&>(lseg1).LineSegment::operator==(static_cast<const LineSegment&>(lseg2));
 }
 
 //===========================================
 // lsegEllipseAreEqual
 //===========================================
-bool lsegEllipseAreEqual(const Primitive& lseg, const Primitive& elps) {
+bool lsegEllipseAreEqual(const Shape& lseg, const Shape& elps) {
    throw Exception("Error in operator==(); Attempt to compare LineSegment with Ellipse", __FILE__, __LINE__);
 }
 
 //===========================================
 // lsegPolyAreEqual
 //===========================================
-bool lsegPolyAreEqual(const Primitive& lseg, const Primitive& poly) {
+bool lsegPolyAreEqual(const Shape& lseg, const Shape& poly) {
    throw Exception("Error in operator==(); Attempt to compare LineSegment with Polygon", __FILE__, __LINE__);
 }
 
 //===========================================
 // ellipseEllipseAreEqual
 //===========================================
-bool ellipseEllipseAreEqual(const Primitive& elps1, const Primitive& elps2) {
+bool ellipseEllipseAreEqual(const Shape& elps1, const Shape& elps2) {
    return static_cast<const Ellipse&>(elps1).Ellipse::operator==(static_cast<const Ellipse&>(elps2));
 }
 
 //===========================================
 // ellipsePolyAreEqual
 //===========================================
-bool ellipsePolyAreEqual(const Primitive& elps, const Primitive& poly) {
+bool ellipsePolyAreEqual(const Shape& elps, const Shape& poly) {
    throw Exception("Error in operator==(); Attempt to compare Ellipse with Polygon", __FILE__, __LINE__);
 }
 
 //===========================================
 // ellipseBoxAreEqual
 //===========================================
-bool ellipseBoxAreEqual(const Primitive& elps, const Primitive& box) {
+bool ellipseBoxAreEqual(const Shape& elps, const Shape& box) {
    throw Exception("Error in operator==(); Attempt to compare Ellipse with Box", __FILE__, __LINE__);
 }
 
 //===========================================
 // polyPolyAreEqual
 //===========================================
-bool polyPolyAreEqual(const Primitive& poly1, const Primitive& poly2) {
+bool polyPolyAreEqual(const Shape& poly1, const Shape& poly2) {
    return static_cast<const Polygon&>(poly1).Polygon::operator==(static_cast<const Polygon&>(poly2));
 }
 
@@ -107,12 +107,12 @@ dispatchTable_t* initDispatchTable() {
 //===========================================
 // operator==
 //===========================================
-bool operator==(const Primitive& obj1, const Primitive& obj2) {
+bool operator==(const Shape& obj1, const Shape& obj2) {
    static unique_ptr<dispatchTable_t> tbl(initDispatchTable());
 
    dispatchTable_t::iterator it = tbl->find(makePair(obj1.typeId(), obj2.typeId()));
    if (it == tbl->end())
-      throw Exception("Error in operator==(); Unrecognised primitive types", __FILE__, __LINE__);
+      throw Exception("Error in operator==(); Unrecognised shape types", __FILE__, __LINE__);
 
    return it->second(obj1, obj2);
 }

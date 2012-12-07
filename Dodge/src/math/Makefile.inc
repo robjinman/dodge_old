@@ -1,4 +1,4 @@
-include $(BASE_DIR)/math/primitives/Makefile.inc
+include $(BASE_DIR)/math/shapes/Makefile.inc
 OBJS += $(BASE_DIR)/math/common.o \
 	$(BASE_DIR)/math/fAreEqual.o \
 	$(BASE_DIR)/math/fContains.o \

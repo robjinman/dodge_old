@@ -40,7 +40,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::PhysicalEntity
       //===========================================
-      explicit PhysicalEntity(long type, std::unique_ptr<Primitive> shape)
+      explicit PhysicalEntity(long type, std::unique_ptr<Shape> shape)
          : Entity(type), T_PHYSICS(this) {
 
          setSilent(true);
@@ -51,7 +51,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::PhysicalEntity
       //===========================================
-      PhysicalEntity(long name, long type, std::unique_ptr<Primitive> shape)
+      PhysicalEntity(long name, long type, std::unique_ptr<Shape> shape)
          : Entity(name, type), T_PHYSICS(this) {
 
          setSilent(true);
@@ -62,7 +62,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::PhysicalEntity
       //===========================================
-      PhysicalEntity(long type, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+      PhysicalEntity(long type, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
          : Entity(type), T_PHYSICS(this, options) {
 
          setSilent(true);
@@ -73,7 +73,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::PhysicalEntity
       //===========================================
-      PhysicalEntity(long name, long type, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+      PhysicalEntity(long name, long type, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
          : Entity(name, type), T_PHYSICS(this, options) {
 
          setSilent(true);

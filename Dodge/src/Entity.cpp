@@ -10,7 +10,7 @@
 #include <StringId.hpp>
 #include <AssetManager.hpp>
 #include <globals.hpp>
-#include <PrimitiveFactory.hpp>
+#include <ShapeFactory.hpp>
 
 
 using namespace std;
@@ -81,7 +81,7 @@ Entity::Entity(const XmlNode data)
    : m_silent(false), m_parent(NULL) {
 
    AssetManager assetManager;
-   PrimitiveFactory primitiveFactory;
+   ShapeFactory primitiveFactory;
 
    try {
       setSilent(true);
@@ -114,7 +114,7 @@ Entity::Entity(const XmlNode data)
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "shape") {
-         m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+         m_shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
          node = node.nextSibling();
       }
 
@@ -232,7 +232,7 @@ void Entity::deepCopy(const Entity& copy) {
    m_z = copy.m_z;
    m_rot = copy.m_rot;
 
-   m_shape = copy.m_shape ? unique_ptr<Primitive>(copy.m_shape->clone()) : unique_ptr<Primitive>();
+   m_shape = copy.m_shape ? unique_ptr<Shape>(copy.m_shape->clone()) : unique_ptr<Shape>();
    m_boundary = copy.m_boundary;
 }
 
@@ -252,7 +252,7 @@ void Entity::assignData(const XmlNode data) {
    if (data.isNull() || data.name() != "Entity") return;
 
    AssetManager assetManager;
-   PrimitiveFactory primitiveFactory;
+   ShapeFactory primitiveFactory;
 
    try {
       bool silent = isSilent();
@@ -290,7 +290,7 @@ void Entity::assignData(const XmlNode data) {
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "shape") {
-         m_shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+         m_shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
          node = node.nextSibling();
       }
 
@@ -506,9 +506,9 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 //===========================================
 // Entity::setShape
 //===========================================
-void Entity::setShape(std::unique_ptr<Primitive> shape) {
+void Entity::setShape(std::unique_ptr<Shape> shape) {
    Range bounds = m_boundary;
-   Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
+   Shape* oldShape = m_shape ? m_shape->clone() : NULL;
    float32_t oldRot_abs = getRotation_abs();
 
    m_shape = std::move(shape);
@@ -518,7 +518,7 @@ void Entity::setShape(std::unique_ptr<Primitive> shape) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs, pPrimitive_t(m_shape->clone()), getRotation_abs());
+      EEvent* event2 = new EEntityShape(shared_from_this(), pShape_t(oldShape), oldRot_abs, pShape_t(m_shape->clone()), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -533,7 +533,7 @@ void Entity::setShape(std::unique_ptr<Primitive> shape) {
 //===========================================
 void Entity::scale(float32_t x, float32_t y) {
    Range bounds = m_boundary;
-   Primitive* oldShape = m_shape ? m_shape->clone() : NULL;
+   Shape* oldShape = m_shape ? m_shape->clone() : NULL;
    float32_t oldRot_abs = getRotation_abs();
 
    if (m_shape) m_shape->scale(Vec2f(x, y));
@@ -544,8 +544,8 @@ void Entity::scale(float32_t x, float32_t y) {
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
 
-      EEvent* event2 = new EEntityShape(shared_from_this(), pPrimitive_t(oldShape), oldRot_abs,
-         pPrimitive_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
+      EEvent* event2 = new EEntityShape(shared_from_this(), pShape_t(oldShape), oldRot_abs,
+         pShape_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);

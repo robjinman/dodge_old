@@ -12,7 +12,7 @@
 #include "fContains.hpp"
 #include "fIntersect.hpp"
 #include "fOverlap.hpp"
-#include "primitives/primitives.hpp"
+#include "shapes/shapes.hpp"
 
 
 #endif

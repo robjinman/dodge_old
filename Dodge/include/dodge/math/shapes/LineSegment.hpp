@@ -7,7 +7,7 @@
 #define __LINE_SEGMENT_HPP__
 
 
-#include "Primitive.hpp"
+#include "Shape.hpp"
 #include "../../definitions.hpp"
 #include "../Vec2f.hpp"
 #include "../../renderer/Model.hpp"
@@ -18,7 +18,7 @@ namespace Dodge {
 
 class Renderer;
 
-class LineSegment : public Primitive {
+class LineSegment : public Shape {
    public:
       explicit LineSegment(const XmlNode data);
 

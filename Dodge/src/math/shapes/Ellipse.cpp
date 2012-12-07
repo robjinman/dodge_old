@@ -3,7 +3,7 @@
  * Date: 2012
  */
 
-#include <math/primitives/Ellipse.hpp>
+#include <math/shapes/Ellipse.hpp>
 #include <StringId.hpp>
 
 

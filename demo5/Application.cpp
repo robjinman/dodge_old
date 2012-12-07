@@ -351,7 +351,7 @@ void Application::loadMap() {
    float32_t w = filler->getBoundary().getSize().x;
    float32_t h = filler->getBoundary().getSize().y;
 
-   unique_ptr<Primitive> shape(filler->getShape().clone());
+   unique_ptr<Shape> shape(filler->getShape().clone());
    shape->scale(Vec2f(0.9f, 0.9f));
 
    for (float32_t x = 0.f; x < m_mapSize.x; x += w) {

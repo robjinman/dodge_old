@@ -27,7 +27,7 @@
 #include "PhysicalEntity.hpp"
 #include "PhysicalSprite.hpp"
 #include "PNG_CHECK.hpp"
-#include "PrimitiveFactory.hpp"
+#include "ShapeFactory.hpp"
 #include "Quadtree.hpp"
 #include "Range.hpp"
 #include "renderer/renderer.hpp"

@@ -198,11 +198,11 @@ void Player::render() const {
       graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
 
       Vec2f pos = getTranslation_abs();
-      graphics2d.drawPrimitive(m_footSensor, pos.x, pos.y, 9);
-      graphics2d.drawPrimitive(m_headSensor, pos.x, pos.y, 9);
-      graphics2d.drawPrimitive(m_leftSensor, pos.x, pos.y, 9);
-      graphics2d.drawPrimitive(m_rightSensor, pos.x, pos.y, 9);
-      graphics2d.drawPrimitive(m_midSensor, pos.x, pos.y, 9);
+      graphics2d.drawShape(m_footSensor, pos.x, pos.y, 9);
+      graphics2d.drawShape(m_headSensor, pos.x, pos.y, 9);
+      graphics2d.drawShape(m_leftSensor, pos.x, pos.y, 9);
+      graphics2d.drawShape(m_rightSensor, pos.x, pos.y, 9);
+      graphics2d.drawShape(m_midSensor, pos.x, pos.y, 9);
    }
 
    if (dbg_flags & DBG_DRAW_SHAPE) {
@@ -211,7 +211,7 @@ void Player::render() const {
       graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
 
       Vec2f pos = getTranslation_abs();
-      graphics2d.drawPrimitive(getShape(), pos.x, pos.y, 9);
+      graphics2d.drawShape(getShape(), pos.x, pos.y, 9);
    }
 #endif
 */}
@@ -280,7 +280,7 @@ bool Player::move(int dir) {
    static long hitFromTopStr = internString("hitFromTop");
 
    if (m_mode == DIG_MODE) {
-      Primitive* sensor = NULL;
+      Shape* sensor = NULL;
       dir_t facing = LEFT;
       long plyrAnim = 0, eventType = 0;
       switch (dir) {

@@ -7,12 +7,12 @@
 #define __F_ARE_EQUAL_HPP__
 
 
-#include "primitives/Primitive.hpp"
+#include "shapes/Shape.hpp"
 
 
-extern bool operator==(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2);
+extern bool operator==(const Dodge::Shape& obj1, const Dodge::Shape& obj2);
 
-inline bool operator!=(const Dodge::Primitive& obj1, const Dodge::Primitive& obj2) {
+inline bool operator!=(const Dodge::Shape& obj1, const Dodge::Shape& obj2) {
    return !(obj1 == obj2);
 }
 

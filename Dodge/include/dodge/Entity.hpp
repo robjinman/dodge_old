@@ -17,7 +17,7 @@
 #include "definitions.hpp"
 #include "StringId.hpp"
 #include "EventManager.hpp"
-#include "math/primitives/Primitive.hpp"
+#include "math/shapes/Shape.hpp"
 #include "Range.hpp"
 #include "renderer/Renderer.hpp"
 #include "xml/xml.hpp"
@@ -60,15 +60,15 @@ class EEntityTranslation : public EEvent {
 
 class EEntityShape : public EEvent {
    public:
-      EEntityShape(pEntity_t entity_, pPrimitive_t oldShape_, float32_t oldRotation_abs_,
-         pPrimitive_t newShape_, float32_t newRotation_abs_)
+      EEntityShape(pEntity_t entity_, pShape_t oldShape_, float32_t oldRotation_abs_,
+         pShape_t newShape_, float32_t newRotation_abs_)
          : EEvent(internString("entityShape")), entity(entity_), oldShape(oldShape_),
            oldRotation_abs(oldRotation_abs_), newShape(newShape_), newRotation_abs(newRotation_abs_) {}
 
       pEntity_t entity;
-      pPrimitive_t oldShape;
+      pShape_t oldShape;
       float32_t oldRotation_abs;
-      pPrimitive_t newShape;
+      pShape_t newShape;
       float32_t newRotation_abs;
 };
 
@@ -133,7 +133,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void scale(float32_t s);
       void scale(float32_t x, float32_t y);
       inline void scale(const Vec2f& s);
-      void setShape(std::unique_ptr<Primitive> shape);
+      void setShape(std::unique_ptr<Shape> shape);
 
       // Relative to parent (parent's model space)
       inline Vec2f getTranslation() const;
@@ -145,7 +145,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       Vec2f getTranslation_abs() const;
 
       inline bool hasShape() const;
-      inline const Primitive& getShape() const;
+      inline const Shape& getShape() const;
       inline long getName() const;
       inline long getTypeName() const;
       inline const Vec2f& getScale() const;
@@ -188,7 +188,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       int m_z;
       float32_t m_rot;
 
-      std::unique_ptr<Primitive> m_shape; // Bounding polygon/shape
+      std::unique_ptr<Shape> m_shape; // Bounding polygon/shape
       Range m_boundary;
 
       Colour m_fillColour;
@@ -399,7 +399,7 @@ inline bool Entity::hasShape() const {
 //===========================================
 // Entity::getShape
 //===========================================
-inline const Primitive& Entity::getShape() const {
+inline const Shape& Entity::getShape() const {
    if (!m_shape)
       throw Exception("Error returning entity's shape; Entity does not have a shape", __FILE__, __LINE__);
 

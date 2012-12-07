@@ -67,7 +67,7 @@ class Box2dPhysics : public EntityPhysics {
       void setEntity(Entity* entity);
 
       void constructBody();
-      void primitiveToBox2dBody(const Primitive& shape, const EntityPhysics::options_t& opts, b2Body* body, uint_t* nFixtures) const;
+      void primitiveToBox2dBody(const Shape& shape, const EntityPhysics::options_t& opts, b2Body* body, uint_t* nFixtures) const;
       void updatePos(EEvent* event);
       void deepCopy(const Box2dPhysics& copy);
 

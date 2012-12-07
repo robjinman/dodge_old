@@ -2,7 +2,7 @@
 #include <cstring>
 #include <Exception.hpp>
 #include <AnimFrame.hpp>
-#include <PrimitiveFactory.hpp>
+#include <ShapeFactory.hpp>
 
 
 using namespace std;
@@ -35,9 +35,9 @@ AnimFrame::AnimFrame(const XmlNode data) {
       col = Colour(node.firstChild());
       node = node.nextSibling();
 
-      if (!node.isNull() && node.name() == "shape") {     // TODO: PrimitiveDelta
-         PrimitiveFactory primitiveFactory;
-         shape = unique_ptr<Primitive>(primitiveFactory.create(node.firstChild()));
+      if (!node.isNull() && node.name() == "shape") {     // TODO: ShapeDelta
+         ShapeFactory primitiveFactory;
+         shape = unique_ptr<Shape>(primitiveFactory.create(node.firstChild()));
       }
    }
    catch (XmlException& e) {
@@ -49,7 +49,7 @@ AnimFrame::AnimFrame(const XmlNode data) {
 //===========================================
 // AnimFrame::AnimFrame
 //===========================================
-AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Primitive> shape_, const Colour& col_)
+AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Shape> shape_, const Colour& col_)
    : pos(pos_), dim(dim_), col(col_) {
 
    shape = std::move(shape_);
@@ -67,7 +67,7 @@ AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_)
 AnimFrame::AnimFrame(const AnimFrame& copy) {
    pos = copy.pos;
    dim = copy.dim;
-   shape = copy.shape ? unique_ptr<Primitive>(copy.shape->clone()) : unique_ptr<Primitive>();
+   shape = copy.shape ? unique_ptr<Shape>(copy.shape->clone()) : unique_ptr<Shape>();
    col = copy.col;
 }
 
@@ -100,7 +100,7 @@ void AnimFrame::dbg_print(std::ostream& out, int tab) const {
 AnimFrame& AnimFrame::operator=(const AnimFrame& rhs) {
    pos = rhs.pos;
    dim = rhs.dim;
-   shape = unique_ptr<Primitive>(rhs.shape->clone());
+   shape = unique_ptr<Shape>(rhs.shape->clone());
    col = rhs.col;
 
    return *this;

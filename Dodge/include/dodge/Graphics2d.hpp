@@ -11,7 +11,6 @@
 #include "renderer/Camera.hpp"
 #include "math/Vec2i.hpp"
 #include "math/Vec2f.hpp"
-#include "math/primitives/Primitive.hpp"
 #include "Exception.hpp"
 
 

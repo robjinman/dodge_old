@@ -41,7 +41,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::PhysicalSprite
       //===========================================
-      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Primitive> shape)
+      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Shape> shape)
          : Entity(type), Sprite(type, texture), T_PHYSICS(this) {
 
          setSilent(true);
@@ -52,7 +52,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::PhysicalSprite
       //===========================================
-      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Primitive> shape)
+      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Shape> shape)
          : Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this) {
 
          setSilent(true);
@@ -63,7 +63,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::PhysicalSprite
       //===========================================
-      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+      PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
          : Entity(type), Sprite(type, texture), T_PHYSICS(this, options) {
 
          setSilent(true);
@@ -74,7 +74,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::PhysicalSprite
       //===========================================
-      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Primitive> shape, const EntityPhysics::options_t& options)
+      PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
          : Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this, options) {
 
          setSilent(true);
