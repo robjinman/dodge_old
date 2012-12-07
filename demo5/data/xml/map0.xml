@@ -16,30 +16,25 @@ Prototype definitions should go in separate files. -->
    </settings>
    <assets>
       <asset id="98">
-         <CShape>
-            <Item>
-               <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
-                  <shape>
-                     <Polygon>
-                        <Vec2f x="0.0" y="0.0"/>
-                        <Vec2f x="1.5" y="0.0"/>
-                        <Vec2f x="1.5" y="0.9"/>
-                        <Vec2f x="0.0" y="0.9"/>
-                     </Polygon>
-                  </shape>
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
-                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                  <lineWidth>0</lineWidth>
-                  <children/>
-               </Entity>
-            </Item>
-            <Shape>
-               <Entity/>
-            </Shape>
-         </CShape>
+         <Item>
+            <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
+               <shape>
+                  <Polygon>
+                     <Vec2f x="0.0" y="0.0"/>
+                     <Vec2f x="1.5" y="0.0"/>
+                     <Vec2f x="1.5" y="0.9"/>
+                     <Vec2f x="0.0" y="0.9"/>
+                  </Polygon>
+               </shape>
+               <scale>
+                  <Vec2f x="1.0" y="1.0"/>
+               </scale>
+               <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+               <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+               <lineWidth>0</lineWidth>
+               <children/>
+            </Entity>
+         </Item>
       </asset>
 
       <asset id="97">

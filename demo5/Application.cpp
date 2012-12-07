@@ -5,7 +5,6 @@
 #include "Soil.hpp"
 #include "CPhysicalEntity.hpp"
 #include "CPhysicalSprite.hpp"
-#include "CShape.hpp"
 #include "CSprite.hpp"
 
 
@@ -169,7 +168,7 @@ void Application::loadMapSettings(const XmlNode data) {
 boost::shared_ptr<Item> Application::constructItem(const XmlNode data) const {
    if (data.name() == "Player") return pItem_t(new Player(data));
    if (data.name() == "Soil") return pItem_t(new Soil(data));
-   if (data.name() == "CShape") return pItem_t(new CShape(data));
+   if (data.name() == "Item") return pItem_t(new Item(data));
    if (data.name() == "CSprite") return pItem_t(new CSprite(data));
    if (data.name() == "CPhysicalEntity") return pItem_t(new CPhysicalEntity(data));
    if (data.name() == "CPhysicalSprite") return pItem_t(new CPhysicalSprite(data));

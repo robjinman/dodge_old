@@ -96,10 +96,10 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       Entity(const Entity& copy);
       Entity(const Entity& copy, long name);
 
-      virtual Entity* clone() const = 0;
+      virtual Entity* clone() const;
 
       // The XML node needn't contain a complete description of the object.
-      virtual void assignData(const XmlNode data) = 0;
+      virtual void assignData(const XmlNode data);
 
       // Derived classes may need these
       virtual void addToWorld() {}
@@ -160,8 +160,8 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 
       inline pEntity_t getSharedPtr();
 
-      virtual void render() const {}
-      virtual void unrender() const {}
+      virtual void render() const;
+      virtual void unrender() const;
 
       virtual void update() {}
 
@@ -169,7 +169,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
-      virtual ~Entity() = 0;
+      virtual ~Entity();
 
    protected:
       static EventManager m_eventManager;
@@ -432,6 +432,7 @@ inline const Vec2f& Entity::getScale() const {
 //===========================================
 inline void Entity::setFillColour(const Colour& colour) {
    m_fillColour = colour;
+   if (m_shape) m_shape->setFillColour(colour);
 }
 
 //===========================================
@@ -439,6 +440,7 @@ inline void Entity::setFillColour(const Colour& colour) {
 //===========================================
 inline void Entity::setLineColour(const Colour& colour) {
    m_lineColour = colour;
+   if (m_shape) m_shape->setLineColour(colour);
 }
 
 //===========================================
@@ -446,6 +448,7 @@ inline void Entity::setLineColour(const Colour& colour) {
 //===========================================
 inline void Entity::setLineWidth(Renderer::int_t lineWidth) {
    m_lineWidth = lineWidth;
+   if (m_shape) m_shape->setLineWidth(lineWidth);
 }
 
 //===========================================

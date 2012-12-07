@@ -34,7 +34,7 @@ class EntityAnimations {
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
       inline void setOnScreenSize(float32_t w, float32_t h);
 
-      void addAnimation(pAnimation_t anim); // TODO: use unique_ptr instead
+      void addAnimation(pAnimation_t anim);
       void removeAnimation(long anim);
 
       inline const Range& getTextureSection() const;

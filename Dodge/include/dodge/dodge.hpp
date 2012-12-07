@@ -31,7 +31,6 @@
 #include "Quadtree.hpp"
 #include "Range.hpp"
 #include "renderer/renderer.hpp"
-#include "Shape.hpp"
 #include "SpatialContainer.hpp"
 #include "Sprite.hpp"
 #include "StackAllocator.hpp"

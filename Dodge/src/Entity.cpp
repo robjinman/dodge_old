@@ -350,6 +350,20 @@ void Entity::assignData(const XmlNode data) {
 }
 
 //===========================================
+// Entity::render
+//===========================================
+void Entity::render() const {
+   if (m_shape) m_shape->render();
+}
+
+//===========================================
+// Entity::unrender
+//===========================================
+void Entity::unrender() const {
+   if (m_shape) m_shape->unrender();
+}
+
+//===========================================
 // Entity::setParent
 //===========================================
 void Entity::setParent(Entity* parent) {
@@ -550,6 +564,13 @@ void Entity::parentMovedHandler() {
 
    if (!m_silent)
       m_eventManager.queueEvent(new EEntityBoundingBox(shared_from_this(), bounds, m_boundary));
+}
+
+//===========================================
+// Entity::clone
+//===========================================
+Entity* Entity::clone() const {
+   return new Entity(*this);
 }
 
 //===========================================

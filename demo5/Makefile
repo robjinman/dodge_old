@@ -6,7 +6,6 @@ LIBS = -L../Dodge/lib -L/usr/lib -lDodge -lX11 -lGLESv2 -lEGL -lpnglite -lz -lBo
 OBJS = Application.o \
 	CPhysicalEntity.o \
 	CPhysicalSprite.o \
-	CShape.o \
 	CSprite.o \
 	Item.o \
 	main.o \
