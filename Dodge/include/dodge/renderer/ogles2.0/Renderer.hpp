@@ -28,6 +28,7 @@ namespace Dodge {
 
 class IModel;
 class SceneGraph;
+class ShaderProgram;
 
 // OpenGL ES 2.0 implementation
 class Renderer {
@@ -130,17 +131,14 @@ class Renderer {
       };
 
       static void renderLoop();
+      static void processMessages();
 
       void init();
       void clear();
       void setMode(mode_t mode);
       void constructShaderProgs();
-      void constructTexturedShaderProg();
-      void constructNonTexturedShaderProg();
-      inline bool isSupportedPrimitive(primitive_t primitiveType) const;
       GLint primitiveToGLType(primitive_t primitiveType) const;
-      void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
-      void processMsg(const Message& msg);
+      void processMessage(const Message& msg);
       textureHandle_t loadTexture(const textureData_t* texture, int_t w, int_t h);
       void constructVBO(IModel* model);
       void queueMsg(Message msg);
@@ -148,18 +146,11 @@ class Renderer {
       void computeFrameRate();
 #endif
 
-      static std::map<mode_t, GLint> m_shaderProgIds;
-
-      static GLint m_locPosition;
-      static GLint m_locColour;
-      static GLint m_locBUniColour;
-      static GLint m_locUniColour;
-      static GLint m_locTexCoord;
-      static GLint m_locMV;
-      static GLint m_locP;
+      static std::map<mode_t, ShaderProgram*> m_shaderProgs;
+      static ShaderProgram* m_activeShaderProg;
+      static mode_t m_mode;
 
       static std::atomic<bool> m_init;
-      static mode_t m_mode;
 
       static SceneGraph m_sceneGraph;
       static std::mutex m_sceneGraphMutex;
@@ -194,13 +185,6 @@ inline long Renderer::getFrameRate() const {
    return m_frameRate;
 }
 #endif
-
-//===========================================
-// Renderer::isSupportedPrimitive
-//===========================================
-inline bool Renderer::isSupportedPrimitive(primitive_t primitiveType) const {
-   return primitiveType == TRIANGLES || primitiveType == LINES;
-}
 
 //===========================================
 // Renderer::attachCamera

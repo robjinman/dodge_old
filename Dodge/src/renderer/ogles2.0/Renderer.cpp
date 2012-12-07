@@ -9,6 +9,7 @@
 #include <renderer/RendererException.hpp>
 #include <renderer/Model.hpp>
 #include <renderer/SceneGraph.hpp>
+#include <renderer/ogles2.0/ShaderProgram.hpp>
 #include <renderer/GL_CHECK.hpp>
 #include <Timer.hpp>
 
@@ -21,19 +22,13 @@ namespace Dodge {
 
 
 atomic<bool> Renderer::m_running(false);
-map<Renderer::mode_t, GLint> Renderer::m_shaderProgIds;
+map<Renderer::mode_t, ShaderProgram*> Renderer::m_shaderProgs;
 Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
+ShaderProgram* Renderer::m_activeShaderProg = NULL;
 SceneGraph Renderer::m_sceneGraph;
 mutex Renderer::m_sceneGraphMutex;
 boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
 mutex Renderer::m_cameraMutex;
-GLint Renderer::m_locPosition = -1;
-GLint Renderer::m_locColour = -1;
-GLint Renderer::m_locBUniColour = -1;
-GLint Renderer::m_locUniColour = -1;
-GLint Renderer::m_locTexCoord = -1;
-GLint Renderer::m_locMV = -1;
-GLint Renderer::m_locP = -1;
 thread* Renderer::m_thread = NULL;
 std::vector<Renderer::Message> Renderer::m_msgQueue;
 mutex Renderer::m_msgQueueMutex;
@@ -120,54 +115,11 @@ GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
 void Renderer::setMode(mode_t mode) {
    if (mode == m_mode) return;
 
-   switch (mode) {
-      case TEXTURED_ALPHA: {
-         map<mode_t, GLint>::iterator it = m_shaderProgIds.find(TEXTURED_ALPHA);
-         assert(it != m_shaderProgIds.end());
+   map<mode_t, ShaderProgram*>::iterator it = m_shaderProgs.find(mode);
+   assert(it != m_shaderProgs.end());
 
-         GL_CHECK(glUseProgram(it->second));
-
-         m_locPosition = GL_CHECK(glGetAttribLocation(it->second, "av4position"));
-         m_locColour = GL_CHECK(glGetAttribLocation(it->second, "av4colour"));
-         m_locTexCoord = GL_CHECK(glGetAttribLocation(it->second, "av2texcoord"));
-
-         m_locBUniColour = GL_CHECK(glGetUniformLocation(it->second, "bUniColour"));
-         m_locUniColour = GL_CHECK(glGetUniformLocation(it->second, "uniColour"));
-         m_locMV = GL_CHECK(glGetUniformLocation(it->second, "mv"));
-         m_locP = GL_CHECK(glGetUniformLocation(it->second, "p"));
-
-         GL_CHECK(glEnableVertexAttribArray(m_locPosition));
-         GL_CHECK(glEnableVertexAttribArray(m_locColour));
-         GL_CHECK(glEnableVertexAttribArray(m_locTexCoord));
-
-         GL_CHECK(glEnable(GL_BLEND));
-         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-      }
-      break;
-      case NONTEXTURED_ALPHA: {
-         map<mode_t, GLint>::iterator it = m_shaderProgIds.find(NONTEXTURED_ALPHA);
-         assert(it != m_shaderProgIds.end());
-
-         GL_CHECK(glUseProgram(it->second));
-
-         m_locPosition = GL_CHECK(glGetAttribLocation(it->second, "av4position"));
-         m_locColour = GL_CHECK(glGetAttribLocation(it->second, "av4colour"));
-
-         m_locBUniColour = GL_CHECK(glGetUniformLocation(it->second, "bUniColour"));
-         m_locUniColour = GL_CHECK(glGetUniformLocation(it->second, "uniColour"));
-         m_locMV = GL_CHECK(glGetUniformLocation(it->second, "mv"));
-         m_locP = GL_CHECK(glGetUniformLocation(it->second, "p"));
-
-         GL_CHECK(glEnableVertexAttribArray(m_locPosition));
-         GL_CHECK(glEnableVertexAttribArray(m_locColour));
-
-         GL_CHECK(glEnable(GL_BLEND));
-         GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-      }
-      break;
-      default:
-         throw RendererException("Could not set rendering mode; Mode not supported", __FILE__, __LINE__);
-   }
+   m_activeShaderProg = it->second;
+   m_activeShaderProg->setActive();
 
    m_mode = mode;
 }
@@ -176,120 +128,11 @@ void Renderer::setMode(mode_t mode) {
 // Renderer::constructShaderProgs
 //===========================================
 void Renderer::constructShaderProgs() {
-   constructTexturedShaderProg();
-   constructNonTexturedShaderProg();
-}
+   ShaderProgram* prog = ShaderProgram::create(NONTEXTURED_ALPHA);
+   m_shaderProgs[NONTEXTURED_ALPHA] = prog;
 
-//===========================================
-// Renderer::constructTexturedShaderProg
-//===========================================
-void Renderer::constructTexturedShaderProg() {
-   GLint prog = GL_CHECK(glCreateProgram());
-
-   const char* vertShader[1] = { NULL };
-   vertShader[0] =
-      "precision mediump float;                          \n"
-      "attribute vec4 av4position;                       \n"
-      "attribute vec4 av4colour;                         \n"
-      "attribute vec2 av2texcoord;                       \n"
-      "uniform bool bUniColour;                          \n"
-      "uniform vec4 uniColour;                           \n"
-      "uniform mat4 mv;                                  \n"
-      "uniform mat4 p;                                   \n"
-      "varying vec4 vv4colour;                           \n"
-      "varying vec2 vv2texcoord;                         \n"
-      "void main() {                                     \n"
-      "   if (bUniColour) {                              \n"
-      "      vv4colour = uniColour;                      \n"
-      "   }                                              \n"
-      "   else {                                         \n"
-      "      vv4colour = av4colour;                      \n"
-      "   }                                              \n"
-      "   gl_Position = p * mv * av4position;            \n"
-      "   vv2texcoord = av2texcoord;                     \n"
-      "}                                                 \n";
-
-   newShaderFromSource(vertShader, GL_VERTEX_SHADER, prog);
-
-   const char* fragShader[1] = { NULL };
-   fragShader[0] =
-      "precision mediump float;                          \n"
-      "varying vec4 vv4colour;                           \n"
-      "varying vec2 vv2texcoord;                         \n"
-      "uniform sampler2D stexture;                       \n"
-      "void main() {                                     \n"
-      "   vec4 tex = texture2D(stexture, vv2texcoord);   \n"
-      "   gl_FragColor = vv4colour * tex;                \n"
-      "}                                                 \n";
-
-   newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, prog);
-
-   GL_CHECK(glLinkProgram(prog));
-   m_shaderProgIds[TEXTURED_ALPHA] = prog;
-}
-
-//===========================================
-// Renderer::constructNonTexturedShaderProg
-//===========================================
-void Renderer::constructNonTexturedShaderProg() {
-   GLint prog = GL_CHECK(glCreateProgram());
-
-   const char* vertShader[1] = { NULL };
-   vertShader[0] =
-      "precision mediump float;                          \n"
-      "attribute vec4 av4position;                       \n"
-      "attribute vec4 av4colour;                         \n"
-      "uniform bool bUniColour;                          \n"
-      "uniform vec4 uniColour;                           \n"
-      "uniform mat4 mv;                                  \n"
-      "uniform mat4 p;                                   \n"
-      "varying vec4 vv4colour;                           \n"
-      "void main() {                                     \n"
-      "   if (bUniColour) {                              \n"
-      "      vv4colour = uniColour;                      \n"
-      "   }                                              \n"
-      "   else {                                         \n"
-      "      vv4colour = av4colour;                      \n"
-      "   }                                              \n"
-      "   gl_Position = p * mv * av4position;            \n"
-      "}                                                 \n";
-
-   newShaderFromSource(vertShader, GL_VERTEX_SHADER, prog);
-
-   const char* fragShader[1] = { NULL };
-   fragShader[0] =
-      "precision mediump float;                          \n"
-      "varying vec4 vv4colour;                           \n"
-      "void main() {                                     \n"
-      "   gl_FragColor = vv4colour;                      \n"
-      "}                                                 \n";
-
-   newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, prog);
-
-   GL_CHECK(glLinkProgram(prog));
-   m_shaderProgIds[NONTEXTURED_ALPHA] = prog;
-}
-
-//===========================================
-// Renderer::newShaderFromSource
-//===========================================
-void Renderer::newShaderFromSource(const char** shaderSrc, GLint type, GLint prog) {
-   GLint shader;
-   GLint success = GL_FALSE;
-
-   // Create shader and load into GL
-   shader = GL_CHECK(glCreateShader(type));
-
-   GL_CHECK(glShaderSource(shader, 1, shaderSrc, NULL));
-
-   // Compile the shader
-   GL_CHECK(glCompileShader(shader));
-   GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
-
-   if(success != GL_TRUE)
-      throw RendererException("Could not process shader; Error in source", __FILE__, __LINE__);
-
-   GL_CHECK(glAttachShader(prog, shader));
+   prog = ShaderProgram::create(TEXTURED_ALPHA);
+   m_shaderProgs[TEXTURED_ALPHA] = prog;
 }
 
 //===========================================
@@ -409,9 +252,9 @@ void Renderer::onWindowResize(int_t x, int_t y) {
 }
 
 //===========================================
-// Renderer::processMsg
+// Renderer::processMessage
 //===========================================
-void Renderer::processMsg(const Message& msg) {
+void Renderer::processMessage(const Message& msg) {
    try {
       switch (msg.type) {
          case MSG_TEX_HANDLE_REQ: {
@@ -455,6 +298,21 @@ void Renderer::computeFrameRate() {
 #endif
 
 //===========================================
+// Renderer::processMessages
+//===========================================
+void Renderer::processMessages() {
+   Renderer renderer;
+
+   m_msgQueueMutex.lock();
+   for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
+      renderer.processMessage(*i);
+   }
+   m_msgQueue.clear();
+   m_msgQueueEmpty = true;
+   m_msgQueueMutex.unlock();
+}
+
+//===========================================
 // Renderer::renderLoop
 //===========================================
 void Renderer::renderLoop() {
@@ -467,122 +325,25 @@ void Renderer::renderLoop() {
       renderer.init();
 
       while (m_running) {
+         processMessages();
+
          renderer.clear();
 
-
-         // Check for pending messages
-         m_msgQueueMutex.lock();
-         for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
-            renderer.processMsg(*i);
-         }
-         m_msgQueue.clear();
-         m_msgQueueEmpty = true;
-         m_msgQueueMutex.unlock();
-
-
          cml::matrix44f_c P;
-
          m_cameraMutex.lock();
          m_camera->getMatrix(P);
          m_cameraMutex.unlock();
 
-
          m_sceneGraphMutex.lock();
          for (auto i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
             const IModel* model = *i;
-            model->lock();
 
-            if (model->getNumVertices() == 0) {
-               model->unlock();
-               continue;
-            }
+            if (model->getNumVertices() == 0) continue;
 
             renderer.setMode(model->getRenderMode());
 
-            GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model->getMatrix()));
-            GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, P.data()));
-
-
-            if (model->getPrimitiveType() == LINES) {
-               if (model->getLineWidth() != 0)
-                  GL_CHECK(glLineWidth(model->getLineWidth()));
-            }
-
-
-            // If model contains per-vertex colour data
-            if (model->containsPerVertexColourData()) {
-               GL_CHECK(glUniform1i(m_locBUniColour, 0));
-               GL_CHECK(glEnableVertexAttribArray(m_locColour));
-            }
-            else {
-               GL_CHECK(glDisableVertexAttribArray(m_locColour));
-               GL_CHECK(glUniform1i(m_locBUniColour, 1));
-
-               Colour colour = model->getColour();
-               GL_CHECK(glUniform4f(m_locUniColour, colour.r, colour.g, colour.b, colour.a));
-            }
-
-
-            switch (model->getRenderMode()) {
-               case TEXTURED_ALPHA: {
-                  GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
-
-                  const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model->getVertexData());
-                  int_t stride = model->containsPerVertexColourData() ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
-
-                  if (model->getHandle() == 0) {
-                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
-                     GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
-
-                     if (model->containsPerVertexColourData())
-                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
-                  }
-                  else {
-                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->getHandle()));
-
-                     GLuint offset = 0;
-
-                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-                     offset += 3 * sizeof(vertexElement_t);
-
-                     GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-                     offset += 2 * sizeof(texCoordElement_t);
-
-                     if (model->containsPerVertexColourData())
-                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-                  }
-               }
-               break;
-               case NONTEXTURED_ALPHA: {
-                  const vvvcccc_t* verts = reinterpret_cast<const vvvcccc_t*>(model->getVertexData());
-                  int_t stride = model->containsPerVertexColourData() ? sizeof(vvvcccc_t) : sizeof(vvv_t);
-
-                  if (model->getHandle() == 0) {
-                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
-
-                     if (model->containsPerVertexColourData())
-                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
-                  }
-                  else {
-                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model->getHandle()));
-
-                     GLuint offset = 0;
-
-                     GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-                     offset += 3 * sizeof(vertexElement_t);
-
-                     if (model->containsPerVertexColourData())
-                        GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-                  }
-               }
-               break;
-               default:
-                  throw RendererException("Error rendering geometry; Render mode not supported", __FILE__, __LINE__);
-            }
-
+            m_activeShaderProg->sendData(model, P);
             GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
-
-            model->unlock();
          }
          m_sceneGraphMutex.unlock();
 

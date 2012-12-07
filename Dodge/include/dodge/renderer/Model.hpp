@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __MODEL_HPP__
 #define __MODEL_HPP__
 
@@ -9,6 +14,7 @@ namespace Dodge {
 
 
 class IModel {
+   friend class ShaderProgram;
    friend class Renderer;
 
    public:
@@ -43,6 +49,7 @@ class IModel {
 
 template <class T>
 class Model : public IModel {
+   friend class ShaderProgram;
    friend class Renderer;
 
    public:
