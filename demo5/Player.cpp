@@ -146,6 +146,70 @@ void Player::removeFromWorld() {
    Item::removeFromWorld();
 }
 
+#ifdef DEBUG
+//===========================================
+// Player::checkDbgFlags
+//===========================================
+void Player::checkDbgFlags() const {
+   static byte_t flags = 0;
+
+   const Shape& shape = getShape();
+   Vec2f pos = getTranslation_abs();
+
+   m_footSensor.setRenderTransform(pos.x, pos.y, 9);
+   m_headSensor.setRenderTransform(pos.x, pos.y, 9);
+   m_leftSensor.setRenderTransform(pos.x, pos.y, 9);
+   m_rightSensor.setRenderTransform(pos.x, pos.y, 9);
+   m_midSensor.setRenderTransform(pos.x, pos.y, 9);
+
+   shape.setRenderTransform(pos.x, pos.y, 9);
+
+   // Toggle on
+   if (!(flags & DBG_DRAW_SENSORS) && (dbg_flags & DBG_DRAW_SENSORS)) {
+      m_footSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      m_footSensor.setLineWidth(0);
+      m_footSensor.render();
+
+      m_headSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      m_headSensor.setLineWidth(0);
+      m_headSensor.render();
+
+      m_leftSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      m_leftSensor.setLineWidth(0);
+      m_leftSensor.render();
+
+      m_rightSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      m_rightSensor.setLineWidth(0);
+      m_rightSensor.render();
+
+      m_midSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      m_midSensor.setLineWidth(0);
+      m_midSensor.render();
+   }
+   // Toggle off
+   else if ((flags & DBG_DRAW_SENSORS) && !(dbg_flags & DBG_DRAW_SENSORS)) {
+      m_footSensor.unrender();
+      m_headSensor.unrender();
+      m_leftSensor.unrender();
+      m_rightSensor.unrender();
+      m_midSensor.unrender();
+   }
+
+   // Toggle on
+   if (!(flags & DBG_DRAW_SHAPE) && (dbg_flags & DBG_DRAW_SHAPE)) {
+      shape.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
+      shape.setLineWidth(0);
+      shape.render();
+   }
+   // Toggle off
+   else if ((flags & DBG_DRAW_SHAPE) && !(dbg_flags & DBG_DRAW_SHAPE)) {
+      shape.unrender();
+   }
+
+   flags = dbg_flags;
+}
+#endif
+
 //===========================================
 // Player::update
 //===========================================
@@ -183,6 +247,10 @@ void Player::update() {
          m_mode = DIG_MODE;
       }
    }
+
+#ifdef DEBUG
+   checkDbgFlags();
+#endif
 }
 
 //===========================================
@@ -190,31 +258,7 @@ void Player::update() {
 //===========================================
 void Player::render() const {
    PhysicalSprite<Box2dPhysics>::render();
-/*
-#ifdef DEBUG
-   if (dbg_flags & DBG_DRAW_SENSORS) {
-      Graphics2d graphics2d;
-      graphics2d.setLineWidth(0);
-      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
-
-      Vec2f pos = getTranslation_abs();
-      graphics2d.drawShape(m_footSensor, pos.x, pos.y, 9);
-      graphics2d.drawShape(m_headSensor, pos.x, pos.y, 9);
-      graphics2d.drawShape(m_leftSensor, pos.x, pos.y, 9);
-      graphics2d.drawShape(m_rightSensor, pos.x, pos.y, 9);
-      graphics2d.drawShape(m_midSensor, pos.x, pos.y, 9);
-   }
-
-   if (dbg_flags & DBG_DRAW_SHAPE) {
-      Graphics2d graphics2d;
-      graphics2d.setLineWidth(0);
-      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
-
-      Vec2f pos = getTranslation_abs();
-      graphics2d.drawShape(getShape(), pos.x, pos.y, 9);
-   }
-#endif
-*/}
+}
 
 //===========================================
 // Player::unrender

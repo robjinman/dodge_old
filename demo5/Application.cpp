@@ -65,7 +65,7 @@ void Application::keyDown(int key) {
       case WinIO::KEY_3:
          dbg_flags ^= DBG_DRAW_WORLDSPACE;
          if (dbg_flags & DBG_DRAW_WORLDSPACE)
-            m_worldSpace.dbg_render(Colour(1.f, 0.f, 0.f, 1.f), 3, 9);
+            m_worldSpace.dbg_render(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
          else
             m_worldSpace.dbg_unrender();
       break;

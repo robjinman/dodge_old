@@ -54,6 +54,9 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       bool grounded() const;
       void snapToGridV(Dodge::float32_t offset = 0.0);
       void snapToGridH(Dodge::float32_t offset = 0.0);
+#ifdef DEBUG
+      void checkDbgFlags() const;
+#endif
 
       Dodge::WorldSpace m_worldSpace;
       mode_t m_mode;
