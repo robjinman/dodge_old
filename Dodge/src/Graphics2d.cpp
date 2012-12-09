@@ -18,7 +18,6 @@ namespace Dodge {
 
 
 bool Graphics2d::m_init = false;
-Renderer Graphics2d::m_renderer = Renderer();
 pCamera_t Graphics2d::m_camera = pCamera_t();
 
 
@@ -30,7 +29,7 @@ void Graphics2d::init(int w, int h) {
 
    m_camera = pCamera_t(new Camera(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f));
 
-   m_renderer.attachCamera(m_camera);
+   Renderer::getInstance().attachCamera(m_camera);
 }
 
 //===========================================

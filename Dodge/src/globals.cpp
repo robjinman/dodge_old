@@ -18,7 +18,7 @@ StackAllocator gMemStack(GLOBAL_STACK_SIZE);
 // gGetPixelSize
 //===========================================
 Vec2f gGetPixelSize() {
-   Renderer renderer;
+   Renderer& renderer = Renderer::getInstance();
    WinIO win;
 
    const Vec2f& view = renderer.getCamera().getViewSize();

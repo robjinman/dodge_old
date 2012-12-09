@@ -21,26 +21,24 @@ using namespace std;
 namespace Dodge {
 
 
-atomic<bool> Renderer::m_running(false);
-map<Renderer::mode_t, ShaderProgram*> Renderer::m_shaderProgs;
-Renderer::mode_t Renderer::m_mode = Renderer::UNDEFINED;
-ShaderProgram* Renderer::m_activeShaderProg = NULL;
-SceneGraph Renderer::m_sceneGraph;
-mutex Renderer::m_sceneGraphMutex;
-boost::shared_ptr<Camera> Renderer::m_camera = boost::shared_ptr<Camera>(new Camera(1.f, 1.f));
-mutex Renderer::m_cameraMutex;
-thread* Renderer::m_thread = NULL;
-std::vector<Renderer::Message> Renderer::m_msgQueue;
-mutex Renderer::m_msgQueueMutex;
-atomic<bool> Renderer::m_msgQueueEmpty(true);
-Colour Renderer::m_bgColour;
-mutex Renderer::m_bgColourMutex;
-Renderer::exceptionWrapper_t Renderer::m_exception = { UNKNOWN_EXCEPTION, NULL };
-atomic<bool> Renderer::m_errorPending(false);
-#ifdef DEBUG
-atomic<long> Renderer::m_frameRate(0);
-#endif
+Renderer* Renderer::m_instance = NULL;
 
+
+Renderer::Renderer()
+   : m_activeShaderProg(NULL),
+     m_mode(UNDEFINED),
+     m_init(false),
+     m_sceneGraph(new SceneGraph),
+     m_camera(new Camera(1.f, 1.f)),
+     m_running(false),
+     m_thread(NULL),
+     m_msgQueueEmpty(true),
+     m_exception({UNKNOWN_EXCEPTION, NULL}),
+     m_errorPending(false)
+#ifdef DEBUG
+   , m_frameRate(0)
+#endif
+     {}
 
 //===========================================
 // Renderer::init
@@ -61,7 +59,7 @@ void Renderer::init() {
 void Renderer::start() {
    if (!m_thread) {
       m_running = true;
-      m_thread = new thread(Renderer::renderLoop);
+      m_thread = new thread(&Renderer::renderLoop, this);
    }
 }
 
@@ -159,7 +157,7 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 //===========================================
 void Renderer::stageModel(const IModel* model) {
    m_sceneGraphMutex.lock();
-   m_sceneGraph.insert(model);
+   m_sceneGraph->insert(model);
    m_sceneGraphMutex.unlock();
 }
 
@@ -168,7 +166,7 @@ void Renderer::stageModel(const IModel* model) {
 //===========================================
 void Renderer::unstageModel(const IModel* model) {
    m_sceneGraphMutex.lock();
-   m_sceneGraph.remove(model);
+   m_sceneGraph->remove(model);
    m_sceneGraphMutex.unlock();
 }
 
@@ -301,11 +299,9 @@ void Renderer::computeFrameRate() {
 // Renderer::processMessages
 //===========================================
 void Renderer::processMessages() {
-   Renderer renderer;
-
    m_msgQueueMutex.lock();
    for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
-      renderer.processMessage(*i);
+      processMessage(*i);
    }
    m_msgQueue.clear();
    m_msgQueueEmpty = true;
@@ -316,18 +312,16 @@ void Renderer::processMessages() {
 // Renderer::renderLoop
 //===========================================
 void Renderer::renderLoop() {
-   Renderer renderer;
-
    try {
       WinIO win;
       win.createGLContext();
 
-      renderer.init();
+      init();
 
       while (m_running) {
          processMessages();
 
-         renderer.clear();
+         clear();
 
          cml::matrix44f_c P;
          m_cameraMutex.lock();
@@ -335,44 +329,44 @@ void Renderer::renderLoop() {
          m_cameraMutex.unlock();
 
          m_sceneGraphMutex.lock();
-         for (auto i = m_sceneGraph.begin(); i != m_sceneGraph.end(); ++i) {
+         for (auto i = m_sceneGraph->begin(); i != m_sceneGraph->end(); ++i) {
             const IModel* model = *i;
 
             if (model->getNumVertices() == 0) continue;
 
-            renderer.setMode(model->getRenderMode());
+            setMode(model->getRenderMode());
 
             m_activeShaderProg->sendData(model, P);
 
-            GL_CHECK(glDrawArrays(renderer.primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
+            GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
          }
          m_sceneGraphMutex.unlock();
 
          win.swapBuffers();
 
 #ifdef DEBUG
-         renderer.computeFrameRate();
+         computeFrameRate();
 #endif
       }
    }
    catch (RendererException& e) {
       e.prepend("Exception caught in render loop; ");
-      renderer.m_exception = e.constructWrapper();
-      renderer.m_errorPending = true;
+      m_exception = e.constructWrapper();
+      m_errorPending = true;
 
       // Await imminent death
       while (m_running) {}
    }
    catch (Exception& e) {
       e.prepend("Exception caught in render loop; ");
-      renderer.m_exception = { EXCEPTION, new Exception(e) };
-      renderer.m_errorPending = true;
+      m_exception = { EXCEPTION, new Exception(e) };
+      m_errorPending = true;
 
       while (m_running) {}
    }
    catch (...) {
-      renderer.m_exception = { UNKNOWN_EXCEPTION, NULL };
-      renderer.m_errorPending = true;
+      m_exception = { UNKNOWN_EXCEPTION, NULL };
+      m_errorPending = true;
 
       while (m_running) {}
    }

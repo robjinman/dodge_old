@@ -26,12 +26,17 @@ namespace Dodge {
 
 
 class IModel;
-class SceneGraph;
 class ShaderProgram;
+class SceneGraph;
 
 // OpenGL ES 2.0 implementation
 class Renderer {
    public:
+      static Renderer& getInstance() {
+         if (!m_instance) m_instance = new Renderer;
+         return *m_instance;
+      }
+
       typedef GLint int_t;
       typedef GLfloat float_t;
       typedef GLfloat vertexElement_t;
@@ -56,6 +61,18 @@ class Renderer {
          TRIANGLE_STRIP
       };
 
+      enum exceptionType_t {
+         UNKNOWN_EXCEPTION,
+         EXCEPTION,
+         RENDERER_EXCEPTION
+         // ...
+      };
+
+      struct exceptionWrapper_t {
+         exceptionType_t type;
+         void* data;
+      };
+
       void setBgColour(const Colour& col);
 
       inline void attachCamera(pCamera_t camera);
@@ -77,19 +94,9 @@ class Renderer {
 
       void checkForErrors();
 
-      enum exceptionType_t {
-         UNKNOWN_EXCEPTION,
-         EXCEPTION,
-         RENDERER_EXCEPTION
-         // ...
-      };
+   protected:
+      Renderer();
 
-      struct exceptionWrapper_t {
-         exceptionType_t type;
-         void* data;
-      };
-
-   private:
       typedef enum {
          MSG_TEX_HANDLE_REQ,
          MSG_VP_RESIZE_REQ,
@@ -129,8 +136,11 @@ class Renderer {
          msgData_t data;
       };
 
-      static void renderLoop();
-      static void processMessages();
+   private:
+      static Renderer* m_instance;
+
+      void renderLoop();
+      void processMessages();
 
       void init();
       void clear();
@@ -145,34 +155,34 @@ class Renderer {
       void computeFrameRate();
 #endif
 
-      static std::map<mode_t, ShaderProgram*> m_shaderProgs;
-      static ShaderProgram* m_activeShaderProg;
-      static mode_t m_mode;
+      std::map<mode_t, ShaderProgram*> m_shaderProgs;
+      ShaderProgram* m_activeShaderProg;
+      mode_t m_mode;
 
-      static std::atomic<bool> m_init;
+      std::atomic<bool> m_init;
 
-      static SceneGraph m_sceneGraph;
-      static std::mutex m_sceneGraphMutex;
+      std::unique_ptr<SceneGraph> m_sceneGraph;
+      mutable std::mutex m_sceneGraphMutex;
 
-      static pCamera_t m_camera;
-      static std::mutex m_cameraMutex;
+      pCamera_t m_camera;
+      mutable std::mutex m_cameraMutex;
 
-      static std::atomic<bool> m_running;
-      static std::thread* m_thread;
+      std::atomic<bool> m_running;
+      std::thread* m_thread;
 
-      static std::vector<Message> m_msgQueue;
-      static std::mutex m_msgQueueMutex;
+      std::vector<Message> m_msgQueue;
+      mutable std::mutex m_msgQueueMutex;
 
-      static std::atomic<bool> m_msgQueueEmpty;
+      std::atomic<bool> m_msgQueueEmpty;
 
-      static Colour m_bgColour;
-      static std::mutex m_bgColourMutex;
+      Colour m_bgColour;
+      mutable std::mutex m_bgColourMutex;
 
-      static exceptionWrapper_t m_exception;
-      static std::atomic<bool> m_errorPending;
+      exceptionWrapper_t m_exception;
+      std::atomic<bool> m_errorPending;
 
 #ifdef DEBUG
-      static std::atomic<long> m_frameRate;
+      std::atomic<long> m_frameRate;
 #endif
 };
 

@@ -14,7 +14,6 @@
 #include "Animation.hpp"
 #include "Entity.hpp"
 #include "renderer/Texture.hpp"
-#include "renderer/Renderer.hpp"
 #include "renderer/Model.hpp"
 #include "Range.hpp"
 
@@ -72,8 +71,6 @@ class EntityAnimations {
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
       mutable PlainTexturedAlphaModel m_model;
-
-      static Renderer m_renderer;
 };
 
 //===========================================

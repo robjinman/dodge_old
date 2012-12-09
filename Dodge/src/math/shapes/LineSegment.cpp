@@ -18,9 +18,6 @@ using namespace std;
 namespace Dodge {
 
 
-Renderer LineSegment::m_renderer = Renderer();
-
-
 //===========================================
 // LineSegment::LineSegment
 //===========================================
@@ -155,14 +152,14 @@ void LineSegment::setRenderTransform(float32_t x, float32_t y, int z) const {
 // LineSegment::render
 //===========================================
 void LineSegment::render() const {
-   m_renderer.stageModel(&m_model);
+   Renderer::getInstance().stageModel(&m_model);
 }
 
 //===========================================
 // LineSegment::unrender
 //===========================================
 void LineSegment::unrender() const {
-   m_renderer.unstageModel(&m_model);
+   Renderer::getInstance().unstageModel(&m_model);
 }
 
 //===========================================

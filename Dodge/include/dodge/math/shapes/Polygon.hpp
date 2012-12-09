@@ -87,8 +87,6 @@ class Polygon : public Shape {
       Colour m_fillColour;
       Colour m_lineColour;
       Renderer::int_t m_lineWidth;
-
-      static Renderer m_renderer;
 };
 
 //===========================================

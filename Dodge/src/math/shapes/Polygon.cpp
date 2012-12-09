@@ -18,9 +18,6 @@ using namespace std;
 namespace Dodge {
 
 
-Renderer Polygon::m_renderer = Renderer();
-
-
 //===========================================
 // Polygon::Polygon
 //===========================================
@@ -280,16 +277,16 @@ void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
 // Polygon::render
 //===========================================
 void Polygon::render() const {
-   m_renderer.stageModel(&m_interiorModel);
-   m_renderer.stageModel(&m_outlineModel);
+   Renderer::getInstance().stageModel(&m_interiorModel);
+   Renderer::getInstance().stageModel(&m_outlineModel);
 }
 
 //===========================================
 // Polygon::unrender
 //===========================================
 void Polygon::unrender() const {
-   m_renderer.unstageModel(&m_interiorModel);
-   m_renderer.unstageModel(&m_outlineModel);
+   Renderer::getInstance().unstageModel(&m_interiorModel);
+   Renderer::getInstance().unstageModel(&m_outlineModel);
 }
 
 //===========================================

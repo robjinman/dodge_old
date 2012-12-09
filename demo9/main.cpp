@@ -7,7 +7,7 @@ using namespace Dodge;
 
 
 WinIO win;
-Renderer renderer;
+Renderer& renderer = Renderer::getInstance();
 double frameRate = 1000000;
 Polygon shape;
 

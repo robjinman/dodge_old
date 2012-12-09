@@ -59,8 +59,7 @@ EntityUi::~EntityUi() {
 bool EntityUi::inRange(int x, int y, float32_t& wx, float32_t& wy) const {
    y = m_winIO.getWindowHeight() - y;
 
-   Renderer renderer;
-   Vec2f viewPos = renderer.getCamera().getTranslation();
+   Vec2f viewPos = Renderer::getInstance().getCamera().getTranslation();
 
    wx = viewPos.x + static_cast<float32_t>(x) * gGetPixelSize().x;
    wy = viewPos.y + static_cast<float32_t>(y) * gGetPixelSize().y;

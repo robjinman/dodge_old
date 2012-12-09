@@ -42,7 +42,6 @@ class Graphics2d {
 
    private:
       static bool m_init;
-      static Renderer m_renderer;
       static pCamera_t m_camera;
 
       static Colour m_fillColour;
@@ -84,7 +83,7 @@ inline void Graphics2d::setLineWidth(Renderer::int_t width) const {
 // Graphics2d::setCamera
 //===========================================
 inline void Graphics2d::setCamera(pCamera_t camera) {
-   m_renderer.attachCamera(camera);
+   Renderer::getInstance().attachCamera(camera);
 }
 
 //===========================================

@@ -11,7 +11,8 @@
 class Application {
    public:
       Application()
-         : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)) {}
+         : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
+           m_renderer(Dodge::Renderer::getInstance()) {}
 
       void onExit(Functor<void, TYPELIST_0()> callBack);
       void begin();
@@ -45,7 +46,7 @@ class Application {
       Functor<void, TYPELIST_0()> m_onExit;
 
       Dodge::Graphics2d          m_graphics2d;
-      Dodge::Renderer            m_renderer;
+      Dodge::Renderer&           m_renderer;
       int                        m_currentMap;
       std::map<int, bool>        m_keyState;
       std::vector<int>           m_dirKeyStack;

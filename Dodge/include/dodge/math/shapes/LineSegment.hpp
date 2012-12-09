@@ -16,8 +16,6 @@
 namespace Dodge {
 
 
-class Renderer;
-
 class LineSegment : public Shape {
    public:
       explicit LineSegment(const XmlNode data);
@@ -60,8 +58,6 @@ class LineSegment : public Shape {
 
    private:
       mutable PlainNonTexturedAlphaModel m_model;
-
-      static Renderer m_renderer;
 };
 
 //===========================================

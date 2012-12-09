@@ -30,8 +30,7 @@ void Application::exitDefault() {
 // Application::quit
 //===========================================
 void Application::quit() {
-   Renderer renderer;
-   renderer.stop();
+   m_renderer.stop();
 
    m_items.clear();
    m_eventManager.clear();

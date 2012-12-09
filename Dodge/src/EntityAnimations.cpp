@@ -5,7 +5,7 @@
 
 #include <cstring>
 #include <cml/cml.h>
-#include "renderer/Texture.hpp"
+#include "renderer/Renderer.hpp"
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
 #include "EAnimFinished.hpp"
@@ -18,9 +18,6 @@ using namespace std;
 
 
 namespace Dodge {
-
-
-Renderer EntityAnimations::m_renderer = Renderer();
 
 
 #ifdef DEBUG
@@ -205,14 +202,14 @@ void EntityAnimations::assignData(const XmlNode data) {
 // EntityAnimations::render
 //===========================================
 void EntityAnimations::render() const {
-   m_renderer.stageModel(&m_model);
+   Renderer::getInstance().stageModel(&m_model);
 }
 
 //===========================================
 // EntityAnimations::unrender
 //===========================================
 void EntityAnimations::unrender() const {
-   m_renderer.unstageModel(&m_model);
+   Renderer::getInstance().unstageModel(&m_model);
 }
 
 //===========================================
