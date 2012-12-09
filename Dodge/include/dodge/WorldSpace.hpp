@@ -37,8 +37,8 @@ class WorldSpace {
       inline void getEntities(const Range& region, std::vector<pEntity_t>& entities) const;
 
 #ifdef DEBUG
-      inline int dbg_getNumEntities() const;
-//      inline void dbg_draw(int z) const;
+      inline void dbg_render(const Colour& colour, Renderer::int_t lineWidth, int z) const;
+      inline void dbg_unrender() const;
 #endif
 
    private:
@@ -159,21 +159,24 @@ inline void WorldSpace::getEntities(const Range& region, std::vector<pEntity_t>&
 
 #ifdef DEBUG
 //===========================================
-// WorldSpace::dbg_getNumEntities
+// WorldSpace::dbg_render
 //===========================================
-inline int WorldSpace::dbg_getNumEntities() const{
-   return m_container->getNumEntries();
+inline void WorldSpace::dbg_render(const Colour& colour, Renderer::int_t lineWidth, int z) const {
+   if (!m_init)
+      throw Exception("Error rendering worldspace; WorldSpace not initialised", __FILE__, __LINE__);
+
+   m_container->dbg_render(colour, lineWidth, z);
 }
 
 //===========================================
-// WorldSpace::dbg_draw
+// WorldSpace::dbg_unrender
 //===========================================
-/*inline void WorldSpace::dbg_draw(int z) const {
+inline void WorldSpace::dbg_unrender() const {
    if (!m_init)
-      throw Exception("Error drawing WorldSpace; WorldSpace not initialised", __FILE__, __LINE__);
+      throw Exception("Error unrendering worldspace; WorldSpace not initialised", __FILE__, __LINE__);
 
-   m_container->dbg_draw(z);
-}*/
+   m_container->dbg_unrender();
+}
 #endif
 
 

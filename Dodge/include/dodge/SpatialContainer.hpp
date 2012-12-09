@@ -10,6 +10,7 @@
 #include <vector>
 #ifdef DEBUG
 #include <ostream>
+#include "renderer/Renderer.hpp"
 #endif
 
 
@@ -17,9 +18,6 @@ namespace Dodge {
 
 
 class Range;
-#ifdef DEBUG
-class Colour;
-#endif
 
 template <typename T>
 class SpatialContainer {
@@ -32,7 +30,8 @@ class SpatialContainer {
       virtual const Range& getBoundary() const = 0;
 
 #ifdef DEBUG
-//      virtual void dbg_draw(int z) const = 0;
+      virtual void dbg_render(const Colour& colour, Renderer::int_t lineWidth, int z) const = 0;
+      virtual void dbg_unrender() const = 0;
 #endif
 
       virtual ~SpatialContainer() {}

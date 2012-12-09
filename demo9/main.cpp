@@ -1,17 +1,15 @@
-#include <vector>
 #include <dodge/dodge.hpp>
 #include <iostream>
 
 
 using namespace std;
 using namespace Dodge;
-using namespace cml;
 
 
 WinIO win;
 Renderer renderer;
-std::vector<pPrimitive_t> shapes;
-double frameRate;
+double frameRate = 1000000;
+Polygon shape;
 
 
 void quit() {
@@ -27,6 +25,8 @@ void keyDown(int key) {
          cout << "Frame rate (main loop): " << frameRate << "fps\n";
          cout << "Frame rate (render loop): " << renderer.getFrameRate() << "fps\n" << flush;
       break;
+      case WinIO::KEY_1: shape.render();     break;
+      case WinIO::KEY_2: shape.unrender();   break;
    }
 }
 
@@ -42,34 +42,46 @@ void computeFrameRate() {
 }
 
 void onWindowResize(int w, int h) {
-   Renderer renderer;
    renderer.onWindowResize(w, h);
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 int main() {
    try {
-      win.init("Demo9 - renderer", 640, 480, false);
+      win.init("Rotating Square", 240, 240, false);
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
       win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
-      renderer.start();
-
-      pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
+      pCamera_t camera(new Camera(240.0 / 240.0, 1.f));
       renderer.attachCamera(camera);
 
-      renderer.setBgColour(Colour(1.0, 1.0, 0.0, 1.0));
+      renderer.setBgColour(Colour(0.2, 0.2, 0.2, 1.0));
 
-      pPrimitive_t shape(new LineSegment(Vec2f(0.f, 0.f), Vec2f(1.f, 1.f)));
-      shape->setLineWidth(4);
-      shape->setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
-      shape->render();
+      renderer.start();
 
+      shape.addVertex(0.3, 0.3);
+      shape.addVertex(0.7, 0.3);
+      shape.addVertex(0.7, 0.7);
+      shape.addVertex(0.3, 0.7);
+
+      shape.setLineWidth(3);
+      shape.setFillColour(Colour(0.0, 0.2, 0.9, 1.0));
+      shape.setLineColour(Colour(0.7, 0.1, 0.1, 1.0));
+
+      shape.render();
+
+      long i = 1;
       while (1) {
          win.doEvents();
          computeFrameRate();
+
+         if (i % 1000 == 0)
+            shape.rotate((180000.0) / frameRate, Vec2f(0.5f, 0.5f));
+
          renderer.checkForErrors();
+
+         ++i;
       }
    }
    catch (Exception& e) {

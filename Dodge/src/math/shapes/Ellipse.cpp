@@ -21,6 +21,13 @@ Ellipse::Ellipse(const XmlNode data) {
 }
 
 //===========================================
+// Ellipse::Ellipse
+//===========================================
+Ellipse::Ellipse(const Ellipse& copy) {
+   // TODO
+}
+
+//===========================================
 // Ellipse::typeId
 //===========================================
 long Ellipse::typeId() const {

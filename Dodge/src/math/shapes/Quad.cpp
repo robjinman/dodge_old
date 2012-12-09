@@ -68,6 +68,14 @@ Quad::Quad(const Vec2f& d) {
    addVertex(Vec2f(0.f, d.y));
 }
 
+//===========================================
+// Quad::operator=
+//===========================================
+Quad& Quad::operator=(const Quad& rhs) {
+   Polygon::operator=(rhs);
+   return *this;
+}
+
 #ifdef DEBUG
 //===========================================
 // Quad::dbg_print

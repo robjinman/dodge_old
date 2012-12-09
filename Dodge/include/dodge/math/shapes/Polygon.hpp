@@ -11,6 +11,7 @@
 #include <boost/shared_ptr.hpp>
 #include "Shape.hpp"
 #include "../Vec2f.hpp"
+#include "../../renderer/Model.hpp"
 #include "../../Exception.hpp"
 #include "../../renderer/Renderer.hpp"
 
@@ -45,16 +46,18 @@ class Polygon : public Shape {
       virtual void rotate(float32_t deg, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab) const;
+      virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
-      virtual void setFillColour(const Colour& colour) {} // TODO
-      virtual void setLineColour(const Colour& colour) {}
-      virtual void setLineWidth(int lineWidth) {}
+      virtual void setFillColour(const Colour& colour);
+      virtual void setLineColour(const Colour& colour);
+      virtual void setLineWidth(int lineWidth);
 
-      virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
-      virtual void render() const {}
-      virtual void unrender() const {}
+      virtual void setRenderTransform(float32_t x, float32_t y, int z) const;
+      virtual void render() const;
+      virtual void unrender() const;
+
+      Polygon& operator=(const Polygon& rhs);
 
       bool operator==(const Polygon& rhs) const;
       bool operator!=(const Polygon& rhs) const;
@@ -63,17 +66,27 @@ class Polygon : public Shape {
       virtual ~Polygon() {}
 
    private:
+      void deepCopy(const Polygon& copy);
+
       void restructure();
       bool isConvex() const;
       void subdivide();
       void absorbChildren();
 
-      void drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const;
-      void drawSolid(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const;
+      void updateModels() const;
+      void updateInteriorModel() const;
+      void updateOutlineModel() const;
 
       std::vector<boost::shared_ptr<Vec2f> > m_verts;
       int m_nVerts;
       std::vector<Polygon> m_children;
+
+      mutable PlainNonTexturedAlphaModel m_outlineModel;
+      mutable PlainNonTexturedAlphaModel m_interiorModel;
+
+      Colour m_fillColour;
+      Colour m_lineColour;
+      Renderer::int_t m_lineWidth;
 
       static Renderer m_renderer;
 };
@@ -112,6 +125,7 @@ inline void Polygon::setVertex(int idx, const Vec2f& vert) {
    *m_verts[idx] = vert;
 
    restructure();
+   updateModels();
 }
 
 //===========================================

@@ -16,6 +16,7 @@ namespace Dodge {
 class Ellipse : public Shape {
    public:
       explicit Ellipse(const XmlNode data);
+      Ellipse(const Ellipse& copy);
 
       virtual long typeId() const;
 
@@ -36,6 +37,8 @@ class Ellipse : public Shape {
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
       virtual void render() const {}
       virtual void unrender() const {}
+
+      Ellipse& operator=(const Ellipse& rhs) { return *this; } // TODO
 
       inline bool operator==(const Ellipse& rhs) const;
       inline bool operator!=(const Ellipse& rhs) const;

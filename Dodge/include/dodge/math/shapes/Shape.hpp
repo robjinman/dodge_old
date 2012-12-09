@@ -15,7 +15,7 @@
 namespace Dodge {
 
 
-// A shape is a shape that does not have any explicit position defined (though
+// A shape does not have any explicit position defined (though
 // some shapes such as polygons, which are represented as sequences of vertices,
 // will have an implicit position because all vertices can be moved).
 class Shape : virtual public Asset {
@@ -24,7 +24,7 @@ class Shape : virtual public Asset {
 
       virtual Shape* clone() const = 0;
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab) const = 0;
+      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
 #endif
       virtual Vec2f getMinimum() const = 0;
       virtual Vec2f getMaximum() const = 0;

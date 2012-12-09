@@ -73,24 +73,21 @@ class Model : public IModel {
       //===========================================
       // Model::Model
       //===========================================
-      Model(const Model& cpy) {
-         cpy.m_mutex.lock();
+      Model(const Model& cpy) : m_n(0) {
+         m_mutex.lock();
+         deepCopy(cpy);
+         m_mutex.unlock();
+      }
 
-         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+      //===========================================
+      // Model::operator=
+      //===========================================
+      Model& operator=(const Model& rhs) {
+         m_mutex.lock();
+         deepCopy(rhs);
+         m_mutex.unlock();
 
-         m_verts = new T[cpy.m_n];
-         memcpy(m_verts, cpy.m_verts, cpy.m_n * sizeof(T));
-
-         m_n = cpy.m_n;
-         m_texHandle = cpy.m_texHandle;
-         m_colour = cpy.m_colour;
-         m_lineWidth = cpy.m_lineWidth;
-         m_primitiveType = cpy.m_primitiveType;
-         m_colData = cpy.m_colData;
-         m_renderMode = cpy.m_renderMode;
-         m_handle = 0;
-
-         cpy.m_mutex.unlock();
+         return *this;
       }
 
       //===========================================
@@ -282,6 +279,25 @@ class Model : public IModel {
       }
 
    private:
+      //===========================================
+      // Model::deepCopy
+      //===========================================
+      void deepCopy(const Model& cpy) {
+         cpy.m_mutex.lock();
+
+         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+         setVertices(0, cpy.m_verts, cpy.m_n);
+         m_texHandle = cpy.m_texHandle;
+         m_colour = cpy.m_colour;
+         m_lineWidth = cpy.m_lineWidth;
+         m_primitiveType = cpy.m_primitiveType;
+         m_colData = cpy.m_colData;
+         m_renderMode = cpy.m_renderMode;
+         m_handle = 0;
+
+         cpy.m_mutex.unlock();
+      }
+
       mutable std::recursive_mutex m_mutex;
 
       Renderer::matrixElement_t m_matrix[16];

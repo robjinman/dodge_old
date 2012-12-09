@@ -24,24 +24,76 @@ Renderer LineSegment::m_renderer = Renderer();
 //===========================================
 // LineSegment::LineSegment
 //===========================================
+LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
+   : m_model(Renderer::LINES) {
+
+   vvv_t verts[] = {
+      {p1x, p1y, 0.f},
+      {p2x, p2y, 0.f}
+   };
+
+   m_model.setVertices(0, verts, 2);
+}
+
+//===========================================
+// LineSegment::LineSegment
+//===========================================
+LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
+   : m_model(Renderer::LINES) {
+
+   vvv_t verts[] = {
+      {p1.x, p1.y, 0.f},
+      {p2.x, p2.y, 0.f}
+   };
+
+   m_model.setVertices(0, verts, 2);
+}
+
+//===========================================
+// LineSegment::LineSegment
+//===========================================
 LineSegment::LineSegment(const XmlNode data)
    : m_model(Renderer::LINES) {
+
+   vvv_t verts[] = {
+      {0.f, 0.f, 0.f},
+      {0.f, 0.f, 0.f}
+   };
+
+   m_model.setVertices(0, verts, 2);
 
    try {
       XML_NODE_CHECK(data, LineSegment);
 
       XmlNode node = data.firstChild();
       XML_NODE_CHECK(node, Vec2f);
-      m_p1 = Vec2f(node);
+      Vec2f p1(node);
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, Vec2f);
-      m_p2 = Vec2f(node);
+      Vec2f p2(node);
+
+      m_model.setVertex(0, {p1.x, p1.y, 0.f});
+      m_model.setVertex(1, {p2.x, p2.y, 0.f});
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class LineSegment; ");
       throw;
    }
+}
+
+//===========================================
+// LineSegment::LineSegment
+//===========================================
+LineSegment::LineSegment(const LineSegment& copy)
+   : m_model(copy.m_model) {}
+
+//===========================================
+// LineSegment::operator=
+//===========================================
+LineSegment& LineSegment::operator=(const LineSegment& rhs) {
+   m_model = rhs.m_model;
+   return *this;
 }
 
 //===========================================
@@ -69,10 +121,10 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
    out << "LineSegment\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
-   out << "p1: (" << m_p1.x << ", " << m_p1.y << ")\n";
+   out << "p1: (" << getPoint1().x << ", " << getPoint1().y << ")\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
-   out << "p2: (" << m_p2.x << ", " << m_p2.y << ")\n";
+   out << "p2: (" << getPoint2().x << ", " << getPoint2().y << ")\n";
 }
 #endif
 
@@ -117,32 +169,50 @@ void LineSegment::unrender() const {
 // LineSegment::getMinimum
 //===========================================
 Vec2f LineSegment::getMinimum() const {
-   return Vec2f(m_p1.x < m_p2.x ? m_p1.x : m_p2.x, m_p1.y < m_p2.y ? m_p1.y : m_p2.y);
+   Vec2f p1 = getPoint1();
+   Vec2f p2 = getPoint2();
+
+   return Vec2f(p1.x < p2.x ? p1.x : p2.x, p1.y < p2.y ? p1.y : p2.y);
 }
 
 //===========================================
 // LineSegment::getMaximum
 //===========================================
 Vec2f LineSegment::getMaximum() const {
-   return Vec2f(m_p1.x > m_p2.x ? m_p1.x : m_p2.x, m_p1.y > m_p2.y ? m_p1.y : m_p2.y);
+   Vec2f p1 = getPoint1();
+   Vec2f p2 = getPoint2();
+
+   return Vec2f(p1.x > p2.x ? p1.x : p2.x, p1.y > p2.y ? p1.y : p2.y);
 }
 
 //===========================================
 // LineSegment::rotate
 //===========================================
 void LineSegment::rotate(float32_t rads, const Vec2f& pivot) {
-   m_p1.rotate(pivot, rads);
-   m_p2.rotate(pivot, rads);
+   Vec2f p1 = getPoint1();
+   Vec2f p2 = getPoint2();
+
+   p1.rotate(pivot, rads);
+   p2.rotate(pivot, rads);
+
+   setPoint1(p1);
+   setPoint2(p2);
 }
 
 //===========================================
 // LineSegment::scale
 //===========================================
 void LineSegment::scale(const Vec2f& sv) {
-   m_p1.x *= sv.x;
-   m_p1.y *= sv.y;
-   m_p2.x *= sv.x;
-   m_p2.y *= sv.y;
+   Vec2f p1 = getPoint1();
+   Vec2f p2 = getPoint2();
+
+   p1.x *= sv.x;
+   p1.y *= sv.y;
+   p2.x *= sv.x;
+   p2.y *= sv.y;
+
+   setPoint1(p1);
+   setPoint2(p2);
 }
 
 

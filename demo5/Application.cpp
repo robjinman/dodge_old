@@ -63,7 +63,13 @@ void Application::keyDown(int key) {
       case WinIO::KEY_P: m_player->dbg_print(cout); break;
       case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
-      case WinIO::KEY_3: dbg_flags ^= DBG_DRAW_WORLDSPACE; break;
+      case WinIO::KEY_3:
+         dbg_flags ^= DBG_DRAW_WORLDSPACE;
+         if (dbg_flags & DBG_DRAW_WORLDSPACE)
+            m_worldSpace.dbg_render(Colour(1.f, 0.f, 0.f, 1.f), 3, 9);
+         else
+            m_worldSpace.dbg_unrender();
+      break;
 #endif
    }
 

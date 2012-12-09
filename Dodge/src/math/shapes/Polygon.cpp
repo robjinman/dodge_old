@@ -24,14 +24,21 @@ Renderer Polygon::m_renderer = Renderer();
 //===========================================
 // Polygon::Polygon
 //===========================================
-Polygon::Polygon() : m_nVerts(0) {
+Polygon::Polygon()
+   : m_nVerts(0),
+     m_outlineModel(Renderer::LINES),
+     m_interiorModel(Renderer::TRIANGLES) {
+
 //   m_verts.resize(Polygon::MAX_VERTS);
 }
 
 //===========================================
 // Polygon::Polygon
 //===========================================
-Polygon::Polygon(const XmlNode data) {
+Polygon::Polygon(const XmlNode data)
+   : m_outlineModel(Renderer::LINES),
+     m_interiorModel(Renderer::TRIANGLES) {
+
    try {
       XML_NODE_CHECK(data, Polygon);
 
@@ -52,6 +59,7 @@ Polygon::Polygon(const XmlNode data) {
    }
 
    restructure();
+   updateModels();
 }
 
 //===========================================
@@ -59,17 +67,42 @@ Polygon::Polygon(const XmlNode data) {
 //
 // Contruct deep copy
 //===========================================
-Polygon::Polygon(const Polygon& poly) {
-//   m_verts.resize(Polygon::MAX_VERTS);
+Polygon::Polygon(const Polygon& poly)
+   : m_outlineModel(Renderer::LINES),
+     m_interiorModel(Renderer::TRIANGLES) {
 
-   for (int i = 0; i < poly.m_nVerts; ++i) {
-      boost::shared_ptr<Vec2f> vert(new Vec2f(*poly.m_verts[i])); // Make copy of vertex
+   deepCopy(poly);
+}
+
+//===========================================
+// Polygon::deepCopy
+//===========================================
+void Polygon::deepCopy(const Polygon& copy) {
+   m_verts.clear();
+   m_nVerts = 0;
+
+   for (int i = 0; i < copy.m_nVerts; ++i) {
+      boost::shared_ptr<Vec2f> vert(new Vec2f(*copy.m_verts[i])); // Make copy of vertex
       m_verts.push_back(vert);
    }
 
-   m_nVerts = poly.m_nVerts;
+   m_nVerts = copy.m_nVerts;
 
    restructure();
+
+   m_outlineModel = copy.m_outlineModel;
+   m_interiorModel = copy.m_interiorModel;
+   m_fillColour = copy.m_fillColour;
+   m_lineColour = copy.m_lineColour;
+   m_lineWidth = copy.m_lineWidth;
+}
+
+//===========================================
+// Polygon::operator=
+//===========================================
+Polygon& Polygon::operator=(const Polygon& rhs) {
+   deepCopy(rhs);
+   return *this;
 }
 
 //===========================================
@@ -169,6 +202,7 @@ void Polygon::addVertex(const Vec2f& vert) {
    ++m_nVerts;
 
    restructure();
+   updateModels();
 }
 
 //===========================================
@@ -184,6 +218,7 @@ void Polygon::removeVertex(int idx) {
    --m_nVerts;
 
    restructure();
+   updateModels();
 }
 
 //===========================================
@@ -201,97 +236,113 @@ void Polygon::insertVertex(int idx, const Vec2f& vert) {
    *m_verts[idx] = vert;
 
    restructure();
+   updateModels();
 }
 
 //===========================================
-// Polygon::drawHollow
+// Polygon::setFillColour
 //===========================================
-void Polygon::drawHollow(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
-   m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
-
-   int n = m_nVerts;
-
-   matrix44f_c rotation;
-   matrix44f_c translation;
-   matrix44f_c modelView;
-
-   float32_t rads = DEG_TO_RAD(angle);
-   matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
-   matrix_translation(translation, x, y, 0.f);
-   modelView = translation * rotation;
-
-   m_renderer.setMatrix(modelView.data());
-
-   Renderer::vertexElement_t verts[6];
-
-   for (int i = 0; i < n; ++i) {
-      const Vec2f& p1 = getVertex(i);
-      const Vec2f& p2 = getVertex((i + 1) % n);
-
-      verts[0] = p1.x;
-      verts[1] = p1.y;
-      verts[2] = static_cast<float32_t>(z);
-      verts[3] = p2.x;
-      verts[4] = p2.y;
-      verts[5] = static_cast<float32_t>(z);
-
-      m_renderer.setGeometry(verts, Renderer::LINES, 2);
-      m_renderer.render();
-   }*/
+void Polygon::setFillColour(const Colour& colour) {
+   m_fillColour = colour;
+   m_interiorModel.setColour(colour);
 }
 
 //===========================================
-// Polygon::drawSolid
+// Polygon::setLineColour
 //===========================================
-void Polygon::drawSolid(float32_t x, float32_t y, int z, float32_t angle, const Vec2f& pivot) const {/*
-   if (m_children.size() == 0) {
-      m_renderer.setMode(Renderer::NONTEXTURED_ALPHA);
-      int n = m_nVerts;
+void Polygon::setLineColour(const Colour& colour) {
+   m_lineColour = m_lineColour;
+   m_outlineModel.setColour(colour);
+}
 
-      float32_t fZ = static_cast<float32_t>(z);
+//===========================================
+// Polygon::setLineWidth
+//===========================================
+void Polygon::setLineWidth(int lineWidth) {
+   m_lineWidth = lineWidth;
+   m_outlineModel.setLineWidth(lineWidth);
+}
 
+//===========================================
+// Polygon::setRenderTransform
+//===========================================
+void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
+   m_outlineModel.setMatrixElement(12, x);
+   m_outlineModel.setMatrixElement(13, y);
+   m_outlineModel.setMatrixElement(14, static_cast<float32_t>(z));
 
-      // Construct triangle fan
+   m_interiorModel.setMatrixElement(12, x);
+   m_interiorModel.setMatrixElement(13, y);
+   m_interiorModel.setMatrixElement(14, static_cast<float32_t>(z));
+}
 
-      // The number of vertices in a triangle fan is 3n-6,
-      // where n is the number of vertices in the polygon.
-      Renderer::vertexElement_t verts[3 * 3 * MAX_VERTS - 6];
+//===========================================
+// Polygon::render
+//===========================================
+void Polygon::render() const {
+   m_renderer.stageModel(&m_interiorModel);
+   m_renderer.stageModel(&m_outlineModel);
+}
 
-      int i = 0;
-      for (int v = 1; v < n - 1; ++v) {
-         verts[3 * i + 0] = getVertex(0).x;
-         verts[3 * i + 1] = getVertex(0).y;
-         verts[3 * i + 2] = fZ;
-         i++;
+//===========================================
+// Polygon::unrender
+//===========================================
+void Polygon::unrender() const {
+   m_renderer.unstageModel(&m_interiorModel);
+   m_renderer.unstageModel(&m_outlineModel);
+}
 
-         verts[3 * i + 0] = getVertex(v).x;
-         verts[3 * i + 1] = getVertex(v).y;
-         verts[3 * i + 2] = fZ;
-         i++;
+//===========================================
+// Polygon::updateModels
+//===========================================
+void Polygon::updateModels() const {
+   updateOutlineModel();
+   updateInteriorModel();
+}
 
-         verts[3 * i + 0] = getVertex(v + 1).x;
-         verts[3 * i + 1] = getVertex(v + 1).y;
-         verts[3 * i + 2] = fZ;
-         i++;
-      }
+//===========================================
+// Polygon::updateOutlineModel
+//===========================================
+void Polygon::updateOutlineModel() const {
+   vvv_t verts[m_nVerts * 2];
 
-      matrix44f_c rotation;
-      matrix44f_c translation;
-      matrix44f_c modelView;
+   int i = 0;
+   for (int v = 0; v < m_nVerts; ++v) {
+      verts[i] = { getVertex(v).x, getVertex(v % m_nVerts).y, 0.f };
+      ++i;
 
-      float32_t rads = DEG_TO_RAD(angle);
-      matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
-      matrix_translation(translation, x, y, 0.f);
-      modelView = translation * rotation;
-
-      m_renderer.setMatrix(modelView.data());
-      m_renderer.setGeometry(verts, Renderer::TRIANGLES, 3 * n - 6);
-      m_renderer.render();
+      verts[i] = { getVertex((v + 1) % m_nVerts).x, getVertex((v + 1) % m_nVerts).y, 0.f };
+      ++i;
    }
-   else {
-      for (uint_t i = 0; i < m_children.size(); ++i)
-         m_children[i].draw(x, y, z, angle, pivot);
-   }*/
+
+   m_outlineModel.setVertices(0, verts, m_nVerts * 2);
+}
+
+//===========================================
+// Polygon::updateInteriorModel
+//===========================================
+void Polygon::updateInteriorModel() const { // TODO: for each convex child
+   if (m_nVerts < 3) return;
+
+   // Construct triangle fan
+
+   // The number of vertices in a triangle fan is 3n-6,
+   // where n is the number of vertices in the polygon.
+   vvv_t verts[3 * m_nVerts - 6];
+
+   int i = 0;
+   for (int v = 1; v < m_nVerts - 1; ++v) {
+      verts[i] = { getVertex(0).x, getVertex(0).y, 0.f };
+      ++i;
+
+      verts[i] = { getVertex(v).x, getVertex(v).y, 0.f };
+      ++i;
+
+      verts[i] = { getVertex(v + 1).x, getVertex(v + 1).y, 0.f };
+      ++i;
+   }
+
+   m_interiorModel.setVertices(0, verts, 3 * m_nVerts - 6);
 }
 
 //===========================================
@@ -332,6 +383,8 @@ Vec2f Polygon::getMaximum() const {
 void Polygon::rotate(float32_t deg, const Vec2f& p) {
    for (int i = 0; i < m_nVerts; ++i)
       m_verts[i]->rotate(p, deg);
+
+   updateModels();
 }
 
 //===========================================
@@ -344,6 +397,8 @@ void Polygon::scale(const Vec2f& sv) {
       m_verts[i]->x = m_verts[i]->x * sv.x;
       m_verts[i]->y = m_verts[i]->y * sv.y;
    }
+
+   updateModels();
 }
 
 //===========================================

@@ -21,18 +21,17 @@ class Renderer;
 class LineSegment : public Shape {
    public:
       explicit LineSegment(const XmlNode data);
-
-      LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
-         : m_p1(p1x, p1y), m_p2(p2x, p2y), m_model(Renderer::LINES) {}
-
-      LineSegment(const Vec2f& p1, const Vec2f& p2)
-         : m_p1(p1), m_p2(p2), m_model(Renderer::LINES) {}
+      LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y);
+      LineSegment(const Vec2f& p1, const Vec2f& p2);
+      LineSegment(const LineSegment& copy);
 
       inline void setPoint1(float32_t x, float32_t y);
+      inline void setPoint1(const Vec2f& p1);
       inline void setPoint2(float32_t x, float32_t y);
+      inline void setPoint2(const Vec2f& p2);
 
-      inline const Vec2f& getPoint1() const;
-      inline const Vec2f& getPoint2() const;
+      inline Vec2f getPoint1() const;
+      inline Vec2f getPoint2() const;
 
       virtual LineSegment* clone() const;
 #ifdef DEBUG
@@ -51,6 +50,8 @@ class LineSegment : public Shape {
       virtual void render() const;
       virtual void unrender() const;
 
+      LineSegment& operator=(const LineSegment& rhs);
+
       inline bool operator==(const LineSegment& rhs) const;
       inline bool operator!=(const LineSegment& rhs) const;
 
@@ -58,8 +59,6 @@ class LineSegment : public Shape {
       virtual ~LineSegment() {}
 
    private:
-      Vec2f m_p1; // TODO: remove
-      Vec2f m_p2;
       mutable PlainNonTexturedAlphaModel m_model;
 
       static Renderer m_renderer;
@@ -69,37 +68,51 @@ class LineSegment : public Shape {
 // LineSegment::setPoint1
 //===========================================
 inline void LineSegment::setPoint1(float32_t x, float32_t y) {
-   m_p1.x = x;
-   m_p1.y = y;
+   m_model.setVertex(0, {x, y, 0.f});
+}
+
+//===========================================
+// LineSegment::setPoint1
+//===========================================
+inline void LineSegment::setPoint1(const Vec2f& p1) {
+   setPoint1(p1.x, p1.y);
 }
 
 //===========================================
 // LineSegment::setPoint2
 //===========================================
 inline void LineSegment::setPoint2(float32_t x, float32_t y) {
-   m_p2.x = x;
-   m_p2.y = y;
+   m_model.setVertex(1, {x, y, 0.f});
+}
+
+//===========================================
+// LineSegment::setPoint2
+//===========================================
+inline void LineSegment::setPoint2(const Vec2f& p2) {
+   setPoint2(p2.x, p2.y);
 }
 
 //===========================================
 // LineSegment::getPoint1
 //===========================================
-inline const Vec2f& LineSegment::getPoint1() const {
-   return m_p1;
+inline Vec2f LineSegment::getPoint1() const {
+   vvv_t vert = m_model.getVertex(0);
+   return Vec2f(vert.v1, vert.v2);
 }
 
 //===========================================
 // LineSegment::getPoint2
 //===========================================
-inline const Vec2f& LineSegment::getPoint2() const {
-   return m_p2;
+inline Vec2f LineSegment::getPoint2() const {
+   vvv_t vert = m_model.getVertex(1);
+   return Vec2f(vert.v1, vert.v2);
 }
 
 //===========================================
 // LineSegment::operator==
 //===========================================
 inline bool LineSegment::operator==(const LineSegment& rhs) const {
-   return m_p1 == rhs.m_p1 && m_p2 == rhs.m_p2;
+   return getPoint1() == rhs.getPoint1() && getPoint2() == rhs.getPoint2();
 }
 
 //===========================================
