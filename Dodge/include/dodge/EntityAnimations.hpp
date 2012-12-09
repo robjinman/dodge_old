@@ -70,7 +70,9 @@ class EntityAnimations {
       Vec2f m_onScreenSize;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
+
       mutable PlainTexturedAlphaModel m_model;
+      Renderer& m_renderer;
 };
 
 //===========================================

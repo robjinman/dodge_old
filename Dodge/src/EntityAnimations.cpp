@@ -48,7 +48,8 @@ EntityAnimations::EntityAnimations(Entity* entity, pTexture_t texture)
      m_texture(texture),
      m_texSection(),
      m_activeAnim(),
-     m_model(Renderer::TRIANGLES) {}
+     m_model(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {}
 
 //===========================================
 // EntityAnimations::EntityAnimations
@@ -58,7 +59,8 @@ EntityAnimations::EntityAnimations(Entity* entity, pTexture_t texture)
 EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
    : m_entity(entity),
      m_activeAnim(),
-     m_model(Renderer::TRIANGLES) {
+     m_model(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {
 
    m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
@@ -78,7 +80,8 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    : m_entity(entity),
      m_activeAnim(),
-     m_model(Renderer::TRIANGLES) {
+     m_model(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {
 
    AssetManager assetManager;
 
@@ -202,14 +205,14 @@ void EntityAnimations::assignData(const XmlNode data) {
 // EntityAnimations::render
 //===========================================
 void EntityAnimations::render() const {
-   Renderer::getInstance().stageModel(&m_model);
+   m_renderer.stageModel(&m_model);
 }
 
 //===========================================
 // EntityAnimations::unrender
 //===========================================
 void EntityAnimations::unrender() const {
-   Renderer::getInstance().unstageModel(&m_model);
+   m_renderer.unstageModel(&m_model);
 }
 
 //===========================================
@@ -345,7 +348,9 @@ void EntityAnimations::update() {
 //===========================================
 // EntityAnimations::~EntityAnimations
 //===========================================
-EntityAnimations::~EntityAnimations() {}
+EntityAnimations::~EntityAnimations() {
+   m_renderer.unstageModel(&m_model);
+}
 
 
 }

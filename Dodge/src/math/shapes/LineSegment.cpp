@@ -22,7 +22,8 @@ namespace Dodge {
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
-   : m_model(Renderer::LINES) {
+   : m_model(Renderer::LINES),
+     m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
       {p1x, p1y, 0.f},
@@ -36,7 +37,8 @@ LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t 
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
-   : m_model(Renderer::LINES) {
+   : m_model(Renderer::LINES),
+     m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
       {p1.x, p1.y, 0.f},
@@ -50,7 +52,8 @@ LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const XmlNode data)
-   : m_model(Renderer::LINES) {
+   : m_model(Renderer::LINES),
+     m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
       {0.f, 0.f, 0.f},
@@ -83,7 +86,8 @@ LineSegment::LineSegment(const XmlNode data)
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const LineSegment& copy)
-   : m_model(copy.m_model) {}
+   : m_model(copy.m_model),
+     m_renderer(Renderer::getInstance()) {}
 
 //===========================================
 // LineSegment::operator=
@@ -210,6 +214,13 @@ void LineSegment::scale(const Vec2f& sv) {
 
    setPoint1(p1);
    setPoint2(p2);
+}
+
+//===========================================
+// LineSegment::~LineSegment
+//===========================================
+LineSegment::~LineSegment() {
+   m_renderer.unstageModel(&m_model);
 }
 
 

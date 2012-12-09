@@ -310,7 +310,6 @@ void Application::deletePending(EEvent* event) {
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
 
-      e->item->unrender();
       m_worldSpace.removeAndUntrackEntity(e->item);
       e->item->removeFromWorld();
       m_items.erase(e->item->getName());

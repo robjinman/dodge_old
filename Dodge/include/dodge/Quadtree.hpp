@@ -232,15 +232,8 @@ class Quadtree : public SpatialContainer<T> {
                m_children[i]->dbg_updateModel();
          }
          else {
-            if (m_line1) {
-               m_line1->unrender();
-               m_line1.reset();
-            }
-
-            if (m_line2) {
-               m_line2->unrender();
-               m_line2.reset();
-            }
+            if (m_line1) m_line1.reset();
+            if (m_line2) m_line2.reset();
          }
       }
 #endif

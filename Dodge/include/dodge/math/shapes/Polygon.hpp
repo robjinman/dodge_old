@@ -63,7 +63,7 @@ class Polygon : public Shape {
       bool operator!=(const Polygon& rhs) const;
 
       virtual long typeId() const;
-      virtual ~Polygon() {}
+      virtual ~Polygon();
 
    private:
       void deepCopy(const Polygon& copy);
@@ -83,6 +83,7 @@ class Polygon : public Shape {
 
       mutable PlainNonTexturedAlphaModel m_outlineModel;
       mutable PlainNonTexturedAlphaModel m_interiorModel;
+      Renderer& m_renderer;
 
       Colour m_fillColour;
       Colour m_lineColour;

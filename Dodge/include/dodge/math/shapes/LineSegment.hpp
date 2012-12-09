@@ -54,10 +54,11 @@ class LineSegment : public Shape {
       inline bool operator!=(const LineSegment& rhs) const;
 
       virtual long typeId() const;
-      virtual ~LineSegment() {}
+      virtual ~LineSegment();
 
    private:
       mutable PlainNonTexturedAlphaModel m_model;
+      Renderer& m_renderer;
 };
 
 //===========================================

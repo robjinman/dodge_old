@@ -24,7 +24,8 @@ namespace Dodge {
 Polygon::Polygon()
    : m_nVerts(0),
      m_outlineModel(Renderer::LINES),
-     m_interiorModel(Renderer::TRIANGLES) {
+     m_interiorModel(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {
 
 //   m_verts.resize(Polygon::MAX_VERTS);
 }
@@ -34,7 +35,8 @@ Polygon::Polygon()
 //===========================================
 Polygon::Polygon(const XmlNode data)
    : m_outlineModel(Renderer::LINES),
-     m_interiorModel(Renderer::TRIANGLES) {
+     m_interiorModel(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {
 
    try {
       XML_NODE_CHECK(data, Polygon);
@@ -66,7 +68,8 @@ Polygon::Polygon(const XmlNode data)
 //===========================================
 Polygon::Polygon(const Polygon& poly)
    : m_outlineModel(Renderer::LINES),
-     m_interiorModel(Renderer::TRIANGLES) {
+     m_interiorModel(Renderer::TRIANGLES),
+     m_renderer(Renderer::getInstance()) {
 
    deepCopy(poly);
 }
@@ -277,16 +280,16 @@ void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
 // Polygon::render
 //===========================================
 void Polygon::render() const {
-   Renderer::getInstance().stageModel(&m_interiorModel);
-   Renderer::getInstance().stageModel(&m_outlineModel);
+   m_renderer.stageModel(&m_interiorModel);
+   m_renderer.stageModel(&m_outlineModel);
 }
 
 //===========================================
 // Polygon::unrender
 //===========================================
 void Polygon::unrender() const {
-   Renderer::getInstance().unstageModel(&m_interiorModel);
-   Renderer::getInstance().unstageModel(&m_outlineModel);
+   m_renderer.unstageModel(&m_interiorModel);
+   m_renderer.unstageModel(&m_outlineModel);
 }
 
 //===========================================
@@ -415,6 +418,14 @@ bool Polygon::operator==(const Polygon& rhs) const {
 //===========================================
 bool Polygon::operator!=(const Polygon& rhs) const {
    return !(*this == rhs);
+}
+
+//===========================================
+// Polygon::~Polygon
+//===========================================
+Polygon::~Polygon() {
+   m_renderer.unstageModel(&m_interiorModel);
+   m_renderer.unstageModel(&m_outlineModel);
 }
 
 
