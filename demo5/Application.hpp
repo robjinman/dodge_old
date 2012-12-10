@@ -15,13 +15,7 @@ class Application {
            m_renderer(Dodge::Renderer::getInstance()) {}
 
       void onExit(Functor<void, TYPELIST_0()> callBack);
-      void begin();
-
-#ifdef DEBUG
-      static const Dodge::byte_t DBG_DRAW_WORLDSPACE = 1 << 0;
-
-      Dodge::byte_t dbg_flags;
-#endif
+      void begin(int argc, char** argv);
 
    private:
       void quit();
@@ -53,12 +47,14 @@ class Application {
       Dodge::WinIO               m_win;
       Dodge::EventManager        m_eventManager;
       Dodge::WorldSpace          m_worldSpace;
+#ifdef DEBUG
+      bool                       dbg_worldSpaceVisible;
+#endif
       Dodge::AssetManager        m_assetManager;
       std::map<long, pItem_t>    m_items;
       pPlayer_t                  m_player;
       Dodge::float32_t           m_frameRate;
 
-      Dodge::Colour m_bgColour;
       Dodge::Vec2f m_mapSize;
       long m_fillerTileId;
 };

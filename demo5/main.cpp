@@ -13,11 +13,11 @@ void programExit() {
 //===========================================
 // main
 //===========================================
-int main() {
+int main(int argc, char** argv) {
    try {
       Application app;
       app.onExit(Functor<void, TYPELIST_0()>(programExit));
-      app.begin();
+      app.begin(argc, argv);
    }
    catch (Dodge::Exception& e) {
       std::cerr << e.what() << "\n";

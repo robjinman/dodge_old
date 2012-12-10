@@ -63,8 +63,8 @@ void Application::keyDown(int key) {
       case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
       case WinIO::KEY_3:
-         dbg_flags ^= DBG_DRAW_WORLDSPACE;
-         if (dbg_flags & DBG_DRAW_WORLDSPACE)
+         dbg_worldSpaceVisible = !dbg_worldSpaceVisible;
+         if (dbg_worldSpaceVisible)
             m_worldSpace.dbg_render(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
          else
             m_worldSpace.dbg_unrender();
@@ -148,7 +148,7 @@ void Application::loadMapSettings(const XmlNode data) {
 
       XmlNode node = data.firstChild();
       XML_NODE_CHECK(node, bgColour);
-      m_bgColour = Colour(node.firstChild());
+      m_renderer.setBgColour(Colour(node.firstChild()));
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, dimensions);
@@ -390,9 +390,19 @@ void Application::loadMap() {
 //===========================================
 // Application::begin
 //===========================================
-void Application::begin() {
+void Application::begin(int argc, char** argv) {
    m_currentMap = 0;
 
+#ifdef DEBUG
+   dbg_worldSpaceVisible = false;
+
+   if (argc > 0) {
+      for (int i = 0; i < argc; ++i) {
+         if (strcmp(argv[i], "-novsync") == 0)
+            WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
+      }
+   }
+#endif
    m_win.init("Shit Game", 640, 480, false);
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
    m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Application::keyDown));
@@ -400,7 +410,6 @@ void Application::begin() {
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
    m_renderer.start();
-   m_renderer.setBgColour(Colour(1.f, 1.f, 0.f, 1.f));
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));

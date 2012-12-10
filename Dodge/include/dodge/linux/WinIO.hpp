@@ -16,6 +16,7 @@
 #include <EGL/egl.h>
 #include "../../utils/Functor.hpp"
 #include "../../utils/TypeList.hpp"
+#include "../definitions.hpp"
 #include "../EGL_CHECK.hpp"
 
 
@@ -154,6 +155,12 @@ class WinIO {
       void doEvents();
       void destroyWindow();
       void swapBuffers();
+
+#ifdef DEBUG
+      static const byte_t DBG_NO_VSYNC = 1 << 0;
+
+      static byte_t dbg_flags;
+#endif
 
    private:
       static Bool waitForMap(Display* d, XEvent* e, char* win_ptr); // TODO: why is this static?

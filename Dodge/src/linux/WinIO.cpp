@@ -30,6 +30,9 @@ int WinIO::m_width = 0;
 int WinIO::m_height = 0;
 
 bool WinIO::m_init = false;
+#ifdef DEBUG
+byte_t WinIO::dbg_flags = 0;
+#endif
 
 
 //===========================================
@@ -80,9 +83,14 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
 
    m_eglSurface = EGL_CHECK(eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_win, 0));
 
-   // No VSync
-   XSynchronize(m_display, False);
-   eglSwapInterval(m_eglDisplay, 0);
+#ifdef DEBUG
+   if (dbg_flags & DBG_NO_VSYNC)
+      XSynchronize(m_display, False);
+   else
+      XSynchronize(m_display, True);
+#else
+   XSynchronize(m_display, True);
+#endif
 
    m_init = true;
 }
@@ -98,6 +106,15 @@ void WinIO::createGLContext() {
 
    m_eglContext = EGL_CHECK(eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, aEGLContextAttributes));
    EGL_CHECK(eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext));
+
+#ifdef DEBUG
+   if (dbg_flags & DBG_NO_VSYNC)
+      eglSwapInterval(m_eglDisplay, 0);
+   else
+      eglSwapInterval(m_eglDisplay, 1);
+#else
+   eglSwapInterval(m_eglDisplay, 1);
+#endif
 }
 
 //===========================================
