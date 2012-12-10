@@ -31,9 +31,9 @@ class Shape : virtual public Asset {
       virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f)) = 0;
       virtual void scale(const Vec2f& sv) = 0;
 
-      virtual void setFillColour(const Colour& colour) = 0;
-      virtual void setLineColour(const Colour& colour) = 0;
-      virtual void setLineWidth(int lineWidth) = 0;
+      virtual void setFillColour(const Colour& colour) const = 0;
+      virtual void setLineColour(const Colour& colour) const = 0;
+      virtual void setLineWidth(int lineWidth) const = 0;
 
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const = 0;
       virtual void render() const = 0;

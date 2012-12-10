@@ -30,9 +30,9 @@ class Ellipse : public Shape {
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif
 
-      virtual void setFillColour(const Colour& colour) {} // TODO
-      virtual void setLineColour(const Colour& colour) {}
-      virtual void setLineWidth(int lineWidth) {}
+      virtual void setFillColour(const Colour& colour) const {} // TODO
+      virtual void setLineColour(const Colour& colour) const {}
+      virtual void setLineWidth(int lineWidth) const {}
 
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
       virtual void render() const {}

@@ -40,9 +40,9 @@ class LineSegment : public Shape {
       virtual void rotate(float32_t rads, const Vec2f& pivot);
       virtual void scale(const Vec2f& sv);
 
-      virtual void setFillColour(const Colour& colour) {}
-      virtual void setLineColour(const Colour& colour);
-      virtual void setLineWidth(int lineWidth);
+      virtual void setFillColour(const Colour& colour) const {}
+      virtual void setLineColour(const Colour& colour) const;
+      virtual void setLineWidth(int lineWidth) const;
 
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const;
       virtual void render() const;

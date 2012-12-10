@@ -92,9 +92,6 @@ void Polygon::deepCopy(const Polygon& copy) {
 
    m_outlineModel = copy.m_outlineModel;
    m_interiorModel = copy.m_interiorModel;
-   m_fillColour = copy.m_fillColour;
-   m_lineColour = copy.m_lineColour;
-   m_lineWidth = copy.m_lineWidth;
 }
 
 //===========================================
@@ -242,24 +239,21 @@ void Polygon::insertVertex(int idx, const Vec2f& vert) {
 //===========================================
 // Polygon::setFillColour
 //===========================================
-void Polygon::setFillColour(const Colour& colour) {
-   m_fillColour = colour;
+void Polygon::setFillColour(const Colour& colour) const {
    m_interiorModel.setColour(colour);
 }
 
 //===========================================
 // Polygon::setLineColour
 //===========================================
-void Polygon::setLineColour(const Colour& colour) {
-   m_lineColour = m_lineColour;
+void Polygon::setLineColour(const Colour& colour) const {
    m_outlineModel.setColour(colour);
 }
 
 //===========================================
 // Polygon::setLineWidth
 //===========================================
-void Polygon::setLineWidth(int lineWidth) {
-   m_lineWidth = lineWidth;
+void Polygon::setLineWidth(int lineWidth) const {
    m_outlineModel.setLineWidth(lineWidth);
 }
 

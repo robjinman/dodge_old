@@ -76,8 +76,15 @@ int main() {
          win.doEvents();
          computeFrameRate();
 
-         if (i % 1000 == 0)
-            shape.rotate((180000.0) / frameRate, Vec2f(0.5f, 0.5f));
+//         if (i % 1000 == 0)
+//            shape.rotate((180000.0) / frameRate, Vec2f(0.5f, 0.5f));
+
+         if (i % 1000 == 0) {
+            static float f = -0.5;
+            shape.setRenderTransform(f, 0.0, 9);
+
+            f += 1000.0 / frameRate;
+         }
 
          renderer.checkForErrors();
 

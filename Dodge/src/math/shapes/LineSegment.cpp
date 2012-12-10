@@ -132,14 +132,14 @@ void LineSegment::dbg_print(std::ostream& out, int tab) const {
 //===========================================
 // LineSegment::setLineColour
 //===========================================
-void LineSegment::setLineColour(const Colour& colour) {
+void LineSegment::setLineColour(const Colour& colour) const {
    m_model.setColour(colour);
 }
 
 //===========================================
 // LineSegment::setLineWidth
 //===========================================
-void LineSegment::setLineWidth(int lineWidth) {
+void LineSegment::setLineWidth(int lineWidth) const {
    m_model.setLineWidth(lineWidth);
 }
 
