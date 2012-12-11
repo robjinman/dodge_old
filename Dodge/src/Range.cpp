@@ -38,6 +38,39 @@ Range::Range(const XmlNode data)
    }
 }
 
+//===========================================
+// Range::Range
+//===========================================
+Range::Range()
+   : m_pos(0.f, 0.f),
+     m_size(0.f, 0.f)
+#ifdef DEBUG
+   , m_quad(m_size)
+#endif
+     {}
+
+//===========================================
+// Range::Range
+//===========================================
+Range::Range(float32_t x, float32_t y, float32_t w, float32_t h)
+   : m_pos(x, y),
+     m_size(w, h)
+#ifdef DEBUG
+   , m_quad(m_size)
+#endif
+     {}
+
+//===========================================
+// Range::Range
+//===========================================
+Range::Range(const Vec2f& pos, const Vec2f& size)
+   : m_pos(pos),
+     m_size(size)
+#ifdef DEBUG
+   , m_quad(m_size)
+#endif
+     {}
+
 #ifdef DEBUG
 //===========================================
 // Range::dbg_print
@@ -74,6 +107,31 @@ void Range::dbg_unrender() const {
    m_quad.unrender();
 }
 #endif
+
+//===========================================
+// Range::setPosition
+//===========================================
+void Range::setPosition(float32_t x, float32_t y) {
+   m_pos.x = x;
+   m_pos.y = y;
+
+#ifdef DEBUG
+   m_quad.setRenderTransform(m_pos.x, m_pos.y, m_z);
+#endif
+}
+
+//===========================================
+// Range::setSize
+//===========================================
+void Range::setSize(float32_t w, float32_t h) {
+   m_size.x = w;
+   m_size.y = h;
+
+#ifdef DEBUG
+   m_quad.setVertex(1, Vec2f(m_size.x, 0.f));
+   m_quad.setVertex(2, Vec2f(m_size.x, m_size.y));
+#endif
+}
 
 //===========================================
 // Range::overlaps

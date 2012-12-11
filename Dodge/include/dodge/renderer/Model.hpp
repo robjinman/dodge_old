@@ -346,6 +346,7 @@ class Model : public IModel {
          m_mutex.unlock();
       }
 #endif
+
    private:
       //===========================================
       // Model::deepCopy

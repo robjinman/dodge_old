@@ -291,11 +291,11 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       throw PhysicsException("Instance of Box2dPhysics is not initialised", __FILE__, __LINE__);
 
    if (ev->getType() == entityTranslationStr) {
-      EEntityBoundingBox* event = static_cast<EEntityBoundingBox*>(ev);
+      EEntityTranslation* event = static_cast<EEntityTranslation*>(ev);
 
       // Update position
-      float32_t x = event->newBoundingBox.getPosition().x;
-      float32_t y = event->newBoundingBox.getPosition().y;
+      float32_t x = event->newTransl_abs.x;
+      float32_t y = event->newTransl_abs.y;
 
       m_body->SetTransform(b2Vec2(x / m_worldUnitsPerMetre, y / m_worldUnitsPerMetre), m_body->GetAngle());
    }/*
