@@ -117,6 +117,8 @@ void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projM
    Renderer::int_t stride = model_containsPerVertexColourData(*model) ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
 
    if (model_getHandle(*model) == 0) {
+      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
       GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
 

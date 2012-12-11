@@ -574,6 +574,51 @@ Entity* Entity::clone() const {
 }
 
 //===========================================
+// Entity::setFillColour
+//===========================================
+void Entity::setFillColour(const Colour& colour) {
+   m_fillColour = colour;
+   if (m_shape) m_shape->setFillColour(colour);
+}
+
+//===========================================
+// Entity::setLineColour
+//===========================================
+void Entity::setLineColour(const Colour& colour) {
+   m_lineColour = colour;
+   if (m_shape) m_shape->setLineColour(colour);
+}
+
+//===========================================
+// Entity::setLineWidth
+//===========================================
+void Entity::setLineWidth(Renderer::int_t lineWidth) {
+   m_lineWidth = lineWidth;
+   if (m_shape) m_shape->setLineWidth(lineWidth);
+}
+
+//===========================================
+// Entity::getFillColour
+//===========================================
+const Colour& Entity::getFillColour() const {
+   return m_fillColour;
+}
+
+//===========================================
+// Entity::getLineColour
+//===========================================
+const Colour& Entity::getLineColour() const {
+   return m_lineColour;
+}
+
+//===========================================
+// Entity::getLineWidth
+//===========================================
+Renderer::int_t Entity::getLineWidth() const {
+   return m_lineWidth;
+}
+
+//===========================================
 // Entity::~Entity
 //===========================================
 Entity::~Entity() {}

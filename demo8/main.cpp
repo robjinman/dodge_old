@@ -8,11 +8,10 @@ using namespace Dodge;
 using namespace cml;
 
 
-typedef Model Model;
-typedef boost::shared_ptr<Model> pModel_t;
+typedef boost::shared_ptr<PlainTexturedAlphaModel> pModel_t;
 
 WinIO win;
-Renderer renderer;
+Renderer& renderer = Renderer::getInstance();
 pTexture_t tex0;
 pTexture_t tex1;
 std::vector<pModel_t> models;
@@ -47,7 +46,6 @@ void computeFrameRate() {
 }
 
 void onWindowResize(int w, int h) {
-   Renderer renderer;
    renderer.onWindowResize(w, h);
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
@@ -56,15 +54,12 @@ void constructModels() {
    float32_t w = 0.1;
    float32_t h = 0.1;
 
-   matrix44f_c I;
-   identity_transform(I);
-
    bool b = false;
    for (float32_t x = 0.f; x < 1.2f; x += w) {
       for (float32_t y = 0.f; y < 0.9f; y += h) {
          b = !b;
 
-         Renderer::vvvtt_t verts[] = {
+         vvvtt_t verts[] = {
             {x + w,   y,       1.0,    1.0, 0.0},
             {x + w,   y + h,   1.0,    1.0, 1.0},
             {x    ,   y,       1.0,    0.0, 0.0},
@@ -75,13 +70,12 @@ void constructModels() {
 
          Colour col = b ? Colour(1.0, 0.0, 0.0, 1.0) : Colour(0.0, 0.0, 1.0, 1.0);
 
-         pModel_t model(new Model(Renderer::TEXTURED_ALPHA, false));
+         pModel_t model(new PlainTexturedAlphaModel(Renderer::TRIANGLES));
          models.push_back(model);
 
-         model->setVertices(Renderer::TRIANGLES, verts, 6, sizeof(Renderer::vvvtt_t));
+         model->setVertices(0, verts, 6);
          model->setTextureHandle(b ? tex0->getHandle() : tex1->getHandle());
          model->setColour(col);
-         model->setMatrix(I.data());
 
          renderer.bufferModel(model.get());
          renderer.stageModel(model.get());
@@ -91,6 +85,9 @@ void constructModels() {
 
 int main() {
    try {
+#ifdef DEBUG
+      WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
+#endif
       win.init("Demo8 - renderer", 640, 480, false);
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
@@ -107,6 +104,9 @@ int main() {
       tex1 = pTexture_t(new Texture("1.png"));
 
       constructModels();
+
+      Range range(0.5, 0.1, 0.4, 0.2);
+      range.dbg_render(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
 
       while (1) {
          win.doEvents();

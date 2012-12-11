@@ -31,6 +31,9 @@ class IModel {
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) = 0;
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
       virtual Renderer::mode_t getRenderMode() const = 0;
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
+#endif
 
       virtual ~IModel() {}
 
@@ -272,12 +275,77 @@ class Model : public IModel {
       }
 
       //===========================================
+      // Model::eraseVertices
+      //===========================================
+      void eraseVertices() {
+         m_mutex.lock();
+
+         delete[] m_verts;
+         m_verts = NULL;
+         m_n = 0;
+
+         m_mutex.unlock();
+      }
+
+      //===========================================
       // Model::~Model
       //===========================================
       virtual ~Model() {
          delete[] m_verts;
       }
 
+#ifdef DEBUG
+      //===========================================
+      // Model::dbg_print
+      //===========================================
+      virtual void dbg_print(std::ostream& out, int tab = 0) const {
+         m_mutex.lock();
+
+         for (int t = 0; t < tab; ++t) out << "\t";
+         out << "Model\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "matrix:\n";
+
+         for (int i = 0; i < 4; ++i) {
+            for (int t = 0; t < tab + 2; ++t) out << "\t";
+
+            for (int j = 0; j < 4; ++j)
+               out << m_matrix[i * 4 + j] << " ";
+
+            out << "\n";
+         }
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "textureHandle: " << m_texHandle << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "colour: (" << m_colour.r << " " << m_colour.g << " " << m_colour.b << " " << m_colour.a << ")\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "lineWidth: " << m_lineWidth << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "primitiveType: " << m_primitiveType << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "containsPerVertexColourData: " << (m_colData ? "true" : "false") << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "renderMode: " << m_renderMode << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "handle: " << m_handle << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "vertices (" << m_n << "):\n";
+
+         for (uint_t i = 0; i < m_n; ++i)
+            m_verts[i].dbg_print(out, tab + 2);
+
+         m_mutex.unlock();
+      }
+#endif
    private:
       //===========================================
       // Model::deepCopy
@@ -349,12 +417,24 @@ struct vvvcccc_t {
    Renderer::colourElement_t c2;
    Renderer::colourElement_t c3;
    Renderer::colourElement_t c4;
+#ifdef DEBUG
+   void dbg_print(std::ostream& out, int tab = 0) const {
+      for (int t = 0; t < tab; ++t) out << "\t";
+      out << "(" << v1 << " " << v2 << " " << v3 << ") (" << c1 << " " << c2 << " " << c3 << " " << c4 << ")\n";
+   }
+#endif
 };
 
 struct vvv_t {
    Renderer::vertexElement_t v1;
    Renderer::vertexElement_t v2;
    Renderer::vertexElement_t v3;
+#ifdef DEBUG
+   void dbg_print(std::ostream& out, int tab = 0) const {
+      for (int t = 0; t < tab; ++t) out << "\t";
+      out << "(" << v1 << " " << v2 << " " << v3 << ")\n";
+   }
+#endif
 };
 
 struct vvvttcccc_t {
@@ -367,6 +447,12 @@ struct vvvttcccc_t {
    Renderer::colourElement_t c2;
    Renderer::colourElement_t c3;
    Renderer::colourElement_t c4;
+#ifdef DEBUG
+   void dbg_print(std::ostream& out, int tab = 0) const {
+      for (int t = 0; t < tab; ++t) out << "\t";
+      out << "(" << v1 << " " << v2 << " " << v3 << ") (" << t1 << " " << t2 << ") (" << c1 << " " << c2 << " " << c3 << " " << c4 << ")\n";
+   }
+#endif
 };
 
 struct vvvtt_t {
@@ -375,6 +461,12 @@ struct vvvtt_t {
    Renderer::vertexElement_t v3;
    Renderer::texCoordElement_t t1;
    Renderer::texCoordElement_t t2;
+#ifdef DEBUG
+   void dbg_print(std::ostream& out, int tab = 0) const {
+      for (int t = 0; t < tab; ++t) out << "\t";
+      out << "(" << v1 << " " << v2 << " " << v3 << ") (" << t1 << " " << t2 << ")\n";
+   }
+#endif
 };
 
 

@@ -321,15 +321,13 @@ void Application::deletePending(EEvent* event) {
 // Application::update
 //===========================================
 void Application::update() {
-   m_graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
-
    for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->update();
 
    m_player->update();
 
-   pCamera_t cam = m_graphics2d.getCamera();
-   cam->setTranslation(m_player->getTranslation_abs() - cam->getViewSize() / 2.f);
+   Camera& cam = m_renderer.getCamera();
+   cam.setTranslation(m_player->getTranslation_abs() - cam.getViewSize() / 2.f);
 }
 
 //===========================================
@@ -337,7 +335,7 @@ void Application::update() {
 //===========================================
 void Application::onWindowResize(int w, int h) {
    m_renderer.onWindowResize(w, h);
-   m_graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+   m_renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 //===========================================
@@ -416,7 +414,8 @@ void Application::begin(int argc, char** argv) {
 
    m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
-   m_graphics2d.init(640, 480);
+   pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
+   m_renderer.attachCamera(camera);
 
    Box2dPhysics::loadSettings("data/physics.conf");
 

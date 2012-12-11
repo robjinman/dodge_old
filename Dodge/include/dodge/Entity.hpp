@@ -151,12 +151,12 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline const Vec2f& getScale() const;
       inline const Range& getBoundary() const;
 
-      inline void setFillColour(const Colour& colour);
-      inline void setLineColour(const Colour& colour);
-      inline void setLineWidth(Renderer::int_t lineWidth);
-      inline const Colour& getFillColour() const;
-      inline const Colour& getLineColour() const;
-      inline Renderer::int_t getLineWidth() const;
+      virtual void setFillColour(const Colour& colour);
+      virtual void setLineColour(const Colour& colour);
+      virtual void setLineWidth(Renderer::int_t lineWidth);
+      virtual const Colour& getFillColour() const;
+      virtual const Colour& getLineColour() const;
+      virtual Renderer::int_t getLineWidth() const;
 
       inline pEntity_t getSharedPtr();
 
@@ -425,51 +425,6 @@ inline long Entity::getTypeName() const {
 //===========================================
 inline const Vec2f& Entity::getScale() const {
    return m_scale;
-}
-
-//===========================================
-// Entity::setFillColour
-//===========================================
-inline void Entity::setFillColour(const Colour& colour) {
-   m_fillColour = colour;
-   if (m_shape) m_shape->setFillColour(colour);
-}
-
-//===========================================
-// Entity::setLineColour
-//===========================================
-inline void Entity::setLineColour(const Colour& colour) {
-   m_lineColour = colour;
-   if (m_shape) m_shape->setLineColour(colour);
-}
-
-//===========================================
-// Entity::setLineWidth
-//===========================================
-inline void Entity::setLineWidth(Renderer::int_t lineWidth) {
-   m_lineWidth = lineWidth;
-   if (m_shape) m_shape->setLineWidth(lineWidth);
-}
-
-//===========================================
-// Entity::getFillColour
-//===========================================
-inline const Colour& Entity::getFillColour() const {
-   return m_fillColour;
-}
-
-//===========================================
-// Entity::getLineColour
-//===========================================
-inline const Colour& Entity::getLineColour() const {
-   return m_lineColour;
-}
-
-//===========================================
-// Entity::getLineWidth
-//===========================================
-inline Renderer::int_t Entity::getLineWidth() const {
-   return m_lineWidth;
 }
 
 

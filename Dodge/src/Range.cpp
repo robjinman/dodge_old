@@ -4,9 +4,6 @@
  */
 
 #include <Range.hpp>
-#ifdef DEBUG
-   #include <math/shapes/Quad.hpp>
-#endif
 
 
 using namespace std;
@@ -15,15 +12,15 @@ using namespace std;
 namespace Dodge {
 
 
-#ifdef DEBUG
-Graphics2d Range::m_graphics2d = Graphics2d();
-#endif
-
-
 //===========================================
 // Range::Range
 //===========================================
-Range::Range(const XmlNode data) {
+Range::Range(const XmlNode data)
+#ifdef DEBUG
+         : m_quad(Vec2f(0.f, 0.f))
+#endif
+         {
+
    try {
       XML_NODE_CHECK(data, Range);
 
@@ -54,6 +51,27 @@ void Range::dbg_print(ostream& out, int tab) const {
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "size: (" << m_size.x << ", " << m_size.y << ")\n";
+}
+
+//===========================================
+// Range::dbg_render
+//===========================================
+void Range::dbg_render(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const {
+   m_z = z;
+
+   m_quad.setLineWidth(lineWidth);
+   m_quad.setFillColour(fillColour);
+   m_quad.setLineColour(lineColour);
+   m_quad.setRenderTransform(m_pos.x, m_pos.y, m_z);
+
+   m_quad.render();
+}
+
+//===========================================
+// Range::dbg_unrender
+//===========================================
+void Range::dbg_unrender() const {
+   m_quad.unrender();
 }
 #endif
 

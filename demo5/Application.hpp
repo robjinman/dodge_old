@@ -39,7 +39,6 @@ class Application {
 
       Functor<void, TYPELIST_0()> m_onExit;
 
-      Dodge::Graphics2d          m_graphics2d;
       Dodge::Renderer&           m_renderer;
       int                        m_currentMap;
       std::map<int, bool>        m_keyState;

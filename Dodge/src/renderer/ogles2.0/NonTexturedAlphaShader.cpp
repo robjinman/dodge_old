@@ -107,6 +107,8 @@ void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& pr
    Renderer::int_t stride = model_containsPerVertexColourData(*model) ? sizeof(vvvcccc_t) : sizeof(vvv_t);
 
    if (model_getHandle(*model) == 0) {
+      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
 
       if (model_containsPerVertexColourData(*model))

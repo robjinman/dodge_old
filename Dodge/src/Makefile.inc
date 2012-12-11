@@ -14,13 +14,13 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/EventManager.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/globals.o \
-	$(BASE_DIR)/Graphics2d.o \
 	$(BASE_DIR)/KvpParser.o \
 	$(BASE_DIR)/ShapeFactory.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \
+	$(BASE_DIR)/TextEntity.o \
 	$(BASE_DIR)/Transformation.o \
 	$(BASE_DIR)/TransFrame.o \
 	$(BASE_DIR)/WorldSpace.o

@@ -100,8 +100,9 @@ void Renderer::checkForErrors() {
 //===========================================
 GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
    switch (primitiveType) {
-      case TRIANGLES: return GL_TRIANGLES;
-      case LINES: return GL_LINES;
+      case TRIANGLES:      return GL_TRIANGLES;
+      case LINES:          return GL_LINES;
+      case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
       default:
          throw RendererException("Primitive type not supported", __FILE__, __LINE__);
    }
