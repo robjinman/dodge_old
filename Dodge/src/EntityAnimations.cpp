@@ -319,7 +319,23 @@ void EntityAnimations::onEvent(const EEvent* event) {
    if (event->getType() == entityRotationStr
       || event->getType() == entityTranslationStr) {
 
-      updateModel();
+      Vec2f pos = m_entity->getTranslation_abs();
+
+      float32_t x = pos.x;
+      float32_t y = pos.y;
+      int z = m_entity->getZ();
+
+      float32_t angle = m_entity->getRotation_abs();
+
+      matrix44f_c rotation;
+      matrix44f_c translation;
+      matrix44f_c mv;
+
+      float32_t rads = DEG_TO_RAD(angle);
+      matrix_rotation_euler(rotation, 0.f, 0.f, rads, euler_order_xyz);
+      matrix_translation(translation, x, y, 0.f);
+      mv = translation * rotation;
+      m_model.setMatrix(mv.data());
    }
 }
 
