@@ -41,6 +41,11 @@ class Sprite
       virtual Sprite* clone() const;
       virtual void assignData(const XmlNode data);
 
+      virtual void onEvent(const EEvent* event);
+
+      virtual void addToWorld();
+      virtual void removeFromWorld();
+
       virtual void render() const;
       virtual void unrender() const;
 

@@ -102,6 +102,30 @@ void Sprite::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
+// Sprite::onEvent
+//===========================================
+void Sprite::onEvent(const EEvent* event) {
+   Entity::onEvent(event);
+   EntityAnimations::onEvent(event);
+}
+
+//===========================================
+// Sprite::addToWorld
+//===========================================
+void Sprite::addToWorld() {
+   Entity::addToWorld();
+   EntityAnimations::addToWorld();
+}
+
+//===========================================
+// Sprite::removeFromWorld
+//===========================================
+void Sprite::removeFromWorld() {
+   Entity::removeFromWorld();
+   EntityAnimations::removeFromWorld();
+}
+
+//===========================================
 // Sprite::render
 //===========================================
 void Sprite::render() const {

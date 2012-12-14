@@ -135,7 +135,6 @@ void Player::snapToGridV(float32_t offset) {
 //===========================================
 void Player::addToWorld() {
    PhysicalSprite<Box2dPhysics>::addToWorld();
-   Item::addToWorld();
 }
 
 //===========================================
@@ -143,7 +142,6 @@ void Player::addToWorld() {
 //===========================================
 void Player::removeFromWorld() {
    PhysicalSprite<Box2dPhysics>::removeFromWorld();
-   Item::removeFromWorld();
 }
 
 #ifdef DEBUG
@@ -217,7 +215,6 @@ void Player::update() {
    static long gravityRegionStr = internString("gravityRegion");
 
    PhysicalSprite<Box2dPhysics>::update();
-   Item::update();
 
    if (m_modeLockTimer.getTime() > m_modeLocked) {
       bool b = false;
@@ -266,11 +263,6 @@ void Player::render() const {
 void Player::unrender() const {
    PhysicalSprite<Box2dPhysics>::unrender();
 }
-
-//===========================================
-// Player::onEvent
-//===========================================
-void Player::onEvent(const EEvent* event) {}
 
 //===========================================
 // Player::grounded

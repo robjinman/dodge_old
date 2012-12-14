@@ -115,11 +115,23 @@ void TextEntity::dbg_print(std::ostream& out, int tab) const {
 #endif
 
 //===========================================
-// TextEntity::setText
+// TextEntity::onEvent
 //===========================================
-void TextEntity::setText(const std::string& text) {
-   m_text = text;
+void TextEntity::onEvent(const EEvent* event) {
+   static long entityRotationStr = internString("entityRotation");
+   static long entityTranslationStr = internString("entityTranslation");
 
+   if (event->getType() == entityRotationStr
+      || event->getType() == entityTranslationStr) {
+
+      updateModel();
+   }
+}
+
+//===========================================
+// TextEntity::updateModel
+//===========================================
+void TextEntity::updateModel() const {
    float32_t x = getTranslation_abs().x;
    float32_t y = getTranslation_abs().y;
    float32_t z = getZ();
@@ -166,6 +178,14 @@ void TextEntity::setText(const std::string& text) {
    m_renderer.bufferModel(&m_model);
 
    gMemStack.freeToMarker(marker);
+}
+
+//===========================================
+// TextEntity::setText
+//===========================================
+void TextEntity::setText(const std::string& text) {
+   m_text = text;
+   updateModel();
 }
 
 //===========================================

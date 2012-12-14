@@ -47,6 +47,11 @@ class EntityAnimations {
       inline void pauseAnimation();
       inline void stopAnimation();
 
+      virtual void onEvent(const EEvent* event);
+
+      virtual void addToWorld();
+      virtual void removeFromWorld() {}
+
       virtual void render() const;
       virtual void unrender() const;
 

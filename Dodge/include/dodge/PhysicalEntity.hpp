@@ -118,6 +118,13 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
          }
       }
 
+      //===========================================
+      // PhysicalEntity::onEvent
+      //===========================================
+      virtual void onEvent(const EEvent* event) {
+         Entity::onEvent(event);
+      }
+
       #ifdef DEBUG
       //===========================================
       // PhysicalEntity::dbg_print
@@ -134,6 +141,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::addToWorld
       //===========================================
       virtual void addToWorld() {
+         Entity::addToWorld();
          T_PHYSICS::addToWorld();
       }
 
@@ -141,6 +149,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::removeFromWorld
       //===========================================
       virtual void removeFromWorld() {
+         Entity::removeFromWorld();
          T_PHYSICS::removeFromWorld();
       }
 

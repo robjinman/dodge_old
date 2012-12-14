@@ -21,6 +21,8 @@ class TextEntity : public Entity {
       virtual TextEntity* clone() const;
       virtual void assignData(const XmlNode data);
 
+      virtual void onEvent(const EEvent* event);
+
       virtual void setFillColour(const Colour& colour);
 
       virtual void render() const;
@@ -49,6 +51,8 @@ class TextEntity : public Entity {
       Vec2f m_size;
 
       mutable PlainTexturedAlphaModel m_model;
+
+      void updateModel() const;
 };
 
 typedef boost::shared_ptr<TextEntity> pTextEntity_t;

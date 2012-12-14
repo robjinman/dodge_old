@@ -80,6 +80,7 @@ int main() {
       font1 = pFont_t(new Dodge::Font(tex, 0, 0, 852, 792, 71, 98));
 
       txt1 = pTextEntity_t(new TextEntity(internString("lblMainLoopFR"), internString("txtLabel"), font1, "Frame rate (main): ", Vec2f(0.04, 0.05)));
+      txt1->setTranslation(0.f, 0.8f);
       txt1->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
       txt1->render();
 

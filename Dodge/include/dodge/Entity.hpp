@@ -120,20 +120,20 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void setTranslation(const Vec2f& t);
       inline void setTranslation_x(float32_t x);
       inline void setTranslation_y(float32_t y);
-      void translate(float32_t x, float32_t y);
+      virtual void translate(float32_t x, float32_t y);
       inline void translate(const Vec2f& t);
       inline void translate_x(float32_t x);
       inline void translate_y(float32_t y);
       inline void setZ(int z);
       inline void setRotation(float32_t deg);
-      void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
+      virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
       inline void setScale(float32_t s);
       inline void setScale(float32_t x, float32_t y);
       inline void setScale(const Vec2f& s);
       inline void scale(float32_t s);
-      void scale(float32_t x, float32_t y);
+      virtual void scale(float32_t x, float32_t y);
       inline void scale(const Vec2f& s);
-      void setShape(std::unique_ptr<Shape> shape);
+      virtual void setShape(std::unique_ptr<Shape> shape);
 
       // Relative to parent (parent's model space)
       inline Vec2f getTranslation() const;

@@ -119,6 +119,13 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
          }
       }
 
+      //===========================================
+      // PhysicalSprite::onEvent
+      //===========================================
+      virtual void onEvent(const EEvent* event) {
+         Sprite::onEvent(event);
+      }
+
       #ifdef DEBUG
       //===========================================
       // PhysicalSprite::dbg_print
@@ -135,6 +142,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::addToWorld
       //===========================================
       virtual void addToWorld() {
+         Sprite::addToWorld();
          T_PHYSICS::addToWorld();
       }
 
@@ -142,6 +150,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::removeFromWorld
       //===========================================
       virtual void removeFromWorld() {
+         Sprite::removeFromWorld();
          T_PHYSICS::removeFromWorld();
       }
 

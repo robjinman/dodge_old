@@ -32,7 +32,6 @@ CPhysicalEntity* CPhysicalEntity::clone() const {
 //===========================================
 void CPhysicalEntity::addToWorld() {
    PhysicalEntity<Box2dPhysics>::addToWorld();
-   Item::addToWorld();
 }
 
 //===========================================
@@ -40,7 +39,6 @@ void CPhysicalEntity::addToWorld() {
 //===========================================
 void CPhysicalEntity::removeFromWorld() {
    PhysicalEntity<Box2dPhysics>::removeFromWorld();
-   Item::removeFromWorld();
 }
 
 //===========================================
@@ -48,7 +46,6 @@ void CPhysicalEntity::removeFromWorld() {
 //===========================================
 void CPhysicalEntity::update() {
    PhysicalEntity<Box2dPhysics>::update();
-   Item::update();
 }
 
 //===========================================

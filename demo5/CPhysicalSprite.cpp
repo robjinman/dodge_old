@@ -32,7 +32,6 @@ CPhysicalSprite* CPhysicalSprite::clone() const {
 //===========================================
 void CPhysicalSprite::addToWorld() {
    PhysicalSprite<Box2dPhysics>::addToWorld();
-   Item::addToWorld();
 }
 
 //===========================================
@@ -40,7 +39,6 @@ void CPhysicalSprite::addToWorld() {
 //===========================================
 void CPhysicalSprite::removeFromWorld() {
    PhysicalSprite<Box2dPhysics>::removeFromWorld();
-   Item::removeFromWorld();
 }
 
 //===========================================
@@ -48,7 +46,6 @@ void CPhysicalSprite::removeFromWorld() {
 //===========================================
 void CPhysicalSprite::update() {
    PhysicalSprite<Box2dPhysics>::update();
-   Item::update();
 }
 
 //===========================================

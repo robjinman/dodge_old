@@ -38,8 +38,6 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       virtual void render() const;
       virtual void unrender() const;
 
-      virtual void onEvent(const Dodge::EEvent* event);
-
       virtual ~Player() {}
 
 #ifdef DEBUG

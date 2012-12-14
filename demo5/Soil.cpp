@@ -34,7 +34,6 @@ Soil* Soil::clone() const {
 //===========================================
 void Soil::addToWorld() {
    Sprite::addToWorld();
-   Item::addToWorld();
 }
 
 //===========================================
@@ -42,7 +41,6 @@ void Soil::addToWorld() {
 //===========================================
 void Soil::removeFromWorld() {
    Sprite::removeFromWorld();
-   Item::addToWorld();
 }
 
 //===========================================
@@ -55,6 +53,8 @@ void Soil::onEvent(const EEvent* event) {
    static long hitFromBottomStr = internString("hitFromBottom");
    static long dissolveStr = internString("dissolve");
    static long animFinishedStr = internString("animFinished");
+
+   Sprite::onEvent(event);
 
    if (event->getType() == hitFromLeftStr
       || event->getType() == hitFromRightStr
@@ -76,7 +76,6 @@ void Soil::onEvent(const EEvent* event) {
 //===========================================
 void Soil::update() {
    Sprite::update();
-   Item::update();
 }
 
 //===========================================

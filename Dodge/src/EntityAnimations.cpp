@@ -310,6 +310,27 @@ void EntityAnimations::updateModel() {
 }
 
 //===========================================
+// EntityAnimations::onEvent
+//===========================================
+void EntityAnimations::onEvent(const EEvent* event) {
+   static long entityRotationStr = internString("entityRotation");
+   static long entityTranslationStr = internString("entityTranslation");
+
+   if (event->getType() == entityRotationStr
+      || event->getType() == entityTranslationStr) {
+
+      updateModel();
+   }
+}
+
+//===========================================
+// EntityAnimations::addToWorld
+//===========================================
+void EntityAnimations::addToWorld() {
+   updateModel();
+}
+
+//===========================================
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
@@ -322,6 +343,7 @@ void EntityAnimations::update() {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
          m_entity->setFillColour(frame->col);
          if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+         updateModel();
 
          if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
             try {
@@ -341,8 +363,6 @@ void EntityAnimations::update() {
 
       ++it;
    }
-
-   updateModel();
 }
 
 //===========================================

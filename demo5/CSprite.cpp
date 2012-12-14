@@ -27,7 +27,6 @@ void CSprite::unrender() const {
 }
 
 void CSprite::update() {
-   Item::update();
    Sprite::update();
 }
 
@@ -36,12 +35,10 @@ CSprite* CSprite::clone() const {
 }
 
 void CSprite::addToWorld() {
-   Item::addToWorld();
    Sprite::addToWorld();
 }
 
 void CSprite::removeFromWorld() {
-   Item::removeFromWorld();
    Sprite::removeFromWorld();
 }
 

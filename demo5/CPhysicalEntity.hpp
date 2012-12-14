@@ -33,6 +33,7 @@ class CPhysicalEntity : public Item, public Dodge::PhysicalEntity<Dodge::Box2dPh
       virtual void removeFromWorld();
 
       virtual void assignData(const Dodge::XmlNode data);
+//      virtual void onEvent(const Dodge::EEvent* event);
 
       virtual ~CPhysicalEntity() {}
 };

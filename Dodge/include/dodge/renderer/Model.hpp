@@ -14,6 +14,7 @@ namespace Dodge {
 
 
 class IModel {
+
    friend class ShaderProgram;
    friend class Renderer;
 
@@ -52,6 +53,7 @@ class IModel {
 
 template <class T>
 class Model : public IModel {
+
    friend class ShaderProgram;
    friend class Renderer;
 

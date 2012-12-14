@@ -196,7 +196,9 @@ Entity::Entity(long type)
 //
 // Construct deep copy.
 //===========================================
-Entity::Entity(const Entity& copy) : m_parent(NULL) {
+Entity::Entity(const Entity& copy)
+   : m_silent(false), m_parent(NULL) {
+
    deepCopy(copy);
    m_name = generateName();
 
@@ -208,7 +210,9 @@ Entity::Entity(const Entity& copy) : m_parent(NULL) {
 //
 // Construct deep copy.
 //===========================================
-Entity::Entity(const Entity& copy, long name) : m_parent(NULL) {
+Entity::Entity(const Entity& copy, long name)
+   : m_silent(false), m_parent(NULL) {
+
    deepCopy(copy);
    m_name = name;
 
@@ -223,7 +227,6 @@ Entity::Entity(const Entity& copy, long name) : m_parent(NULL) {
 void Entity::deepCopy(const Entity& copy) {
    m_name = copy.m_name;
    m_type = copy.m_type;
-   m_silent = copy.m_silent;
    m_scale = copy.m_scale;
    m_fillColour = copy.m_fillColour;
    m_lineColour = copy.m_lineColour;
