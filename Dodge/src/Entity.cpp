@@ -430,6 +430,9 @@ void Entity::onNewAncestor(Entity* oldAncestor, Entity* newAncestor) {
       m_eventManager.queueEvent(event2);
       m_eventManager.queueEvent(event3);
    }
+
+   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+      (*i)->onNewAncestor(oldAncestor, newAncestor);
 }
 
 //===========================================
@@ -519,7 +522,7 @@ void Entity::translate(float32_t x, float32_t y) {
    }
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onParentTranslation(Vec2f(x, y));
+      (*i)->onAncestorTranslation(Vec2f(x, y));
 }
 
 //===========================================
@@ -578,13 +581,13 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    }
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onParentRotation(deg, m_transl - oldTransl);
+      (*i)->onAncestorRotation(deg, m_transl - oldTransl);
 }
 
 //===========================================
-// Entity::onParentRotation
+// Entity::onAncestorRotation
 //===========================================
-void Entity::onParentRotation(float32_t da, const Vec2f& ds) {
+void Entity::onAncestorRotation(float32_t da, const Vec2f& ds) {
    if (!m_silent) {
       Range bounds = m_boundary;
       recomputeBoundary();
@@ -604,12 +607,15 @@ void Entity::onParentRotation(float32_t da, const Vec2f& ds) {
       m_eventManager.queueEvent(event2);
       m_eventManager.queueEvent(event3);
    }
+
+   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+      (*i)->onAncestorRotation(da, ds);
 }
 
 //===========================================
-// Entity::onParentTranslation
+// Entity::onAncestorTranslation
 //===========================================
-void Entity::onParentTranslation(const Vec2f& ds) {
+void Entity::onAncestorTranslation(const Vec2f& ds) {
    if (!m_silent) {
       Range bounds = m_boundary;
       recomputeBoundary();
@@ -625,6 +631,9 @@ void Entity::onParentTranslation(const Vec2f& ds) {
       m_eventManager.queueEvent(event1);
       m_eventManager.queueEvent(event2);
    }
+
+   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+      (*i)->onAncestorTranslation(ds);
 }
 
 //===========================================

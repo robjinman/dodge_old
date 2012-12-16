@@ -177,8 +177,8 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
    private:
       void recomputeBoundary();
       void deepCopy(const Entity& copy);
-      void onParentTranslation(const Vec2f& ds);
-      void onParentRotation(float32_t da, const Vec2f& ds);
+      void onAncestorTranslation(const Vec2f& ds);
+      void onAncestorRotation(float32_t da, const Vec2f& ds);
       void onNewAncestor(Entity* oldAncestor, Entity* newAncestor);
 
       long m_name;
