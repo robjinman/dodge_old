@@ -107,13 +107,13 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 
       virtual void onEvent(const EEvent* event) {}
 
-      void setParent(Entity* parent);
-      inline void addChild(pEntity_t child);
-      inline void removeChild(pEntity_t child);
+      virtual void setParent(Entity* parent);
+      virtual void addChild(pEntity_t child);
+      virtual void removeChild(pEntity_t child);
       inline Entity* getParent() const;
       inline const std::set<pEntity_t>& getChildren() const;
 
-      inline void setSilent(bool b);
+      virtual void setSilent(bool b);
       inline bool isSilent() const;
 
       inline void setTranslation(float32_t x, float32_t y);
@@ -124,7 +124,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void translate(const Vec2f& t);
       inline void translate_x(float32_t x);
       inline void translate_y(float32_t y);
-      inline void setZ(int z);
+      virtual void setZ(int z);
       inline void setRotation(float32_t deg);
       virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
       inline void setScale(float32_t s);
@@ -177,7 +177,9 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
    private:
       void recomputeBoundary();
       void deepCopy(const Entity& copy);
-      void parentMovedHandler();
+      void onParentTranslation(const Vec2f& ds);
+      void onParentRotation(float32_t da, const Vec2f& ds);
+      void onNewAncestor(Entity* oldAncestor, Entity* newAncestor);
 
       long m_name;
       long m_type;
@@ -211,34 +213,10 @@ inline pEntity_t Entity::getSharedPtr() {
 }
 
 //===========================================
-// Entity::setSilent
-//===========================================
-inline void Entity::setSilent(bool b) {
-   m_silent = b;
-}
-
-//===========================================
 // Entity::isSilent
 //===========================================
 inline bool Entity::isSilent() const {
    return m_silent;
-}
-
-//===========================================
-// Entity::addChild
-//===========================================
-inline void Entity::addChild(pEntity_t child) {
-   child->setParent(this);
-}
-
-//===========================================
-// Entity::removeChild
-//===========================================
-inline void Entity::removeChild(pEntity_t child) {
-   if (child->m_parent == this)
-      child->m_parent = NULL;
-
-   m_children.erase(child);
 }
 
 //===========================================
@@ -337,13 +315,6 @@ inline void Entity::setScale(const Vec2f& s) {
 //===========================================
 inline void Entity::scale(const Vec2f& s) {
    scale(s.x, s.y);
-}
-
-//===========================================
-// Entity::setZ
-//===========================================
-inline void Entity::setZ(int z) {
-   m_z = z;
 }
 
 //===========================================

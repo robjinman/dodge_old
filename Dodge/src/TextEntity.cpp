@@ -129,12 +129,19 @@ void TextEntity::onEvent(const EEvent* event) {
 }
 
 //===========================================
+// TextEntity::setZ
+//===========================================
+void TextEntity::setZ(int z) {
+   Entity::setZ(z);
+   m_model.setMatrixElement(14, z);
+}
+
+//===========================================
 // TextEntity::updateModel
 //===========================================
 void TextEntity::updateModel() const {
    float32_t x = getTranslation_abs().x;
    float32_t y = getTranslation_abs().y;
-   float32_t z = getZ();
 
    float32_t texSectionX1 = m_font->getTextureSection().getPosition().x;
    float32_t texSectionY1 = m_font->getTextureSection().getPosition().y;
@@ -160,12 +167,12 @@ void TextEntity::updateModel() const {
       float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((m_text[i] - ' ') % rowLen));
       float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((m_text[i] - ' ') / rowLen);
 
-      verts[v] = { chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY + m_size.y, z,    srcX / texW,           srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY,            0,    (srcX + pxChW) / texW, (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, 0,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
+      verts[v] = { chX,            chY,            0,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, 0,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
+      verts[v] = { chX,            chY + m_size.y, 0,    srcX / texW,           srcY / texH           };    ++v;
+      verts[v] = { chX,            chY,            0,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
    }
 
    m_model.eraseVertices();

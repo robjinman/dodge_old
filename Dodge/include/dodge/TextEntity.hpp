@@ -24,6 +24,7 @@ class TextEntity : public Entity {
       virtual void onEvent(const EEvent* event);
 
       virtual void setFillColour(const Colour& colour);
+      virtual void setZ(int z);
 
       virtual void render() const;
       virtual void unrender() const;

@@ -323,7 +323,6 @@ void EntityAnimations::onEvent(const EEvent* event) {
 
       float32_t x = pos.x;
       float32_t y = pos.y;
-      int z = m_entity->getZ();
 
       float32_t angle = m_entity->getRotation_abs();
 

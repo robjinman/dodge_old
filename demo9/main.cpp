@@ -11,7 +11,7 @@ Renderer& renderer = Renderer::getInstance();
 double frameRate = 1;
 Polygon shape;
 pFont_t font1;
-pTextEntity_t txt1, txt2;
+pTextEntity_t txtMainFrLbl, txtRenderFrLbl, txtMainFr, txtRenderFr;
 
 
 void quit() {
@@ -22,11 +22,7 @@ void quit() {
 
 void keyDown(int key) {
    switch (key) {
-      case WinIO::KEY_ESCAPE: quit(); break;
-      case WinIO::KEY_F:
-         cout << "Frame rate (main loop): " << frameRate << "fps\n";
-         cout << "Frame rate (render loop): " << renderer.getFrameRate() << "fps\n" << flush;
-      break;
+      case WinIO::KEY_ESCAPE: quit();        break;
       case WinIO::KEY_1: shape.render();     break;
       case WinIO::KEY_2: shape.unrender();   break;
    }
@@ -48,11 +44,19 @@ void onWindowResize(int w, int h) {
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
+void drawFrameRates() {
+   stringstream fr;
+   fr << frameRate << "fps";
+   txtMainFr->setText(fr.str());
+
+   fr.str("");
+   fr << renderer.getFrameRate() << "fps";
+   txtRenderFr->setText(fr.str());
+}
+
 int main() {
    try {
-#ifdef DEBUG
       WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
-#endif
       win.init("Rotating Square", 240, 240, false);
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
@@ -61,7 +65,7 @@ int main() {
       pCamera_t camera(new Camera(240.0 / 240.0, 1.f));
       renderer.attachCamera(camera);
 
-      renderer.setBgColour(Colour(0.2, 0.2, 0.2, 1.0));
+      renderer.setBgColour(Colour(0.2, 0.9, 0.2, 1.0));
 
       renderer.start();
 
@@ -74,16 +78,52 @@ int main() {
       shape.setFillColour(Colour(0.0, 0.2, 0.9, 1.0));
       shape.setLineColour(Colour(0.7, 0.1, 0.1, 1.0));
 
+      shape.setRenderTransform(0.f, -0.1f, 1);
       shape.render();
 
-      pTexture_t tex(new Texture("font2.png"));
-      font1 = pFont_t(new Dodge::Font(tex, 0, 0, 852, 792, 71, 98));
+      pTexture_t tex(new Texture("font1.png"));
+      font1 = pFont_t(new Dodge::Font(tex, 0, 0, 192, 192, 16, 24));
 
-      txt1 = pTextEntity_t(new TextEntity(internString("lblMainLoopFR"), internString("txtLabel"), font1, "Frame rate (main): ", Vec2f(0.04, 0.05)));
-      txt1->setTranslation(0.f, 0.8f);
-      txt1->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
-      txt1->render();
+      Colour col(1, 1, 0, 1);
 
+      txtMainFrLbl = pTextEntity_t(new TextEntity(internString("lblMainLoopFR"), internString("txtLabel"), font1, "Main:", Vec2f(0.05, 0.05)));
+      txtRenderFrLbl = pTextEntity_t(new TextEntity(internString("lblRenderLoopFR"), internString("txtLabel"), font1, "Renderer:", Vec2f(0.05, 0.05)));
+      txtMainFr = pTextEntity_t(new TextEntity(internString("mainLoopFR"), internString("txtFR"), font1, "0", Vec2f(0.05, 0.05)));
+      txtRenderFr = pTextEntity_t(new TextEntity(internString("renderLoopFR"), internString("txtFR"), font1, "0", Vec2f(0.05, 0.05)));
+
+      unique_ptr<Quad> quad(new Quad(Vec2f(1.f, 0.4f)));
+      pEntity_t box(new Entity(internString("frameRates"), internString("box")));
+      box->setShape(move(quad));
+      box->setFillColour(Colour(0.f, 0.f, 0.f, 0.8f));
+      box->setZ(1);
+
+      box->addChild(txtMainFrLbl);
+      box->addChild(txtMainFr);
+      box->addChild(txtRenderFrLbl);
+      box->addChild(txtRenderFr);
+
+      txtMainFrLbl->setTranslation(0.05f, 0.3f);
+      txtMainFrLbl->setZ(2);
+      txtMainFrLbl->setFillColour(col);
+
+      txtRenderFrLbl->setTranslation(0.05f, 0.24f);
+      txtRenderFrLbl->setFillColour(col);
+
+      txtMainFr->setTranslation(0.55f, 0.3f);
+      txtMainFr->setFillColour(col);
+
+      txtRenderFr->setTranslation(0.55f, 0.24f);
+      txtRenderFr->setFillColour(col);
+
+      box->setTranslation(0.f, 0.6f);
+      box->render();
+
+      txtMainFrLbl->render();
+      txtRenderFrLbl->render();
+      txtMainFr->render();
+      txtRenderFr->render();
+
+      Timer timer;
       long i = 1;
       while (1) {
          win.doEvents();
@@ -91,6 +131,11 @@ int main() {
 
          if (i % 1000 == 0)
             shape.rotate((180000.0) / frameRate, Vec2f(0.5f, 0.5f));
+
+         if (timer.getTime() > 0.5) {
+            drawFrameRates();
+            timer.reset();
+         }
 
          renderer.checkForErrors();
 
