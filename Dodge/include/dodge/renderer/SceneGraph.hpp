@@ -10,12 +10,13 @@
 namespace Dodge {
 
 
-// Stores model pointers in order; first by render mode and then by texture handle.
+// Stores model pointers in order; first by depth, then by render mode, and then by texture handle.
 class SceneGraph {
    friend class iterator;
 
    private:
-      typedef std::pair<Renderer::mode_t, Renderer::textureHandle_t> key_t;
+      typedef std::pair<float32_t, Renderer::mode_t> subKey_t;
+      typedef std::pair<subKey_t, Renderer::textureHandle_t> key_t;
       typedef std::pair<key_t, const IModel*> entry_t;
       typedef std::set<entry_t> container_t;
 
@@ -43,11 +44,11 @@ class SceneGraph {
       };
 
       void insert(const IModel* model) {
-         m_container.insert(entry_t(key_t(model->getRenderMode(), model->getTextureHandle()), model));
+         m_container.insert(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model));
       }
 
       void remove(const IModel* model) {
-         if (m_container.erase(entry_t(key_t(model->getRenderMode(), model->getTextureHandle()), model)) == 0) {
+         if (m_container.erase(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model)) == 0) {
 
             for (auto i = m_container.begin(); i != m_container.end(); ++i) {
                if (i->second == model) {

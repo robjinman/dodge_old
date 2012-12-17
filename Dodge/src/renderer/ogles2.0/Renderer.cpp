@@ -44,8 +44,8 @@ Renderer::Renderer()
 // Renderer::init
 //===========================================
 void Renderer::init() {
-   GL_CHECK(glFrontFace(GL_CCW));
    GL_CHECK(glEnable(GL_CULL_FACE));
+   GL_CHECK(glFrontFace(GL_CCW));
    GL_CHECK(glEnable(GL_DEPTH_TEST));
    GL_CHECK(glEnable(GL_STENCIL_TEST));
 

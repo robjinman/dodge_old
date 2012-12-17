@@ -32,6 +32,10 @@ class IModel {
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) = 0;
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
       virtual Renderer::mode_t getRenderMode() const = 0;
+
+      // Returns transformed z-coord of first vertex
+      virtual float32_t getDepth() const = 0;
+
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
 #endif
@@ -287,6 +291,20 @@ class Model : public IModel {
          m_n = 0;
 
          m_mutex.unlock();
+      }
+
+      //===========================================
+      // Model::getDepth
+      //===========================================
+      virtual float32_t getDepth() const {
+         m_mutex.lock();
+
+         float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
+         float32_t d = z + m_matrix[14];
+
+         m_mutex.unlock();
+
+         return d;
       }
 
       //===========================================

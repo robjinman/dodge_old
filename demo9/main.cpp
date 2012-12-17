@@ -11,7 +11,7 @@ Renderer& renderer = Renderer::getInstance();
 double frameRate = 1;
 Polygon shape;
 pFont_t font1;
-pTextEntity_t txtMainFrLbl, txtRenderFrLbl, txtMainFr, txtRenderFr;
+pTextEntity_t txtFpsLbl, txtMainFrLbl, txtRenderFrLbl, txtMainFr, txtRenderFr;
 
 
 void quit() {
@@ -46,11 +46,11 @@ void onWindowResize(int w, int h) {
 
 void drawFrameRates() {
    stringstream fr;
-   fr << frameRate << "fps";
+   fr << frameRate;
    txtMainFr->setText(fr.str());
 
    fr.str("");
-   fr << renderer.getFrameRate() << "fps";
+   fr << renderer.getFrameRate();
    txtRenderFr->setText(fr.str());
 }
 
@@ -86,38 +86,48 @@ int main() {
 
       Colour col(1, 1, 0, 1);
 
+      txtFpsLbl = pTextEntity_t(new TextEntity(internString("lblFps"), internString("txtLabel"), font1, "fps", Vec2f(0.05, 0.05)));
       txtMainFrLbl = pTextEntity_t(new TextEntity(internString("lblMainLoopFR"), internString("txtLabel"), font1, "Main:", Vec2f(0.05, 0.05)));
       txtRenderFrLbl = pTextEntity_t(new TextEntity(internString("lblRenderLoopFR"), internString("txtLabel"), font1, "Renderer:", Vec2f(0.05, 0.05)));
       txtMainFr = pTextEntity_t(new TextEntity(internString("mainLoopFR"), internString("txtFR"), font1, "0", Vec2f(0.05, 0.05)));
       txtRenderFr = pTextEntity_t(new TextEntity(internString("renderLoopFR"), internString("txtFR"), font1, "0", Vec2f(0.05, 0.05)));
 
-      unique_ptr<Quad> quad(new Quad(Vec2f(1.f, 0.4f)));
+      unique_ptr<Quad> quad(new Quad(Vec2f(0.9f, 0.3f)));
       pEntity_t box(new Entity(internString("frameRates"), internString("box")));
       box->setShape(move(quad));
-      box->setFillColour(Colour(0.f, 0.f, 0.f, 0.8f));
-      box->setZ(1);
+      box->setFillColour(Colour(0.f, 0.f, 0.f, 0.5f));
+      box->setZ(2);
 
+      box->addChild(txtFpsLbl);
       box->addChild(txtMainFrLbl);
       box->addChild(txtMainFr);
       box->addChild(txtRenderFrLbl);
       box->addChild(txtRenderFr);
 
-      txtMainFrLbl->setTranslation(0.05f, 0.3f);
-      txtMainFrLbl->setZ(2);
+      txtFpsLbl->setTranslation(0.05f, 0.2f);
+      txtFpsLbl->setFillColour(col);
+      txtFpsLbl->setZ(3);
+
+      txtMainFrLbl->setTranslation(0.05f, 0.1f);
       txtMainFrLbl->setFillColour(col);
+      txtMainFrLbl->setZ(3);
 
-      txtRenderFrLbl->setTranslation(0.05f, 0.24f);
+      txtRenderFrLbl->setTranslation(0.05f, 0.04f);
       txtRenderFrLbl->setFillColour(col);
+      txtRenderFrLbl->setZ(3);
 
-      txtMainFr->setTranslation(0.55f, 0.3f);
+      txtMainFr->setTranslation(0.55f, 0.1f);
       txtMainFr->setFillColour(col);
+      txtMainFr->setZ(3);
 
-      txtRenderFr->setTranslation(0.55f, 0.24f);
+      txtRenderFr->setTranslation(0.55f, 0.04f);
       txtRenderFr->setFillColour(col);
+      txtRenderFr->setZ(3);
 
-      box->setTranslation(0.f, 0.6f);
+      box->setTranslation(0.05f, 0.65f);
       box->render();
 
+      txtFpsLbl->render();
       txtMainFrLbl->render();
       txtRenderFrLbl->render();
       txtMainFr->render();
