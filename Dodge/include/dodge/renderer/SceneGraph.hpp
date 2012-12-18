@@ -25,15 +25,12 @@ class SceneGraph {
          friend class SceneGraph;
 
          public:
-            const IModel* operator*() { return m_i->second; }
-            const IModel* operator->() { return m_i->second; }
-            bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
-            bool operator==(const iterator& rhs) const { return m_i == rhs.m_i; }
+            const IModel* operator*();
+            const IModel* operator->();
+            bool operator!=(const iterator& rhs) const;
+            bool operator==(const iterator& rhs) const;
 
-            iterator& operator++() {
-               ++m_i;
-               return *this;
-            }
+            iterator& operator++();
 
          private:
             iterator(SceneGraph* sg, SceneGraph::container_t::iterator i)
@@ -43,29 +40,52 @@ class SceneGraph {
             SceneGraph::container_t::iterator m_i;
       };
 
-      void insert(const IModel* model) {
-         m_container.insert(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model));
-      }
+      void insert(const IModel* model);
+      void remove(const IModel* model);
 
-      void remove(const IModel* model) {
-         if (m_container.erase(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model)) == 0) {
-
-            for (auto i = m_container.begin(); i != m_container.end(); ++i) {
-               if (i->second == model) {
-                  m_container.erase(i);
-                  break;
-               }
-            }
-         }
-      }
-
-      void clear() { m_container.clear(); }
-      iterator begin() { return iterator(this, m_container.begin()); }
-      iterator end() { return iterator(this, m_container.end()); }
+      void clear();
+      iterator begin();
+      iterator end();
 
    private:
       container_t m_container;
 };
+
+//===========================================
+// SceneGraph::iterator::operator*
+//===========================================
+inline const IModel* SceneGraph::iterator::operator*() {
+   return m_i->second;
+}
+
+//===========================================
+// SceneGraph::iterator::operator->
+//===========================================
+inline const IModel* SceneGraph::iterator::operator->() {
+   return m_i->second;
+}
+
+//===========================================
+// SceneGraph::iterator::operator!=
+//===========================================
+inline bool SceneGraph::iterator::operator!=(const iterator& rhs) const {
+   return !(*this == rhs);
+}
+
+//===========================================
+// SceneGraph::iterator::operator==
+//===========================================
+inline bool SceneGraph::iterator::operator==(const iterator& rhs) const {
+   return m_i == rhs.m_i;
+}
+
+//===========================================
+// SceneGraph::iterator::operator++
+//===========================================
+inline SceneGraph::iterator& SceneGraph::iterator::operator++() {
+   ++m_i;
+   return *this;
+}
 
 
 }
