@@ -88,8 +88,6 @@ void TexturedAlphaShader::setActive() {
 // TexturedAlphaShader::sendData
 //===========================================
 void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projMat) {
-   model_lock(*model);
-
    GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
    GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));
 
@@ -139,8 +137,6 @@ void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projM
       if (model_containsPerVertexColourData(*model))
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    }
-
-   model_unlock(*model);
 }
 
 

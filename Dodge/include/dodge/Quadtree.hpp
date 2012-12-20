@@ -118,10 +118,7 @@ class Quadtree : public SpatialContainer<T> {
       // Quadtree::dbg_draw
       //===========================================
       virtual void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, int z) const {
-/*
          if (hasChildren()) {
-            LineSegment line1, line2;
-
             const Vec2f& pos = m_boundary.getPosition();
             const Vec2f& sz = m_boundary.getSize();
             Vec2f halfSz = sz / 2.f;
@@ -129,23 +126,24 @@ class Quadtree : public SpatialContainer<T> {
             // Horizontal
             Vec2f l1p1(pos.x, pos.y + halfSz.y);
             Vec2f l1p2(pos.x + sz.x, pos.y + halfSz.y);
-            line1 = std::unique_ptr<LineSegment>(new LineSegment(l1p1, l1p2));
-            line1->setRenderTransform(0, 0, m_z);
-            line1->setLineColour(m_colour);
-            line1->setLineWidth(m_lineWidth);
+            LineSegment line1(l1p1, l1p2);
+            line1.setRenderTransform(0, 0, z);
+            line1.setLineColour(colour);
+            line1.setLineWidth(lineWidth);
+            line1.draw();
 
             // Vertical
             Vec2f l2p1(pos.x + halfSz.x, pos.y);
             Vec2f l2p2(pos.x + halfSz.x, pos.y + sz.y);
-            line2 = std::unique_ptr<LineSegment>(new LineSegment(l2p1, l2p2));
-            line2->setRenderTransform(0, 0, m_z);
-            line2->setLineColour(m_colour);
-            line2->setLineWidth(m_lineWidth);
+            LineSegment line2(l2p1, l2p2);
+            line2.setRenderTransform(0, 0, z);
+            line2.setLineColour(colour);
+            line2.setLineWidth(lineWidth);
+            line2.draw();
 
             for (int i = 0; i < 4; ++i)
-               m_children[i]->dbg_draw();
+               m_children[i]->dbg_draw(colour, lineWidth, z);
          }
-*/
       }
 #endif
 

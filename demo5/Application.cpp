@@ -62,13 +62,7 @@ void Application::keyDown(int key) {
       case WinIO::KEY_P: m_player->dbg_print(cout); break;
       case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
-      case WinIO::KEY_3:
-         dbg_worldSpaceVisible = !dbg_worldSpaceVisible;
-         if (dbg_worldSpaceVisible)
-            m_worldSpace.dbg_render(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
-         else
-            m_worldSpace.dbg_unrender();
-      break;
+      case WinIO::KEY_3: dbg_worldSpaceVisible = !dbg_worldSpaceVisible; break;
 #endif
    }
 
@@ -215,7 +209,6 @@ boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long pr
       if (addToWorld) {
          item->addToWorld();
          m_worldSpace.insertAndTrackEntity(item);
-         item->render();
 
          if (data.name() == "Player")
             m_player = boost::dynamic_pointer_cast<Player>(item);
@@ -378,11 +371,25 @@ void Application::loadMap() {
 
             item->addToWorld();
             m_worldSpace.trackEntity(item);
-            item->render();
             m_items[item->getName()] = item;
          }
       }
    }
+}
+
+//===========================================
+// Application::draw
+//===========================================
+void Application::draw() const {
+   for (auto i = m_items.begin(); i != m_items.end(); ++i)
+      i->second->draw();
+
+   m_player->draw();
+
+#ifdef DEBUG
+   if (dbg_worldSpaceVisible)
+      m_worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
+#endif
 }
 
 //===========================================
@@ -427,7 +434,8 @@ void Application::begin(int argc, char** argv) {
       update();
       Box2dPhysics::update();
       m_eventManager.doEvents();
-      m_renderer.checkForErrors();
+      draw();
+      m_renderer.tick();
       m_win.swapBuffers();
 
       computeFrameRate();

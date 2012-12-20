@@ -102,10 +102,8 @@ void Renderer::tick() {
    m_stateChangeMutex.lock();
 
    for (int i = 0; i < 3; ++i) {
-      if (m_state[i].status == renderState_t::IS_PENDING_RENDER) {
+      if (m_state[i].status == renderState_t::IS_PENDING_RENDER)
          m_state[i].status = renderState_t::IS_IDLE;
-         m_state[i].sceneGraph->clear();
-      }
    }
 
    m_idxLatest = m_idxUpdate;
@@ -117,6 +115,7 @@ void Renderer::tick() {
 
    assert(m_idxUpdate != -1);
 
+   m_state[m_idxUpdate].sceneGraph->clear();
    m_state[m_idxUpdate].status = renderState_t::IS_BEING_UPDATED;
 
    m_stateChangeMutex.unlock();
@@ -225,8 +224,6 @@ void Renderer::setBgColour(const Colour& col) {
 // Renderer::constructVBO
 //===========================================
 void Renderer::constructVBO(IModel* model) {
-   model->lock();
-
    modelHandle_t handle;
 
    GL_CHECK(glGenBuffers(1, &handle));
@@ -234,22 +231,16 @@ void Renderer::constructVBO(IModel* model) {
    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
 
    model->setHandle(handle);
-
-   model->unlock();
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(IModel* model) {
-   model->lock();
-
    modelHandle_t handle = model->getHandle();
 
    GL_CHECK(glDeleteBuffers(1, &handle));
    model->setHandle(0);
-
-   model->unlock();
 }
 
 //===========================================

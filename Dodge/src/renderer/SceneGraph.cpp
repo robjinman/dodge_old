@@ -10,21 +10,28 @@ namespace Dodge {
 
 
 //===========================================
+// SceneGraph::SceneGraph
+//===========================================
+SceneGraph::SceneGraph() {}
+
+//===========================================
 // SceneGraph::insert
 //===========================================
 void SceneGraph::insert(const IModel* model) {
-   m_container.insert(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model));
-}
+   IModel* ptr;
+   uint_t offset = m_scratchSpace.cursor;
 
-//===========================================
-// SceneGraph::remove
-//===========================================
-void SceneGraph::remove(const IModel* model) {
-   if (m_container.erase(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model)) == 0) {
-      for (auto i = m_container.begin(); i != m_container.end(); ++i) {
-         if (i->second == model) m_container.erase(i);
-      }
-   }
+   size_t totalSize = model->getSizeOf() + model->vertexDataSize();
+
+   if (m_scratchSpace.buffer.size() < offset + totalSize)
+      m_scratchSpace.buffer.resize(offset + totalSize);
+
+   ptr = reinterpret_cast<IModel*>(m_scratchSpace.buffer.data() + offset);
+   m_scratchSpace.cursor += totalSize;
+
+   model->copyTo(ptr);
+
+   m_container.insert(entry_t(key_t(subKey_t(ptr->getDepth(), ptr->getRenderMode()), ptr->getTextureHandle()), offset));
 }
 
 //===========================================
@@ -32,6 +39,8 @@ void SceneGraph::remove(const IModel* model) {
 //===========================================
 void SceneGraph::clear() {
    m_container.clear();
+   m_scratchSpace.buffer.clear();
+   m_scratchSpace.cursor = 0;
 }
 
 //===========================================

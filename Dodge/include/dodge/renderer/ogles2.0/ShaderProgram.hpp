@@ -24,9 +24,6 @@ class ShaderProgram {
       static void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
 
    protected:
-      void model_lock(const IModel& model) const;
-      void model_unlock(const IModel& model) const;
-
       Renderer::modelHandle_t model_getHandle(const IModel& model) const;
       void model_setHandle(IModel& model, Renderer::modelHandle_t handle);
       bool model_containsPerVertexColourData(const IModel& model) const;

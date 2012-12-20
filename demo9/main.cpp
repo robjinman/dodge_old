@@ -11,7 +11,7 @@ Renderer& renderer = Renderer::getInstance();
 double frameRate = 1;
 Polygon shape;
 pFont_t font1;
-//pTextEntity_t txtFpsLbl, txtMainFrLbl, txtRenderFrLbl, txtMainFr, txtRenderFr;
+pTextEntity_t txtFpsLbl, txtMainFrLbl, txtRenderFrLbl, txtMainFr, txtRenderFr;
 
 
 void quit() {
@@ -42,14 +42,14 @@ void onWindowResize(int w, int h) {
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
-void drawFrameRates() {/*
+void drawFrameRates() {
    stringstream fr;
    fr << frameRate;
    txtMainFr->setText(fr.str());
 
    fr.str("");
    fr << renderer.getFrameRate();
-   txtRenderFr->setText(fr.str());*/
+   txtRenderFr->setText(fr.str());
 }
 
 int main() {
@@ -82,7 +82,7 @@ int main() {
       font1 = pFont_t(new Dodge::Font(tex, 0, 0, 192, 192, 16, 24));
 
       Colour col(1, 1, 0, 1);
-/*
+
       txtFpsLbl = pTextEntity_t(new TextEntity(internString("lblFps"), internString("txtLabel"), font1, "fps", Vec2f(0.05, 0.05)));
       txtMainFrLbl = pTextEntity_t(new TextEntity(internString("lblMainLoopFR"), internString("txtLabel"), font1, "Main:", Vec2f(0.05, 0.05)));
       txtRenderFrLbl = pTextEntity_t(new TextEntity(internString("lblRenderLoopFR"), internString("txtLabel"), font1, "Renderer:", Vec2f(0.05, 0.05)));
@@ -122,7 +122,7 @@ int main() {
       txtRenderFr->setZ(3);
 
       box->setTranslation(0.05f, 0.65f);
-*/
+
       Timer timer;
       long i = 1;
       while (1) {
@@ -138,14 +138,13 @@ int main() {
          }
 
          shape.draw();
-/*         box->draw();
+         box->draw();
          txtFpsLbl->draw();
          txtMainFrLbl->draw();
          txtRenderFrLbl->draw();
          txtMainFr->draw();
-         txtRenderFr->draw();*/
+         txtRenderFr->draw();
 
-         renderer.checkForErrors();
          renderer.tick();
 
          ++i;

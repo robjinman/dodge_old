@@ -24,7 +24,7 @@ class Application {
       void keyboard();
       void onWindowResize(int w, int h);
       void deletePending(Dodge::EEvent* event);
-      void draw();
+      void draw() const;
       void update();
 
       void exitDefault();

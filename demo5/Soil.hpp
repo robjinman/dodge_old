@@ -23,8 +23,7 @@ class Soil : public Item, public Dodge::Sprite {
            Item(copy, name),
            Sprite(copy, name) {}
 
-      virtual void render() const;
-      virtual void unrender() const;
+      virtual void draw() const;
 
       virtual void update();
       virtual Soil* clone() const;

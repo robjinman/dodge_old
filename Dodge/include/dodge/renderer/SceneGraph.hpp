@@ -4,6 +4,7 @@
  */
 
 #include <set>
+#include <vector>
 #include "Renderer.hpp"
 #include "Model.hpp"
 
@@ -18,7 +19,7 @@ class SceneGraph {
    private:
       typedef std::pair<float32_t, Renderer::mode_t> subKey_t;
       typedef std::pair<subKey_t, Renderer::textureHandle_t> key_t;
-      typedef std::pair<key_t, const IModel*> entry_t;
+      typedef std::pair<key_t, uint_t> entry_t;
       typedef std::set<entry_t> container_t;
 
    public:
@@ -41,29 +42,38 @@ class SceneGraph {
             SceneGraph::container_t::iterator m_i;
       };
 
+      SceneGraph();
+
       void insert(const IModel* model);
-      void remove(const IModel* model);
 
       void clear();
       iterator begin();
       iterator end();
 
    private:
+      struct scratchSpace_t {
+         scratchSpace_t() : cursor(0) {}
+
+         std::vector<byte_t> buffer;
+         uint_t cursor;
+      };
+
       container_t m_container;
+      scratchSpace_t m_scratchSpace;
 };
 
 //===========================================
 // SceneGraph::iterator::operator*
 //===========================================
 inline const IModel* SceneGraph::iterator::operator*() {
-   return m_i->second;
+   return reinterpret_cast<const IModel*>(m_sg->m_scratchSpace.buffer.data() + m_i->second);
 }
 
 //===========================================
 // SceneGraph::iterator::operator->
 //===========================================
 inline const IModel* SceneGraph::iterator::operator->() {
-   return m_i->second;
+   return reinterpret_cast<const IModel*>(m_sg->m_scratchSpace.buffer.data() + m_i->second);
 }
 
 //===========================================

@@ -51,8 +51,6 @@ void ShaderProgram::newShaderFromSource(const char** shaderSrc, GLint type, GLin
 // Relay calls to model object. This is to allow derived classes to
 // access Model's private members.
 //===========================================
-void ShaderProgram::model_lock(const IModel& model) const { model.lock(); }
-void ShaderProgram::model_unlock(const IModel& model) const { model.unlock(); }
 Renderer::modelHandle_t ShaderProgram::model_getHandle(const IModel& model) const { return model.getHandle(); }
 void ShaderProgram::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.setHandle(handle); }
 bool ShaderProgram::model_containsPerVertexColourData(const IModel& model) const { return model.containsPerVertexColourData(); }

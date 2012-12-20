@@ -49,17 +49,10 @@ void CPhysicalEntity::update() {
 }
 
 //===========================================
-// CPhysicalEntity::render
+// CPhysicalEntity::draw
 //===========================================
-void CPhysicalEntity::render() const {
-   PhysicalEntity<Box2dPhysics>::render();
-}
-
-//===========================================
-// CPhysicalEntity::unrender
-//===========================================
-void CPhysicalEntity::unrender() const {
-   PhysicalEntity<Box2dPhysics>::unrender();
+void CPhysicalEntity::draw() const {
+   PhysicalEntity<Box2dPhysics>::draw();
 }
 
 //===========================================

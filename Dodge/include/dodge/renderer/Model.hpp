@@ -14,7 +14,7 @@ namespace Dodge {
 
 
 class IModel {
-
+   friend class SceneGraph;
    friend class ShaderProgram;
    friend class Renderer;
 
@@ -43,15 +43,14 @@ class IModel {
       virtual ~IModel() {}
 
    private:
-      virtual void lock() const = 0;
-      virtual void unlock() const = 0;
-
       virtual Renderer::modelHandle_t getHandle() const = 0;
       virtual void setHandle(Renderer::modelHandle_t handle) = 0;
       virtual bool containsPerVertexColourData() const = 0;
+      virtual size_t getSizeOf() const = 0;
       virtual size_t vertexDataSize() const = 0;
       virtual const void* getVertexData() const = 0;
       virtual const Renderer::matrixElement_t* getMatrix() const = 0;
+      virtual void copyTo(void* ptr) const = 0;
 };
 
 
@@ -83,19 +82,14 @@ class Model : public IModel {
       // Model::Model
       //===========================================
       Model(const Model& cpy) : m_n(0) {
-         m_mutex.lock();
          deepCopy(cpy);
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::operator=
       //===========================================
       Model& operator=(const Model& rhs) {
-         m_mutex.lock();
          deepCopy(rhs);
-         m_mutex.unlock();
-
          return *this;
       }
 
@@ -103,139 +97,97 @@ class Model : public IModel {
       // Model::getPrimitiveType
       //===========================================
       virtual Renderer::primitive_t getPrimitiveType() const {
-         m_mutex.lock();
-         Renderer::primitive_t cpy = m_primitiveType;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_primitiveType;
       }
 
       //===========================================
       // Model::getNumVertices
       //===========================================
       virtual uint_t getNumVertices() const {
-         m_mutex.lock();
-         uint_t cpy = m_n;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_n;
       }
 
       //===========================================
       // Model::setMatrix
       //===========================================
       virtual void setMatrix(const Renderer::matrixElement_t* matrix) {
-         m_mutex.lock();
          memcpy(m_matrix, matrix, 16 * sizeof(Renderer::matrixElement_t));
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::setMatrixElement
       //===========================================
       virtual void setMatrixElement(uint_t idx, Renderer::matrixElement_t val) {
-         m_mutex.lock();
          m_matrix[idx] = val;
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getMatrixElement
       //===========================================
       virtual Renderer::matrixElement_t getMatrixElement(uint_t idx) const {
-         m_mutex.lock();
-         Renderer::matrixElement_t m = m_matrix[idx];
-         m_mutex.unlock();
-
-         return m;
+         return m_matrix[idx];
       }
 
       //===========================================
       // Model::getMatrix
       //===========================================
       virtual void getMatrix(Renderer::matrixElement_t* matrix) const {
-         m_mutex.lock();
          memcpy(matrix, m_matrix, 16 * sizeof(Renderer::matrixElement_t));
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::setColour
       //===========================================
       virtual void setColour(const Colour& colour) {
-         m_mutex.lock();
          m_colour = colour;
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getColour
       //===========================================
       virtual Colour getColour() const {
-         m_mutex.lock();
-         Colour cpy = m_colour;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_colour;
       }
 
       //===========================================
       // Model::setLineWidth
       //===========================================
       virtual void setLineWidth(Renderer::int_t lineWidth) {
-         m_mutex.lock();
          m_lineWidth = lineWidth;
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getLineWidth
       //===========================================
       virtual Renderer::int_t getLineWidth() const {
-         m_mutex.lock();
-         Renderer::int_t cpy = m_lineWidth;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_lineWidth;
       }
 
       //===========================================
       // Model::setTextureHandle
       //===========================================
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) {
-         m_mutex.lock();
          m_texHandle = texHandle;
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getTextureHandle
       //===========================================
       virtual Renderer::textureHandle_t getTextureHandle() const {
-         m_mutex.lock();
-         Renderer::textureHandle_t cpy = m_texHandle;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_texHandle;
       }
 
       //===========================================
       // Model::getRenderMode
       //===========================================
       virtual Renderer::mode_t getRenderMode() const {
-         m_mutex.lock();
-         Renderer::mode_t cpy = m_renderMode;
-         m_mutex.unlock();
-
-         return cpy;
+         return m_renderMode;
       }
 
       //===========================================
       // Model::setVertices
       //===========================================
       void setVertices(uint_t idx, const T* verts, uint_t num) {
-         m_mutex.lock();
-
          if (idx + num > m_n) {
             T* tmp = new T[idx + num];
             memcpy(tmp, m_verts, sizeof(T) * idx);
@@ -247,64 +199,44 @@ class Model : public IModel {
          }
 
          memcpy(m_verts + idx, verts, sizeof(T) * num);
-
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::setVertex
       //===========================================
       void setVertex(uint_t idx, const T& vert) {
-         m_mutex.lock();
          m_verts[idx] = vert;
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getVertices
       //===========================================
       void getVertices(T* dest, uint_t startIdx, uint_t endIdx) const {
-         m_mutex.lock();
          memcpy(dest, m_verts + startIdx, sizeof(T) * (endIdx - startIdx));
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getVertex
       //===========================================
       T getVertex(uint_t idx) const {
-         m_mutex.lock();
-         T cpy = m_verts[idx];
-         m_mutex.unlock();
-
-         return cpy;
+         return m_verts[idx];
       }
 
       //===========================================
       // Model::eraseVertices
       //===========================================
       void eraseVertices() {
-         m_mutex.lock();
-
          delete[] m_verts;
          m_verts = NULL;
          m_n = 0;
-
-         m_mutex.unlock();
       }
 
       //===========================================
       // Model::getDepth
       //===========================================
       virtual float32_t getDepth() const {
-         m_mutex.lock();
-
          float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
-         float32_t d = z + m_matrix[14];
-
-         m_mutex.unlock();
-
-         return d;
+         return z + m_matrix[14];
       }
 
       //===========================================
@@ -319,8 +251,6 @@ class Model : public IModel {
       // Model::dbg_print
       //===========================================
       virtual void dbg_print(std::ostream& out, int tab = 0) const {
-         m_mutex.lock();
-
          for (int t = 0; t < tab; ++t) out << "\t";
          out << "Model\n";
 
@@ -362,20 +292,25 @@ class Model : public IModel {
 
          for (uint_t i = 0; i < m_n; ++i)
             m_verts[i].dbg_print(out, tab + 2);
-
-         m_mutex.unlock();
       }
 #endif
 
    private:
+      Model() {}
+
       //===========================================
       // Model::deepCopy
       //===========================================
       void deepCopy(const Model& cpy) {
-         cpy.m_mutex.lock();
-
-         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+         shallowCopy(cpy);
          setVertices(0, cpy.m_verts, cpy.m_n);
+      }
+
+      //===========================================
+      // Model::shallowCopy
+      //===========================================
+      void shallowCopy(const Model& cpy) {
+         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
          m_texHandle = cpy.m_texHandle;
          m_colour = cpy.m_colour;
          m_lineWidth = cpy.m_lineWidth;
@@ -383,11 +318,7 @@ class Model : public IModel {
          m_colData = cpy.m_colData;
          m_renderMode = cpy.m_renderMode;
          m_handle = 0;
-
-         cpy.m_mutex.unlock();
       }
-
-      mutable std::recursive_mutex m_mutex;
 
       Renderer::matrixElement_t m_matrix[16];
       T* m_verts;
@@ -400,9 +331,6 @@ class Model : public IModel {
 
       Renderer::mode_t m_renderMode;
       Renderer::modelHandle_t m_handle;
-
-      virtual void lock() const { m_mutex.lock(); }
-      virtual void unlock() const { m_mutex.unlock(); }
 
       virtual Renderer::modelHandle_t getHandle() const {
          return m_handle;
@@ -426,6 +354,22 @@ class Model : public IModel {
 
       virtual const Renderer::matrixElement_t* getMatrix() const {
          return m_matrix;
+      }
+
+      virtual size_t getSizeOf() const {
+         return sizeof(Model<T>);
+      }
+
+      virtual void copyTo(void* ptr) const {
+         byte_t* p = reinterpret_cast<byte_t*>(ptr);
+         byte_t* verts = p + sizeof(Model<T>);
+         Model<T>* pModel = reinterpret_cast<Model<T>*>(p);
+
+         new (p) Model<T>;
+         pModel->shallowCopy(*this);
+         memcpy(verts, m_verts, m_n * sizeof(T));
+         pModel->m_verts = reinterpret_cast<T*>(verts);
+         pModel->m_n = m_n;
       }
 };
 

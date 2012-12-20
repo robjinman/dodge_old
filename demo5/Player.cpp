@@ -148,7 +148,7 @@ void Player::removeFromWorld() {
 //===========================================
 // Player::checkDbgFlags
 //===========================================
-void Player::checkDbgFlags() const {
+void Player::checkDbgFlags() const {/*
    static byte_t flags = 0;
 
    const Shape& shape = getShape();
@@ -204,7 +204,7 @@ void Player::checkDbgFlags() const {
       shape.unrender();
    }
 
-   flags = dbg_flags;
+   flags = dbg_flags;*/
 }
 #endif
 
@@ -251,17 +251,10 @@ void Player::update() {
 }
 
 //===========================================
-// Player::render
+// Player::draw
 //===========================================
-void Player::render() const {
-   PhysicalSprite<Box2dPhysics>::render();
-}
-
-//===========================================
-// Player::unrender
-//===========================================
-void Player::unrender() const {
-   PhysicalSprite<Box2dPhysics>::unrender();
+void Player::draw() const {
+   PhysicalSprite<Box2dPhysics>::draw();
 }
 
 //===========================================

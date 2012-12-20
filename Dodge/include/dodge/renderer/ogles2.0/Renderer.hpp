@@ -154,6 +154,7 @@ class Renderer {
 
       void init();
       void clear();
+      void checkForErrors();
       void setMode(mode_t mode);
       void constructShaderProgs();
       GLint primitiveToGLType(primitive_t primitiveType) const;
