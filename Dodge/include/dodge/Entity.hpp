@@ -160,8 +160,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 
       inline pEntity_t getSharedPtr();
 
-      virtual void render() const;
-      virtual void unrender() const;
+      virtual void draw() const;
 
       virtual void update() {}
 

@@ -46,8 +46,7 @@ class Sprite
       virtual void addToWorld();
       virtual void removeFromWorld();
 
-      virtual void render() const;
-      virtual void unrender() const;
+      virtual void draw() const;
 
       virtual void update();
 

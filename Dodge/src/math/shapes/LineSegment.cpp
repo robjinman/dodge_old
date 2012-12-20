@@ -153,17 +153,10 @@ void LineSegment::setRenderTransform(float32_t x, float32_t y, int z) const {
 }
 
 //===========================================
-// LineSegment::render
+// LineSegment::draw
 //===========================================
-void LineSegment::render() const {
-   Renderer::getInstance().stageModel(&m_model);
-}
-
-//===========================================
-// LineSegment::unrender
-//===========================================
-void LineSegment::unrender() const {
-   Renderer::getInstance().unstageModel(&m_model);
+void LineSegment::draw() const {
+   m_renderer.draw(&m_model);
 }
 
 //===========================================
@@ -219,9 +212,7 @@ void LineSegment::scale(const Vec2f& sv) {
 //===========================================
 // LineSegment::~LineSegment
 //===========================================
-LineSegment::~LineSegment() {
-   m_renderer.unstageModel(&m_model);
-}
+LineSegment::~LineSegment() {}
 
 
 }

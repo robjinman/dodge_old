@@ -126,17 +126,10 @@ void Sprite::removeFromWorld() {
 }
 
 //===========================================
-// Sprite::render
+// Sprite::draw
 //===========================================
-void Sprite::render() const {
-   EntityAnimations::render();
-}
-
-//===========================================
-// Sprite::unrender
-//===========================================
-void Sprite::unrender() const {
-   EntityAnimations::unrender();
+void Sprite::draw() const {
+   EntityAnimations::draw();
 }
 
 //===========================================

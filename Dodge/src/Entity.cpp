@@ -353,17 +353,10 @@ void Entity::assignData(const XmlNode data) {
 }
 
 //===========================================
-// Entity::render
+// Entity::draw
 //===========================================
-void Entity::render() const {
-   if (m_shape) m_shape->render();
-}
-
-//===========================================
-// Entity::unrender
-//===========================================
-void Entity::unrender() const {
-   if (m_shape) m_shape->unrender();
+void Entity::draw() const {
+   if (m_shape) m_shape->draw();
 }
 
 //===========================================

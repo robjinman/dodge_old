@@ -50,6 +50,11 @@ void onWindowResize(int w, int h) {
    renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
+void drawModels() {
+   for (uint_t i = 0; i < models.size(); ++i)
+      renderer.draw(models[i].get());
+}
+
 void constructModels() {
    float32_t w = 0.1;
    float32_t h = 0.1;
@@ -77,8 +82,7 @@ void constructModels() {
          model->setTextureHandle(b ? tex0->getHandle() : tex1->getHandle());
          model->setColour(col);
 
-         renderer.bufferModel(model.get());
-         renderer.stageModel(model.get());
+//         renderer.bufferModel(model.get());
       }
    }
 }
@@ -105,13 +109,14 @@ int main() {
 
       constructModels();
 
-      Range range(0.5, 0.1, 0.4, 0.2);
-      range.dbg_render(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
+//      Range range(0.5, 0.1, 0.4, 0.2);
+//      range.dbg_render(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
 
       while (1) {
          win.doEvents();
          computeFrameRate();
-         renderer.checkForErrors();
+         drawModels();
+         renderer.tick();
       }
    }
    catch (Exception& e) {

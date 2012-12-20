@@ -89,7 +89,7 @@ void Range::dbg_print(ostream& out, int tab) const {
 //===========================================
 // Range::dbg_render
 //===========================================
-void Range::dbg_render(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const {
+void Range::dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const {
    m_z = z;
 
    m_quad.setLineWidth(lineWidth);
@@ -97,14 +97,7 @@ void Range::dbg_render(const Colour& fillColour, const Colour& lineColour, Rende
    m_quad.setLineColour(lineColour);
    m_quad.setRenderTransform(m_pos.x, m_pos.y, m_z);
 
-   m_quad.render();
-}
-
-//===========================================
-// Range::dbg_unrender
-//===========================================
-void Range::dbg_unrender() const {
-   m_quad.unrender();
+   m_quad.draw();
 }
 #endif
 

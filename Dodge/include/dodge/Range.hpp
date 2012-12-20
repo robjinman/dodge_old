@@ -28,8 +28,7 @@ class Range {
 #ifdef DEBUG
       void dbg_print(std::ostream& out, int tab) const;
 
-      void dbg_render(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const;
-      void dbg_unrender() const;
+      void dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const;
 #endif
 
       void setPosition(float32_t x, float32_t y);

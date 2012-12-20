@@ -9,8 +9,8 @@
 
 #include <GLES2/gl2.h>
 #include <cml/cml.h>
-#include <set>
 #include <map>
+#include <queue>
 #include <cstring>
 #include <mutex>
 #include <thread>
@@ -84,15 +84,13 @@ class Renderer {
       void bufferModel(IModel* model);
       void freeBufferedModel(IModel* model);
 
-      void stageModel(const IModel* model);
-      void unstageModel(const IModel* model);
+      void draw(const IModel* model);
 #ifdef DEBUG
       inline long getFrameRate() const;
 #endif
       void start();
       void stop();
-
-      void checkForErrors();
+      void tick();
 
    protected:
       Renderer();
@@ -136,6 +134,18 @@ class Renderer {
          msgData_t data;
       };
 
+      struct renderState_t {
+         enum status_t {
+            IS_IDLE,
+            IS_PENDING_RENDER,
+            IS_BEING_RENDERED,
+            IS_BEING_UPDATED
+         };
+
+         status_t status;
+         std::unique_ptr<SceneGraph> sceneGraph;
+      };
+
    private:
       static Renderer* m_instance;
 
@@ -161,8 +171,14 @@ class Renderer {
 
       std::atomic<bool> m_init;
 
-      std::unique_ptr<SceneGraph> m_sceneGraph;
-      mutable std::mutex m_sceneGraphMutex;
+      renderState_t m_state[3];
+      int m_idxLatest;
+      int m_idxRender;
+      int m_idxUpdate;
+      std::mutex m_stateChangeMutex;
+
+      Colour m_bgColour;
+      mutable std::mutex m_bgColourMutex;
 
       pCamera_t m_camera;
       mutable std::mutex m_cameraMutex;
@@ -174,9 +190,6 @@ class Renderer {
       mutable std::mutex m_msgQueueMutex;
 
       std::atomic<bool> m_msgQueueEmpty;
-
-      Colour m_bgColour;
-      mutable std::mutex m_bgColourMutex;
 
       exceptionWrapper_t m_exception;
       std::atomic<bool> m_errorPending;

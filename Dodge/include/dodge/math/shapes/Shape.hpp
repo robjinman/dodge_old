@@ -36,8 +36,7 @@ class Shape : virtual public Asset {
       virtual void setLineWidth(int lineWidth) const = 0;
 
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const = 0;
-      virtual void render() const = 0;
-      virtual void unrender() const = 0;
+      virtual void draw() const = 0;
 
       virtual ~Shape() {};
 };

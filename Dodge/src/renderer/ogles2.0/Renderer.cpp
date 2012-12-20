@@ -28,7 +28,6 @@ Renderer::Renderer()
    : m_activeShaderProg(NULL),
      m_mode(UNDEFINED),
      m_init(false),
-     m_sceneGraph(new SceneGraph),
      m_camera(new Camera(1.f, 1.f)),
      m_running(false),
      m_thread(NULL),
@@ -38,7 +37,24 @@ Renderer::Renderer()
 #ifdef DEBUG
    , m_frameRate(0)
 #endif
-     {}
+     {
+
+   m_state[0].sceneGraph = unique_ptr<SceneGraph>(new SceneGraph);
+   m_state[1].sceneGraph = unique_ptr<SceneGraph>(new SceneGraph);
+   m_state[2].sceneGraph = unique_ptr<SceneGraph>(new SceneGraph);
+
+   m_stateChangeMutex.lock();
+
+   m_state[0].status = renderState_t::IS_BEING_RENDERED;
+   m_state[1].status = renderState_t::IS_IDLE;
+   m_state[2].status = renderState_t::IS_BEING_UPDATED;
+
+   m_idxRender = 0;
+   m_idxLatest = 0;
+   m_idxUpdate = 2;
+
+   m_stateChangeMutex.unlock();
+}
 
 //===========================================
 // Renderer::init
@@ -71,6 +87,39 @@ void Renderer::stop() {
    m_thread->join();
    delete m_thread;
    m_thread = NULL;
+}
+
+//===========================================
+// Renderer::tick
+//
+// This is called by the main thread every frame, after all
+// draw calls, to notify the renderer that the next
+// frame is complete and ready for rendering.
+//===========================================
+void Renderer::tick() {
+   checkForErrors();
+
+   m_stateChangeMutex.lock();
+
+   for (int i = 0; i < 3; ++i) {
+      if (m_state[i].status == renderState_t::IS_PENDING_RENDER) {
+         m_state[i].status = renderState_t::IS_IDLE;
+         m_state[i].sceneGraph->clear();
+      }
+   }
+
+   m_idxLatest = m_idxUpdate;
+   m_state[m_idxLatest].status = renderState_t::IS_PENDING_RENDER;
+
+   m_idxUpdate = -1;
+   for (int i = 0; i < 3; ++i)
+      if (m_state[i].status == renderState_t::IS_IDLE) m_idxUpdate = i;
+
+   assert(m_idxUpdate != -1);
+
+   m_state[m_idxUpdate].status = renderState_t::IS_BEING_UPDATED;
+
+   m_stateChangeMutex.unlock();
 }
 
 //===========================================
@@ -157,21 +206,10 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 }
 
 //===========================================
-// Renderer::stageModel
+// Renderer::draw
 //===========================================
-void Renderer::stageModel(const IModel* model) {
-   m_sceneGraphMutex.lock();
-   m_sceneGraph->insert(model);
-   m_sceneGraphMutex.unlock();
-}
-
-//===========================================
-// Renderer::unstageModel
-//===========================================
-void Renderer::unstageModel(const IModel* model) {
-   m_sceneGraphMutex.lock();
-   m_sceneGraph->remove(model);
-   m_sceneGraphMutex.unlock();
+void Renderer::draw(const IModel* model) {
+   m_state[m_idxUpdate].sceneGraph->insert(model);
 }
 
 //===========================================
@@ -332,8 +370,7 @@ void Renderer::renderLoop() {
          m_camera->getMatrix(P);
          m_cameraMutex.unlock();
 
-         m_sceneGraphMutex.lock();
-         for (auto i = m_sceneGraph->begin(); i != m_sceneGraph->end(); ++i) {
+         for (auto i = m_state[m_idxRender].sceneGraph->begin(); i != m_state[m_idxRender].sceneGraph->end(); ++i) {
             const IModel* model = *i;
 
             if (model->getNumVertices() == 0) continue;
@@ -344,10 +381,16 @@ void Renderer::renderLoop() {
 
             GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
          }
-         m_sceneGraphMutex.unlock();
 
          win.swapBuffers();
 
+         m_stateChangeMutex.lock();
+
+         m_state[m_idxRender].status = renderState_t::IS_IDLE;
+         m_idxRender = m_idxLatest;
+         m_state[m_idxRender].status = renderState_t::IS_BEING_RENDERED;
+
+         m_stateChangeMutex.unlock();
 #ifdef DEBUG
          computeFrameRate();
 #endif

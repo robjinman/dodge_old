@@ -3,6 +3,7 @@
  * Date: 2012
  */
 
+#include <set>
 #include "Renderer.hpp"
 #include "Model.hpp"
 

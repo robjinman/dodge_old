@@ -271,19 +271,11 @@ void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
 }
 
 //===========================================
-// Polygon::render
+// Polygon::draw
 //===========================================
-void Polygon::render() const {
-   m_renderer.stageModel(&m_interiorModel);
-   m_renderer.stageModel(&m_outlineModel);
-}
-
-//===========================================
-// Polygon::unrender
-//===========================================
-void Polygon::unrender() const {
-   m_renderer.unstageModel(&m_interiorModel);
-   m_renderer.unstageModel(&m_outlineModel);
+void Polygon::draw() const {
+   m_renderer.draw(&m_interiorModel);
+   m_renderer.draw(&m_outlineModel);
 }
 
 //===========================================
@@ -417,10 +409,7 @@ bool Polygon::operator!=(const Polygon& rhs) const {
 //===========================================
 // Polygon::~Polygon
 //===========================================
-Polygon::~Polygon() {
-   m_renderer.unstageModel(&m_interiorModel);
-   m_renderer.unstageModel(&m_outlineModel);
-}
+Polygon::~Polygon() {}
 
 
 }

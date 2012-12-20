@@ -35,8 +35,7 @@ class Ellipse : public Shape {
       virtual void setLineWidth(int lineWidth) const {}
 
       virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
-      virtual void render() const {}
-      virtual void unrender() const {}
+      virtual void draw() const {}
 
       Ellipse& operator=(const Ellipse& rhs) { return *this; } // TODO
 

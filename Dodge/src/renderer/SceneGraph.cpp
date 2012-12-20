@@ -21,12 +21,8 @@ void SceneGraph::insert(const IModel* model) {
 //===========================================
 void SceneGraph::remove(const IModel* model) {
    if (m_container.erase(entry_t(key_t(subKey_t(model->getDepth(), model->getRenderMode()), model->getTextureHandle()), model)) == 0) {
-
       for (auto i = m_container.begin(); i != m_container.end(); ++i) {
-         if (i->second == model) {
-            m_container.erase(i);
-//            break;
-         }
+         if (i->second == model) m_container.erase(i);
       }
    }
 }

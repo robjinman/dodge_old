@@ -85,17 +85,10 @@ void TextEntity::assignData(const XmlNode data) {
 }
 
 //===========================================
-// TextEntity::render
+// TextEntity::draw
 //===========================================
-void TextEntity::render() const {
-   m_renderer.stageModel(&m_model);
-}
-
-//===========================================
-// TextEntity::unrender
-//===========================================
-void TextEntity::unrender() const {
-   m_renderer.unstageModel(&m_model);
+void TextEntity::draw() const {
+   m_renderer.draw(&m_model);
 }
 
 //===========================================
@@ -208,7 +201,6 @@ void TextEntity::setFillColour(const Colour& colour) {
 //===========================================
 TextEntity::~TextEntity() {
    m_renderer.freeBufferedModel(&m_model);
-   m_renderer.unstageModel(&m_model);
 }
 
 

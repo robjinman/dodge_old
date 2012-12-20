@@ -202,17 +202,10 @@ void EntityAnimations::assignData(const XmlNode data) {
 }
 
 //===========================================
-// EntityAnimations::render
+// EntityAnimations::draw
 //===========================================
-void EntityAnimations::render() const {
-   m_renderer.stageModel(&m_model);
-}
-
-//===========================================
-// EntityAnimations::unrender
-//===========================================
-void EntityAnimations::unrender() const {
-   m_renderer.unstageModel(&m_model);
+void EntityAnimations::draw() const {
+   m_renderer.draw(&m_model);
 }
 
 //===========================================
@@ -383,9 +376,7 @@ void EntityAnimations::update() {
 //===========================================
 // EntityAnimations::~EntityAnimations
 //===========================================
-EntityAnimations::~EntityAnimations() {
-   m_renderer.unstageModel(&m_model);
-}
+EntityAnimations::~EntityAnimations() {}
 
 
 }
