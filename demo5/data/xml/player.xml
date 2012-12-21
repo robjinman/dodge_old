@@ -57,7 +57,7 @@ identifies it. -->
                         <Vec2f x="0.1" y="0.1"/>
                      </onScreenSize>
                      <animation>
-                        <Animation name="moveDown" rate="16.0">
+                        <Animation name="moveDown" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="0"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -81,7 +81,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveLeft" rate="16.0">
+                        <Animation name="moveLeft" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="16"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -105,7 +105,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveUp" rate="16.0">
+                        <Animation name="moveUp" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="32"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -129,7 +129,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveRight" rate="16.0">
+                        <Animation name="moveRight" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="48"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -153,7 +153,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="jump" rate="16.0">
+                        <Animation name="jump" rate="24.0">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="64"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -179,7 +179,7 @@ identifies it. -->
                   </EntityAnimations>
                   <EntityTransformations>
                      <transformation>
-                        <Transformation name="moveDown" rate="6.0" smooth="32">
+                        <Transformation name="moveDown" rate="1000.0" smooth="1">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="-0.1"/></delta>
                               <rot>0.0</rot>
@@ -188,7 +188,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveLeft" rate="6.0" smooth="32">
+                        <Transformation name="moveLeft" rate="6.0" smooth="100">
                            <TransFrame>
                               <delta><Vec2f x="-0.1" y="0.0"/></delta>
                               <rot>0.0</rot>
@@ -197,7 +197,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveUp" rate="6.0" smooth="32">
+                        <Transformation name="moveUp" rate="6.0" smooth="100">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="0.1"/></delta>
                               <rot>0.0</rot>
@@ -206,7 +206,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveRight" rate="6.0" smooth="32">
+                        <Transformation name="moveRight" rate="6.0" smooth="100">
                            <TransFrame>
                               <delta><Vec2f x="0.1" y="0.0"/></delta>
                               <rot>0.0</rot>

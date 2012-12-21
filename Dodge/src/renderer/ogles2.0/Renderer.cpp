@@ -96,7 +96,7 @@ void Renderer::stop() {
 // draw calls, to notify the renderer that the next
 // frame is complete and ready for rendering.
 //===========================================
-void Renderer::tick() {
+void Renderer::tick(const Colour& bgColour) {
    checkForErrors();
 
    m_stateChangeMutex.lock();
@@ -108,6 +108,7 @@ void Renderer::tick() {
 
    m_idxLatest = m_idxUpdate;
    m_state[m_idxLatest].status = renderState_t::IS_PENDING_RENDER;
+   m_camera->getMatrix(m_state[m_idxLatest].P);
 
    m_idxUpdate = -1;
    for (int i = 0; i < 3; ++i)
@@ -116,6 +117,7 @@ void Renderer::tick() {
    assert(m_idxUpdate != -1);
 
    m_state[m_idxUpdate].sceneGraph->clear();
+   m_state[m_idxUpdate].bgColour = bgColour;
    m_state[m_idxUpdate].status = renderState_t::IS_BEING_UPDATED;
 
    m_stateChangeMutex.unlock();
@@ -209,15 +211,6 @@ Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, in
 //===========================================
 void Renderer::draw(const IModel* model) {
    m_state[m_idxUpdate].sceneGraph->insert(model);
-}
-
-//===========================================
-// Renderer::setBgColour
-//===========================================
-void Renderer::setBgColour(const Colour& col) {
-   m_bgColourMutex.lock();
-   m_bgColour = col;
-   m_bgColourMutex.unlock();
 }
 
 //===========================================
@@ -333,11 +326,14 @@ void Renderer::computeFrameRate() {
 //===========================================
 void Renderer::processMessages() {
    m_msgQueueMutex.lock();
+
    for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
       processMessage(*i);
    }
+
    m_msgQueue.clear();
    m_msgQueueEmpty = true;
+
    m_msgQueueMutex.unlock();
 }
 
@@ -356,11 +352,6 @@ void Renderer::renderLoop() {
 
          clear();
 
-         cml::matrix44f_c P;
-         m_cameraMutex.lock();
-         m_camera->getMatrix(P);
-         m_cameraMutex.unlock();
-
          for (auto i = m_state[m_idxRender].sceneGraph->begin(); i != m_state[m_idxRender].sceneGraph->end(); ++i) {
             const IModel* model = *i;
 
@@ -368,7 +359,7 @@ void Renderer::renderLoop() {
 
             setMode(model->getRenderMode());
 
-            m_activeShaderProg->sendData(model, P);
+            m_activeShaderProg->sendData(model, m_state[m_idxRender].P);
 
             GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
          }
@@ -414,10 +405,9 @@ void Renderer::renderLoop() {
 // Renderer::clear
 //===========================================
 void Renderer::clear() {
-   m_bgColourMutex.lock();
-   GL_CHECK(glClearColor(m_bgColour.r, m_bgColour.g, m_bgColour.b, m_bgColour.a));
-   m_bgColourMutex.unlock();
+   const Colour& col = m_state[m_idxRender].bgColour;
 
+   GL_CHECK(glClearColor(col.r, col.g, col.b, col.a));
    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 

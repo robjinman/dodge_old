@@ -142,7 +142,7 @@ void Application::loadMapSettings(const XmlNode data) {
 
       XmlNode node = data.firstChild();
       XML_NODE_CHECK(node, bgColour);
-      m_renderer.setBgColour(Colour(node.firstChild()));
+      m_bgColour = Colour(node.firstChild());
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, dimensions);
@@ -285,13 +285,9 @@ void Application::loadAssets_r(const string& file, int depth) {
 //===========================================
 void Application::computeFrameRate() {
    static Timer timer;
-   static long i = 0;
-   i++;
 
-   if (i % 100 == 0) {
-      m_frameRate = 100.0 / timer.getTime();
-      timer.reset();
-   }
+   m_frameRate = 1.0 / timer.getTime();
+   timer.reset();
 }
 
 //===========================================
@@ -428,15 +424,22 @@ void Application::begin(int argc, char** argv) {
 
    loadMap();
 
+   Timer timer;
    while (1) {
+      timer.reset();
+
       m_win.doEvents();
       keyboard();
       update();
       Box2dPhysics::update();
       m_eventManager.doEvents();
       draw();
-      m_renderer.tick();
+      m_renderer.tick(m_bgColour);
       m_win.swapBuffers();
+
+      double wait = (1.0 / 120.0) - timer.getTime();
+      if (wait < 0.0) wait = 0.0;
+      usleep(wait * 1000000.0);
 
       computeFrameRate();
    }

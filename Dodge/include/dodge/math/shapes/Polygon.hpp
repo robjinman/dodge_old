@@ -83,10 +83,6 @@ class Polygon : public Shape {
       mutable PlainNonTexturedAlphaModel m_outlineModel;
       mutable PlainNonTexturedAlphaModel m_interiorModel;
       Renderer& m_renderer;
-
-      Colour m_fillColour;
-      Colour m_lineColour;
-      Renderer::int_t m_lineWidth;
 };
 
 //===========================================

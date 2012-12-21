@@ -107,10 +107,6 @@ void Range::dbg_draw(const Colour& fillColour, const Colour& lineColour, Rendere
 void Range::setPosition(float32_t x, float32_t y) {
    m_pos.x = x;
    m_pos.y = y;
-
-#ifdef DEBUG
-   m_quad.setRenderTransform(m_pos.x, m_pos.y, m_z);
-#endif
 }
 
 //===========================================

@@ -82,7 +82,7 @@ void constructModels() {
          model->setTextureHandle(b ? tex0->getHandle() : tex1->getHandle());
          model->setColour(col);
 
-//         renderer.bufferModel(model.get());
+         renderer.bufferModel(model.get());
       }
    }
 }
@@ -109,13 +109,13 @@ int main() {
 
       constructModels();
 
-//      Range range(0.5, 0.1, 0.4, 0.2);
-//      range.dbg_render(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
+      Range range(0.5, 0.1, 0.4, 0.2);
 
       while (1) {
          win.doEvents();
          computeFrameRate();
          drawModels();
+         range.dbg_draw(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
          renderer.tick();
       }
    }

@@ -12,7 +12,8 @@ class Application {
    public:
       Application()
          : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
-           m_renderer(Dodge::Renderer::getInstance()) {}
+           m_renderer(Dodge::Renderer::getInstance()),
+           m_frameRate(60.0) {}
 
       void onExit(Functor<void, TYPELIST_0()> callBack);
       void begin(int argc, char** argv);
@@ -49,10 +50,11 @@ class Application {
 #ifdef DEBUG
       bool                       dbg_worldSpaceVisible;
 #endif
+      Dodge::Colour              m_bgColour;
       Dodge::AssetManager        m_assetManager;
       std::map<long, pItem_t>    m_items;
       pPlayer_t                  m_player;
-      Dodge::float32_t           m_frameRate;
+      double                     m_frameRate;
 
       Dodge::Vec2f m_mapSize;
       long m_fillerTileId;

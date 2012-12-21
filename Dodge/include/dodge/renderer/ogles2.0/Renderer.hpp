@@ -73,8 +73,6 @@ class Renderer {
          void* data;
       };
 
-      void setBgColour(const Colour& col);
-
       inline void attachCamera(pCamera_t camera);
       inline Camera& getCamera() const;
 
@@ -90,7 +88,7 @@ class Renderer {
 #endif
       void start();
       void stop();
-      void tick();
+      void tick(const Colour& bgColour = Colour(0.f, 0.f, 0.f, 1.f));
 
    protected:
       Renderer();
@@ -144,6 +142,8 @@ class Renderer {
 
          status_t status;
          std::unique_ptr<SceneGraph> sceneGraph;
+         cml::matrix44f_c P;
+         Colour bgColour;
       };
 
    private:
@@ -176,13 +176,9 @@ class Renderer {
       int m_idxLatest;
       int m_idxRender;
       int m_idxUpdate;
-      std::mutex m_stateChangeMutex;
-
-      Colour m_bgColour;
-      mutable std::mutex m_bgColourMutex;
+      mutable std::mutex m_stateChangeMutex;
 
       pCamera_t m_camera;
-      mutable std::mutex m_cameraMutex;
 
       std::atomic<bool> m_running;
       std::thread* m_thread;
@@ -213,20 +209,14 @@ inline long Renderer::getFrameRate() const {
 // Renderer::attachCamera
 //===========================================
 inline void Renderer::attachCamera(pCamera_t camera) {
-   m_cameraMutex.lock();
    m_camera = camera;
-   m_cameraMutex.unlock();
 }
 
 //===========================================
 // Renderer::getCamera
 //===========================================
 inline Camera& Renderer::getCamera() const {
-   m_cameraMutex.lock();
-   Camera& cpy = *m_camera;
-   m_cameraMutex.unlock();
-
-   return cpy;
+   return *m_camera;
 }
 
 

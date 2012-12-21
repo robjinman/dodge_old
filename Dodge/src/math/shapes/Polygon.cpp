@@ -67,7 +67,8 @@ Polygon::Polygon(const XmlNode data)
 // Contruct deep copy
 //===========================================
 Polygon::Polygon(const Polygon& poly)
-   : m_outlineModel(Renderer::LINES),
+   : Shape(poly),
+     m_outlineModel(Renderer::LINES),
      m_interiorModel(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
 

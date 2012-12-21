@@ -646,6 +646,9 @@ void Entity::setShape(std::unique_ptr<Shape> shape) {
       Vec2f pos = getTranslation_abs();
       m_shape->setRenderTransform(pos.x, pos.y, m_z);
 
+      m_shape->setLineWidth(m_lineWidth);
+      m_shape->setFillColour(m_fillColour);
+      m_shape->setLineColour(m_lineColour);
    }
 
    recomputeBoundary();
