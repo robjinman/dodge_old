@@ -173,8 +173,15 @@ Entity::Entity(const XmlNode data)
 // Entity::Entity
 //===========================================
 Entity::Entity(long name, long type)
-   : m_name(name), m_type(type), m_silent(false), m_scale(1.f, 1.f), m_transl(0.f, 0.f),
-     m_z(1), m_rot(0.f), m_parent(NULL) {
+   : m_name(name),
+     m_type(type),
+     m_silent(false),
+     m_scale(1.f, 1.f),
+     m_transl(0.f, 0.f),
+     m_z(1),
+     m_rot(0.f),
+     m_lineWidth(0),
+     m_parent(NULL) {
 
    ++m_count;
 }
@@ -183,8 +190,14 @@ Entity::Entity(long name, long type)
 // Entity::Entity
 //===========================================
 Entity::Entity(long type)
-   : m_type(type), m_silent(false), m_scale(1.f, 1.f), m_transl(0.f, 0.f), m_z(1),
-     m_rot(0.f), m_parent(NULL) {
+   : m_type(type),
+     m_silent(false),
+     m_scale(1.f, 1.f),
+     m_transl(0.f, 0.f),
+     m_z(1),
+     m_rot(0.f),
+     m_lineWidth(0),
+     m_parent(NULL) {
 
    m_name = generateName();
 
@@ -197,7 +210,8 @@ Entity::Entity(long type)
 // Construct deep copy.
 //===========================================
 Entity::Entity(const Entity& copy)
-   : m_silent(false), m_parent(NULL) {
+   : m_silent(false),
+     m_parent(NULL) {
 
    deepCopy(copy);
    m_name = generateName();
@@ -211,7 +225,8 @@ Entity::Entity(const Entity& copy)
 // Construct deep copy.
 //===========================================
 Entity::Entity(const Entity& copy, long name)
-   : m_silent(false), m_parent(NULL) {
+   : m_silent(false),
+     m_parent(NULL) {
 
    deepCopy(copy);
    m_name = name;

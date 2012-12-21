@@ -89,8 +89,8 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
 
    int nLines = poly1.getNumVertices() + poly2.getNumVertices();
 
-   StackAllocator::marker_t marker = gMemStack.getMarker();
-   Vec2f* lines = static_cast<Vec2f*>(gMemStack.alloc(sizeof(Vec2f) * nLines));
+   StackAllocator::marker_t marker = gGetMemStack().getMarker();
+   Vec2f* lines = static_cast<Vec2f*>(gGetMemStack().alloc(sizeof(Vec2f) * nLines));
 
    for (int i = 0; i < poly1.getNumVertices(); ++i) {
       Vec2f line = (poly1.getVertex(i) - poly1.getVertex((i + 1) % poly1.getNumVertices())) + pos1;
@@ -146,12 +146,12 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
       }
 
       if (p1Max <= p2Min || p2Max <= p1Min) {
-         gMemStack.freeToMarker(marker);
+         gGetMemStack().freeToMarker(marker);
          return false;
       }
    }
 
-   gMemStack.freeToMarker(marker);
+   gGetMemStack().freeToMarker(marker);
    return true;
 }
 

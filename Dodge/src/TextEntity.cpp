@@ -148,8 +148,8 @@ void TextEntity::updateModel() const {
 
    int rowLen = (static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW)) + 0.5;
 
-   StackAllocator::marker_t marker = gMemStack.getMarker();
-   vvvtt_t* verts = reinterpret_cast<vvvtt_t*>(gMemStack.alloc(m_text.size() * 6 * sizeof(vvvtt_t)));
+   StackAllocator::marker_t marker = gGetMemStack().getMarker();
+   vvvtt_t* verts = reinterpret_cast<vvvtt_t*>(gGetMemStack().alloc(m_text.size() * 6 * sizeof(vvvtt_t)));
 
    int v = 0;
    for (uint_t i = 0; i < m_text.length(); ++i) {
@@ -177,7 +177,7 @@ void TextEntity::updateModel() const {
    m_renderer.freeBufferedModel(&m_model);
    m_renderer.bufferModel(&m_model);
 
-   gMemStack.freeToMarker(marker);
+   gGetMemStack().freeToMarker(marker);
 }
 
 //===========================================

@@ -21,6 +21,7 @@ class StackAllocator {
       StackAllocator(size_t size);
       ~StackAllocator();
 
+      inline size_t getSize() const;
       void* alloc(size_t size);
       marker_t getMarker() const;
       void freeToMarker(marker_t marker);
@@ -31,6 +32,13 @@ class StackAllocator {
       byte_t* m_top;
       byte_t* m_bottom;
 };
+
+//===========================================
+// StackAllocator::getSize
+//===========================================
+size_t StackAllocator::getSize() const {
+   return m_size;
+}
 
 
 }

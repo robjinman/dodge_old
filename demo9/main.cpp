@@ -44,11 +44,11 @@ void onWindowResize(int w, int h) {
 
 void drawFrameRates() {
    stringstream fr;
-   fr << frameRate;
+   fr << static_cast<long>(frameRate);
    txtMainFr->setText(fr.str());
 
    fr.str("");
-   fr << renderer.getFrameRate();
+   fr << static_cast<long>(renderer.getFrameRate());
    txtRenderFr->setText(fr.str());
 }
 
@@ -56,14 +56,14 @@ int main() {
    try {
       WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
       win.init("Rotating Square", 240, 240, false);
+      gInitialise();
+
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
       win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
       pCamera_t camera(new Camera(240.0 / 240.0, 1.f));
       renderer.attachCamera(camera);
-
-      renderer.setBgColour(Colour(0.2, 0.9, 0.2, 1.0));
 
       renderer.start();
 
@@ -124,13 +124,11 @@ int main() {
       box->setTranslation(0.05f, 0.65f);
 
       Timer timer;
-      long i = 1;
       while (1) {
          win.doEvents();
          computeFrameRate();
 
-         if (i % 1000 == 0)
-            shape.rotate((180000.0) / frameRate, Vec2f(0.5f, 0.5f));
+         shape.rotate((180.0) / frameRate, Vec2f(0.5f, 0.5f));
 
          if (timer.getTime() > 0.5) {
             drawFrameRates();
@@ -145,14 +143,12 @@ int main() {
          txtMainFr->draw();
          txtRenderFr->draw();
 
-         renderer.tick();
-
-         ++i;
+         renderer.tick(Colour(0.2, 0.9, 0.2, 1.0));
       }
    }
    catch (Exception& e) {
       e.prepend("An error occurred; ");
-      cerr << e.what() << flush;
+      cerr << e.what() << "\n" << flush;
 
       quit();
    }

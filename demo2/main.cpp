@@ -11,13 +11,13 @@ using namespace Dodge;
 using namespace std;
 
 
-Graphics2d graphics2d;
 map<int, bool> keys;
 double frameRate;
 vector<pEntity_t> entities;
 Range dragRegion;
 WorldSpace worldSpace;
 EventManager eventManager;
+Renderer& renderer = Renderer::getInstance();
 
 
 void quit() {
@@ -34,7 +34,6 @@ void keyDown(int code) {
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: cout << "frame rate: " << frameRate << "\n"; break;
-      case WinIO::KEY_N: cout << "worldSpace.dbg_getNumEntities() = " << worldSpace.dbg_getNumEntities() << "\n"; break;
    }
 }
 
@@ -93,25 +92,26 @@ void btn1Release(int x, int y) {
 
    Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
 
-   pShape_t shape(new Shape(internString("rectangle"), unique_ptr<Primitive>(new Quad(size))));
+   pEntity_t shape(new Entity(internString("rectangle")));
+   shape->setShape(unique_ptr<Shape>(new Quad(size)));
    shape->setTranslation(dragRegion.getPosition());
    shape->setZ(1);
 
-   Renderer::colourElement_t fCol[] = {1.f, 0.f, 0.f, 0.2f};
-   shape->getRenderBrush()->setFillColour(fCol);
-   shape->getRenderBrush()->setLineWidth(0);
+   shape->setFillColour(Colour(1.f, 0.f, 0.f, 0.2f));
+   shape->setLineWidth(0);
 
    entities.push_back(shape);
    worldSpace.insertEntity(shape);
 }
 
 void onWindowResize(int w, int h) {
-   Renderer renderer;
    renderer.onWindowResize(w, h);
    graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 int main(int argc, char** argv) {
+   gInitialise();
+
    WinIO win;
    win.init("OpenGLES 2.0 Demo", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
@@ -123,7 +123,10 @@ int main(int argc, char** argv) {
 
    worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
-   graphics2d.init(640, 480);
+   pCamera_t camera(new Camera(240.0 / 240.0, 1.f));
+   renderer.attachCamera(camera);
+
+   renderer.start();
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
    pTexture_t texFont1(new Texture("data/textures/font2.png"));
@@ -150,7 +153,7 @@ int main(int argc, char** argv) {
 
    pSprite_t proto(new Sprite(internString("type0"), tex0));
    proto->addAnimation(anim0);
-   proto->setShape(unique_ptr<Primitive>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
+   proto->setShape(unique_ptr<Shape>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
    proto->setOnScreenSize(w, h);
 
    entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
@@ -180,11 +183,9 @@ int main(int argc, char** argv) {
    poly->setZ(0);
    poly->setTranslation(0.5f, 0.4f);
 
-   Renderer::colourElement_t polyFc[] = {0.f, 1.f, 0.f, 1.f};
-   Renderer::colourElement_t polyLc[] = {0.f, 0.f, 1.f, 1.f};
-   poly->getRenderBrush()->setFillColour(polyFc);
-   poly->getRenderBrush()->setLineColour(polyLc);
-   poly->getRenderBrush()->setLineWidth(6);
+   poly->setFillColour(Colour(0.f, 1.f, 0.f, 1.f));
+   poly->setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
+   poly->setLineWidth(6);
 
    static long strRectangle = internString("rectangle");
    while (1) {
@@ -195,9 +196,7 @@ int main(int argc, char** argv) {
       graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
       poly->draw();
 
-      graphics2d.setLineWidth(1);
-      graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
-      worldSpace.dbg_draw(5);
+      worldSpace.dbg_draw(Colour(1.f, 0.f, 0.f, 1.f), 1, 5);
 
       for (uint_t i = 0; i < entities.size(); ++i) {
          if (entities[i]->getTypeName() == strRectangle) {
@@ -220,11 +219,12 @@ int main(int argc, char** argv) {
          }
       }
 
-      stringstream strFr;
-      strFr << "Frame Rate: " << frameRate << "fps";
-      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
-      graphics2d.drawText(font1, Vec2f(0.02, 0.03), strFr.str(), 0.1, 0.9, 5, 0.f, Vec2f(0.f, 0.f));
+//      stringstream strFr;
+//      strFr << "Frame Rate: " << frameRate << "fps";
+//      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
+//      graphics2d.drawText(font1, Vec2f(0.02, 0.03), strFr.str(), 0.1, 0.9, 5, 0.f, Vec2f(0.f, 0.f));
 
+      renderer.tick();
       eventManager.doEvents();
 
       win.swapBuffers();

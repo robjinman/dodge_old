@@ -264,7 +264,7 @@ void Polygon::setLineWidth(int lineWidth) const {
 void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
    m_outlineModel.setMatrixElement(12, x);
    m_outlineModel.setMatrixElement(13, y);
-   m_outlineModel.setMatrixElement(14, static_cast<float32_t>(z));
+   m_outlineModel.setMatrixElement(14, static_cast<float32_t>(z + 1));
 
    m_interiorModel.setMatrixElement(12, x);
    m_interiorModel.setMatrixElement(13, y);

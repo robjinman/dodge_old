@@ -102,8 +102,6 @@ int main() {
       pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
       renderer.attachCamera(camera);
 
-      renderer.setBgColour(Colour(1.0, 1.0, 0.0, 1.0));
-
       tex0 = pTexture_t(new Texture("0.png"));
       tex1 = pTexture_t(new Texture("1.png"));
 
@@ -116,12 +114,12 @@ int main() {
          computeFrameRate();
          drawModels();
          range.dbg_draw(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
-         renderer.tick();
+         renderer.tick(Colour(1.0, 1.0, 0.0, 1.0));
       }
    }
    catch (Exception& e) {
       e.prepend("An error occurred; ");
-      cerr << e.what() << flush;
+      cerr << e.what() << "\n" << flush;
 
       quit();
    }

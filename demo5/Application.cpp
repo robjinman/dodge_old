@@ -405,6 +405,8 @@ void Application::begin(int argc, char** argv) {
    }
 #endif
    m_win.init("Shit Game", 640, 480, false);
+   gInitialise();
+
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
    m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Application::keyDown));
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
@@ -437,7 +439,7 @@ void Application::begin(int argc, char** argv) {
       m_renderer.tick(m_bgColour);
       m_win.swapBuffers();
 
-      double wait = (1.0 / 120.0) - timer.getTime();
+      double wait = (1.0 / gGetTargetFrameRate()) - timer.getTime();
       if (wait < 0.0) wait = 0.0;
       usleep(wait * 1000000.0);
 

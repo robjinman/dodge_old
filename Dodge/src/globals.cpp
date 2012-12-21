@@ -8,16 +8,57 @@
 #include <WinIO.hpp>
 
 
+using namespace std;
+
+
 namespace Dodge {
 
 
-StackAllocator gMemStack(GLOBAL_STACK_SIZE);
+bool init = false;
+unique_ptr<StackAllocator> memStack;
+float32_t targetFrameRate;
 
+
+//===========================================
+// gInitialise
+//===========================================
+void gInitialise(const projectSettings_t& settings) {
+   if (init)
+      throw Exception("Error initialising globals; Globals already initialised", __FILE__, __LINE__);
+
+   memStack = unique_ptr<StackAllocator>(new StackAllocator(settings.globalStackSize));
+   targetFrameRate = settings.targetFrameRate;
+
+   init = true;
+}
+
+//===========================================
+// gGetTargetFrameRate
+//===========================================
+float32_t gGetTargetFrameRate() {
+   if (!init)
+      throw Exception("Error retrieving target frame rate; Globals not initialised", __FILE__, __LINE__);
+
+   return targetFrameRate;
+}
+
+//===========================================
+// gGetMemStack
+//===========================================
+StackAllocator& gGetMemStack() {
+   if (!init)
+      throw Exception("Error retrieving memory stack; Globals not initialised", __FILE__, __LINE__);
+
+   return *memStack;
+}
 
 //===========================================
 // gGetPixelSize
 //===========================================
 Vec2f gGetPixelSize() {
+   if (!init)
+      throw Exception("Error retrieving pixel size; Globals not initialised", __FILE__, __LINE__);
+
    Renderer& renderer = Renderer::getInstance();
    WinIO win;
 

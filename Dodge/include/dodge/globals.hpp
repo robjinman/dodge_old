@@ -15,9 +15,20 @@
 namespace Dodge {
 
 
-const size_t GLOBAL_STACK_SIZE = 102400; // 100KB
-extern StackAllocator gMemStack;
+struct projectSettings_t {
+   projectSettings_t()
+      : targetFrameRate(120),
+        globalStackSize(102400) {}
 
+   float32_t targetFrameRate;
+   size_t globalStackSize;
+};
+
+
+extern void gInitialise(const projectSettings_t& settings = projectSettings_t());
+
+extern float32_t gGetTargetFrameRate();
+extern StackAllocator& gGetMemStack();
 extern Vec2f gGetPixelSize();
 
 
