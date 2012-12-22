@@ -15,7 +15,7 @@ identifies it. -->
       <!-- 'stopBlock' prototype -->
       <asset id="150">
          <CPhysicalEntity>
-            <Item>
+            <Item solid="true">
                <Entity type="stopBlock" name="stopBlockProto" x="0.0" y="0.0" z="2" rot="0.0">
                   <shape>
                      <Polygon>

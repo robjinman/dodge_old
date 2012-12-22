@@ -19,7 +19,7 @@ identifies it. -->
       <!-- 'soil' prototype -->
       <asset id="50">
          <Soil>
-            <Item>
+            <Item solid="true">
                <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="4" rot="0.0">
                   <shape>
                      <Polygon>

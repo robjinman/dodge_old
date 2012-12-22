@@ -19,8 +19,8 @@ using namespace std;
 namespace Dodge {
 
 
-float Box2dPhysics::m_frameRate = 60.0;
-float Box2dPhysics::m_worldUnitsPerMetre = 0.01;
+float32_t Box2dPhysics::m_timeStep = 1.0 / 60.0;
+float32_t Box2dPhysics::m_worldUnitsPerMetre = 0.01;
 int Box2dPhysics::m_v_iterations = 6;
 int Box2dPhysics::m_p_iterations = 4;
 EventManager Box2dPhysics::m_eventManager = EventManager();
@@ -247,6 +247,7 @@ void Box2dPhysics::loadSettings(const string& file) {
    if (parser.getMetaData(0).compare("Box2D") != 0)
       throw PhysicsException("Error loading settings; File is not for this implementation (Box2D)", __FILE__, __LINE__);
 
+   m_timeStep = 1.f / atof(parser.getValue("fps").data());
    m_worldUnitsPerMetre = atof(parser.getValue("worldUnitsPerMetre").data());
    m_v_iterations = atoi(parser.getValue("vIterations").data());
    m_p_iterations = atoi(parser.getValue("pIterations").data());
@@ -326,28 +327,14 @@ void Box2dPhysics::updatePos(EEvent* ev) {
 }
 
 //===========================================
-// Box2dPhysics::updateFrameRate
-//===========================================
-void Box2dPhysics::updateFrameRate() {
-   static Timer timer;
-   static long i = 0; i++;
-
-   if (i % 10 == 0) {
-      m_frameRate = 10.0 / timer.getTime();
-      timer.reset();
-   }
-}
-
-//===========================================
 // Box2dPhysics::update
 //===========================================
 void Box2dPhysics::update() {
-   updateFrameRate();
    if (m_physEnts.empty()) return;
 
 
    // Update b2Body positions
-   m_world.Step(1.0 / m_frameRate, m_v_iterations, m_p_iterations);
+   m_world.Step(m_timeStep, m_v_iterations, m_p_iterations);
    m_world.ClearForces();
 
 

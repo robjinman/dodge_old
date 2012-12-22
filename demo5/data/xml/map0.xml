@@ -16,7 +16,7 @@ Prototype definitions should go in separate files. -->
    </settings>
    <assets>
       <asset id="98">
-         <Item>
+         <Item solid="false">
             <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
                <shape>
                   <Polygon>
@@ -39,8 +39,16 @@ Prototype definitions should go in separate files. -->
 
       <asset id="97">
          <CSprite>
-            <Item>
+            <Item solid="false">
                <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0.0" y="0.0"/>
+                        <Vec2f x="1.5" y="0.0"/>
+                        <Vec2f x="1.5" y="0.9"/>
+                        <Vec2f x="0.0" y="0.9"/>
+                     </Polygon>
+                  </shape>
                   <scale>
                      <Vec2f x="1.0" y="1.0"/>
                   </scale>
@@ -71,16 +79,16 @@ Prototype definitions should go in separate files. -->
          </CSprite>
       </asset>
 
-      <asset id="99" proto="10"><Player><Item><Entity name="player" x="0.1" y="0.3" z="8"/></Item></Player></asset>
+      <asset id="99" proto="10"><Player><Item solid="true"><Entity name="player" x="0.1" y="0.3" z="8"/></Item></Player></asset>
 
-      <asset id="400" proto="1000"><CPhysicalSprite><Item><Entity name="platform1" x="0.7" y="0.35" rot="10"/></Item></CPhysicalSprite></asset>
-      <asset id="401" proto="1000"><CPhysicalSprite><Item><Entity name="platform2" x="1.1" y="0.5" rot="-5"><scale><Vec2f x="1.9" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
-      <asset id="402" proto="1000"><CPhysicalSprite><Item><Entity name="platform3" x="1.4" y="0.68"><scale><Vec2f x="1.1" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
-      <asset id="403" proto="1000"><CPhysicalSprite><Item><Entity name="platform4" x="0.7" y="0.8"><scale><Vec2f x="1.3" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="400" proto="1000"><CPhysicalSprite><Item solid="true"><Entity name="platform1" x="0.7" y="0.35" rot="10"/></Item></CPhysicalSprite></asset>
+      <asset id="401" proto="1000"><CPhysicalSprite><Item solid="true"><Entity name="platform2" x="1.1" y="0.5" rot="-5"><scale><Vec2f x="1.9" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="402" proto="1000"><CPhysicalSprite><Item solid="true"><Entity name="platform3" x="1.4" y="0.68"><scale><Vec2f x="1.1" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="403" proto="1000"><CPhysicalSprite><Item solid="true"><Entity name="platform4" x="0.7" y="0.8"><scale><Vec2f x="1.3" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
 
-      <asset id="300" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock0" x="0.5" y="0.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="301" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock1" x="0.4" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="302" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock2" x="2.0" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="304" proto="150"><CPhysicalEntity><Item><Entity name="stopBlock3" x="0.5" y="1.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="300" proto="150"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock0" x="0.5" y="0.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="301" proto="150"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock1" x="0.4" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="302" proto="150"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock2" x="2.0" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="304" proto="150"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock3" x="0.5" y="1.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
    </assets>
 </ASSETFILE>

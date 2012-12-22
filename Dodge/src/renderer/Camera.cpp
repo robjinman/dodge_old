@@ -41,7 +41,7 @@ void Camera::setTranslation(float32_t x, float32_t y) {
 //===========================================
 // Camera::getTranslation
 //===========================================
-inline Vec2f Camera::getTranslation() const {
+Vec2f Camera::getTranslation() const {
    m_mutex.lock();
    Vec2f tmp(-0.5 * (m_viewSize.x / m_viewSize.y) * (m_matrix.data()[12] + 1.f), -0.5 * (m_matrix.data()[13] + 1.f));
    m_mutex.unlock();

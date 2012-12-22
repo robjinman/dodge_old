@@ -244,17 +244,18 @@ void Player::draw() const {
 // Player::grounded
 //===========================================
 bool Player::grounded() const {
-   static long gravityRegionStr = internString("gravityRegion");
-
    vector<pEntity_t> vec;
    m_worldSpace.getEntities(getBoundary(), vec);
 
    for (uint_t i = 0; i < vec.size(); ++i) {
-      if (vec[i].get() == this) continue;
-      if (vec[i]->getTypeName() == gravityRegionStr) continue;
-      if (!vec[i]->hasShape()) continue;
+      pItem_t item = boost::dynamic_pointer_cast<Item>(vec[i]);
+      assert(item);
 
-      if (Math::overlap(m_footSensor, getTranslation_abs(), vec[i]->getShape(), vec[i]->getTranslation_abs()))
+      if (item.get() == this) continue;
+      if (!item->isSolid()) continue;
+      if (!item->hasShape()) continue;
+
+      if (Math::overlap(m_footSensor, getTranslation_abs(), item->getShape(), item->getTranslation_abs()))
          return true;
    }
 

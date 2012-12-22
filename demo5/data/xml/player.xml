@@ -19,7 +19,7 @@ identifies it. -->
       <!-- 'player' prototype -->
       <asset id="10">
          <Player>
-            <Item>
+            <Item solid="true">
                <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
                   <shape>
                      <Polygon>
@@ -179,7 +179,7 @@ identifies it. -->
                   </EntityAnimations>
                   <EntityTransformations>
                      <transformation>
-                        <Transformation name="moveDown" rate="1000.0" smooth="1">
+                        <Transformation name="moveDown" rate="6.0" smooth="16">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="-0.1"/></delta>
                               <rot>0.0</rot>
@@ -188,7 +188,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveLeft" rate="6.0" smooth="100">
+                        <Transformation name="moveLeft" rate="6.0" smooth="16">
                            <TransFrame>
                               <delta><Vec2f x="-0.1" y="0.0"/></delta>
                               <rot>0.0</rot>
@@ -197,7 +197,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveUp" rate="6.0" smooth="100">
+                        <Transformation name="moveUp" rate="6.0" smooth="16">
                            <TransFrame>
                               <delta><Vec2f x="0.0" y="0.1"/></delta>
                               <rot>0.0</rot>
@@ -206,7 +206,7 @@ identifies it. -->
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveRight" rate="6.0" smooth="100">
+                        <Transformation name="moveRight" rate="6.0" smooth="16">
                            <TransFrame>
                               <delta><Vec2f x="0.1" y="0.0"/></delta>
                               <rot>0.0</rot>

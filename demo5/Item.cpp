@@ -14,6 +14,10 @@ Item::Item(const XmlNode data)
 
    try {
       XML_NODE_CHECK(data, Item);
+
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, solid);
+      m_solid = attr.getBool();
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Item; ");
@@ -44,6 +48,10 @@ void Item::setPendingDeletion() {
 void Item::assignData(const XmlNode data) {
    try {
       XML_NODE_CHECK(data, Item);
+
+      XmlAttribute attr = data.firstAttribute();
+      if (!attr.isNull() && attr.name() == "solid")
+         m_solid = attr.getBool();
 
       XmlNode node = data.firstChild();
       if (!node.isNull() && node.name() == "Entity")

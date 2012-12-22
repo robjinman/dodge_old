@@ -27,6 +27,7 @@ class Application {
       void deletePending(Dodge::EEvent* event);
       void draw() const;
       void update();
+      void updateViewArea();
 
       void exitDefault();
 
@@ -47,6 +48,7 @@ class Application {
       Dodge::WinIO               m_win;
       Dodge::EventManager        m_eventManager;
       Dodge::WorldSpace          m_worldSpace;
+      Dodge::Range               m_viewArea;
 #ifdef DEBUG
       bool                       dbg_worldSpaceVisible;
 #endif

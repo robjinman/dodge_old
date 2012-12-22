@@ -71,13 +71,12 @@ class Box2dPhysics : public EntityPhysics {
       void updatePos(EEvent* event);
       void deepCopy(const Box2dPhysics& copy);
 
-      static void updateFrameRate();
       static void entityMovedHandler(EEvent* ev);
 
       static EventManager m_eventManager;
       static std::set<EEvent*> m_ignore;
 
-      static float32_t m_frameRate;
+      static float32_t m_timeStep;
       static float32_t m_worldUnitsPerMetre;
       static int m_v_iterations;
       static int m_p_iterations;

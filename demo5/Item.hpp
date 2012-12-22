@@ -18,10 +18,30 @@ class Item : virtual public Dodge::Entity {
 
       void setPendingDeletion();
 
+      inline void setSolid(bool b);
+      inline bool isSolid() const;
+
       virtual ~Item();
+
+   private:
+      bool m_solid;
 };
 
 typedef boost::shared_ptr<Item> pItem_t;
+
+//===========================================
+// Item::setSolid
+//===========================================
+void Item::setSolid(bool b) {
+   m_solid = b;
+}
+
+//===========================================
+// Item::isSolid
+//===========================================
+bool Item::isSolid() const {
+   return m_solid;
+}
 
 
 #endif

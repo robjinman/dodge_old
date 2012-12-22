@@ -315,8 +315,7 @@ void Application::update() {
 
    m_player->update();
 
-   Camera& cam = m_renderer.getCamera();
-   cam.setTranslation(m_player->getTranslation_abs() - cam.getViewSize() / 2.f);
+   updateViewArea();
 }
 
 //===========================================
@@ -377,8 +376,12 @@ void Application::loadMap() {
 // Application::draw
 //===========================================
 void Application::draw() const {
-   for (auto i = m_items.begin(); i != m_items.end(); ++i)
-      i->second->draw();
+   vector<pEntity_t> visibleEnts;
+
+   m_worldSpace.getEntities(m_viewArea, visibleEnts);
+
+   for (uint_t i = 0; i < visibleEnts.size(); ++i)
+      visibleEnts[i]->draw();
 
    m_player->draw();
 
@@ -386,6 +389,17 @@ void Application::draw() const {
    if (dbg_worldSpaceVisible)
       m_worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
 #endif
+}
+
+//===========================================
+// Application::updateViewArea
+//===========================================
+void Application::updateViewArea() {
+   Camera& cam = m_renderer.getCamera();
+   cam.setTranslation(m_player->getTranslation_abs() - cam.getViewSize() / 2.f);
+
+   m_viewArea.setPosition(cam.getTranslation());
+   m_viewArea.setSize(cam.getViewSize());
 }
 
 //===========================================
@@ -430,6 +444,7 @@ void Application::begin(int argc, char** argv) {
    while (1) {
       timer.reset();
 
+      computeFrameRate();
       m_win.doEvents();
       keyboard();
       update();
@@ -442,7 +457,5 @@ void Application::begin(int argc, char** argv) {
       double wait = (1.0 / gGetTargetFrameRate()) - timer.getTime();
       if (wait < 0.0) wait = 0.0;
       usleep(wait * 1000000.0);
-
-      computeFrameRate();
    }
 }
