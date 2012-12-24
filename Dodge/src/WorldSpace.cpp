@@ -10,9 +10,9 @@
 namespace Dodge {
 
 
-EventManager WorldSpace::m_eventManager = EventManager();
-std::unique_ptr<SpatialContainer<pEntity_t> > WorldSpace::m_container = std::unique_ptr<SpatialContainer<pEntity_t> >();
-std::set<pEntity_t> WorldSpace::m_tracking = std::set<pEntity_t>();
+EventManager WorldSpace::m_eventManager;
+std::unique_ptr<SpatialContainer<pEntity_t> > WorldSpace::m_container;
+std::set<pEntity_t> WorldSpace::m_tracking;
 bool WorldSpace::m_init = false;
 
 
@@ -20,8 +20,7 @@ bool WorldSpace::m_init = false;
 // WorldSpace::entityMovedHandler
 //===========================================
 void WorldSpace::entityMovedHandler(EEvent* e) {
-   if (!m_init)   // This is impossible
-      throw Exception("Error in entityMoveHandler; WorldSpace not initialised", __FILE__, __LINE__);
+   assert(m_init);
 
    EEntityBoundingBox* event = static_cast<EEntityBoundingBox*>(e);
 

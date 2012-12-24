@@ -396,9 +396,13 @@ void Application::draw() const {
 //===========================================
 void Application::updateViewArea() {
    Camera& cam = m_renderer.getCamera();
-   cam.setTranslation(m_player->getTranslation_abs() - cam.getViewSize() / 2.f);
+   Vec2f viewPos = m_player->getTranslation_abs() - cam.getViewSize() / 2.f;
 
-   m_viewArea.setPosition(cam.getTranslation());
+   if (viewPos.x < 0.f) viewPos.x = 0.f;
+   if (viewPos.y < 0.f) viewPos.y = 0.f;
+
+   cam.setTranslation(viewPos);
+   m_viewArea.setPosition(viewPos);
    m_viewArea.setSize(cam.getViewSize());
 }
 

@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<project name="" company="" manager="" phase="" project-start="20121224T000000Z" mrproject-version="2" calendar="1">
+  <properties/>
+  <phases/>
+  <calendars>
+    <day-types>
+      <day-type id="0" name="Working" description="A default working day"/>
+      <day-type id="1" name="Nonworking" description="A default non working day"/>
+      <day-type id="2" name="Use base" description="Use day from base calendar"/>
+    </day-types>
+    <calendar id="1" name="Default">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1200"/>
+          <interval start="1300" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
+  </calendars>
+  <tasks>
+    <task id="1" name="Deterministic transformations" note="" work="28800" start="20121224T000000Z" end="20121224T170000Z" work-start="20121224T080000Z" percent-complete="14" priority="0" type="normal" scheduling="fixed-work">
+      <constraint type="must-start-on" time="20121224T000000Z"/>
+    </task>
+    <task id="2" name="Scrolling backgrounds" note="" work="28800" start="20121224T170000Z" end="20121225T170000Z" work-start="20121225T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="1" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="3" name="Resource management" note="" work="86400" start="20121225T170000Z" end="20121228T170000Z" work-start="20121226T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="2" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="4" name="Entity Placement Tool" note="" work="259200" start="20121228T170000Z" end="20130106T170000Z" work-start="20121229T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="3" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="5" name="Finish Polygon class" note="" work="28800" start="20130106T170000Z" end="20130107T170000Z" work-start="20130107T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="4" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="6" name="Scripted events" note="" work="115200" start="20130107T170000Z" end="20130111T170000Z" work-start="20130108T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="5" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="7" name="Advanced UI" note="" work="115200" start="20130111T170000Z" end="20130115T170000Z" work-start="20130112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="6" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="8" name="Windows build" note="" work="57600" start="20130115T170000Z" end="20130117T170000Z" work-start="20130116T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="7" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="9" name="Lua binding" note="" work="86400" start="20130117T170000Z" end="20130120T170000Z" work-start="20130118T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="8" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="10" name="Destructible terrain" note="" work="115200" start="20130120T170000Z" end="20130124T170000Z" work-start="20130121T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="9" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="11" name="Rendering" note="" work="172800" start="20130124T170000Z" end="20130130T170000Z" work-start="20130125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="10" type="FS"/>
+      </predecessors>
+      <task id="12" name="Particle effects" note="" work="57600" start="20130124T170000Z" end="20130126T170000Z" work-start="20130125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="13" name="Batching" note="" work="57600" start="20130126T170000Z" end="20130128T170000Z" work-start="20130127T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="12" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="14" name="Bump mapping" note="" work="57600" start="20130128T170000Z" end="20130130T170000Z" work-start="20130129T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="13" type="FS"/>
+        </predecessors>
+      </task>
+    </task>
+  </tasks>
+  <resource-groups/>
+  <resources/>
+  <allocations/>
+</project>
