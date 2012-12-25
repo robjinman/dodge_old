@@ -79,7 +79,7 @@ void EntityParallax::update() {
    const Range& boundary = m_entity->getBoundary();
 
    Vec2f viewCentre = cam.getTranslation() + cam.getViewSize() / 2.0;
-   Vec2f maxDist = cam.getViewSize();
+   Vec2f maxDist = cam.getViewSize() / 2.0;
    Vec2f centre = boundary.getPosition() + (boundary.getSize() / 2.0);
    Vec2f dist = viewCentre - centre;
    Vec2f norm(dist.x / maxDist.x, dist.y / maxDist.y);

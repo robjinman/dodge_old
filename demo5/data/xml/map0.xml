@@ -79,7 +79,7 @@ Prototype definitions should go in separate files. -->
                </Sprite>
             </CSprite>
             <EntityParallax>
-               <range><Vec2f x="0.4" y="0.4"/></range>
+               <range><Vec2f x="0.25" y="0.25"/></range>
             </EntityParallax>
          </Cave>
       </asset>
