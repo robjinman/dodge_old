@@ -6,6 +6,7 @@
 #include <cstring>
 #include <Animation.hpp>
 #include <StringId.hpp>
+#include <globals.hpp>
 
 
 using namespace std;
@@ -26,9 +27,9 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
    out << "name: " << getInternedString(m_name) << "\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
-   out << "rate: " << m_rate << "\n";
+   out << "duration: " << m_duration << "\n";
 
-   for (unsigned int f = 0; f < m_frames.size(); f++) {
+   for (unsigned int f = 0; f < m_frames.size(); ++f) {
       for (int i = 0; i < tab + 1; ++i) out << "\t";
       out << "frame " << f << ":\n";
 
@@ -51,8 +52,8 @@ Animation::Animation(const XmlNode data)
       m_name = internString(attr.getString());
 
       attr = attr.nextAttribute();
-      XML_ATTR_CHECK(attr, rate);
-      m_rate = attr.getFloat();
+      XML_ATTR_CHECK(attr, duration);
+      m_duration = attr.getFloat();
 
       XmlNode node = data.firstChild();
       while (!node.isNull() && node.name() == "AnimFrame") {
@@ -74,15 +75,15 @@ Animation::Animation(const XmlNode data)
 Animation::Animation(const Animation& copy, long name)
    : m_name(name), m_state(STOPPED), m_frameReady(false) {
 
-   m_rate = copy.m_rate;
+   m_duration = copy.m_duration;
    m_frames = copy.m_frames;
 }
 
 //===========================================
 // Animation::Animation
 //===========================================
-Animation::Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames)
-   : m_name(name), m_rate(rate), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
+Animation::Animation(long name, float32_t duration, const std::vector<AnimFrame>& frames)
+   : m_name(name), m_duration(duration), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
 
 //===========================================
 // Animation::clone
@@ -94,18 +95,18 @@ Animation* Animation::clone() const {
 //===========================================
 // Animation::play
 //===========================================
-bool Animation::play() {
+bool Animation::play(bool repeat) {
    switch (m_state) {
       case STOPPED:
-         m_timer.reset();
-         m_current = 0;
+         m_frame = 0;
+         m_tickCount = 0;
+         m_frameReady = true;
          m_state = PLAYING;
-         m_prev = m_timer.getTime();
+         m_repeat = repeat;
       break;
       case PAUSED:
-         m_timer.reset();
          m_state = PLAYING;
-         m_prev = m_timer.getTime();
+         m_repeat = repeat;
       break;
       case PLAYING: return false;
    }
@@ -114,30 +115,63 @@ bool Animation::play() {
 }
 
 //===========================================
+// Animation::step
+//===========================================
+void Animation::step() {
+   if (m_state == PAUSED) {
+      ++m_frame;
+
+      if (m_frame < m_frames.size()) {
+         m_frameReady = true;
+      }
+      else {
+         m_state = STOPPED;
+         m_frameReady = false;
+      }
+   }
+}
+
+//===========================================
+// Animation::getCurrentFrame
+//===========================================
+const AnimFrame* Animation::getCurrentFrame() {
+   if (m_frameReady) {
+      m_frameReady = false;
+      return &m_frames[m_frame];
+   }
+   return NULL;
+}
+
+//===========================================
 // Animation::update
 //===========================================
-void Animation::update() {
+void Animation::update(bool* justFinished) {
    if (m_state != PLAYING) return;
    if (m_frames.empty()) return;
 
-   float32_t diff = m_timer.getTime() - m_prev;
-   float32_t dt = 1.f / m_rate;
-   if (diff > dt) {
-      float32_t extra = diff - dt;
+   ++m_tickCount;
 
-      do {
+   uint_t n = static_cast<uint_t>((gGetTargetFrameRate() * m_duration) / static_cast<float32_t>(m_frames.size()));
+
+   if (m_tickCount >= n) {
+      ++m_frame;
+
+      if (m_frame < m_frames.size()) {
+         m_tickCount = 0;
          m_frameReady = true;
-
-         ++m_current;
-         if (extra >= dt) extra -= dt;
-
-         if (m_current == m_frames.size()) {
-            m_state = STOPPED;
-            break;
+      }
+      else {
+         if (m_repeat) {
+            m_frame = 0;
+            m_frameReady = true;
          }
-      } while (extra >= dt);
+         else {
+            m_state = STOPPED;
+            m_frameReady = false;
+         }
 
-      m_prev = m_timer.getTime() - extra;
+         if (justFinished) *justFinished = true;
+      }
    }
 }
 

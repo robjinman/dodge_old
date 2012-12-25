@@ -22,5 +22,5 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/StringId.o \
 	$(BASE_DIR)/TextEntity.o \
 	$(BASE_DIR)/Transformation.o \
-	$(BASE_DIR)/TransFrame.o \
+	$(BASE_DIR)/TransPart.o \
 	$(BASE_DIR)/WorldSpace.o

@@ -16,7 +16,6 @@
 #include "xml/xml.hpp"
 #include "Exception.hpp"
 #include "AnimFrame.hpp"
-#include "Timer.hpp"
 #include "Asset.hpp"
 
 
@@ -34,35 +33,35 @@ class Animation : virtual public Asset {
       virtual Animation* clone() const;
 
       inline void addFrame(const AnimFrame& frame);
-      inline void setFrameRate(float32_t rate);
+      inline void setDuration(float32_t duration);
 
       inline long getName() const;
-      inline float32_t getFrameRate() const;
+      inline float32_t getDuration() const;
       inline state_t getState() const;
-      inline const AnimFrame* getCurrentFrame();
+      const AnimFrame* getCurrentFrame();
       inline uint_t getCurrentFrameIndex() const;
       inline const AnimFrame* getFrame(uint_t idx) const;
       inline uint_t getNumFrames() const;
 
-      inline void step();
+      void step();
       inline void setFrame(uint_t frame);
-      bool play();
+      bool play(bool repeat = false);
       inline void pause();
       inline void stop();
-      void update();
+      void update(bool* justFinished = NULL);
 
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
    private:
-      Timer m_timer;
       long m_name;
-      float32_t m_rate;
-      uint_t m_current;
-      float32_t m_prev;
+      float32_t m_duration;
+      uint_t m_frame;
+      uint_t m_tickCount;
       std::vector<AnimFrame> m_frames;
       state_t m_state;
+      bool m_repeat;
 
       bool m_frameReady;   // Indicates when frame is ready to be read via getCurrentFrame()
 };
@@ -77,10 +76,10 @@ inline void Animation::addFrame(const AnimFrame& frame) {
 }
 
 //===========================================
-// Animation::setFrameRate
+// Animation::setDuration
 //===========================================
-inline void Animation::setFrameRate(float32_t rate) {
-   m_rate = rate;
+inline void Animation::setDuration(float32_t duration) {
+   m_duration = duration;
 }
 
 //===========================================
@@ -91,10 +90,10 @@ inline long Animation::getName() const {
 }
 
 //===========================================
-// Animation::getFrameRate
+// Animation::getDuration
 //===========================================
-inline float32_t Animation::getFrameRate() const {
-   return m_rate;
+inline float32_t Animation::getDuration() const {
+   return m_duration;
 }
 
 //===========================================
@@ -108,7 +107,7 @@ inline Animation::state_t Animation::getState() const {
 // Animation::getCurrentFrameIndex
 //===========================================
 inline uint_t Animation::getCurrentFrameIndex() const {
-   return m_current;
+   return m_frame;
 }
 
 //===========================================
@@ -129,31 +128,13 @@ inline uint_t Animation::getNumFrames() const {
 }
 
 //===========================================
-// Animation::getCurrentFrame
-//===========================================
-inline const AnimFrame* Animation::getCurrentFrame() {
-   if (m_frameReady && m_current > 0) {
-      m_frameReady = false;
-      return &m_frames[m_current - 1];
-   }
-   return NULL;
-}
-
-//===========================================
 // Animation::setFrame
 //===========================================
 inline void Animation::setFrame(uint_t frame) {
    if (frame < m_frames.size())
-      m_current = frame;
+      m_frame = frame;
    else
       throw Exception("Error setting animFrame; index out of range", __FILE__, __LINE__);
-}
-
-//===========================================
-// Animation::step
-//===========================================
-inline void Animation::step() {
-   ++m_current;
 }
 
 //===========================================

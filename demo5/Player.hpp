@@ -8,6 +8,7 @@
 #include <dodge/Box2dPhysics.hpp>
 #include <dodge/PhysicalSprite.hpp>
 #include <dodge/math/math.hpp>
+#include <dodge/Timer.hpp>
 #include "Item.hpp"
 
 
@@ -34,6 +35,7 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       virtual Player* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
       virtual void update();
+      virtual void onEvent(const Dodge::EEvent* event);
 
       virtual void draw() const;
 

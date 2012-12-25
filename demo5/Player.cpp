@@ -1,5 +1,4 @@
 #include <set>
-#include <dodge/ETransFinished.hpp>
 #include <dodge/StringId.hpp>
 #include "Player.hpp"
 
@@ -125,11 +124,10 @@ void Player::snapToGridH(float32_t offset) {
    float32_t x = getTranslation_abs().x;
    float32_t targetx = floor((x / m_gridSize.x) + 0.5) * m_gridSize.x + offset;
 
-   vector<TransFrame> frames;
-   frames.push_back(TransFrame(Vec2f(targetx - x, 0.f), 0.f, Vec2f(1.f, 1.f)));
+   vector<TransPart> parts;
+   parts.push_back(TransPart(0.1, Vec2f(targetx - x, 0.f), 0.f, Vec2f(1.f, 1.f)));
 
-   pTransformation_t t(new Transformation(snapToGridHStr, 16.f, frames));
-   t->setSmooth(8);
+   pTransformation_t t(new Transformation(snapToGridHStr, parts));
 
    addTransformation(t);
    playTransformation(snapToGridHStr);
@@ -144,11 +142,10 @@ void Player::snapToGridV(float32_t offset) {
    float32_t y = getTranslation_abs().y;
    float32_t targety = floor((y / m_gridSize.y) + 0.5) * m_gridSize.y + offset;
 
-   vector<TransFrame> frames;
-   frames.push_back(TransFrame(Vec2f(0.f, targety - y), 0.f, Vec2f(1.f, 1.f)));
+   vector<TransPart> parts;
+   parts.push_back(TransPart(0.1, Vec2f(0.f, targety - y), 0.f, Vec2f(1.f, 1.f)));
 
-   pTransformation_t t(new Transformation(snapToGridVStr, 16.f, frames));
-   t->setSmooth(8);
+   pTransformation_t t(new Transformation(snapToGridVStr, parts));
 
    addTransformation(t);
    playTransformation(snapToGridVStr);
@@ -169,12 +166,49 @@ void Player::removeFromWorld() {
 }
 
 //===========================================
+// Player::onEvent
+//===========================================
+void Player::onEvent(const EEvent* event) {
+   static long transPartFinishedStr = internString("transPartFinished");
+   static long moveLeftStr = internString("moveLeft");
+   static long moveRightStr = internString("moveRight");
+   static long moveUpStr = internString("moveUp");
+   static long moveDownStr = internString("moveDown");
+
+   PhysicalSprite<Box2dPhysics>::onEvent(event);
+
+   if (event->getType() == transPartFinishedStr) {
+      const ETransPartFinished* e = static_cast<const ETransPartFinished*>(event);
+      pTransformation_t trans = e->transformation;
+
+      if (trans->getName() == moveLeftStr
+         || trans->getName() == moveUpStr
+         || trans->getName() == moveRightStr
+         || trans->getName() == moveDownStr) stepAnimation();
+   }
+}
+
+//===========================================
 // Player::update
 //===========================================
 void Player::update() {
    static long gravityRegionStr = internString("gravityRegion");
+   static long moveLeftStr = internString("moveLeft");
+   static long moveRightStr = internString("moveRight");
 
    PhysicalSprite<Box2dPhysics>::update();
+
+   if (m_mode == PLATFORM_MODE) {
+      float32_t v = fabs(getLinearVelocity().x);
+      float32_t minDuration = 0.2;
+      float32_t maxDuration = 1.0;
+      float32_t norm = (m_speed - v) / m_speed;
+      float32_t duration = minDuration + norm * (maxDuration - minDuration);
+
+      if (getAnimName() == moveLeftStr || getAnimName() == moveRightStr) {
+         setAnimationDuration(v < 0.1 ? 9999.9 : duration);
+      }
+   }
 
    if (m_modeLockTimer.getTime() > m_modeLocked) {
       bool b = false;
@@ -323,7 +357,8 @@ bool Player::move(int dir) {
             break;
       }
 
-      playAnimation(plyrAnim);
+      playAnimation(plyrAnim, true);
+      pauseAnimation();
 
       if (numActiveTransformations() == 0) {
          playTransformation(plyrAnim);
@@ -377,7 +412,9 @@ bool Player::move(int dir) {
                move(0);
             }
             else {
-               playAnimation(moveLeftStr);
+               if (getAnimName() != moveLeftStr) stopAnimation();
+               playAnimation(moveLeftStr, true);
+
                if (getLinearVelocity().x > -m_speed)
                   applyForce(Vec2f(-m_acc, 0.0), Vec2f(0.0, 0.0));
             }
@@ -439,7 +476,9 @@ bool Player::move(int dir) {
                move(2);
             }
             else {
-               playAnimation(moveRightStr);
+               if (getAnimName() != moveRightStr) stopAnimation();
+               playAnimation(moveRightStr, true);
+
                if (getLinearVelocity().x < m_speed)
                   applyForce(Vec2f(m_acc, 0.0), Vec2f(0.0, 0.0));
             }

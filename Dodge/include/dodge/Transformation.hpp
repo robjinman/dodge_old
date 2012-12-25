@@ -14,70 +14,94 @@
 #include <boost/shared_ptr.hpp>
 #include "math/Vec2f.hpp"
 #include "Exception.hpp"
-#include "Timer.hpp"
-#include "TransFrame.hpp"
+#include "TransPart.hpp"
 #include "Asset.hpp"
+#include "EEvent.hpp"
+#include "StringId.hpp"
 
 
 namespace Dodge {
 
 
 class Entity;
+class Transformation;
+
+class ETransFinished : public EEvent {
+   public:
+      ETransFinished(boost::shared_ptr<Entity> entity_, const boost::shared_ptr<Transformation> trans_)
+         : EEvent(internString("transFinished")), transformation(trans_), entity(entity_) {}
+
+      const boost::shared_ptr<Transformation> transformation;
+      boost::shared_ptr<Entity> entity;
+};
+
+class ETransPartFinished : public EEvent {
+   public:
+      ETransPartFinished(boost::shared_ptr<Entity> entity_, const boost::shared_ptr<Transformation> trans_)
+         : EEvent(internString("transPartFinished")), transformation(trans_), entity(entity_) {}
+
+      const boost::shared_ptr<Transformation> transformation;
+      boost::shared_ptr<Entity> entity;
+};
 
 class Transformation : virtual public Asset {
    public:
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
-      Transformation()
-         : m_rate(1),
-           m_current(0),
-           m_smooth(1),
-           m_state(STOPPED),
-           m_frameReady(false),
-           m_tmpFrame(Vec2f(0.0, 0.0), 0.0, Vec2f(1.0, 1.0)) {}
+      struct delta_t {
+         delta_t() : rot(0) {}
+
+         delta_t(const Vec2f& t, float32_t r, const Vec2f& s)
+            : transl(t), rot(r), scale(s) {}
+
+         Vec2f transl;
+         float32_t rot;
+         Vec2f scale;
+      };
 
       explicit Transformation(const XmlNode data);
       Transformation(const Transformation& copy, long name);
-      Transformation(long name, double rate, const std::vector<TransFrame>& frames);
+      Transformation(long name, const std::vector<TransPart>& parts);
 
       virtual Transformation* clone() const;
 
       inline void setName(long name);
-      inline void addFrame(const TransFrame& frame);
-      inline void addFrames(const std::vector<TransFrame>& frames);
-      inline void setSmooth(int smooth);
-      inline void setFrameRate(double rate);
+      void addPart(const TransPart& part);
+      void addParts(const std::vector<TransPart>& parts);
 
       inline long getName() const;
-      inline int getSmooth() const;
-      inline double getFrameRate() const;
-      inline const TransFrame* getCurrentFrame();
-      inline unsigned int getCurrentFrameIndex() const;
-      inline unsigned int getNumFrames() const;
+
+      inline uint_t getCurrentPartIdx() const;
+      inline uint_t getNumParts() const;
+      inline uint_t getCurrentFrameNumber() const;
+      inline uint_t getNumFrames() const;
+      inline float32_t getDuration() const;
+
       inline state_t getState() const;
 
-      inline void step();
-      inline void setFrame(unsigned int frame);
+//      inline void setPart(uint_t part); // TODO
+//      void setFrame(uint_t frame); // TODO
       inline void stop();
       inline void pause();
       void play();
-      void update();
+      const delta_t* update();
 
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
 
    private:
-      Timer m_timer;
+      void init();
+
       long m_name;
-      double m_rate;
-      unsigned int m_current;
-      double m_prev;
-      int m_smooth;
-      std::vector<TransFrame> m_frames;
+      uint_t m_frame;
+      uint_t m_numFrames;
+      uint_t m_part;
+      std::vector<TransPart> m_parts;
       state_t m_state;
-      bool m_frameReady;
-      TransFrame m_tmpFrame;
+      float32_t m_duration;
+      delta_t m_delta;
+      uint_t m_endOfPart;
 };
 
 typedef boost::shared_ptr<Transformation> pTransformation_t;
@@ -90,52 +114,10 @@ inline void Transformation::setName(long name) {
 }
 
 //===========================================
-// Transformation::addFrame
-//===========================================
-inline void Transformation::addFrame(const TransFrame& frame) {
-   m_frames.push_back(frame);
-}
-
-//===========================================
-// Transformation::addFrame
-//===========================================
-inline void Transformation::addFrames(const std::vector<TransFrame>& frames) {
-   m_frames = frames;
-}
-
-//===========================================
-// Transformation::setSmooth
-//===========================================
-inline void Transformation::setSmooth(int smooth) {
-   m_smooth = smooth;
-}
-
-//===========================================
-// Transformation::setFrameRate
-//===========================================
-inline void Transformation::setFrameRate(double rate) {
-   m_rate = rate;
-}
-
-//===========================================
 // Transformation::getName
 //===========================================
 inline long Transformation::getName() const {
    return m_name;
-}
-
-//===========================================
-// Transformation::getSmooth
-//===========================================
-inline int Transformation::getSmooth() const {
-   return m_smooth;
-}
-
-//===========================================
-// Transformation::getFrameRate
-//===========================================
-inline double Transformation::getFrameRate() const {
-   return m_rate;
 }
 
 //===========================================
@@ -146,28 +128,38 @@ inline Transformation::state_t Transformation::getState() const {
 }
 
 //===========================================
-// Transformation::getCurrentFrameIndex
+// Transformation::getCurrentPartIdx
 //===========================================
-inline unsigned int Transformation::getCurrentFrameIndex() const {
-   return m_current;
+inline uint_t Transformation::getCurrentPartIdx() const {
+   return m_part;
+}
+
+//===========================================
+// Transformation::getCurrentFrameNumber
+//===========================================
+inline uint_t Transformation::getCurrentFrameNumber() const {
+   return m_frame;
 }
 
 //===========================================
 // Transformation::getNumFrames
 //===========================================
-inline unsigned int Transformation::getNumFrames() const {
-   return m_frames.size();
+inline uint_t Transformation::getNumFrames() const {
+   return m_numFrames;
 }
 
 //===========================================
-// Transformation::getCurrentFrame
+// Transformation::getNumParts
 //===========================================
-inline const TransFrame* Transformation::getCurrentFrame() {
-   if (m_frameReady && m_current > 0) {
-      m_frameReady = false;
-      return &m_tmpFrame;
-   }
-   return NULL;
+inline uint_t Transformation::getNumParts() const {
+   return m_parts.size();
+}
+
+//===========================================
+// Transformation::getDuration
+//===========================================
+inline float32_t Transformation::getDuration() const {
+   return m_duration;
 }
 
 //===========================================
@@ -182,23 +174,6 @@ inline void Transformation::pause() {
 //===========================================
 inline void Transformation::stop() {
    m_state = STOPPED;
-}
-
-//===========================================
-// Transformation::step
-//===========================================
-inline void Transformation::step() {
-   ++m_current;
-}
-
-//===========================================
-// Transformation::setFrame
-//===========================================
-inline void Transformation::setFrame(unsigned int frame) {
-   if (frame < m_frames.size())
-      m_current = frame;
-   else
-      throw Exception("Frame out of range", __FILE__, __LINE__);
 }
 
 

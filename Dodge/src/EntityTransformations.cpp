@@ -7,7 +7,6 @@
 #include <cstring>
 #include <EntityTransformations.hpp>
 #include <Entity.hpp>
-#include <ETransFinished.hpp>
 #include <AssetManager.hpp>
 
 
@@ -139,30 +138,32 @@ void EntityTransformations::playTransformation(long name) {
 // EntityTransformations::update
 //===========================================
 void EntityTransformations::update() {
-   map<long, pTransformation_t>::iterator it = m_transformations.begin();
-   while (it != m_transformations.end()) {
-      it->second->update();
+   try {
+      for (auto it = m_transformations.begin(); it != m_transformations.end(); ++it) {
+         uint_t part = it->second->getCurrentPartIdx();
+         const Transformation::delta_t* delta = it->second->update();
 
-      const TransFrame* frame = it->second->getCurrentFrame();
-      if (frame) {
-         m_entity->translate(frame->delta.x, frame->delta.y);
-         if (frame->rot != 0.f) m_entity->rotate(frame->rot);
-         if (frame->scale != Vec2f(1.f, 1.f)) m_entity->scale(frame->scale);
+         if (part != it->second->getCurrentPartIdx()) {
+            ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), it->second);
+            m_entity->onEvent(event);
+         }
 
-         if (it->second->getCurrentFrameIndex() == it->second->getNumFrames() * it->second->getSmooth()) {
-            try {
+         if (delta) {
+            m_entity->translate(delta->transl.x, delta->transl.y);
+            if (delta->rot != 0.f) m_entity->rotate(delta->rot);
+            if (delta->scale != Vec2f(1.f, 1.f)) m_entity->scale(delta->scale);
+
+            if (it->second->getCurrentFrameNumber() == it->second->getNumFrames()) {
                ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), it->second);
                m_entity->onEvent(event);
             }
-            catch (bad_alloc& e) {
-               Exception ex("Error updating EntityTransformations; ", __FILE__, __LINE__);
-               ex.append(e.what());
-               throw ex;
-            }
          }
       }
-
-      ++it;
+   }
+   catch (bad_alloc& e) {
+      Exception ex("Error updating EntityTransformations; ", __FILE__, __LINE__);
+      ex.append(e.what());
+      throw ex;
    }
 }
 
@@ -174,7 +175,7 @@ int EntityTransformations::numActiveTransformations() const {
 
    map<long, pTransformation_t>::const_iterator it = m_transformations.begin();
    while (it != m_transformations.end()) {
-      if (it->second->getState() == Transformation::PLAYING) n++;
+      if (it->second->getState() == Transformation::PLAYING) ++n;
       ++it;
    }
 

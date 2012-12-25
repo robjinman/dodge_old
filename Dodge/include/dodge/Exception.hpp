@@ -1,6 +1,6 @@
 /*
- * Author: Rob Jinman <jinmane@gmail.com>
- * Date: 2011
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
  */
 
 #ifndef __EXCEPTION_HPP__

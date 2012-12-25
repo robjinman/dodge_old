@@ -57,7 +57,7 @@ identifies it. -->
                         <Vec2f x="0.1" y="0.1"/>
                      </onScreenSize>
                      <animation>
-                        <Animation name="moveDown" rate="24.0">
+                        <Animation name="moveDown" duration="0.16667">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="0"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -81,7 +81,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveLeft" rate="24.0">
+                        <Animation name="moveLeft" duration="0.16667">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="16"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -105,7 +105,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveUp" rate="24.0">
+                        <Animation name="moveUp" duration="0.16667">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="32"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -129,7 +129,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="moveRight" rate="24.0">
+                        <Animation name="moveRight" duration="0.16667">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="48"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -153,7 +153,7 @@ identifies it. -->
                         </Animation>
                      </animation>
                      <animation>
-                        <Animation name="jump" rate="24.0">
+                        <Animation name="jump" duration="0.16667">
                            <AnimFrame>
                               <pos><Vec2i x="0" y="64"/></pos>
                               <dim><Vec2i x="16" y="16"/></dim>
@@ -179,39 +179,99 @@ identifies it. -->
                   </EntityAnimations>
                   <EntityTransformations>
                      <transformation>
-                        <Transformation name="moveDown" rate="6.0" smooth="16">
-                           <TransFrame>
-                              <delta><Vec2f x="0.0" y="-0.1"/></delta>
+                        <Transformation name="moveDown">
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
                               <rot>0.0</rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransFrame>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveLeft" rate="6.0" smooth="16">
-                           <TransFrame>
-                              <delta><Vec2f x="-0.1" y="0.0"/></delta>
+                        <Transformation name="moveLeft">
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
                               <rot>0.0</rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransFrame>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveUp" rate="6.0" smooth="16">
-                           <TransFrame>
-                              <delta><Vec2f x="0.0" y="0.1"/></delta>
+                        <Transformation name="moveUp">
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="0.025"/></transl>
                               <rot>0.0</rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransFrame>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.0" y="0.025"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
                         </Transformation>
                      </transformation>
                      <transformation>
-                        <Transformation name="moveRight" rate="6.0" smooth="16">
-                           <TransFrame>
-                              <delta><Vec2f x="0.1" y="0.0"/></delta>
+                        <Transformation name="moveRight">
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.025" y="0.0"/></transl>
                               <rot>0.0</rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransFrame>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
+                           <TransPart duration="0.05">
+                              <transl><Vec2f x="0.025" y="0.0"/></transl>
+                              <rot>0.0</rot>
+                              <scale><Vec2f x="1.0" y="1.0"/></scale>
+                           </TransPart>
                         </Transformation>
                      </transformation>
                   </EntityTransformations>

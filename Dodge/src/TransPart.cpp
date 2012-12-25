@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
 #include <Exception.hpp>
-#include <TransFrame.hpp>
+#include <TransPart.hpp>
 #include <globals.hpp>
 
 
@@ -12,15 +12,19 @@ namespace Dodge {
 
 
 //===========================================
-// TransFrame::Transframe
+// TransPart::Transframe
 //===========================================
-TransFrame::TransFrame(const XmlNode data) {
+TransPart::TransPart(const XmlNode data) {
    try {
-      XML_NODE_CHECK(data, TransFrame);
+      XML_NODE_CHECK(data, TransPart);
+
+      XmlAttribute attr = data.firstAttribute();
+      XML_ATTR_CHECK(attr, duration);
+      duration = attr.getFloat();
 
       XmlNode node = data.firstChild();
-      XML_NODE_CHECK(node, delta);
-      delta = Vec2f(node.firstChild());
+      XML_NODE_CHECK(node, transl);
+      transl = Vec2f(node.firstChild());
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, rot);
@@ -31,21 +35,24 @@ TransFrame::TransFrame(const XmlNode data) {
       scale = Vec2f(node.firstChild());
    }
    catch (XmlException& e) {
-      e.prepend("Error parsing XML for instance of class TransFrame; ");
+      e.prepend("Error parsing XML for instance of class TransPart; ");
       throw;
    }
 }
 
 #ifdef DEBUG
 //===========================================
-// TransFrame::dbg_print
+// TransPart::dbg_print
 //===========================================
-void TransFrame::dbg_print(ostream& out, int tab) const {
+void TransPart::dbg_print(ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";
-   out << "TransFrame\n";
+   out << "TransPart\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
-   out << "delta: (" << delta.x << ", " << delta.y << ")\n";
+   out << "duration: " << duration << "\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "transl: (" << transl.x << ", " << transl.y << ")\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "rot: " << rot << "\n";

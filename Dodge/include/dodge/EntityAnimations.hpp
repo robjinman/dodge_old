@@ -32,6 +32,7 @@ class EntityAnimations {
       inline void setTexture(pTexture_t texture);
       inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
       inline void setOnScreenSize(float32_t w, float32_t h);
+      inline void setAnimationDuration(float32_t duration);
 
       void addAnimation(pAnimation_t anim);
       void removeAnimation(long anim);
@@ -42,8 +43,9 @@ class EntityAnimations {
       inline Animation::state_t getAnimState() const;
       inline long getAnimName() const;
 
-      bool playAnimation(long name);
-      inline bool playAnimation();
+      bool playAnimation(long name, bool repeat = false);
+      inline bool playAnimation(bool repeat = false);
+      inline void stepAnimation();
       inline void pauseAnimation();
       inline void stopAnimation();
 
@@ -80,6 +82,13 @@ class EntityAnimations {
 };
 
 //===========================================
+// EntityAnimations::setAnimationDuration
+//===========================================
+inline void EntityAnimations::setAnimationDuration(float32_t duration) {
+   if (m_activeAnim) m_activeAnim->setDuration(duration);
+}
+
+//===========================================
 // EntityAnimations::setTexture
 //===========================================
 inline void EntityAnimations::setTexture(pTexture_t texture) {
@@ -104,8 +113,8 @@ inline void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
 //===========================================
 // EntityAnimations::playAnimation
 //===========================================
-inline bool EntityAnimations::playAnimation() {
-   if (m_activeAnim) return m_activeAnim->play();
+inline bool EntityAnimations::playAnimation(bool repeat) {
+   if (m_activeAnim) return m_activeAnim->play(repeat);
 }
 
 //===========================================
@@ -113,6 +122,13 @@ inline bool EntityAnimations::playAnimation() {
 //===========================================
 inline void EntityAnimations::pauseAnimation() {
    if (m_activeAnim) m_activeAnim->pause();
+}
+
+//===========================================
+// EntityAnimations::stepAnimation
+//===========================================
+inline void EntityAnimations::stepAnimation() {
+   if (m_activeAnim) m_activeAnim->step();
 }
 
 //===========================================

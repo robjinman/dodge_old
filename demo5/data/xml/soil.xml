@@ -52,7 +52,7 @@ identifies it. -->
                      <Vec2f x="0.1" y="0.1"/>
                   </onScreenSize>
                   <animation>
-                     <Animation name="dissolve" rate="48.0">
+                     <Animation name="dissolve" duration="0.25">
                         <AnimFrame>
                            <pos><Vec2i x="0" y="0"/></pos>
                            <dim><Vec2i x="64" y="64"/></dim>

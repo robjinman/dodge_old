@@ -213,14 +213,14 @@ void EntityAnimations::draw() const {
 //
 // Plays an animation if it's not already playing.
 //===========================================
-bool EntityAnimations::playAnimation(long name) {
+bool EntityAnimations::playAnimation(long name, bool repeat) {
    if (getAnimState() == Animation::PLAYING) return false;
 
    map<long, pAnimation_t>::iterator it = m_animations.find(name);
    if (it == m_animations.end()) return false;
 
    m_activeAnim = it->second;
-   return m_activeAnim->play();
+   return m_activeAnim->play(repeat);
 }
 
 //===========================================
@@ -344,7 +344,8 @@ void EntityAnimations::addToWorld() {
 void EntityAnimations::update() {
    map<long, pAnimation_t>::iterator it = m_animations.begin();
    while (it != m_animations.end()) {
-      it->second->update();
+      bool justFinished = false;
+      it->second->update(&justFinished);
 
       const AnimFrame* frame = it->second->getCurrentFrame();
       if (frame) {
@@ -352,20 +353,20 @@ void EntityAnimations::update() {
          m_entity->setFillColour(frame->col);
          if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
          updateModel();
+      }
 
-         if (it->second->getCurrentFrameIndex() == it->second->getNumFrames()) {
-            try {
-               EventManager eventManager;
+      if (justFinished) {
+         try {
+            EventManager eventManager;
 
-               EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), it->second);
-               m_entity->onEvent(event);
-               eventManager.queueEvent(event);
-            }
-            catch (bad_alloc& e) {
-               Exception ex("Error updating EntityAnimations; ", __FILE__, __LINE__);
-               ex.append(e.what());
-               throw ex;
-            }
+            EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), it->second);
+            m_entity->onEvent(event);
+            eventManager.queueEvent(event);
+         }
+         catch (bad_alloc& e) {
+            Exception ex("Error updating EntityAnimations; ", __FILE__, __LINE__);
+            ex.append(e.what());
+            throw ex;
          }
       }
 
