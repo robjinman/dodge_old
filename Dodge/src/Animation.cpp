@@ -163,6 +163,7 @@ void Animation::update(bool* justFinished) {
       else {
          if (m_repeat) {
             m_frame = 0;
+            m_tickCount = 0;
             m_frameReady = true;
          }
          else {
