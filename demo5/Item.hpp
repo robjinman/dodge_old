@@ -21,6 +21,8 @@ class Item : virtual public Dodge::Entity {
       inline void setSolid(bool b);
       inline bool isSolid() const;
 
+      // TODO: dbg_print
+
       virtual ~Item();
 
    private:

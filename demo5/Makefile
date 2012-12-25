@@ -4,9 +4,11 @@ CFLAGS = -std=c++0x -Wall -g -O3 -DDEBUG
 INCL = -I../Dodge/include
 LIBS = -L../Dodge/lib -L/usr/lib -lDodge -lX11 -lGLESv2 -lEGL -lpnglite -lz -lBox2D
 OBJS = Application.o \
+	Cave.o \
 	CPhysicalEntity.o \
 	CPhysicalSprite.o \
 	CSprite.o \
+	EntityParallax.o \
 	Item.o \
 	main.o \
 	Player.o \

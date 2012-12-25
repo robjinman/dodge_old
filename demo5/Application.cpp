@@ -3,9 +3,9 @@
 #include "EPendingDeletion.hpp"
 #include "Application.hpp"
 #include "Soil.hpp"
+#include "Cave.hpp"
 #include "CPhysicalEntity.hpp"
 #include "CPhysicalSprite.hpp"
-#include "CSprite.hpp"
 
 
 using namespace std;
@@ -168,6 +168,7 @@ boost::shared_ptr<Item> Application::constructItem(const XmlNode data) const {
    if (data.name() == "Player") return pItem_t(new Player(data));
    if (data.name() == "Soil") return pItem_t(new Soil(data));
    if (data.name() == "Item") return pItem_t(new Item(data));
+   if (data.name() == "Cave") return pItem_t(new Cave(data));
    if (data.name() == "CSprite") return pItem_t(new CSprite(data));
    if (data.name() == "CPhysicalEntity") return pItem_t(new CPhysicalEntity(data));
    if (data.name() == "CPhysicalSprite") return pItem_t(new CPhysicalSprite(data));

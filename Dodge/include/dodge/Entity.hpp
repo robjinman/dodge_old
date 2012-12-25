@@ -116,6 +116,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       virtual void setSilent(bool b);
       inline bool isSilent() const;
 
+      // TODO: setTranslation_abs ?
       inline void setTranslation(float32_t x, float32_t y);
       inline void setTranslation(const Vec2f& t);
       inline void setTranslation_x(float32_t x);

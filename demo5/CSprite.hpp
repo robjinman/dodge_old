@@ -25,7 +25,7 @@ class CSprite : public Item, public Dodge::Sprite {
 
       virtual void draw() const;
 
-      virtual void onEvent(const Dodge::EEvent* event) {}
+      virtual void onEvent(const Dodge::EEvent* event) { Sprite::onEvent(event); }
       virtual void update();
       virtual CSprite* clone() const;
       virtual void addToWorld();
