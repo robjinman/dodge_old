@@ -9,8 +9,8 @@ using namespace Dodge;
 
 WinIO win;
 EventManager eventManager;
-pShape_t shape;
-Graphics2d graphics2d;
+pEntity_t shape;
+Renderer& renderer = Renderer::getInstance();
 map<int, bool> keyState;
 double frameRate;
 
@@ -54,19 +54,23 @@ void computeFrameRate() {
 }
 
 void onWindowResize(int w, int h) {
-   Renderer renderer;
    renderer.onWindowResize(w, h);
-   graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+   renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 int main() {
+   gInitialise();
+
    win.init("Demo7 - polygon", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
    win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
-   graphics2d.init(640, 480);
+   renderer.start();
+
+   pCamera_t camera(new Camera(640.0 / 480.0, 1.0));
+   renderer.attachCamera(camera);
 
    unique_ptr<Polygon> pPoly(new Polygon);
    pPoly->addVertex(Vec2f(0.09, 0.0));
@@ -75,23 +79,27 @@ int main() {
    pPoly->addVertex(Vec2f(0.2, 0.4));
    pPoly->addVertex(Vec2f(0.0, 0.23));
 
-   shape = pShape_t(new Shape(internString("polygon"), internString("bigPentagon"), move(pPoly)));
+   shape = pEntity_t(new Entity(internString("polygon"), internString("bigPentagon")));
+   shape->setShape(move(pPoly));
+   shape->setTranslation(0.5, 0.4);
    shape->setZ(0);
-   shape->setTranslation(0.5f, 0.4f);
-
-   shape->getRenderBrush()->setFillColour(Colour(0.f, 1.f, 0.f, 1.f));
-   shape->getRenderBrush()->setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
-   shape->getRenderBrush()->setLineWidth(6);
+   shape->setFillColour(Colour(0.f, 1.f, 0.f, 1.f));
+   shape->setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
+   shape->setLineWidth(6);
 
    while (1) {
-      graphics2d.clear(Colour(0.5f, 0.5f, 0.5f, 1.f));
+      LOOP_START
+
       win.doEvents();
       eventManager.doEvents();
       keyboard();
       shape->update();
+      renderer.tick(Colour(0.5f, 0.5f, 0.5f, 1.f));
       draw();
       computeFrameRate();
       win.swapBuffers();
+
+      LOOP_END
    }
 
    return 0;

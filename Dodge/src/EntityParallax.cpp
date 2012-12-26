@@ -1,8 +1,8 @@
-#include <dodge/renderer/Renderer.hpp>
+#include "renderer/Renderer.hpp"
 #include "EntityParallax.hpp"
 
 
-using namespace Dodge;
+namespace Dodge {
 
 
 //===========================================
@@ -86,6 +86,7 @@ void EntityParallax::update() {
 
    Vec2f transl(norm.x * m_range.x, norm.y * m_range.y);
 
+   // TODO: use setTranslation_abs()
    m_entity->setTranslation(m_pos + transl);
 }
 
@@ -97,3 +98,6 @@ void EntityParallax::dbg_print(std::ostream& out, int tab) const {
    // TODO
 }
 #endif
+
+
+}

@@ -10,13 +10,15 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/EEvent.o \
 	$(BASE_DIR)/Entity.o \
 	$(BASE_DIR)/EntityAnimations.o \
+	$(BASE_DIR)/EntityParallax.o \
 	$(BASE_DIR)/EntityTransformations.o \
 	$(BASE_DIR)/EventManager.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/KvpParser.o \
-	$(BASE_DIR)/ShapeFactory.o \
+	$(BASE_DIR)/ParallaxSprite.o \
 	$(BASE_DIR)/Range.o \
+	$(BASE_DIR)/ShapeFactory.o \
 	$(BASE_DIR)/Sprite.o \
 	$(BASE_DIR)/StackAllocator.o \
 	$(BASE_DIR)/StringId.o \

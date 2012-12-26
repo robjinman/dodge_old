@@ -11,6 +11,16 @@
 #define RAD_TO_DEG(x) ((x) * 57.29578f)
 #define DEG_TO_RAD(x) ((x) * 0.01745329f)
 
+#define LOOP_START \
+   { \
+      Dodge::Timer lpStart_timer;
+
+#define LOOP_END \
+      double lpEnd_wait = (1.0 / Dodge::gGetTargetFrameRate()) - lpStart_timer.getTime(); \
+      if (lpEnd_wait < 0.0) lpEnd_wait = 0.0; \
+      Dodge::sleepThread(lpEnd_wait); \
+   }
+
 
 namespace Dodge {
 

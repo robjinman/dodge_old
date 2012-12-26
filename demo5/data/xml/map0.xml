@@ -38,27 +38,27 @@ Prototype definitions should go in separate files. -->
       </asset>
 
       <asset id="97">
-         <Cave>
-            <CSprite>
-               <Item solid="false">
-                  <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
-                     <shape>
-                        <Polygon>
-                           <Vec2f x="0.0" y="0.0"/>
-                           <Vec2f x="1.5" y="0.0"/>
-                           <Vec2f x="1.5" y="0.9"/>
-                           <Vec2f x="0.0" y="0.9"/>
-                        </Polygon>
-                     </shape>
-                     <scale>
-                        <Vec2f x="1.0" y="1.0"/>
-                     </scale>
-                     <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                     <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                     <lineWidth>0</lineWidth>
-                     <children/>
-                  </Entity>
-               </Item>
+         <CParallaxSprite>
+            <Item solid="false">
+               <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0.0" y="0.0"/>
+                        <Vec2f x="1.5" y="0.0"/>
+                        <Vec2f x="1.5" y="0.9"/>
+                        <Vec2f x="0.0" y="0.9"/>
+                     </Polygon>
+                  </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                  <lineWidth>0</lineWidth>
+                  <children/>
+               </Entity>
+            </Item>
+            <ParallaxSprite>
                <Sprite>
                   <Entity/>
                   <EntityAnimations>
@@ -77,11 +77,11 @@ Prototype definitions should go in separate files. -->
                   </EntityAnimations>
                   <EntityTransformations/>
                </Sprite>
-            </CSprite>
-            <EntityParallax>
-               <range><Vec2f x="0.25" y="0.25"/></range>
-            </EntityParallax>
-         </Cave>
+               <EntityParallax>
+                  <range><Vec2f x="0.25" y="0.25"/></range>
+               </EntityParallax>
+            </ParallaxSprite>
+         </CParallaxSprite>
       </asset>
 
       <asset id="99" proto="10"><Player><Item solid="true"><Entity name="player" x="0.1" y="0.3" z="8"/></Item></Player></asset>
