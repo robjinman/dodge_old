@@ -7,6 +7,9 @@
 #define __ASSET_HPP__
 
 
+#include <boost/shared_ptr.hpp>
+
+
 namespace Dodge {
 
 
@@ -20,6 +23,8 @@ class Asset {
    private:
       long m_id;
 };
+
+typedef boost::shared_ptr<Asset> pAsset_t;
 
 inline long Asset::getAssetId() const { return m_id; }
 

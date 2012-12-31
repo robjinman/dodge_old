@@ -31,6 +31,7 @@ class Application {
       void keyboard();
       void onWindowResize(int w, int h);
       void deletePending(Dodge::EEvent* event);
+      void deleteAsset(Dodge::EEvent* event);
       void draw() const;
       void update();
       void updateViewArea();

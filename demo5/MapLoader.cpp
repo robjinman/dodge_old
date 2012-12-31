@@ -278,18 +278,17 @@ void MapLoader::parseMapSegment(mapSegment_t& segment) {
 // MapLoader::unloadRefCountZeroAssets
 //===========================================
 void MapLoader::unloadRefCountZeroAssets() {
-   // TODO: This currently only removes the asset from the asset manager.
-   // It must also be removed from all other containers.
-   // Some sort of message system should be used to communicate to other parts of
-   // the program that the asset should be deleted. This message system must be
-   // instantaneous.
-   //
-   // Once this is implemented, the gameMap->items, and m_gameMap->worldspace containers
-   // can reside elsewhere, helping to make this class less game-specific, and more
-   // generic -- ultimately enabling it to be factored out into the engine.
-
    for (auto i = m_refCounts.begin(); i != m_refCounts.end(); ++i) {
-      if (i->second == 0) m_gameMap->assetManager.freeAsset(i->first);
+      if (i->second == 0) {
+         pAsset_t asset = m_gameMap->assetManager.getAssetPointer(i->first);
+
+         if (asset) {
+            EAssetDeletionRequest* event = new EAssetDeletionRequest(asset);
+            m_eventManager.immediateDispatch(event);
+
+            m_gameMap->assetManager.freeAsset(i->first);
+         }
+      }
    }
 }
 

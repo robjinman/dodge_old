@@ -166,6 +166,27 @@ void Application::deletePending(EEvent* event) {
 }
 
 //===========================================
+// Application::deleteAsset
+//===========================================
+void Application::deleteAsset(EEvent* event) {
+   static long assetDeletionRequestStr = internString("assetDeletionRequest");
+
+   if (event->getType() == assetDeletionRequestStr) {
+      EAssetDeletionRequest* e = static_cast<EAssetDeletionRequest*>(event);
+
+      // TODO: This is ugly
+      pEntity_t entity = dynamic_pointer_cast<Entity>(e->asset);
+      if (entity) {
+         m_gameMap.worldSpace.removeAndUntrackEntity(entity);
+         entity->removeFromWorld();
+         m_gameMap.items.erase(entity->getName());
+      }
+
+      m_gameMap.assetManager.freeAsset(e->asset->getAssetId());
+   }
+}
+
+//===========================================
 // Application::update
 //===========================================
 void Application::update() {
@@ -255,6 +276,9 @@ void Application::begin(int argc, char** argv) {
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
+
+   m_eventManager.registerCallback(internString("assetDeletionRequest"),
+      Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deleteAsset));
 
    m_gameMap.worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 

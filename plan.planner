@@ -27,57 +27,57 @@
         <predecessor id="1" predecessor-id="1" type="FS"/>
       </predecessors>
     </task>
-    <task id="3" name="Resource management" note="" work="259020" start="20121225T235820Z" end="20121228T235820Z" work-start="20121225T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="3" name="Resource management" note="" work="690720" start="20121225T235820Z" end="20130102T235820Z" work-start="20121225T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="2" type="FS"/>
       </predecessors>
     </task>
-    <task id="4" name="Entity Placement Tool" note="" work="777060" start="20121228T235820Z" end="20130106T235820Z" work-start="20121228T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="4" name="Entity Placement Tool" note="" work="777060" start="20130102T235820Z" end="20130111T235820Z" work-start="20130102T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="3" type="FS"/>
       </predecessors>
     </task>
-    <task id="5" name="Finish Polygon class" note="" work="86340" start="20130106T235820Z" end="20130107T235820Z" work-start="20130106T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="5" name="Finish Polygon class" note="" work="86340" start="20130111T235820Z" end="20130112T235820Z" work-start="20130111T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="4" type="FS"/>
       </predecessors>
     </task>
-    <task id="6" name="Scripted events" note="" work="345360" start="20130107T235820Z" end="20130111T235820Z" work-start="20130107T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="6" name="Scripted events" note="" work="345360" start="20130112T235820Z" end="20130116T235820Z" work-start="20130112T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="5" type="FS"/>
       </predecessors>
     </task>
-    <task id="7" name="Advanced UI" note="" work="345360" start="20130111T235820Z" end="20130115T235820Z" work-start="20130111T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="7" name="Advanced UI" note="" work="345360" start="20130116T235820Z" end="20130120T235820Z" work-start="20130116T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="6" type="FS"/>
       </predecessors>
     </task>
-    <task id="8" name="Windows build" note="" work="172680" start="20130115T235820Z" end="20130117T235820Z" work-start="20130115T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="8" name="Windows build" note="" work="172680" start="20130120T235820Z" end="20130122T235820Z" work-start="20130120T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="7" type="FS"/>
       </predecessors>
     </task>
-    <task id="9" name="Lua binding" note="" work="259020" start="20130117T235820Z" end="20130120T235820Z" work-start="20130117T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="9" name="Lua binding" note="" work="259020" start="20130122T235820Z" end="20130125T235820Z" work-start="20130122T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="8" type="FS"/>
       </predecessors>
     </task>
-    <task id="10" name="Destructible terrain" note="" work="345360" start="20130120T235820Z" end="20130124T235820Z" work-start="20130120T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="10" name="Destructible terrain" note="" work="345360" start="20130125T235820Z" end="20130129T235820Z" work-start="20130125T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="9" type="FS"/>
       </predecessors>
     </task>
-    <task id="11" name="Rendering" note="" work="518040" start="20130124T235820Z" end="20130130T235820Z" work-start="20130124T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="11" name="Rendering" note="" work="518040" start="20130129T235820Z" end="20130204T235820Z" work-start="20130129T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="10" type="FS"/>
       </predecessors>
-      <task id="12" name="Particle effects" note="" work="172680" start="20130124T235820Z" end="20130126T235820Z" work-start="20130124T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="13" name="Batching" note="" work="172680" start="20130126T235820Z" end="20130128T235820Z" work-start="20130126T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="12" name="Particle effects" note="" work="172680" start="20130129T235820Z" end="20130131T235820Z" work-start="20130129T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="13" name="Batching" note="" work="172680" start="20130131T235820Z" end="20130202T235820Z" work-start="20130131T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="12" type="FS"/>
         </predecessors>
       </task>
-      <task id="14" name="Bump mapping" note="" work="172680" start="20130128T235820Z" end="20130130T235820Z" work-start="20130128T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="14" name="Bump mapping" note="" work="172680" start="20130202T235820Z" end="20130204T235820Z" work-start="20130202T235820Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="13" type="FS"/>
         </predecessors>

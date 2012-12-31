@@ -46,6 +46,28 @@ void EventManager::doEvents() {
 }
 
 //===========================================
+// EventManager::immediateDispatch
+//===========================================
+void EventManager::immediateDispatch(EEvent* event) {
+   map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > >::iterator it = m_callbacks.find(event->getType());
+
+   if (it != m_callbacks.end()) {
+      vector<Functor<void, TYPELIST_1(EEvent*)> >& funcs = it->second;
+      for (uint_t i = 0; i < funcs.size(); ++i) funcs[i](event);
+   }
+
+   delete event;
+}
+
+//===========================================
+// EventManager::clear
+//===========================================
+void EventManager::clear() {
+   while (!m_eventQueue.empty()) m_eventQueue.pop();
+   EEvent::m_stack.clear();
+}
+
+//===========================================
 // EventManager::unregisterCallback
 //===========================================
 void EventManager::unregisterCallback(long type, const Functor<void, TYPELIST_1(EEvent*)>& func) {

@@ -26,12 +26,22 @@ struct gameMap_t {
    Dodge::Colour  bgColour;
 };
 
+class EAssetDeletionRequest : public Dodge::EEvent {
+   public:
+      EAssetDeletionRequest(Dodge::pAsset_t asset_)
+         : EEvent(Dodge::internString("assetDeletionRequest")), asset(asset_) {}
+
+      Dodge::pAsset_t asset;
+};
+
 class MapLoader {
    public:
       void parseMapFile(const std::string& file, gameMap_t* gameMap);
       void update(const Dodge::Vec2f& cameraPos);
 
    private:
+      Dodge::EventManager m_eventManager;
+
       gameMap_t* m_gameMap;
       long m_fillerTileId;
 

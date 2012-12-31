@@ -18,11 +18,12 @@ namespace Dodge {
 
 class EventManager {
    public:
+      void immediateDispatch(EEvent* event);
       inline void queueEvent(EEvent* event);
       inline void registerCallback(long type, const Functor<void, TYPELIST_1(EEvent*)>& func);
       void unregisterCallback(long type, const Functor<void, TYPELIST_1(EEvent*)>& func);
       void doEvents();
-      inline void clear();
+      void clear();
 
    private:
       static std::map<long, std::vector<Functor<void, TYPELIST_1(EEvent*)> > > m_callbacks;
@@ -41,14 +42,6 @@ inline void EventManager::queueEvent(EEvent* event) {
 //===========================================
 inline void EventManager::registerCallback(long type, const Functor<void, TYPELIST_1(EEvent*)>& func) {
    m_callbacks[type].push_back(func);
-}
-
-//===========================================
-// EventManager::clear
-//===========================================
-inline void EventManager::clear() {
-   while (!m_eventQueue.empty()) m_eventQueue.pop();
-   EEvent::m_stack.clear();
 }
 
 
