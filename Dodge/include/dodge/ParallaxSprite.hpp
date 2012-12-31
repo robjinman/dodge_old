@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __PARALLAX_SPRITE_HPP__
 #define __PARALLAX_SPRITE_HPP__
 

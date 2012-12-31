@@ -17,6 +17,7 @@ namespace Dodge {
 
 class XmlAttribute {
    public:
+      XmlAttribute() : m_attr(NULL) {}
       explicit XmlAttribute(const rapidxml::xml_attribute<>* attr) : m_attr(attr) {}
 
       inline std::string name() const;

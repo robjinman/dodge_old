@@ -18,6 +18,7 @@ namespace Dodge {
 
 class XmlNode {
    public:
+      XmlNode() : m_node(NULL) {}
       explicit XmlNode(const rapidxml::xml_node<>* node) : m_node(node) {}
 
       inline std::string name() const;

@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __APPLICATION_HPP__
 #define __APPLICATION_HPP__
 
@@ -6,6 +11,7 @@
 #include <string>
 #include <dodge/dodge.hpp>
 #include "Player.hpp"
+#include "MapLoader.hpp"
 
 
 class Application {
@@ -31,12 +37,6 @@ class Application {
 
       void exitDefault();
 
-      boost::shared_ptr<Dodge::Asset> constructAsset(const Dodge::XmlNode data, long proto, bool addToWorld);
-      pItem_t constructItem(const Dodge::XmlNode data) const;
-      void loadAssets_r(const std::string& file, int depth = 0);
-      void loadMapSettings(const Dodge::XmlNode data);
-      void loadMap();
-
       void computeFrameRate();
 
       Functor<void, TYPELIST_0()> m_onExit;
@@ -47,19 +47,15 @@ class Application {
       std::vector<int>           m_dirKeyStack;
       Dodge::WinIO               m_win;
       Dodge::EventManager        m_eventManager;
-      Dodge::WorldSpace          m_worldSpace;
       Dodge::Range               m_viewArea;
 #ifdef DEBUG
       bool                       dbg_worldSpaceVisible;
 #endif
-      Dodge::Colour              m_bgColour;
-      Dodge::AssetManager        m_assetManager;
-      std::map<long, pItem_t>    m_items;
       pPlayer_t                  m_player;
       double                     m_frameRate;
 
-      Dodge::Vec2f m_mapSize;
-      long m_fillerTileId;
+      MapLoader                  m_mapLoader;
+      gameMap_t                  m_gameMap;
 };
 
 

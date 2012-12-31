@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #include <sstream>
 #include <iostream>
 #include "EPendingDeletion.hpp"
@@ -33,10 +38,10 @@ void Application::exitDefault() {
 void Application::quit() {
    m_renderer.stop();
 
-   m_items.clear();
+   m_gameMap.items.clear();
    m_eventManager.clear();
-   m_worldSpace.removeAll();
-   m_assetManager.freeAllAssets();
+   m_gameMap.worldSpace.removeAll();
+   m_gameMap.assetManager.freeAllAssets();
    m_player.reset();
    m_win.destroyWindow();
 
@@ -135,154 +140,6 @@ void Application::keyboard() {
 }
 
 //===========================================
-// Application::loadMapSettings
-//===========================================
-void Application::loadMapSettings(const XmlNode data) {
-   try {
-      XML_NODE_CHECK(data, settings);
-
-      XmlNode node = data.firstChild();
-      XML_NODE_CHECK(node, bgColour);
-      m_bgColour = Colour(node.firstChild());
-
-      node = node.nextSibling();
-      XML_NODE_CHECK(node, dimensions);
-      m_mapSize = Vec2f(node.firstChild());
-
-      node = node.nextSibling();
-      XML_NODE_CHECK(node, fillerTile);
-
-      XmlAttribute attr = node.firstAttribute();
-      XML_ATTR_CHECK(attr, id);
-      m_fillerTileId = attr.getLong();
-   }
-   catch (XmlException& e) {
-      e.prepend("Error loading map settings; ");
-      throw;
-   }
-}
-
-//===========================================
-// Application::constructItem
-//===========================================
-boost::shared_ptr<Item> Application::constructItem(const XmlNode data) const {
-   if (data.name() == "Player") return pItem_t(new Player(data));
-   if (data.name() == "Soil") return pItem_t(new Soil(data));
-   if (data.name() == "Item") return pItem_t(new Item(data));
-   if (data.name() == "CParallaxSprite") return pItem_t(new CParallaxSprite(data));
-   if (data.name() == "CSprite") return pItem_t(new CSprite(data));
-   if (data.name() == "CPhysicalEntity") return pItem_t(new CPhysicalEntity(data));
-   if (data.name() == "CPhysicalSprite") return pItem_t(new CPhysicalSprite(data));
-
-   throw Exception("Unrecognised item type", __FILE__, __LINE__);
-}
-
-//===========================================
-// Application::constructAsset
-//
-// If proto = -1 asset is *not* constructed from prototype
-//===========================================
-boost::shared_ptr<Asset> Application::constructAsset(const XmlNode data, long proto, bool addToWorld) {
-   if (data.isNull())
-      throw XmlException("Error constructing asset; XML node is empty", __FILE__, __LINE__);
-
-   boost::shared_ptr<Asset> asset;
-
-   // Construct non-Item assets
-   if (data.name() == "Texture") {
-      asset = boost::shared_ptr<Asset>(new Texture(data));
-   }
-   // Construct Items
-   else {
-      pItem_t item;
-
-      if (proto == -1) {
-         asset = item = constructItem(data);
-      }
-      else {
-         asset = item = pItem_t(dynamic_cast<Item*>(m_assetManager.cloneAsset(proto)));
-
-         if (!item)
-            throw XmlException("Error constructing asset; Bad prototype id", __FILE__, __LINE__);
-
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_worldSpace.insertAndTrackEntity(item);
-
-         if (data.name() == "Player")
-            m_player = boost::dynamic_pointer_cast<Player>(item);
-         else
-            m_items[item->getName()] = item;
-      }
-   }
-
-   return asset;
-}
-
-//===========================================
-// Application::loadAssets_r
-//===========================================
-void Application::loadAssets_r(const string& file, int depth) {
-   try {
-      XmlDocument doc;
-
-      XmlNode decl = doc.parse(file);
-      if (decl.isNull())
-         throw XmlException("Expected XML declaration", __FILE__, __LINE__);
-
-      XmlNode node = decl.nextSibling();
-      XML_NODE_CHECK(node, ASSETFILE);
-
-      node = node.firstChild();
-      if (node.isNull())
-         throw XmlException("Expected 'using', 'settings', or 'assets' tag", __FILE__, __LINE__);
-
-      if (node.name() == "using") {
-         XmlNode node_ = node.firstChild();
-         while (!node_.isNull() && node_.name() == "file") {
-            string path = string("data/xml/").append(node_.getString());
-            loadAssets_r(path, depth + 1);
-
-            node_ = node_.nextSibling();
-         }
-
-         node = node.nextSibling();
-      }
-
-      if (!node.isNull() && node.name() == "settings") {
-         loadMapSettings(node);
-         node = node.nextSibling();
-      }
-
-      XML_NODE_CHECK(node, assets);
-
-      node = node.firstChild();
-      while (!node.isNull() && node.name() == "asset") {
-         XmlAttribute attr = node.firstAttribute();
-         XML_ATTR_CHECK(attr, id);
-         long id = attr.getLong();
-
-         long proto = -1;
-         attr = attr.nextAttribute();
-         if (!attr.isNull() && attr.name() == "proto")
-            proto = attr.getLong();
-
-         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto, depth == 0 ? true : false);
-         m_assetManager.addAsset(id, asset);
-
-         node = node.nextSibling();
-      }
-   }
-   catch (XmlException& e) {
-      e.prepend("Error loading assets from XML file; ");
-      throw;
-   }
-}
-
-//===========================================
 // Application::computeFrameRate
 //===========================================
 void Application::computeFrameRate() {
@@ -301,10 +158,10 @@ void Application::deletePending(EEvent* event) {
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
 
-      m_worldSpace.removeAndUntrackEntity(e->item);
+      m_gameMap.worldSpace.removeAndUntrackEntity(e->item);
       e->item->removeFromWorld();
-      m_items.erase(e->item->getName());
-      m_assetManager.freeAsset(e->item->getAssetId());
+      m_gameMap.items.erase(e->item->getName());
+      m_gameMap.assetManager.freeAsset(e->item->getAssetId());
    }
 }
 
@@ -312,7 +169,7 @@ void Application::deletePending(EEvent* event) {
 // Application::update
 //===========================================
 void Application::update() {
-   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
+   for (map<long, pItem_t>::iterator i = m_gameMap.items.begin(); i != m_gameMap.items.end(); ++i)
       i->second->update();
 
    m_player->update();
@@ -329,58 +186,12 @@ void Application::onWindowResize(int w, int h) {
 }
 
 //===========================================
-// Application::loadMap
-//===========================================
-void Application::loadMap() {
-   static long stopBlockStr = internString("stopBlock");
-
-   stringstream strMap;
-   strMap << "data/xml/map" << m_currentMap << ".xml";
-   loadAssets_r(strMap.str());
-
-   pItem_t filler = boost::dynamic_pointer_cast<Item>(m_assetManager.getAssetPointer(m_fillerTileId));
-
-   float32_t w = filler->getBoundary().getSize().x;
-   float32_t h = filler->getBoundary().getSize().y;
-
-   unique_ptr<Shape> shape(filler->getShape().clone());
-   shape->scale(Vec2f(0.9f, 0.9f));
-
-   for (float32_t x = 0.f; x < m_mapSize.x; x += w) {
-      for (float32_t y = 0.f; y < m_mapSize.y; y += h) {
-
-         vector<pEntity_t> vec;
-         m_worldSpace.getEntities(filler->getBoundary(), vec);
-         bool clear = true;
-         for (uint_t i = 0; i < vec.size(); ++i) {
-            if (!vec[i]->hasShape()) continue;
-            if (vec[i]->getTypeName() == stopBlockStr) continue;
-
-            if (Math::overlap(*shape, Vec2f(x + 0.005, y + 0.005), vec[i]->getShape(), vec[i]->getTranslation_abs())) {
-               clear = false;
-               break;
-            }
-         }
-
-         if (clear) {
-            pItem_t item(filler->clone());
-            item->setTranslation(x, y);
-
-            item->addToWorld();
-            m_worldSpace.trackEntity(item);
-            m_items[item->getName()] = item;
-         }
-      }
-   }
-}
-
-//===========================================
 // Application::draw
 //===========================================
 void Application::draw() const {
    vector<pEntity_t> visibleEnts;
 
-   m_worldSpace.getEntities(m_viewArea, visibleEnts);
+   m_gameMap.worldSpace.getEntities(m_viewArea, visibleEnts);
 
    for (uint_t i = 0; i < visibleEnts.size(); ++i)
       visibleEnts[i]->draw();
@@ -389,7 +200,7 @@ void Application::draw() const {
 
 #ifdef DEBUG
    if (dbg_worldSpaceVisible)
-      m_worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
+      m_gameMap.worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
 #endif
 }
 
@@ -400,12 +211,20 @@ void Application::updateViewArea() {
    Camera& cam = m_renderer.getCamera();
    Vec2f viewPos = m_player->getTranslation_abs() - cam.getViewSize() / 2.f;
 
-   if (viewPos.x < 0.f) viewPos.x = 0.f;
-   if (viewPos.y < 0.f) viewPos.y = 0.f;
+   if (viewPos.x < 0.f) viewPos.x = m_gameMap.mapBoundary.getPosition().x;
+   if (viewPos.y < 0.f) viewPos.y = m_gameMap.mapBoundary.getPosition().y;
+
+   if (viewPos.x + cam.getViewSize().x > m_gameMap.mapBoundary.getPosition().x + m_gameMap.mapBoundary.getSize().x)
+      viewPos.x = m_gameMap.mapBoundary.getPosition().x + m_gameMap.mapBoundary.getSize().x - cam.getViewSize().x;
+
+   if (viewPos.y + cam.getViewSize().y > m_gameMap.mapBoundary.getPosition().y + m_gameMap.mapBoundary.getSize().y)
+      viewPos.y = m_gameMap.mapBoundary.getPosition().y + m_gameMap.mapBoundary.getSize().y - cam.getViewSize().y;
 
    cam.setTranslation(viewPos);
    m_viewArea.setPosition(viewPos);
    m_viewArea.setSize(cam.getViewSize());
+
+   m_mapLoader.update(viewPos);
 }
 
 //===========================================
@@ -437,14 +256,28 @@ void Application::begin(int argc, char** argv) {
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
 
-   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
+   m_gameMap.worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    m_renderer.attachCamera(camera);
 
    Box2dPhysics::loadSettings("data/physics.conf");
 
-   loadMap();
+   stringstream str;
+   str << "data/xml/map" << m_currentMap << ".xml";
+   m_mapLoader.parseMapFile(str.str(), &m_gameMap);
+
+   m_mapLoader.update(camera->getTranslation() + Vec2f(0.1, 0.1));
+
+   for (auto i = m_gameMap.items.begin(); i != m_gameMap.items.end(); ++i) {
+      if (i->first == internString("player")) {
+         m_player = boost::static_pointer_cast<Player>(i->second);
+         m_gameMap.items.erase(i);
+         break;
+      }
+   }
+
+   if (!m_player) throw Exception("m_player is NULL", __FILE__, __LINE__);
 
    while (1) {
       LOOP_START
@@ -456,7 +289,7 @@ void Application::begin(int argc, char** argv) {
       Box2dPhysics::update();
       m_eventManager.doEvents();
       draw();
-      m_renderer.tick(m_bgColour);
+      m_renderer.tick(m_gameMap.bgColour);
       m_win.swapBuffers();
 
       LOOP_END

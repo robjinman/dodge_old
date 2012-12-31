@@ -1,3 +1,8 @@
+/*
+ * Author: Rob Jinman <admin@robjinman.com>
+ * Date: 2012
+ */
+
 #ifndef __ENTITY_PARALLAX_HPP__
 #define __ENTITY_PARALLAX_HPP__
 
