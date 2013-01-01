@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MAPFILE>
+   <settings>
+      <bgColour><Colour r="0.075" g="0.05" b="0.02" a="1.0"/></bgColour>
+      <boundary>
+         <Range>
+            <pos><Vec2f x="0.0" y="0.0"/></pos>
+            <size><Vec2f x="2.6" y="1.4"/></size>
+         </Range>
+      </boundary>
+      <numSegments><Vec2i x="1" y="1"/></numSegments>
+      <segmentSize><Vec2f x="2.6" y="1.4"/></segmentSize>
+      <segmentsDir>data/xml/0</segmentsDir>
+      <fillerTile id="50"/>
+   </settings>
+</MAPFILE>

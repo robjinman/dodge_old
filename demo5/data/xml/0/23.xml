@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ASSETFILE>
    <assets>
-      <asset id="97">
+      <asset id="710">
          <CSprite addToWorld="true">
             <Item solid="false">
-               <Entity type="image" name="img01" x="0.1" y="0.1" z="3" rot="0.0">
+               <Entity type="image" name="img12" x="0.7" y="1.0" z="3" rot="0.0">
                   <shape>
                      <Polygon>
                         <Vec2f x="0.0" y="0.0"/>

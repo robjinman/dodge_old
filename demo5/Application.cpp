@@ -38,10 +38,10 @@ void Application::exitDefault() {
 void Application::quit() {
    m_renderer.stop();
 
-   m_gameMap.items.clear();
+   m_items.clear();
    m_eventManager.clear();
-   m_gameMap.worldSpace.removeAll();
-   m_gameMap.assetManager.freeAllAssets();
+   m_worldSpace.removeAll();
+   m_assetManager.freeAllAssets();
    m_player.reset();
    m_win.destroyWindow();
 
@@ -150,6 +150,23 @@ void Application::computeFrameRate() {
 }
 
 //===========================================
+// Application::setMapSettings
+//===========================================
+void Application::setMapSettings(const XmlNode data) {
+   try {
+      XML_NODE_CHECK(data, customSettings);
+
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, bgColour);
+      m_bgColour = Colour(node.firstChild());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error loading map settings; ");
+      throw;
+   }
+}
+
+//===========================================
 // Application::deletePending
 //===========================================
 void Application::deletePending(EEvent* event) {
@@ -158,39 +175,87 @@ void Application::deletePending(EEvent* event) {
    if (event->getType() == pendingDeletionStr) {
       EPendingDeletion* e = static_cast<EPendingDeletion*>(event);
 
-      m_gameMap.worldSpace.removeAndUntrackEntity(e->item);
+      m_worldSpace.removeAndUntrackEntity(e->item);
       e->item->removeFromWorld();
-      m_gameMap.items.erase(e->item->getName());
-      m_gameMap.assetManager.freeAsset(e->item->getAssetId());
+      m_items.erase(e->item->getName());
+      m_assetManager.freeAsset(e->item->getAssetId());
    }
 }
 
 //===========================================
 // Application::deleteAsset
 //===========================================
-void Application::deleteAsset(EEvent* event) {
-   static long assetDeletionRequestStr = internString("assetDeletionRequest");
+void Application::deleteAsset(pAsset_t asset) {
 
-   if (event->getType() == assetDeletionRequestStr) {
-      EAssetDeletionRequest* e = static_cast<EAssetDeletionRequest*>(event);
+   // TODO: This is ugly
+   pEntity_t entity = dynamic_pointer_cast<Entity>(asset);
 
-      // TODO: This is ugly
-      pEntity_t entity = dynamic_pointer_cast<Entity>(e->asset);
-      if (entity) {
-         m_gameMap.worldSpace.removeAndUntrackEntity(entity);
-         entity->removeFromWorld();
-         m_gameMap.items.erase(entity->getName());
-      }
-
-      m_gameMap.assetManager.freeAsset(e->asset->getAssetId());
+   if (entity) {
+      m_worldSpace.removeAndUntrackEntity(entity);
+      entity->removeFromWorld();
+      m_items.erase(entity->getName());
    }
+
+   m_assetManager.freeAsset(asset->getAssetId());
+}
+
+//===========================================
+// Application::constructAsset
+//===========================================
+pAsset_t Application::constructAsset(const XmlNode data) {
+
+   // Construct non-Item assets
+
+   if (data.name() == "Texture") return pAsset_t(new Texture(data));
+   // ...
+
+
+   // Construct Items
+
+   long proto = -1;
+   bool addToWorld;
+
+   XmlAttribute attr = data.firstAttribute();
+   if (!attr.isNull() && attr.name() == "addToWorld") {
+      addToWorld = attr.getBool();
+      attr = attr.nextAttribute();
+   }
+
+   if (!attr.isNull() && attr.name() == "proto")
+      proto = attr.getLong();
+
+   pItem_t item;
+   if (proto != -1) {
+      item = pItem_t(dynamic_cast<Item*>(m_assetManager.cloneAsset(proto)));
+      item->assignData(data);
+   }
+   else {
+      if (data.name() == "Player") item = pItem_t(new Player(data));
+      if (data.name() == "Soil") item = pItem_t(new Soil(data));
+      if (data.name() == "Item") item = pItem_t(new Item(data));
+      if (data.name() == "CParallaxSprite") item = pItem_t(new CParallaxSprite(data));
+      if (data.name() == "CSprite") item = pItem_t(new CSprite(data));
+      if (data.name() == "CPhysicalEntity") item = pItem_t(new CPhysicalEntity(data));
+      if (data.name() == "CPhysicalSprite") item = pItem_t(new CPhysicalSprite(data));
+   }
+
+   if (!item)
+      throw Exception("Unrecognised item type", __FILE__, __LINE__);
+
+   if (addToWorld) {
+      item->addToWorld();
+      m_worldSpace.insertAndTrackEntity(item);
+      m_items[item->getName()] = item;
+   }
+
+   return item;
 }
 
 //===========================================
 // Application::update
 //===========================================
 void Application::update() {
-   for (map<long, pItem_t>::iterator i = m_gameMap.items.begin(); i != m_gameMap.items.end(); ++i)
+   for (map<long, pItem_t>::iterator i = m_items.begin(); i != m_items.end(); ++i)
       i->second->update();
 
    m_player->update();
@@ -212,7 +277,7 @@ void Application::onWindowResize(int w, int h) {
 void Application::draw() const {
    vector<pEntity_t> visibleEnts;
 
-   m_gameMap.worldSpace.getEntities(m_viewArea, visibleEnts);
+   m_worldSpace.getEntities(m_viewArea, visibleEnts);
 
    for (uint_t i = 0; i < visibleEnts.size(); ++i)
       visibleEnts[i]->draw();
@@ -221,7 +286,7 @@ void Application::draw() const {
 
 #ifdef DEBUG
    if (dbg_worldSpaceVisible)
-      m_gameMap.worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
+      m_worldSpace.dbg_draw(Colour(1.f, 1.f, 1.f, 1.f), 2, 9);
 #endif
 }
 
@@ -232,20 +297,23 @@ void Application::updateViewArea() {
    Camera& cam = m_renderer.getCamera();
    Vec2f viewPos = m_player->getTranslation_abs() - cam.getViewSize() / 2.f;
 
-   if (viewPos.x < 0.f) viewPos.x = m_gameMap.mapBoundary.getPosition().x;
-   if (viewPos.y < 0.f) viewPos.y = m_gameMap.mapBoundary.getPosition().y;
+   const Vec2f& mapPos = m_mapLoader.getMapBoundary().getPosition();
+   const Vec2f& mapSz = m_mapLoader.getMapBoundary().getSize();
 
-   if (viewPos.x + cam.getViewSize().x > m_gameMap.mapBoundary.getPosition().x + m_gameMap.mapBoundary.getSize().x)
-      viewPos.x = m_gameMap.mapBoundary.getPosition().x + m_gameMap.mapBoundary.getSize().x - cam.getViewSize().x;
+   if (viewPos.x < 0.f) viewPos.x = mapPos.x;
+   if (viewPos.y < 0.f) viewPos.y = mapPos.y;
 
-   if (viewPos.y + cam.getViewSize().y > m_gameMap.mapBoundary.getPosition().y + m_gameMap.mapBoundary.getSize().y)
-      viewPos.y = m_gameMap.mapBoundary.getPosition().y + m_gameMap.mapBoundary.getSize().y - cam.getViewSize().y;
+   if (viewPos.x + cam.getViewSize().x > mapPos.x + mapSz.x)
+      viewPos.x = mapPos.x + mapSz.x - cam.getViewSize().x;
+
+   if (viewPos.y + cam.getViewSize().y > mapPos.y + mapSz.y)
+      viewPos.y = mapPos.y + mapSz.y - cam.getViewSize().y;
 
    cam.setTranslation(viewPos);
    m_viewArea.setPosition(viewPos);
    m_viewArea.setSize(cam.getViewSize());
 
-   m_mapLoader.update(viewPos);
+   m_mapLoader.update(viewPos + cam.getViewSize() / 2.f);
 }
 
 //===========================================
@@ -277,10 +345,7 @@ void Application::begin(int argc, char** argv) {
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
 
-   m_eventManager.registerCallback(internString("assetDeletionRequest"),
-      Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deleteAsset));
-
-   m_gameMap.worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
+   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    m_renderer.attachCamera(camera);
@@ -289,14 +354,14 @@ void Application::begin(int argc, char** argv) {
 
    stringstream str;
    str << "data/xml/map" << m_currentMap << ".xml";
-   m_mapLoader.parseMapFile(str.str(), &m_gameMap);
+   m_mapLoader.parseMapFile(str.str());
 
    m_mapLoader.update(camera->getTranslation() + Vec2f(0.1, 0.1));
 
-   for (auto i = m_gameMap.items.begin(); i != m_gameMap.items.end(); ++i) {
+   for (auto i = m_items.begin(); i != m_items.end(); ++i) {
       if (i->first == internString("player")) {
          m_player = boost::static_pointer_cast<Player>(i->second);
-         m_gameMap.items.erase(i);
+         m_items.erase(i);
          break;
       }
    }
@@ -313,7 +378,7 @@ void Application::begin(int argc, char** argv) {
       Box2dPhysics::update();
       m_eventManager.doEvents();
       draw();
-      m_renderer.tick(m_gameMap.bgColour);
+      m_renderer.tick(m_bgColour);
       m_win.swapBuffers();
 
       LOOP_END

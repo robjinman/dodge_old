@@ -51,6 +51,13 @@ XmlNode XmlDocument::parse(const string& file) {
 }
 
 //===========================================
+// XmlDocument::firstNode
+//===========================================
+XmlNode XmlDocument::firstNode() {
+   return isNull() ? XmlNode() : XmlNode(m_doc.first_node());
+}
+
+//===========================================
 // XmlDocument::XmlDocument
 //===========================================
 XmlDocument::~XmlDocument() {

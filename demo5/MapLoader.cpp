@@ -4,12 +4,6 @@
  */
 
 #include "MapLoader.hpp"
-#include "Soil.hpp"
-#include "CSprite.hpp"
-#include "CParallaxSprite.hpp"
-#include "CPhysicalEntity.hpp"
-#include "CPhysicalSprite.hpp"
-#include "Player.hpp"
 
 
 using namespace std;
@@ -17,70 +11,50 @@ using namespace Dodge;
 
 
 //===========================================
-// MapLoader::constructItem
-//===========================================
-boost::shared_ptr<Item> MapLoader::constructItem(const XmlNode data) const {
-   if (data.name() == "Player") return pItem_t(new Player(data));
-   if (data.name() == "Soil") return pItem_t(new Soil(data));
-   if (data.name() == "Item") return pItem_t(new Item(data));
-   if (data.name() == "CParallaxSprite") return pItem_t(new CParallaxSprite(data));
-   if (data.name() == "CSprite") return pItem_t(new CSprite(data));
-   if (data.name() == "CPhysicalEntity") return pItem_t(new CPhysicalEntity(data));
-   if (data.name() == "CPhysicalSprite") return pItem_t(new CPhysicalSprite(data));
-
-   throw Exception("Unrecognised item type", __FILE__, __LINE__);
-}
-
-//===========================================
-// MapLoader::constructAsset
+// MapLoader::loadAssets
 //
-// If proto = -1 asset is *not* constructed from prototype
+// Loads assets from <assets> tag.
 //===========================================
-boost::shared_ptr<Asset> MapLoader::constructAsset(const XmlNode data, long proto, bool addToWorld) {
-   if (data.isNull())
-      throw XmlException("Error constructing asset; XML node is empty", __FILE__, __LINE__);
+void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
+   try {
+      XML_NODE_CHECK(data, assets);
 
-   boost::shared_ptr<Asset> asset;
+      XmlNode node = data.firstChild();
+      while (!node.isNull() && node.name() == "asset") {
+         XmlAttribute attr = node.firstAttribute();
+         XML_ATTR_CHECK(attr, id);
+         long id = attr.getLong();
 
-   // Construct non-Item assets
-   if (data.name() == "Texture") {
-      asset = boost::shared_ptr<Asset>(new Texture(data));
-   }
-   // Construct Items
-   else {
-      pItem_t item;
+         // If asset is already loaded
+         if (m_assetManager.getAssetPointer(id)) continue;
 
-      if (proto == -1) {
-         asset = item = constructItem(data);
-      }
-      else {
-         asset = item = pItem_t(dynamic_cast<Item*>(m_gameMap->assetManager.cloneAsset(proto)));
+         boost::shared_ptr<Asset> asset = m_factoryFunc(node.firstChild());
 
-         if (!item)
-            throw XmlException("Error constructing asset; Bad prototype id", __FILE__, __LINE__);
+         m_assetManager.addAsset(id, asset);
+         if (segment) segment->assetIds.push_back(id);
+         ++m_refCounts[id];
 
-         item->assignData(data);
-      }
-
-      if (addToWorld) {
-         item->addToWorld();
-         m_gameMap->worldSpace.insertAndTrackEntity(item);
-         m_gameMap->items[item->getName()] = item;
+         node = node.nextSibling();
       }
    }
-
-   return asset;
+   catch (XmlException& e) {
+      e.prepend("Error loading assets from XML file; ");
+      throw;
+   }
 }
 
 //===========================================
-// MapLoader::loadAssets_r
+// MapLoader::parseAssetsFile_r
 //===========================================
-void MapLoader::loadAssets_r(const XmlNode data, mapSegment_t* segment, int depth) {
+void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
    try {
-      if (data.isNull())
+      XmlDocument doc;
+      XmlNode decl = doc.parse(path);
+
+      if (decl.isNull())
          throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
-      XmlNode node = data.nextSibling();
+      XmlNode node = decl.nextSibling();
       XML_NODE_CHECK(node, ASSETFILE);
 
       node = node.firstChild();
@@ -88,14 +62,10 @@ void MapLoader::loadAssets_r(const XmlNode data, mapSegment_t* segment, int dept
          throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
       if (node.name() == "using") {
+
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
-            string path = string("data/xml/").append(node_.getString());
-
-            XmlDocument doc;
-            XmlNode decl = doc.parse(path);
-            loadAssets_r(decl, segment, depth + 1);
-
+            parseAssetsFile_r(node_.getString(), segment);
             node_ = node_.nextSibling();
          }
 
@@ -103,26 +73,7 @@ void MapLoader::loadAssets_r(const XmlNode data, mapSegment_t* segment, int dept
       }
 
       XML_NODE_CHECK(node, assets);
-
-      node = node.firstChild();
-      while (!node.isNull() && node.name() == "asset") {
-         XmlAttribute attr = node.firstAttribute();
-         XML_ATTR_CHECK(attr, id);
-         long id = attr.getLong();
-
-         long proto = -1;
-         attr = attr.nextAttribute();
-         if (!attr.isNull() && attr.name() == "proto")
-            proto = attr.getLong();
-
-         boost::shared_ptr<Asset> asset = constructAsset(node.firstChild(), proto, depth == 0 ? true : false);
-
-         m_gameMap->assetManager.addAsset(id, asset);
-         segment->assetIds.push_back(id);
-         ++m_refCounts[id];
-
-         node = node.nextSibling();
-      }
+      loadAssets(node, segment);
    }
    catch (XmlException& e) {
       e.prepend("Error loading assets from XML file; ");
@@ -138,12 +89,8 @@ void MapLoader::loadMapSettings(const XmlNode data) {
       XML_NODE_CHECK(data, settings);
 
       XmlNode node = data.firstChild();
-      XML_NODE_CHECK(node, bgColour);
-      m_gameMap->bgColour = Colour(node.firstChild());
-
-      node = node.nextSibling();
       XML_NODE_CHECK(node, boundary);
-      m_gameMap->mapBoundary = Range(node.firstChild());
+      m_mapBoundary = Range(node.firstChild());
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, numSegments);
@@ -156,13 +103,6 @@ void MapLoader::loadMapSettings(const XmlNode data) {
       node = node.nextSibling();
       XML_NODE_CHECK(node, segmentsDir);
       string dir = node.getString();
-
-      node = node.nextSibling();
-      XML_NODE_CHECK(node, fillerTile);
-
-      XmlAttribute attr = node.firstAttribute();
-      XML_ATTR_CHECK(attr, id);
-      m_fillerTileId = attr.getLong();
 
       for (int i = 0; i < nSegs.x; ++i) {
          m_segments.push_back(vector<mapSegment_t>());
@@ -185,64 +125,13 @@ void MapLoader::loadMapSettings(const XmlNode data) {
 }
 
 //===========================================
-// MapLoader::fillRange
-//
-// Fills any empty spaces within the section of map specified by 'range' with the filler tile.
-//===========================================
-void MapLoader::fillRange(const Range& range) {
-   static long stopBlockStr = internString("stopBlock");
-
-   pItem_t filler = boost::dynamic_pointer_cast<Item>(m_gameMap->assetManager.getAssetPointer(m_fillerTileId));
-   if (!filler) throw Exception("Bad filler tile id", __FILE__, __LINE__);
-
-   float32_t w = filler->getBoundary().getSize().x;
-   float32_t h = filler->getBoundary().getSize().y;
-
-   unique_ptr<Shape> shape(filler->getShape().clone());
-   shape->scale(Vec2f(0.9f, 0.9f));
-
-   const Vec2f& pos = range.getPosition();
-   const Vec2f& sz = range.getSize();
-
-   for (float32_t x = pos.x; x < pos.x + sz.x; x += w) {
-      for (float32_t y = pos.y; y < pos.y + sz.y; y += h) {
-
-         vector<pEntity_t> vec;
-         m_gameMap->worldSpace.getEntities(filler->getBoundary(), vec);
-         bool clear = true;
-         for (uint_t i = 0; i < vec.size(); ++i) {
-            if (!vec[i]->hasShape()) continue;
-            if (vec[i]->getTypeName() == stopBlockStr) continue;
-
-            if (Math::overlap(*shape, Vec2f(x + 0.005, y + 0.005), vec[i]->getShape(), vec[i]->getTranslation_abs())) {
-               clear = false;
-               break;
-            }
-         }
-
-         if (clear) {
-            pItem_t item(filler->clone());
-
-            item->setTranslation(x, y);
-
-            item->addToWorld();
-            m_gameMap->worldSpace.trackEntity(item);
-            m_gameMap->items[item->getName()] = item;
-         }
-      }
-   }
-}
-
-//===========================================
 // MapLoader::parseMapFile
 //===========================================
-void MapLoader::parseMapFile(const std::string& file, gameMap_t* gameMap) {
+void MapLoader::parseMapFile(const std::string& file) {
    m_segments.clear();
    m_centreSegment = Vec2i(-1, -1);
 
    try {
-      m_gameMap = gameMap;
-
       XmlDocument doc;
 
       XmlNode decl = doc.parse(file);
@@ -253,23 +142,30 @@ void MapLoader::parseMapFile(const std::string& file, gameMap_t* gameMap) {
       XML_NODE_CHECK(node, MAPFILE);
 
       node = node.firstChild();
+      if (!node.isNull() && node.name() == "customSettings") {
+         m_setMapSettingsFunc(node);
+         node = node.nextSibling();
+      }
+
       loadMapSettings(node);
+
+      node = node.nextSibling();
+      if (!node.isNull() && node.name() == "using") {
+
+         XmlNode node_ = node.firstChild();
+         while (!node_.isNull() && node_.name() == "file") {
+            parseAssetsFile_r(node_.getString(), NULL);
+            node_ = node_.nextSibling();
+         }
+
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "assets")
+         loadAssets(node, NULL);
    }
    catch (XmlException& e) {
       e.prepend("Error loading map; ");
-      throw;
-   }
-}
-
-//===========================================
-// MapLoader::parseMapSegment
-//===========================================
-void MapLoader::parseMapSegment(mapSegment_t& segment) {
-   try {
-      segment.data = segment.xmlDocument->parse(segment.filePath);
-   }
-   catch (XmlException& e) {
-      e.prepend("Error parsing map segment; ");
       throw;
    }
 }
@@ -280,13 +176,11 @@ void MapLoader::parseMapSegment(mapSegment_t& segment) {
 void MapLoader::unloadRefCountZeroAssets() {
    for (auto i = m_refCounts.begin(); i != m_refCounts.end(); ++i) {
       if (i->second == 0) {
-         pAsset_t asset = m_gameMap->assetManager.getAssetPointer(i->first);
+         pAsset_t asset = m_assetManager.getAssetPointer(i->first);
 
          if (asset) {
-            EAssetDeletionRequest* event = new EAssetDeletionRequest(asset);
-            m_eventManager.immediateDispatch(event);
-
-            m_gameMap->assetManager.freeAsset(i->first);
+            m_deleteAssetFunc(asset);
+            m_assetManager.freeAsset(i->first);
          }
       }
    }
@@ -316,15 +210,7 @@ void MapLoader::loadSegment(const Vec2i& indices) {
    if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
       || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) return;
 
-   if (m_segments[indices.x][indices.y].data.isNull())
-      parseMapSegment(m_segments[indices.x][indices.y]);
-
-   loadAssets_r(m_segments[indices.x][indices.y].data, &m_segments[indices.x][indices.y]);
-
-   Range range;
-   getSegmentRange(indices, &range);
-
-   fillRange(range);
+   parseAssetsFile_r(m_segments[indices.x][indices.y].filePath, &m_segments[indices.x][indices.y]);
 }
 
 //===========================================
@@ -410,9 +296,9 @@ void MapLoader::getSegmentRange(const Vec2i& indices, Range* range) const {
       throw Exception("Cannot retrieve map segment; Index out of range", __FILE__, __LINE__);
    }
 
-   const Vec2f& mapPos = m_gameMap->mapBoundary.getPosition();
+   const Vec2f& mapPos = m_mapBoundary.getPosition();
    Vec2f pos(mapPos.x + static_cast<float32_t>(indices.x) * m_segmentSize.x,
-             mapPos.x + static_cast<float32_t>(indices.x) * m_segmentSize.x);
+             mapPos.y + static_cast<float32_t>(indices.y) * m_segmentSize.y);
 
    range->setPosition(pos);
    range->setSize(m_segmentSize);
@@ -424,7 +310,7 @@ void MapLoader::getSegmentRange(const Vec2i& indices, Range* range) const {
 // Returns (-1, -1) if pos is not inside any segment.
 //===========================================
 Vec2i MapLoader::getSegment(const Vec2f& pos) const {
-   Vec2f tmp = pos - m_gameMap->mapBoundary.getPosition();
+   Vec2f tmp = pos - m_mapBoundary.getPosition();
    Vec2i indices(floor(tmp.x / m_segmentSize.x), floor(tmp.y / m_segmentSize.y));
 
    if (indices.x < 0 || indices.x > static_cast<int>(m_segments.size())

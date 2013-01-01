@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MAPFILE>
-   <settings>
+   <customSettings>
       <bgColour><Colour r="0.075" g="0.05" b="0.02" a="1.0"/></bgColour>
+   </customSettings>
+   <settings>
       <boundary>
          <Range>
             <pos><Vec2f x="0.0" y="0.0"/></pos>
-            <size><Vec2f x="2.6" y="1.4"/></size>
+            <size><Vec2f x="5.0" y="5.0"/></size>
          </Range>
       </boundary>
-      <numSegments><Vec2i x="1" y="1"/></numSegments>
-      <segmentSize><Vec2f x="2.6" y="1.4"/></segmentSize>
+      <numSegments><Vec2i x="4" y="4"/></numSegments>
+      <segmentSize><Vec2f x="0.3" y="0.3"/></segmentSize>
       <segmentsDir>data/xml/0</segmentsDir>
-      <fillerTile id="50"/>
    </settings>
+   <using>
+      <file>data/xml/player.xml</file>
+      <file>data/xml/soil.xml</file>
+   </using>
+   <assets>
+      <asset id="99"><Player addToWorld="true" proto="10"><Item solid="true"><Entity name="player" x="0.0" y="0.0" z="8"/></Item></Player></asset>
+   </assets>
 </MAPFILE>

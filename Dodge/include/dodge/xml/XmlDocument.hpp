@@ -14,12 +14,16 @@
 namespace Dodge {
 
 
+class XmlNode;
+
 class XmlDocument {
    public:
       XmlDocument()
          : m_data(NULL) {}
 
       XmlNode parse(const std::string& file);
+      XmlNode firstNode();
+      inline bool isNull() const;
 
       ~XmlDocument();
 
@@ -27,6 +31,13 @@ class XmlDocument {
       rapidxml::xml_document<char> m_doc;
       char* m_data;
 };
+
+//===========================================
+// XmlDocument::isNull
+//===========================================
+inline bool XmlDocument::isNull() const {
+   return m_data == NULL;
+}
 
 
 }

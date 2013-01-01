@@ -18,7 +18,7 @@ identifies it. -->
       </asset>
       <!-- 'player' prototype -->
       <asset id="10">
-         <Player>
+         <Player addToWorld="false">
             <Item solid="true">
                <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
                   <shape>

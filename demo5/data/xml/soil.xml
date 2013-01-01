@@ -18,7 +18,7 @@ identifies it. -->
       </asset>
       <!-- 'soil' prototype -->
       <asset id="50">
-         <Soil>
+         <Soil addToWorld="false">
             <Item solid="true">
                <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="4" rot="0.0">
                   <shape>

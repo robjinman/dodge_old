@@ -13,7 +13,7 @@ identifies it. -->
 <ASSETFILE>
    <assets>
       <asset id="1000">
-         <CPhysicalSprite>
+         <CPhysicalSprite addToWorld="false">
             <Item solid="true">
                <Entity type="stationaryPlatform" name="stationaryPlatformProto" x="0.0" y="0.0" z="4" rot="0.0">
                   <shape>

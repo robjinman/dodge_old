@@ -26,7 +26,7 @@ class Range {
       Range(const Vec2f& pos, const Vec2f& size);
 
 #ifdef DEBUG
-      void dbg_print(std::ostream& out, int tab) const;
+      void dbg_print(std::ostream& out, int tab = 0) const;
 
       void dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const;
 #endif

@@ -19,7 +19,11 @@ class Application {
       Application()
          : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
            m_renderer(Dodge::Renderer::getInstance()),
-           m_frameRate(60.0) {}
+           m_frameRate(60.0),
+           m_mapLoader(m_assetManager,
+              Functor<void, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::setMapSettings),
+              Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::constructAsset),
+              Functor<void, TYPELIST_1(Dodge::pAsset_t)>(this, &Application::deleteAsset)) {}
 
       void onExit(Functor<void, TYPELIST_0()> callBack);
       void begin(int argc, char** argv);
@@ -31,7 +35,9 @@ class Application {
       void keyboard();
       void onWindowResize(int w, int h);
       void deletePending(Dodge::EEvent* event);
-      void deleteAsset(Dodge::EEvent* event);
+      void deleteAsset(Dodge::pAsset_t asset);
+      Dodge::pAsset_t constructAsset(const Dodge::XmlNode data);
+      void setMapSettings(const Dodge::XmlNode data);
       void draw() const;
       void update();
       void updateViewArea();
@@ -55,8 +61,13 @@ class Application {
       pPlayer_t                  m_player;
       double                     m_frameRate;
 
+      Dodge::AssetManager        m_assetManager;
+      Dodge::WorldSpace          m_worldSpace;
+      std::map<long, pItem_t>    m_items;
+
+      Dodge::Colour              m_bgColour;
+
       MapLoader                  m_mapLoader;
-      gameMap_t                  m_gameMap;
 };
 
 
