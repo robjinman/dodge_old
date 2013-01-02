@@ -16,21 +16,16 @@
 namespace Dodge {
 
 
+class XmlNode;
+
 class Font : virtual public Asset {
    public:
-      Font(pTexture_t texture, float32_t texX, float32_t texY, float32_t texW, float32_t texH, int charW, int charH)
-         : m_texture(texture), m_texSection(texX, texY, texW, texH), m_charW(charW), m_charH(charH) {}
+      Font(const XmlNode data);
+      Font(pTexture_t texture, float32_t texX, float32_t texY, float32_t texW, float32_t texH, int charW, int charH);
+      Font(const Font& copy);
 
-      Font(const Font& copy) {
-         m_texture = copy.m_texture;
-         m_texSection = copy.m_texSection;
-         m_charW = copy.m_charW;
-         m_charH = copy.m_charH;
-      }
-
-      virtual Font* clone() const {
-         return new Font(*this);
-      }
+      virtual size_t getSize() const;
+      virtual Font* clone() const;
 
       inline const pTexture_t getTexture() const;
       inline int getCharWidth() const;

@@ -10,9 +10,10 @@
 class Item : virtual public Dodge::Entity {
    public:
       Item(const Dodge::XmlNode data);
-      Item(const Item& item) : Entity(item) {}
-      Item(const Item& item, long name) : Entity(item, name) {}
+      Item(const Item& item);
+      Item(const Item& item, long name);
 
+      virtual size_t getSize() const;
       virtual Item* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
 

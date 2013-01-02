@@ -11,7 +11,8 @@ using namespace Dodge;
 // Player::Player
 //===========================================
 Player::Player(const XmlNode data)
-   : Entity(data.firstChild().firstChild()),
+   : Asset(internString("Player")),
+     Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      PhysicalSprite<Box2dPhysics>(data.nthChild(1)),
      m_mode(DIG_MODE),
@@ -68,7 +69,8 @@ Player::Player(const XmlNode data)
 // Player::Player
 //===========================================
 Player::Player(const Player& copy, long name)
-   : Entity(copy, name),
+   : Asset(internString("Player")),
+     Entity(copy, name),
      Item(copy, name),
      PhysicalSprite<Box2dPhysics>(copy, name),
      m_mode(DIG_MODE),
@@ -106,6 +108,23 @@ void Player::init() {
    m_midSensor.setFillColour(Colour(1.f, 0.f, 0.f, 0.4f));
    m_midSensor.setLineWidth(0);
 #endif
+}
+
+//===========================================
+// Player::getSize
+//===========================================
+size_t Player::getSize() const {
+   return sizeof(Player)
+      - sizeof(Item)
+      - sizeof(PhysicalSprite<Box2dPhysics>)
+      + Item::getSize()
+      + PhysicalSprite<Box2dPhysics>::getSize()
+      - sizeof(Asset)
+      - sizeof(Quad) + m_footSensor.getSize()
+      - sizeof(Quad) + m_headSensor.getSize()
+      - sizeof(Quad) + m_leftSensor.getSize()
+      - sizeof(Quad) + m_rightSensor.getSize()
+      - sizeof(Quad) + m_midSensor.getSize();
 }
 
 //===========================================

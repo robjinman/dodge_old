@@ -41,6 +41,7 @@ class Box2dPhysics : public EntityPhysics {
            m_body(NULL),
            m_opts(options) {}
 
+      virtual size_t getSize() const;
       virtual void assignData(const XmlNode data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

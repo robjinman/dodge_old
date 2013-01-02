@@ -13,20 +13,13 @@
 class CPhysicalSprite : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
    public:
       CPhysicalSprite(const Dodge::XmlNode data);
-
-      CPhysicalSprite(const CPhysicalSprite& copy)
-         : Entity(copy),
-           Item(copy),
-           PhysicalSprite<Box2dPhysics>(copy) {}
-
-      CPhysicalSprite(const CPhysicalSprite& copy, long name)
-         : Entity(copy, name),
-           Item(copy, name),
-           PhysicalSprite<Box2dPhysics>(copy, name) {}
+      CPhysicalSprite(const CPhysicalSprite& copy);
+      CPhysicalSprite(const CPhysicalSprite& copy, long name);
 
       virtual void draw() const;
-
       virtual void update();
+
+      virtual size_t getSize() const;
       virtual CPhysicalSprite* clone() const;
       virtual void addToWorld();
       virtual void removeFromWorld();

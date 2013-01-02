@@ -8,7 +8,8 @@ using namespace Dodge;
 // CPhysicalSprite::CPhysicalSprite
 //===========================================
 CPhysicalSprite::CPhysicalSprite(const XmlNode data)
-   : Entity(data.firstChild().firstChild()),
+   : Asset(internString("CPhysicalSprite")),
+     Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      PhysicalSprite<Box2dPhysics>(data.nthChild(1)) {
 
@@ -18,6 +19,36 @@ CPhysicalSprite::CPhysicalSprite(const XmlNode data)
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class CPhysicalSprite; ");
    }
+}
+
+//===========================================
+// CPhysicalSprite::CPhysicalSprite
+//===========================================
+CPhysicalSprite::CPhysicalSprite(const CPhysicalSprite& copy)
+   : Asset(internString("CPhysicalSprite")),
+     Entity(copy),
+     Item(copy),
+     PhysicalSprite<Box2dPhysics>(copy) {}
+
+//===========================================
+// CPhysicalSprite::CPhysicalSprite
+//===========================================
+CPhysicalSprite::CPhysicalSprite(const CPhysicalSprite& copy, long name)
+   : Asset(internString("CPhysicalSprite")),
+     Entity(copy, name),
+     Item(copy, name),
+     PhysicalSprite<Box2dPhysics>(copy, name) {}
+
+//===========================================
+// CPhysicalSprite::getSize
+//===========================================
+size_t CPhysicalSprite::getSize() const {
+   return sizeof(CPhysicalSprite)
+      - sizeof(Item)
+      - sizeof(PhysicalSprite<Box2dPhysics>)
+      + Item::getSize()
+      + PhysicalSprite<Box2dPhysics>::getSize()
+      - sizeof(Asset);
 }
 
 //===========================================

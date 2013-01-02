@@ -31,6 +31,7 @@ class LineSegment : public Shape {
       inline Vec2f getPoint1() const;
       inline Vec2f getPoint2() const;
 
+      virtual size_t getSize() const;
       virtual LineSegment* clone() const;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;

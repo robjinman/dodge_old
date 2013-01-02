@@ -27,17 +27,12 @@ class Sprite
 
    public:
       explicit Sprite(const XmlNode data);
-
-      Sprite(long type, pTexture_t texture)
-         : Entity(type), EntityAnimations(this, texture), EntityTransformations(this) {}
-
-      Sprite(long name, long type, pTexture_t texture)
-         : Entity(name, type), EntityAnimations(this, texture), EntityTransformations(this) {}
-
+      Sprite(long type, pTexture_t texture);
+      Sprite(long name, long type, pTexture_t texture);
       Sprite(const Sprite& copy);
-
       Sprite(const Sprite& copy, long name);
 
+      virtual size_t getSize() const;
       virtual Sprite* clone() const;
       virtual void assignData(const XmlNode data);
 

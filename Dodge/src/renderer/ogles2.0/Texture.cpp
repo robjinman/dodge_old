@@ -7,6 +7,7 @@
 #include <renderer/ogles2.0/Texture.hpp>
 #include <renderer/ogles2.0/Renderer.hpp>
 #include <PNG_CHECK.hpp>
+#include <StringId.hpp>
 
 
 using namespace std;
@@ -18,7 +19,9 @@ namespace Dodge {
 //===========================================
 // Texture::Texture
 //===========================================
-Texture::Texture(const char* file) {
+Texture::Texture(const char* file)
+   : Asset(internString("Texture")) {
+
    pngInit();
    constructTexture(file);
 }
@@ -26,7 +29,9 @@ Texture::Texture(const char* file) {
 //===========================================
 // Texture::Texture
 //===========================================
-Texture::Texture(const XmlNode data) {
+Texture::Texture(const XmlNode data)
+   : Asset(internString("Texture")) {
+
    try {
       XML_NODE_CHECK(data, Texture);
 
@@ -59,6 +64,13 @@ void Texture::constructTexture(const char* file) {
    PNG_CHECK(png_close_file(&m_png));
 
    Renderer::getInstance().newTexture(m_data, m_png.width, m_png.height, &m_handle);
+}
+
+//===========================================
+// Texture::getSize
+//===========================================
+size_t Texture::getSize() const {
+   return sizeof(Texture) + m_width * m_height * 4;
 }
 
 //===========================================

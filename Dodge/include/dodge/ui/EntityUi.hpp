@@ -35,6 +35,7 @@ class EntityUi {
       bool hasFocus() const;
       void registerCallback(uiEvent_t event, callback_t func);
 
+      virtual size_t getSize() const;
       virtual void update() = 0;
 
       virtual void onBtn1Press(float32_t x, float32_t y) {}

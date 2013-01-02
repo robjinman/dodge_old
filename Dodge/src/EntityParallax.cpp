@@ -65,6 +65,13 @@ void EntityParallax::assignData(const XmlNode data) {
 }
 
 //===========================================
+// EntityParallax::getSize
+//===========================================
+size_t EntityParallax::getSize() const {
+   return sizeof(EntityParallax);
+}
+
+//===========================================
 // EntityParallax::init
 //===========================================
 void EntityParallax::init() {

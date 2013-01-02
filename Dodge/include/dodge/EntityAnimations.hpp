@@ -27,6 +27,7 @@ class EntityAnimations {
       EntityAnimations(Entity* entity, pTexture_t texture);
       EntityAnimations(const EntityAnimations& copy, Entity* entity);
 
+      virtual size_t getSize() const;
       virtual void assignData(const XmlNode data);
 
       inline void setTexture(pTexture_t texture);

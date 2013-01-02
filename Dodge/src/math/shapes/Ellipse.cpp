@@ -16,14 +16,18 @@ namespace Dodge {
 //===========================================
 // Ellipse::Ellipse
 //===========================================
-Ellipse::Ellipse(const XmlNode data) {
+Ellipse::Ellipse(const XmlNode data)
+   : Asset(internString("Ellipse")) {
+
    // TODO
 }
 
 //===========================================
 // Ellipse::Ellipse
 //===========================================
-Ellipse::Ellipse(const Ellipse& copy) {
+Ellipse::Ellipse(const Ellipse& copy)
+   : Asset(internString("Ellipse")) {
+
    // TODO
 }
 
@@ -34,6 +38,13 @@ long Ellipse::typeId() const {
    static long typeId = internString("Ellipse");
 
    return typeId;
+}
+
+//===========================================
+// Ellipse::getSize
+//===========================================
+size_t Ellipse::getSize() const {
+   return sizeof(Ellipse); // TODO
 }
 
 //===========================================

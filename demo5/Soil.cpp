@@ -10,7 +10,8 @@ using namespace Dodge;
 // Soil::Soil
 //===========================================
 Soil::Soil(const XmlNode data)
-   : Entity(data.firstChild().firstChild()),
+   : Asset(internString("Soil")),
+     Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      Sprite(data.nthChild(1)) {
 
@@ -20,6 +21,35 @@ Soil::Soil(const XmlNode data)
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Soil; ");
    }
+}
+
+//===========================================
+// Soil::Soil
+//===========================================
+Soil::Soil(const Soil& copy)
+   : Asset(internString("Soil")),
+     Entity(copy),
+     Item(copy),
+     Sprite(copy) {}
+
+//===========================================
+// Soil::Soil
+//===========================================
+Soil::Soil(const Soil& copy, long name)
+   : Asset(internString("Soil")),
+     Entity(copy, name),
+     Item(copy, name),
+     Sprite(copy, name) {}
+
+//===========================================
+// Soil::getSize
+//===========================================
+size_t Soil::getSize() const {
+   return sizeof(Soil)
+      - sizeof(Item)
+      - sizeof(Sprite)
+      + Item::getSize()
+      + Sprite::getSize();
 }
 
 //===========================================

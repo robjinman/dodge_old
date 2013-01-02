@@ -139,6 +139,21 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
 }
 
 //===========================================
+// EntityAnimations::getSize
+//===========================================
+size_t EntityAnimations::getSize() const {
+
+   size_t animsSz = 0;
+   for (auto i = m_animations.begin(); i != m_animations.end(); ++i)
+      animsSz += sizeof(pair<long, pAnimation_t>) + i->second->getSize();
+
+   return sizeof(EntityAnimations)
+      - sizeof(PlainTexturedAlphaModel)
+      + m_model.getTotalSize()
+      + animsSz;
+}
+
+//===========================================
 // EntityAnimations::assignData
 //===========================================
 void EntityAnimations::assignData(const XmlNode data) {

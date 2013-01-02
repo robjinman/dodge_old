@@ -31,6 +31,8 @@ class AnimFrame {
       AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_);
       AnimFrame(const AnimFrame& copy);
 
+      size_t getSize() const;
+
       AnimFrame& operator=(const AnimFrame& rhs);
 
 #ifdef DEBUG

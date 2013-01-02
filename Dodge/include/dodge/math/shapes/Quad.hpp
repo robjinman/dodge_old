@@ -14,7 +14,7 @@ class Quad : public Polygon {
       explicit Quad(const XmlNode data);
       explicit Quad(const Vec2f& dimensions);
       Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D);
-      Quad(const Quad& copy) : Polygon(copy) {}
+      Quad(const Quad& copy);
 
       Quad& operator=(const Quad& rhs);
 
@@ -25,6 +25,7 @@ class Quad : public Polygon {
 
       inline void clear();
 
+      virtual size_t getSize() const;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

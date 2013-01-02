@@ -17,16 +17,35 @@ class Asset {
    friend class AssetManager;
 
    public:
+      Asset(long typeId)
+         : m_typeId(typeId) {}
+
       virtual Asset* clone() const = 0;
+      virtual size_t getSize() const = 0;
+
       inline long getAssetId() const;
+      inline long getAssetTypeId() const;
 
    private:
       long m_id;
+      long m_typeId;
 };
 
 typedef boost::shared_ptr<Asset> pAsset_t;
 
-inline long Asset::getAssetId() const { return m_id; }
+//===========================================
+// Asset::getAsseId
+//===========================================
+inline long Asset::getAssetId() const {
+   return m_id;
+}
+
+//===========================================
+// Asset::getAssetTypeId
+//===========================================
+inline long Asset::getAssetTypeId() const {
+   return m_typeId;
+}
 
 
 }

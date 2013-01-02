@@ -18,6 +18,7 @@ class TextEntity : public Entity {
       TextEntity(const TextEntity& copy);
       TextEntity(const TextEntity& copy, long name);
 
+      virtual size_t getSize() const;
       virtual TextEntity* clone() const;
       virtual void assignData(const XmlNode data);
 

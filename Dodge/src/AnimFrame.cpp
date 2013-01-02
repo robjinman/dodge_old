@@ -71,9 +71,16 @@ AnimFrame::AnimFrame(const AnimFrame& copy) {
    col = copy.col;
 }
 
+//===========================================
+// AnimFrame::getSize
+//===========================================
+size_t AnimFrame::getSize() const {
+   return sizeof(AnimFrame) + (shape ? shape->getSize() : 0);
+}
+
 #ifdef DEBUG
 //===========================================
-// AnimFrame::AnimFrame
+// AnimFrame::dbg_print
 //===========================================
 void AnimFrame::dbg_print(std::ostream& out, int tab) const {
    for (int i = 0; i < tab; i++) out << "\t";

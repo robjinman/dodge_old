@@ -17,15 +17,12 @@ namespace Dodge {
 class ParallaxSprite : public Sprite, public EntityParallax {
    public:
       ParallaxSprite(const XmlNode data);
-
-      ParallaxSprite(const ParallaxSprite& copy)
-         : Entity(copy), Sprite(copy), EntityParallax(this, copy) {}
-
-      ParallaxSprite(const ParallaxSprite& copy, long name)
-         : Entity(copy, name), Sprite(copy, name), EntityParallax(this, copy) {}
+      ParallaxSprite(const ParallaxSprite& copy);
+      ParallaxSprite(const ParallaxSprite& copy, long name);
 
       virtual void update();
 
+      virtual size_t getSize() const;
       virtual ParallaxSprite* clone() const;
       virtual void assignData(const XmlNode data);
 #ifdef DEBUG

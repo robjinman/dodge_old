@@ -39,6 +39,7 @@ class Polygon : public Shape {
       inline void insertVertex(int idx, float32_t x, float32_t y);
       void clear();
 
+      virtual size_t getSize() const;
       virtual Polygon* clone() const;
 
       virtual Vec2f getMinimum() const;

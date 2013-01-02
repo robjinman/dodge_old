@@ -32,6 +32,7 @@ class Player : public Item, public Dodge::PhysicalSprite<Dodge::Box2dPhysics> {
       virtual void addToWorld();
       virtual void removeFromWorld();
 
+      virtual size_t getSize() const;
       virtual Player* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
       virtual void update();

@@ -12,21 +12,15 @@
 class CSprite : public Item, public Dodge::Sprite {
    public:
       CSprite(const Dodge::XmlNode data);
-
-      CSprite(const CSprite& copy)
-         : Entity(copy),
-           Item(copy),
-           Sprite(copy) {}
-
-      CSprite(const CSprite& copy, long name)
-         : Entity(copy, name),
-           Item(copy, name),
-           Sprite(copy, name) {}
+      CSprite(const CSprite& copy);
+      CSprite(const CSprite& copy, long name);
 
       virtual void draw() const;
 
       virtual void onEvent(const Dodge::EEvent* event) { Sprite::onEvent(event); }
       virtual void update();
+
+      virtual size_t getSize() const;
       virtual CSprite* clone() const;
       virtual void addToWorld();
       virtual void removeFromWorld();

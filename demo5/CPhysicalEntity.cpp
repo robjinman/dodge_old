@@ -8,7 +8,8 @@ using namespace Dodge;
 // CPhysicalEntity::CPhysicalEntity
 //===========================================
 CPhysicalEntity::CPhysicalEntity(const XmlNode data)
-   : Entity(data.firstChild().firstChild()),
+   : Asset(internString("CPhysicalEntity")),
+     Entity(data.firstChild().firstChild()),
      Item(data.firstChild()),
      PhysicalEntity<Box2dPhysics>(data.nthChild(1)) {
 
@@ -21,10 +22,39 @@ CPhysicalEntity::CPhysicalEntity(const XmlNode data)
 }
 
 //===========================================
+// CPhysicalEntity::CPhysicalEntity
+//===========================================
+CPhysicalEntity::CPhysicalEntity(const CPhysicalEntity& copy)
+   : Asset(internString("CPhysicalEntity")),
+     Entity(copy),
+     Item(copy),
+     PhysicalEntity<Box2dPhysics>(copy) {}
+
+//===========================================
+// CPhysicalEntity::CPhysicalEntity
+//===========================================
+CPhysicalEntity::CPhysicalEntity(const CPhysicalEntity& copy, long name)
+   : Asset(internString("CPhysicalEntity")),
+     Entity(copy, name),
+     Item(copy, name),
+     PhysicalEntity<Box2dPhysics>(copy, name) {}
+
+//===========================================
 // CPhysicalEntity::clone
 //===========================================
 CPhysicalEntity* CPhysicalEntity::clone() const {
    return new CPhysicalEntity(*this);
+}
+
+//===========================================
+// CPhysicalEntity::getSize
+//===========================================
+size_t CPhysicalEntity::getSize() const {
+   return sizeof(CPhysicalEntity)
+      - sizeof(Item)
+      - sizeof(PhysicalEntity<Box2dPhysics>)
+      + Item::getSize()
+      + PhysicalEntity<Box2dPhysics>::getSize();
 }
 
 //===========================================

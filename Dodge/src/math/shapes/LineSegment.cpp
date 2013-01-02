@@ -22,7 +22,8 @@ namespace Dodge {
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t p2y)
-   : m_model(Renderer::LINES),
+   : Asset(internString("LineSegment")),
+     m_model(Renderer::LINES),
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
@@ -37,7 +38,8 @@ LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t 
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
-   : m_model(Renderer::LINES),
+   : Asset(internString("LineSegment")),
+     m_model(Renderer::LINES),
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
@@ -52,7 +54,8 @@ LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const XmlNode data)
-   : m_model(Renderer::LINES),
+   : Asset(internString("LineSegment")),
+     m_model(Renderer::LINES),
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
@@ -86,7 +89,8 @@ LineSegment::LineSegment(const XmlNode data)
 // LineSegment::LineSegment
 //===========================================
 LineSegment::LineSegment(const LineSegment& copy)
-   : m_model(copy.m_model),
+   : Asset(internString("LineSegment")),
+     m_model(copy.m_model),
      m_renderer(Renderer::getInstance()) {}
 
 //===========================================
@@ -95,6 +99,13 @@ LineSegment::LineSegment(const LineSegment& copy)
 LineSegment& LineSegment::operator=(const LineSegment& rhs) {
    m_model = rhs.m_model;
    return *this;
+}
+
+//===========================================
+// LineSegment::getSize
+//===========================================
+size_t LineSegment::getSize() const {
+   return sizeof(LineSegment) - sizeof(PlainNonTexturedAlphaModel) + m_model.getTotalSize();
 }
 
 //===========================================

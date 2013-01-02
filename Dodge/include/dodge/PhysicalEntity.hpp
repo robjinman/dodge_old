@@ -32,7 +32,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       explicit PhysicalEntity(const XmlNode data)
-         : Entity(data.nthChild(0)), T_PHYSICS(this, data.nthChild(1)) {
+         : Asset(internString("PhysicalEntity")), Entity(data.nthChild(0)), T_PHYSICS(this, data.nthChild(1)) {
 
          XML_NODE_CHECK(data, PhysicalEntity);
       }
@@ -41,7 +41,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       explicit PhysicalEntity(long type, std::unique_ptr<Shape> shape)
-         : Entity(type), T_PHYSICS(this) {
+         : Asset(internString("PhysicalEntity")), Entity(type), T_PHYSICS(this) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -52,7 +52,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       PhysicalEntity(long name, long type, std::unique_ptr<Shape> shape)
-         : Entity(name, type), T_PHYSICS(this) {
+         : Asset(internString("PhysicalEntity")), Entity(name, type), T_PHYSICS(this) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -63,7 +63,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       PhysicalEntity(long type, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
-         : Entity(type), T_PHYSICS(this, options) {
+         : Asset(internString("PhysicalEntity")), Entity(type), T_PHYSICS(this, options) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -74,7 +74,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       PhysicalEntity(long name, long type, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
-         : Entity(name, type), T_PHYSICS(this, options) {
+         : Asset(internString("PhysicalEntity")), Entity(name, type), T_PHYSICS(this, options) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -85,13 +85,20 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::PhysicalEntity
       //===========================================
       PhysicalEntity(const PhysicalEntity& copy)
-         : Entity(copy), T_PHYSICS(copy, this) {}
+         : Asset(internString("PhysicalEntity")), Entity(copy), T_PHYSICS(copy, this) {}
 
       //===========================================
       // PhysicalEntity::PhysicalEntity
       //===========================================
       PhysicalEntity(const PhysicalEntity& copy, long name)
-         : Entity(copy, name), T_PHYSICS(copy, this) {}
+         : Asset(internString("PhysicalEntity")), Entity(copy, name), T_PHYSICS(copy, this) {}
+
+      //===========================================
+      // PhysicalEntity::getSize
+      //===========================================
+      virtual size_t getSize() const {
+         return Entity::getSize() + T_PHYSICS::getSize();
+      }
 
       //===========================================
       // PhysicalEntity::clone

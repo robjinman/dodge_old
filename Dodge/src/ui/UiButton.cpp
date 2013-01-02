@@ -23,6 +23,17 @@ void UiButton::dbg_print(ostream& out) const {
 #endif
 
 //===========================================
+// UiButton::getSize
+//===========================================
+size_t UiButton::getSize() const {
+   return sizeof(UiButton)
+        - sizeof(EntityUi)
+        - sizeof(Sprite)
+        + Sprite::getSize()
+        + EntityUi::getSize();
+}
+
+//===========================================
 // UiButton::clone
 //===========================================
 UiButton* UiButton::clone() const {

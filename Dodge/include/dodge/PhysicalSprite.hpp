@@ -33,7 +33,10 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       explicit PhysicalSprite(const XmlNode data)
-         : Entity(data.firstChild().firstChild()), Sprite(data.firstChild()), T_PHYSICS(this, data.nthChild(1)) {
+         : Asset(internString("PhysicalSprite")),
+           Entity(data.firstChild().firstChild()),
+           Sprite(data.firstChild()),
+           T_PHYSICS(this, data.nthChild(1)) {
 
          XML_NODE_CHECK(data, PhysicalSprite);
       }
@@ -42,7 +45,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Shape> shape)
-         : Entity(type), Sprite(type, texture), T_PHYSICS(this) {
+         : Asset(internString("PhysicalSprite")), Entity(type), Sprite(type, texture), T_PHYSICS(this) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -53,7 +56,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Shape> shape)
-         : Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this) {
+         : Asset(internString("PhysicalSprite")), Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -64,7 +67,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(long type, pTexture_t texture, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
-         : Entity(type), Sprite(type, texture), T_PHYSICS(this, options) {
+         : Asset(internString("PhysicalSprite")), Entity(type), Sprite(type, texture), T_PHYSICS(this, options) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -75,7 +78,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(long name, long type, pTexture_t texture, std::unique_ptr<Shape> shape, const EntityPhysics::options_t& options)
-         : Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this, options) {
+         : Asset(internString("PhysicalSprite")), Entity(name, type), Sprite(name, type, texture), T_PHYSICS(this, options) {
 
          setSilent(true);
          setShape(std::move(shape));
@@ -86,13 +89,20 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(const PhysicalSprite& copy)
-         : Entity(copy), Sprite(copy), T_PHYSICS(copy, this) {}
+         : Asset(internString("PhysicalSprite")), Entity(copy), Sprite(copy), T_PHYSICS(copy, this) {}
 
       //===========================================
       // PhysicalSprite::PhysicalSprite
       //===========================================
       PhysicalSprite(const PhysicalSprite& copy, long name)
-         : Entity(copy), Sprite(copy, name), T_PHYSICS(copy, this) {}
+         : Asset(internString("PhysicalSprite")), Entity(copy), Sprite(copy, name), T_PHYSICS(copy, this) {}
+
+      //===========================================
+      // PhysicalSprite::getSize
+      //===========================================
+      virtual size_t getSize() const {
+         return Sprite::getSize() + T_PHYSICS::getSize();
+      }
 
       //===========================================
       // PhysicalSprite::clone

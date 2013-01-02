@@ -20,7 +20,10 @@ namespace Dodge {
 // Transformation::Transformation
 //===========================================
 Transformation::Transformation(long name, const std::vector<TransPart>& parts)
-   : m_name(name), m_parts(parts), m_state(STOPPED) {
+   : Asset(internString("Transformation")),
+     m_name(name),
+     m_parts(parts),
+     m_state(STOPPED) {
 
    init();
 }
@@ -29,7 +32,8 @@ Transformation::Transformation(long name, const std::vector<TransPart>& parts)
 // Transformation::Transformation
 //===========================================
 Transformation::Transformation(const XmlNode data)
-   : m_state(STOPPED) {
+   : Asset(internString("Transformation")),
+     m_state(STOPPED) {
 
    try {
       XML_NODE_CHECK(data, Transformation);
@@ -58,7 +62,8 @@ Transformation::Transformation(const XmlNode data)
 // Transformation::Transformation
 //===========================================
 Transformation::Transformation(const Transformation& copy, long name)
-   : m_name(name),
+   : Asset(internString("Transformation")),
+     m_name(name),
      m_state(STOPPED) {
 
    m_parts = copy.m_parts;
@@ -85,6 +90,14 @@ void Transformation::dbg_print(std::ostream& out, int tab) const {
    }
 }
 #endif
+
+//===========================================
+// Transformation::getSize
+//===========================================
+size_t Transformation::getSize() const {
+   return sizeof(Transformation)
+      + m_parts.size() * sizeof(TransPart);
+}
 
 //===========================================
 // Transformation::init

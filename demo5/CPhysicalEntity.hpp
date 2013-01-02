@@ -13,20 +13,13 @@
 class CPhysicalEntity : public Item, public Dodge::PhysicalEntity<Dodge::Box2dPhysics> {
    public:
       CPhysicalEntity(const Dodge::XmlNode data);
-
-      CPhysicalEntity(const CPhysicalEntity& copy)
-         : Entity(copy),
-           Item(copy),
-           PhysicalEntity<Box2dPhysics>(copy) {}
-
-      CPhysicalEntity(const CPhysicalEntity& copy, long name)
-         : Entity(copy, name),
-           Item(copy, name),
-           PhysicalEntity<Box2dPhysics>(copy, name) {}
+      CPhysicalEntity(const CPhysicalEntity& copy);
+      CPhysicalEntity(const CPhysicalEntity& copy, long name);
 
       virtual void draw() const;
-
       virtual void update();
+
+      virtual size_t getSize() const;
       virtual CPhysicalEntity* clone() const;
       virtual void addToWorld();
       virtual void removeFromWorld();

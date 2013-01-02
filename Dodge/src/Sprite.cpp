@@ -6,7 +6,8 @@
 #include <cstring>
 #include <string>
 #include <cstdio>
-#include "Sprite.hpp"
+#include <StringId.hpp>
+#include <Sprite.hpp>
 
 
 using namespace std;
@@ -19,7 +20,8 @@ namespace Dodge {
 // Sprite::Sprite
 //===========================================
 Sprite::Sprite(const XmlNode data)
-   : Entity(data.nthChild(0)),
+   : Asset(internString("Sprite")),
+     Entity(data.nthChild(0)),
      EntityAnimations(this, data.nthChild(1)),
      EntityTransformations(this, data.nthChild(2)) {
 
@@ -29,8 +31,29 @@ Sprite::Sprite(const XmlNode data)
 //===========================================
 // Sprite::Sprite
 //===========================================
+Sprite::Sprite(long type, pTexture_t texture)
+   : Asset(internString("Sprite")),
+     Entity(type),
+     EntityAnimations(this, texture),
+     EntityTransformations(this) {}
+
+//===========================================
+// Sprite::Sprite
+//===========================================
+Sprite::Sprite(long name, long type, pTexture_t texture)
+   : Asset(internString("Sprite")),
+     Entity(name, type),
+     EntityAnimations(this, texture),
+     EntityTransformations(this) {}
+
+//===========================================
+// Sprite::Sprite
+//===========================================
 Sprite::Sprite(const Sprite& copy)
-   : Entity(copy), EntityAnimations(copy, this), EntityTransformations(copy, this) {
+   : Asset(internString("Sprite")),
+     Entity(copy),
+     EntityAnimations(copy, this),
+     EntityTransformations(copy, this) {
 
    deepCopy(copy);
 }
@@ -39,7 +62,10 @@ Sprite::Sprite(const Sprite& copy)
 // Sprite::Sprite
 //===========================================
 Sprite::Sprite(const Sprite& copy, long name)
-   : Entity(copy, name), EntityAnimations(copy, this), EntityTransformations(copy, this) {
+   : Asset(internString("Sprite")),
+     Entity(copy, name),
+     EntityAnimations(copy, this),
+     EntityTransformations(copy, this) {
 
    deepCopy(copy);
 }
@@ -100,6 +126,19 @@ void Sprite::dbg_print(std::ostream& out, int tab) const {
    EntityTransformations::dbg_print(out, tab + 1);
 }
 #endif
+
+//===========================================
+// Sprite::getSize
+//===========================================
+size_t Sprite::getSize() const {
+   return sizeof(Sprite)
+      - sizeof(Entity)
+      - sizeof(EntityTransformations)
+      - sizeof(EntityAnimations)
+      + Entity::getSize()
+      + EntityTransformations::getSize();
+      + EntityAnimations::getSize();
+}
 
 //===========================================
 // Sprite::onEvent

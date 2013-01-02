@@ -22,7 +22,8 @@ namespace Dodge {
 // Polygon::Polygon
 //===========================================
 Polygon::Polygon()
-   : m_nVerts(0),
+   : Asset(internString("Polygon")),
+     m_nVerts(0),
      m_outlineModel(Renderer::LINES),
      m_interiorModel(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
@@ -34,7 +35,8 @@ Polygon::Polygon()
 // Polygon::Polygon
 //===========================================
 Polygon::Polygon(const XmlNode data)
-   : m_outlineModel(Renderer::LINES),
+   : Asset(internString("Polygon")),
+     m_outlineModel(Renderer::LINES),
      m_interiorModel(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
 
@@ -67,7 +69,8 @@ Polygon::Polygon(const XmlNode data)
 // Contruct deep copy
 //===========================================
 Polygon::Polygon(const Polygon& poly)
-   : Shape(poly),
+   : Asset(internString("Polygon")),
+     Shape(poly),
      m_outlineModel(Renderer::LINES),
      m_interiorModel(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
@@ -93,6 +96,24 @@ void Polygon::deepCopy(const Polygon& copy) {
 
    m_outlineModel = copy.m_outlineModel;
    m_interiorModel = copy.m_interiorModel;
+}
+
+//===========================================
+// Polygon::getSize
+//===========================================
+size_t Polygon::getSize() const { // TODO: Keep up to date
+
+   size_t childrenSz = 0;
+   for (uint_t i = 0; i < m_children.size(); ++i)
+      childrenSz += m_children[i].getSize();
+
+   return sizeof(Polygon)
+      - sizeof(PlainNonTexturedAlphaModel)
+      - sizeof(PlainNonTexturedAlphaModel)
+      + m_outlineModel.getTotalSize()
+      + m_interiorModel.getTotalSize()
+      + m_verts.size() * sizeof(boost::shared_ptr<Vec2f>)
+      + childrenSz;
 }
 
 //===========================================

@@ -78,7 +78,9 @@ void Entity::dbg_print(std::ostream& out, int tab) const {
 // Entity::Entity
 //===========================================
 Entity::Entity(const XmlNode data)
-   : m_silent(false), m_parent(NULL) {
+   : Asset(internString("Entity")),
+     m_silent(false),
+     m_parent(NULL) {
 
    AssetManager assetManager;
    ShapeFactory shapeFactory;
@@ -173,7 +175,8 @@ Entity::Entity(const XmlNode data)
 // Entity::Entity
 //===========================================
 Entity::Entity(long name, long type)
-   : m_name(name),
+   : Asset(internString("Entity")),
+     m_name(name),
      m_type(type),
      m_silent(false),
      m_scale(1.f, 1.f),
@@ -190,7 +193,8 @@ Entity::Entity(long name, long type)
 // Entity::Entity
 //===========================================
 Entity::Entity(long type)
-   : m_type(type),
+   : Asset(internString("Entity")),
+     m_type(type),
      m_silent(false),
      m_scale(1.f, 1.f),
      m_transl(0.f, 0.f),
@@ -210,7 +214,8 @@ Entity::Entity(long type)
 // Construct deep copy.
 //===========================================
 Entity::Entity(const Entity& copy)
-   : m_silent(false),
+   : Asset(internString("Entity")),
+     m_silent(false),
      m_parent(NULL) {
 
    deepCopy(copy);
@@ -225,7 +230,8 @@ Entity::Entity(const Entity& copy)
 // Construct deep copy.
 //===========================================
 Entity::Entity(const Entity& copy, long name)
-   : m_silent(false),
+   : Asset(internString("Entity")),
+     m_silent(false),
      m_parent(NULL) {
 
    deepCopy(copy);
@@ -252,6 +258,15 @@ void Entity::deepCopy(const Entity& copy) {
 
    m_shape = copy.m_shape ? unique_ptr<Shape>(copy.m_shape->clone()) : unique_ptr<Shape>();
    m_boundary = copy.m_boundary;
+}
+
+//===========================================
+// Entity::getSize
+//===========================================
+size_t Entity::getSize() const {
+   return sizeof(Entity)
+      + (m_shape ? m_shape->getSize() : 0)
+      + m_children.size() * sizeof(pEntity_t);
 }
 
 //===========================================

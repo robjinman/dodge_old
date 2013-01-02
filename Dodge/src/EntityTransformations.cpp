@@ -89,6 +89,19 @@ EntityTransformations::EntityTransformations(Entity* entity, const XmlNode data)
 }
 
 //===========================================
+// EntityTransformations::getSize
+//===========================================
+size_t EntityTransformations::getSize() const {
+
+   size_t transSz = 0;
+   for (auto i = m_transformations.begin(); i != m_transformations.end(); ++i)
+      transSz += sizeof(pair<long, pTransformation_t>) + i->second->getSize();
+
+   return sizeof(EntityTransformations)
+      + transSz;
+}
+
+//===========================================
 // EntityTransformations::assignData
 //===========================================
 void EntityTransformations::assignData(const XmlNode data) {

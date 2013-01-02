@@ -24,6 +24,7 @@ class Texture : virtual public Asset {
       Texture(const XmlNode data);
       Texture(const char* file);
 
+      virtual size_t getSize() const;
       virtual Texture* clone() const;
 
       inline GLint getWidth() const;

@@ -10,7 +10,8 @@ namespace Dodge {
 // TextEntity::TextEntity
 //===========================================
 TextEntity::TextEntity(const XmlNode data)
-   : Entity(data.firstChild()),
+   : Asset(internString("TextEntity")),
+     Entity(data.firstChild()),
      m_renderer(Renderer::getInstance()),
      m_model(Renderer::TRIANGLES) {
 
@@ -26,7 +27,8 @@ TextEntity::TextEntity(const XmlNode data)
 // TextEntity::TextEntity
 //===========================================
 TextEntity::TextEntity(long type, const pFont_t font, const std::string& text, const Vec2f& size)
-   : Entity(type),
+   : Asset(internString("TextEntity")),
+     Entity(type),
      m_renderer(Renderer::getInstance()),
      m_font(font),
      m_size(size),
@@ -39,7 +41,8 @@ TextEntity::TextEntity(long type, const pFont_t font, const std::string& text, c
 // TextEntity::TextEntity
 //===========================================
 TextEntity::TextEntity(long name, long type, const pFont_t font, const std::string& text, const Vec2f& size)
-   : Entity(name, type),
+   : Asset(internString("TextEntity")),
+     Entity(name, type),
      m_renderer(Renderer::getInstance()),
      m_font(font),
      m_size(size),
@@ -52,7 +55,8 @@ TextEntity::TextEntity(long name, long type, const pFont_t font, const std::stri
 // TextEntity::TextEntity
 //===========================================
 TextEntity::TextEntity(const TextEntity& copy)
-   : Entity(copy),
+   : Asset(internString("TextEntity")),
+     Entity(copy),
      m_renderer(Renderer::getInstance()),
      m_model(Renderer::TRIANGLES) {
 
@@ -63,7 +67,8 @@ TextEntity::TextEntity(const TextEntity& copy)
 // TextEntity::TextEntity
 //===========================================
 TextEntity::TextEntity(const TextEntity& copy, long name)
-   : Entity(copy, name),
+   : Asset(internString("TextEntity")),
+     Entity(copy, name),
      m_renderer(Renderer::getInstance()),
      m_model(Renderer::TRIANGLES) {
 
@@ -75,6 +80,17 @@ TextEntity::TextEntity(const TextEntity& copy, long name)
 //===========================================
 TextEntity* TextEntity::clone() const {
    return new TextEntity(*this);
+}
+
+//===========================================
+// TextEntity::getSize
+//===========================================
+size_t TextEntity::getSize() const {
+   return sizeof(TextEntity)
+      - sizeof(Entity)
+      - sizeof(PlainTexturedAlphaModel)
+      + Entity::getSize()
+      + m_model.getTotalSize();
 }
 
 //===========================================

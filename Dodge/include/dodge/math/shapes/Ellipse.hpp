@@ -19,7 +19,7 @@ class Ellipse : public Shape {
       Ellipse(const Ellipse& copy);
 
       virtual long typeId() const;
-
+      virtual size_t getSize() const;
       virtual Ellipse* clone() const;
 
       virtual Vec2f getMinimum() const;

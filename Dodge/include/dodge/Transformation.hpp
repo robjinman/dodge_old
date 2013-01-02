@@ -63,6 +63,7 @@ class Transformation : virtual public Asset {
       Transformation(const Transformation& copy, long name);
       Transformation(long name, const std::vector<TransPart>& parts);
 
+      virtual size_t getSize() const;
       virtual Transformation* clone() const;
 
       inline void setName(long name);

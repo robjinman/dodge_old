@@ -19,6 +19,7 @@ class EntityParallax {
       EntityParallax(Entity* entity, const Vec2f& range);
       EntityParallax(Entity* entity, const EntityParallax& copy);
 
+      virtual size_t getSize() const;
       virtual void assignData(const XmlNode data);
       virtual void update();
 #ifdef DEBUG

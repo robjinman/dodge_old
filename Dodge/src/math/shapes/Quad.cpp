@@ -13,7 +13,9 @@ namespace Dodge {
 //===========================================
 // Quad::Quad
 //===========================================
-Quad::Quad(const XmlNode data) {
+Quad::Quad(const XmlNode data)
+   : Asset(internString("Quad")) {
+
    try {
       XML_NODE_CHECK(data, Quad);
 
@@ -41,7 +43,9 @@ Quad::Quad(const XmlNode data) {
 //===========================================
 // Quad::Quad
 //===========================================
-Quad::Quad() {
+Quad::Quad()
+   : Asset(internString("Quad")) {
+
    addVertex(Vec2f());
    addVertex(Vec2f());
    addVertex(Vec2f());
@@ -51,7 +55,9 @@ Quad::Quad() {
 //===========================================
 // Quad::Quad
 //===========================================
-Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D) {
+Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D)
+   : Asset(internString("Quad")) {
+
    addVertex(A);
    addVertex(B);
    addVertex(C);
@@ -61,7 +67,9 @@ Quad::Quad(const Vec2f& A, const Vec2f& B, const Vec2f& C, const Vec2f& D) {
 //===========================================
 // Quad::Quad
 //===========================================
-Quad::Quad(const Vec2f& d) {
+Quad::Quad(const Vec2f& d)
+   : Asset(internString("Quad")) {
+
    addVertex(Vec2f(0.f, 0.f));
    addVertex(Vec2f(d.x, 0.f));
    addVertex(d);
@@ -69,11 +77,25 @@ Quad::Quad(const Vec2f& d) {
 }
 
 //===========================================
+// Quad::Quad
+//===========================================
+Quad::Quad(const Quad& copy)
+   : Asset(internString("Quad")),
+     Polygon(copy) {}
+
+//===========================================
 // Quad::operator=
 //===========================================
 Quad& Quad::operator=(const Quad& rhs) {
    Polygon::operator=(rhs);
    return *this;
+}
+
+//===========================================
+// Quad::getSize
+//===========================================
+size_t Quad::getSize() const {
+   return sizeof(Quad) - sizeof(Polygon) + Polygon::getSize();
 }
 
 #ifdef DEBUG

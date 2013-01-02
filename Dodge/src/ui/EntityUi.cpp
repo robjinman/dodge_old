@@ -10,6 +10,9 @@
 #include <Entity.hpp>
 
 
+using namespace std;
+
+
 namespace Dodge {
 
 
@@ -68,6 +71,14 @@ bool EntityUi::inRange(int x, int y, float32_t& wx, float32_t& wy) const {
 }
 
 //===========================================
+// EntityUi::getSize
+//===========================================
+size_t EntityUi::getSize() const {
+   return sizeof(EntityUi)
+      + m_callbacks.size() * sizeof(pair<uiEvent_t, callback_t>); // This is an under-estimate
+}
+
+//===========================================
 // EntityUi::btn1PressHandler
 //===========================================
 void EntityUi::btn1PressHandler(int x, int y) {
@@ -76,7 +87,7 @@ void EntityUi::btn1PressHandler(int x, int y) {
       this->onBtn1Press(wx, wy);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN1_PRESS);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN1_PRESS);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
@@ -100,7 +111,7 @@ void EntityUi::btn1ReleaseHandler(int x, int y) {
       this->onBtn1Release(wx, wy);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN1_RELEASE);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN1_RELEASE);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
@@ -124,7 +135,7 @@ void EntityUi::btn3PressHandler(int x, int y) {
       this->onBtn3Press(wx, wy);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN3_PRESS);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN3_PRESS);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
@@ -148,7 +159,7 @@ void EntityUi::btn3ReleaseHandler(int x, int y) {
       this->onBtn3Release(wx, wy);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN3_RELEASE);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_BTN3_RELEASE);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
@@ -171,7 +182,7 @@ void EntityUi::keyDownHandler(int key) {
       this->onKeyDown(key);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_KEY_DOWN);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_KEY_DOWN);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_2(pEntity_t, int)> >(i->second)(m_entity->getSharedPtr(), key);
 
@@ -194,7 +205,7 @@ void EntityUi::keyUpHandler(int key) {
       this->onKeyUp(key);
 
       try {
-         std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_KEY_UP);
+         map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_KEY_UP);
          if (i != m_callbacks.end())
             boost::get<Functor<void, TYPELIST_2(pEntity_t, int)> >(i->second)(m_entity->getSharedPtr(), key);
 
@@ -220,7 +231,7 @@ void EntityUi::mouseMoveHandler(int x, int y) {
          onHoverOn(wx, wy);
 
          try {
-            std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_ON);
+            map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_ON);
             if (i != m_callbacks.end())
                boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
@@ -241,7 +252,7 @@ void EntityUi::mouseMoveHandler(int x, int y) {
          onHoverOff(wx, wy);
 
          try {
-            std::map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_OFF);
+            map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_OFF);
             if (i != m_callbacks.end())
                boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 

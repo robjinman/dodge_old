@@ -10,7 +10,8 @@ using namespace Dodge;
 // Item::Item
 //===========================================
 Item::Item(const XmlNode data)
-   : Entity(data.firstChild()) {
+   : Asset(internString("Item")),
+     Entity(data.firstChild()) {
 
    try {
       XML_NODE_CHECK(data, Item);
@@ -26,10 +27,31 @@ Item::Item(const XmlNode data)
 }
 
 //===========================================
+// Item::Item
+//===========================================
+Item::Item(const Item& item)
+   : Asset(internString("Item")), Entity(item) {}
+
+//===========================================
+// Item::Item
+//===========================================
+Item::Item(const Item& item, long name)
+   : Asset(internString("Item")), Entity(item, name) {}
+
+//===========================================
 // Item::clone
 //===========================================
 Item* Item::clone() const {
    return new Item(*this);
+}
+
+//===========================================
+// Item::getSize
+//===========================================
+size_t Item::getSize() const {
+   return sizeof(Item)
+      - sizeof(Entity)
+      + Entity::getSize();
 }
 
 //===========================================

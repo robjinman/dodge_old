@@ -9,7 +9,8 @@ using namespace Dodge;
 // CParallaxSprite::CParallaxSprite
 //===========================================
 CParallaxSprite::CParallaxSprite(const XmlNode data)
-   : Entity(data.firstChild().firstChild()),
+   : Asset(internString("CParallaxSprite")),
+     Entity(data.firstChild().firstChild()),
      Item(data.nthChild(0)),
      ParallaxSprite(data.nthChild(1)) {
 
@@ -20,6 +21,36 @@ CParallaxSprite::CParallaxSprite(const XmlNode data)
       e.prepend("Error parsing XML for instance of class CParallaxSprite; ");
       throw;
    }
+}
+
+//===========================================
+// CParallaxSprite::CParallaxSprite
+//===========================================
+CParallaxSprite::CParallaxSprite(const CParallaxSprite& copy)
+   : Asset(internString("CParallaxSprite")),
+     Entity(copy),
+     Item(copy),
+     Dodge::ParallaxSprite(copy) {}
+
+//===========================================
+// CParallaxSprite::CParallaxSprite
+//===========================================
+CParallaxSprite::CParallaxSprite(const CParallaxSprite& copy, long name)
+   : Asset(internString("CParallaxSprite")),
+     Entity(copy, name),
+     Item(copy, name),
+     Dodge::ParallaxSprite(copy) {}
+
+//===========================================
+// CParallaxSprite::getSize
+//===========================================
+size_t CParallaxSprite::getSize() const {
+   return sizeof(CParallaxSprite)
+      - sizeof(Item)
+      - sizeof(ParallaxSprite)
+      + Item::getSize()
+      + ParallaxSprite::getSize()
+      - sizeof(Asset);
 }
 
 //===========================================

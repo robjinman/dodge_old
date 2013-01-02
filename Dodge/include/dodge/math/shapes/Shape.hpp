@@ -7,6 +7,7 @@
 #endif
 #include <boost/shared_ptr.hpp>
 #include "../../xml/xml.hpp"
+#include "../../StringId.hpp"
 #include "../Vec2f.hpp"
 #include "../../Asset.hpp"
 #include "../../renderer/Colour.hpp"
@@ -20,6 +21,8 @@ namespace Dodge {
 // will have an implicit position because all vertices can be moved).
 class Shape : virtual public Asset {
    public:
+      Shape() : Asset(internString("Shape")) {}
+
       virtual long typeId() const = 0;
 
       virtual Shape* clone() const = 0;

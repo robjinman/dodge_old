@@ -42,7 +42,9 @@ void Animation::dbg_print(std::ostream& out, int tab) const {
 // Animation::Animation
 //===========================================
 Animation::Animation(const XmlNode data)
-   : m_state(STOPPED), m_frameReady(false) {
+   : Asset(internString("Animation")),
+     m_state(STOPPED),
+     m_frameReady(false) {
 
    try {
       XML_NODE_CHECK(data, Animation);
@@ -73,7 +75,10 @@ Animation::Animation(const XmlNode data)
 // Animation::Animation
 //===========================================
 Animation::Animation(const Animation& copy, long name)
-   : m_name(name), m_state(STOPPED), m_frameReady(false) {
+   : Asset(internString("Animation")),
+     m_name(name),
+     m_state(STOPPED),
+     m_frameReady(false) {
 
    m_duration = copy.m_duration;
    m_frames = copy.m_frames;
@@ -83,13 +88,30 @@ Animation::Animation(const Animation& copy, long name)
 // Animation::Animation
 //===========================================
 Animation::Animation(long name, float32_t duration, const std::vector<AnimFrame>& frames)
-   : m_name(name), m_duration(duration), m_frames(frames), m_state(STOPPED), m_frameReady(false) {}
+   : Asset(internString("Animation")),
+     m_name(name),
+     m_duration(duration),
+     m_frames(frames),
+     m_state(STOPPED),
+     m_frameReady(false) {}
 
 //===========================================
 // Animation::clone
 //===========================================
 Animation* Animation::clone() const {
    return new Animation(*this);
+}
+
+//===========================================
+// Animation::getSize
+//===========================================
+size_t Animation::getSize() const {
+
+   size_t framesSz = 0;
+   for (uint_t i = 0; i < m_frames.size(); ++i)
+      framesSz += m_frames[i].getSize();
+
+   return sizeof(Animation) + framesSz;
 }
 
 //===========================================

@@ -97,6 +97,13 @@ void Box2dPhysics::assignData(const XmlNode data) {
    }
 }
 
+//===========================================
+// Box2dPhysics::getSize
+//===========================================
+size_t Box2dPhysics::getSize() const {
+   return sizeof(Box2dPhysics); // TODO Not accurate
+}
+
 #ifdef DEBUG
 //===========================================
 // Box2dPhysics::dbg_print

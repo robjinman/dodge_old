@@ -9,15 +9,12 @@
 class CParallaxSprite : public Item, public Dodge::ParallaxSprite {
    public:
       CParallaxSprite(const Dodge::XmlNode data);
-
-      CParallaxSprite(const CParallaxSprite& copy)
-         : Entity(copy), Item(copy), Dodge::ParallaxSprite(copy) {}
-
-      CParallaxSprite(const CParallaxSprite& copy, long name)
-         : Entity(copy, name), Item(copy, name), Dodge::ParallaxSprite(copy) {}
+      CParallaxSprite(const CParallaxSprite& copy);
+      CParallaxSprite(const CParallaxSprite& copy, long name);
 
       virtual void update();
 
+      virtual size_t getSize() const;
       virtual CParallaxSprite* clone() const;
       virtual void assignData(const Dodge::XmlNode data);
 #ifdef DEBUG

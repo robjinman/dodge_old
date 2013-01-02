@@ -32,6 +32,7 @@ class IModel {
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) = 0;
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
       virtual Renderer::mode_t getRenderMode() const = 0;
+      virtual size_t getTotalSize() const = 0;
 
       // Returns transformed z-coord of first vertex
       virtual float32_t getDepth() const = 0;
@@ -237,6 +238,13 @@ class Model : public IModel {
       virtual float32_t getDepth() const {
          float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
          return z + m_matrix[14];
+      }
+
+      //===========================================
+      // Model::getTotalSize
+      //===========================================
+      virtual size_t getTotalSize() const {
+         return getSizeOf() + vertexDataSize();
       }
 
       //===========================================
