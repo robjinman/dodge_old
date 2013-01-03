@@ -18,6 +18,8 @@
 namespace Dodge {
 
 
+class Renderer;
+
 // PNG/OGLES2 implementation
 class Texture : virtual public Asset {
    public:
@@ -32,6 +34,8 @@ class Texture : virtual public Asset {
       inline const byte_t* getData() const;
       inline const GLuint& getHandle() const;
 
+      virtual ~Texture();
+
    private:
       void constructTexture(const char* file);
       void pngInit() const;
@@ -41,6 +45,8 @@ class Texture : virtual public Asset {
       GLint m_width;
       GLint m_height;
       GLuint m_handle;
+
+      Renderer& m_renderer;
 };
 
 typedef boost::shared_ptr<Texture> pTexture_t;

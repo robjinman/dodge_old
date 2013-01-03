@@ -20,7 +20,8 @@ namespace Dodge {
 // Texture::Texture
 //===========================================
 Texture::Texture(const char* file)
-   : Asset(internString("Texture")) {
+   : Asset(internString("Texture")),
+     m_renderer(Renderer::getInstance()) {
 
    pngInit();
    constructTexture(file);
@@ -30,7 +31,8 @@ Texture::Texture(const char* file)
 // Texture::Texture
 //===========================================
 Texture::Texture(const XmlNode data)
-   : Asset(internString("Texture")) {
+   : Asset(internString("Texture")),
+     m_renderer(Renderer::getInstance()) {
 
    try {
       XML_NODE_CHECK(data, Texture);
@@ -63,7 +65,7 @@ void Texture::constructTexture(const char* file) {
 
    PNG_CHECK(png_close_file(&m_png));
 
-   Renderer::getInstance().newTexture(m_data, m_png.width, m_png.height, &m_handle);
+   m_renderer.loadTexture(m_data, m_png.width, m_png.height, &m_handle);
 }
 
 //===========================================
@@ -90,6 +92,14 @@ void Texture::pngInit() const {
       PNG_CHECK(png_init(0, 0));
       init = true;
    }
+}
+
+//===========================================
+// Texture::~Texture
+//===========================================
+Texture::~Texture() {
+   m_renderer.unloadTexture(m_handle);
+   delete[] m_data;
 }
 
 

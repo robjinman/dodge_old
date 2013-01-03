@@ -92,16 +92,13 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       XML_NODE_CHECK(node, texture);
 
       XmlAttribute attr = node.firstAttribute();
-      if (!attr.isNull() && attr.name() == "ptr") {
-         long id = attr.getLong();
-         m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
+      XML_ATTR_CHECK(attr, ptr);
 
-         if (!m_texture)
-            throw XmlException("Bad texture asset id", __FILE__, __LINE__);
-      }
-      else {
-         m_texture = pTexture_t(new Texture(node.firstChild()));
-      }
+      long id = attr.getLong();
+      m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
+
+      if (!m_texture)
+         throw XmlException("Bad texture asset id", __FILE__, __LINE__);
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, textureSection);
@@ -172,9 +169,6 @@ void EntityAnimations::assignData(const XmlNode data) {
 
             if (!m_texture)
                throw XmlException("Bad texture asset id", __FILE__, __LINE__);
-         }
-         else {
-            m_texture = pTexture_t(new Texture(node.firstChild()));
          }
 
          node = node.nextSibling();

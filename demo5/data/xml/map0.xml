@@ -19,6 +19,7 @@
       <file>data/xml/soil.xml</file>
    </using>
    <assets>
+      <asset id="990"><Texture path="data/textures/img01.png"/></asset>
       <asset id="99"><Player addToWorld="true" proto="10"><Item solid="true"><Entity name="player" x="0.0" y="0.0" z="8"/></Item></Player></asset>
    </assets>
 </MAPFILE>

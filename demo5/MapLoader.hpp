@@ -30,6 +30,10 @@ class MapLoader {
 
       inline const Dodge::Range& getMapBoundary() const;
 
+#ifdef DEBUG
+      size_t dbg_getMemoryUsage() const;
+#endif
+
    private:
       Dodge::EventManager m_eventManager;
       Dodge::AssetManager& m_assetManager;

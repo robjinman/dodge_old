@@ -77,7 +77,9 @@ class Renderer {
       inline Camera& getCamera() const;
 
       void onWindowResize(int_t w, int_t h);
-      void newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
+
+      void loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
+      void unloadTexture(textureHandle_t handle);
 
       void bufferModel(IModel* model);
       void freeBufferedModel(IModel* model);
@@ -95,6 +97,7 @@ class Renderer {
 
       typedef enum {
          MSG_TEX_HANDLE_REQ,
+         MSG_TEX_UNLOAD_REQ,
          MSG_VP_RESIZE_REQ,
          MSG_CONSTRUCT_VBO
          // ...
@@ -108,6 +111,10 @@ class Renderer {
          textureHandle_t* retVal;
       };
 
+      struct msgTexUnloadReq_t {
+         textureHandle_t handle;
+      };
+
       struct msgVpResizeReq_t {
          int_t w;
          int_t h;
@@ -119,6 +126,7 @@ class Renderer {
 
       typedef boost::variant<
          msgTexHandleReq_t,
+         msgTexUnloadReq_t,
          msgVpResizeReq_t,
          msgConstructVbo_t
          // ...
@@ -159,7 +167,7 @@ class Renderer {
       void constructShaderProgs();
       GLint primitiveToGLType(primitive_t primitiveType) const;
       void processMessage(const Message& msg);
-      textureHandle_t loadTexture(const textureData_t* texture, int_t w, int_t h);
+      textureHandle_t loadGLTexture(const textureData_t* texture, int_t w, int_t h);
       void constructVBO(IModel* model);
       void queueMsg(Message msg);
 #ifdef DEBUG

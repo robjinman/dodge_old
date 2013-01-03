@@ -25,9 +25,7 @@
             <Sprite>
                <Entity/>
                <EntityAnimations>
-                  <texture>
-                     <Texture path="data/textures/img01.png"/>
-                  </texture>
+                  <texture ptr="990"/>
                   <textureSection>
                      <Range>
                         <pos><Vec2f x="0" y="0"/></pos>

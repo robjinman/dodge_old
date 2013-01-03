@@ -65,6 +65,9 @@ void Application::keyDown(int key) {
          cout << "Frame rate (main thread): " << m_frameRate << "fps\n";
          cout << "Frame rate (renderer): " << m_renderer.getFrameRate() << "fps\n";
       break;
+      case WinIO::KEY_M:
+         cout << "Memory usage: " << static_cast<float32_t>(m_mapLoader.dbg_getMemoryUsage()) / 1000.0 << "KB\n";
+      break;
       case WinIO::KEY_P: m_player->dbg_print(cout); break;
       case WinIO::KEY_1: m_player->dbg_flags ^= Player::DBG_DRAW_SENSORS; break;
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;

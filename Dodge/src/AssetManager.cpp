@@ -9,7 +9,7 @@
 namespace Dodge {
 
 
-AssetManager::assetMap_t AssetManager::m_assets = AssetManager::assetMap_t();
+AssetManager::assetMap_t AssetManager::m_assets;
 
 
 }

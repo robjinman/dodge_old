@@ -24,6 +24,9 @@ namespace Dodge {
 Renderer* Renderer::m_instance = NULL;
 
 
+//===========================================
+// Renderer::Renderer
+//===========================================
 Renderer::Renderer()
    : m_activeShaderProg(NULL),
      m_mode(UNDEFINED),
@@ -185,9 +188,9 @@ void Renderer::constructShaderProgs() {
 }
 
 //===========================================
-// Renderer::loadTexture
+// Renderer::loadGLTexture
 //===========================================
-Renderer::textureHandle_t Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height) {
+Renderer::textureHandle_t Renderer::loadGLTexture(const textureData_t* texture, int_t width, int_t height) {
    GLuint texId;
 
    GL_CHECK(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
@@ -249,14 +252,22 @@ void Renderer::queueMsg(Message msg) {
 }
 
 //===========================================
-// Renderer::newTexture
+// Renderer::loadTexture
 //===========================================
-void Renderer::newTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
+void Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
    msgTexHandleReq_t data = { texture, width, height, handle };
    queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
 
    // Hang until message is processed
    while (!m_msgQueueEmpty) { if (m_errorPending) break; }
+}
+
+//===========================================
+// Renderer::unloadTexture
+//===========================================
+void Renderer::unloadTexture(textureHandle_t handle) {
+   msgTexUnloadReq_t data = { handle };
+   queueMsg(Message(MSG_TEX_UNLOAD_REQ, data));
 }
 
 //===========================================
@@ -283,7 +294,12 @@ void Renderer::processMessage(const Message& msg) {
       switch (msg.type) {
          case MSG_TEX_HANDLE_REQ: {
             msgTexHandleReq_t dat = boost::get<msgTexHandleReq_t>(msg.data);
-            *dat.retVal = loadTexture(dat.texData, dat.w, dat.h);
+            *dat.retVal = loadGLTexture(dat.texData, dat.w, dat.h);
+         }
+         break;
+         case MSG_TEX_UNLOAD_REQ: {
+            msgTexUnloadReq_t dat = boost::get<msgTexUnloadReq_t>(msg.data);
+            GL_CHECK(glDeleteTextures(1, &dat.handle));
          }
          break;
          case MSG_VP_RESIZE_REQ: {
