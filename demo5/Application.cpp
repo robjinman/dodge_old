@@ -1,6 +1,6 @@
 /*
  * Author: Rob Jinman <admin@robjinman.com>
- * Date: 2012
+ * Date: 2013
  */
 
 #include <sstream>
@@ -14,9 +14,25 @@
 #include "CPhysicalSprite.hpp"
 
 
+#define TARGET_MEM_USAGE 112000
+
+
 using namespace std;
 using namespace Dodge;
 
+
+//===========================================
+// Application::Application
+//===========================================
+Application::Application()
+   : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
+     m_renderer(Dodge::Renderer::getInstance()),
+     m_frameRate(60.0),
+     m_mapLoader(m_assetManager,
+        Functor<void, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::setMapSettings),
+        Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::constructAsset),
+        Functor<void, TYPELIST_1(Dodge::pAsset_t)>(this, &Application::deleteAsset),
+        TARGET_MEM_USAGE) {}
 
 //===========================================
 // Application::onExit
@@ -189,8 +205,6 @@ void Application::deletePending(EEvent* event) {
 // Application::deleteAsset
 //===========================================
 void Application::deleteAsset(pAsset_t asset) {
-
-   // TODO: This is ugly
    pEntity_t entity = dynamic_pointer_cast<Entity>(asset);
 
    if (entity) {
@@ -302,7 +316,7 @@ void Application::updateViewArea() {
 
    const Vec2f& mapPos = m_mapLoader.getMapBoundary().getPosition();
    const Vec2f& mapSz = m_mapLoader.getMapBoundary().getSize();
-
+/*
    if (viewPos.x < 0.f) viewPos.x = mapPos.x;
    if (viewPos.y < 0.f) viewPos.y = mapPos.y;
 
@@ -311,7 +325,7 @@ void Application::updateViewArea() {
 
    if (viewPos.y + cam.getViewSize().y > mapPos.y + mapSz.y)
       viewPos.y = mapPos.y + mapSz.y - cam.getViewSize().y;
-
+*/
    cam.setTranslation(viewPos);
    m_viewArea.setPosition(viewPos);
    m_viewArea.setSize(cam.getViewSize());
@@ -359,7 +373,7 @@ void Application::begin(int argc, char** argv) {
    str << "data/xml/map" << m_currentMap << ".xml";
    m_mapLoader.parseMapFile(str.str());
 
-   m_mapLoader.update(camera->getTranslation() + Vec2f(0.1, 0.1));
+   m_mapLoader.update(camera->getTranslation());
 
    for (auto i = m_items.begin(); i != m_items.end(); ++i) {
       if (i->first == internString("player")) {

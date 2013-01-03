@@ -1,6 +1,6 @@
 /*
  * Author: Rob Jinman <admin@robjinman.com>
- * Date: 2012
+ * Date: 2013
  */
 
 #include "MapLoader.hpp"
@@ -9,6 +9,73 @@
 using namespace std;
 using namespace Dodge;
 
+
+//===========================================
+// MapLoader::refCountTable_t::erase
+//===========================================
+void MapLoader::refCountTable_t::erase(id_t id) {
+   auto i = m_byId.find(id);
+   if (i != m_byId.end()) {
+      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
+      m_byId.erase(i);
+   }
+
+   assert(m_byRefCount.size() == m_byId.size());
+}
+
+//===========================================
+// MapLoader::refCountTable_t::insert
+//===========================================
+void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount, time_t time) {
+   m_byRefCount.insert(make_pair(refCount, make_pair(time, id)));
+   m_byId[id] = make_pair(refCount, time);
+
+   assert(m_byRefCount.size() == m_byId.size());
+}
+
+//===========================================
+// MapLoader::refCountTable_t::incrRefCount
+//===========================================
+void MapLoader::refCountTable_t::incrRefCount(id_t id) {
+   auto i = m_byId.find(id);
+   if (i != m_byId.end()) {
+      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
+
+      ++i->second.first;
+      i->second.second = -m_timer.getTime();
+
+      m_byRefCount.insert(make_pair(i->second.first, make_pair(i->second.second, id)));
+   }
+   else {
+      insert(id, 1, m_timer.getTime());
+   }
+
+   assert(m_byRefCount.size() == m_byId.size());
+}
+
+//===========================================
+// MapLoader::refCountTable_t::getBestCandidateForDeletion
+//===========================================
+MapLoader::refCountTable_t::id_t MapLoader::refCountTable_t::getBestCandidateForDeletion() const {
+   auto i = m_byRefCount.begin();
+   return i->first == 0 ? i->second.second : -1;
+}
+
+//===========================================
+// MapLoader::refCountTable_t::decrRefCount
+//===========================================
+void MapLoader::refCountTable_t::decrRefCount(id_t id) {
+   auto i = m_byId.find(id);
+   if (i != m_byId.end() && i->second.first > 0) {
+      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
+
+      --i->second.first;
+
+      m_byRefCount.insert(make_pair(i->second.first, make_pair(i->second.second, id)));
+   }
+
+   assert(m_byRefCount.size() == m_byId.size());
+}
 
 //===========================================
 // MapLoader::loadAssets
@@ -25,14 +92,16 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
          XML_ATTR_CHECK(attr, id);
          long id = attr.getLong();
 
-         // If asset is already loaded
-         if (m_assetManager.getAssetPointer(id)) continue;
+         // If asset is not already loaded
+         if (!m_assetManager.getAssetPointer(id)) {
+            boost::shared_ptr<Asset> asset = m_factoryFunc(node.firstChild());
+            m_assetManager.addAsset(id, asset);
+            m_currentMemUsage += asset->getSize();
+         }
 
-         boost::shared_ptr<Asset> asset = m_factoryFunc(node.firstChild());
-
-         m_assetManager.addAsset(id, asset);
          if (segment) segment->assetIds.push_back(id);
-         ++m_refCounts[id];
+
+         m_refCountTable.incrRefCount(id);
 
          node = node.nextSibling();
       }
@@ -43,18 +112,16 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
    }
 }
 
-#ifdef DEBUG
 //===========================================
 // MapLoader::getMemoryUsage
 //===========================================
-size_t MapLoader::dbg_getMemoryUsage() const {
+size_t MapLoader::getMemoryUsage() const {
    size_t total = 0;
    for (auto i = m_assetManager.begin(); i != m_assetManager.end(); ++i)
       total += i->second->getSize();
 
    return total;
 }
-#endif
 
 //===========================================
 // MapLoader::parseAssetsFile_r
@@ -187,15 +254,21 @@ void MapLoader::parseMapFile(const std::string& file) {
 // MapLoader::unloadRefCountZeroAssets
 //===========================================
 void MapLoader::unloadRefCountZeroAssets() {
-   for (auto i = m_refCounts.begin(); i != m_refCounts.end(); ++i) {
-      if (i->second == 0) {
-         pAsset_t asset = m_assetManager.getAssetPointer(i->first);
+   while (m_currentMemUsage > m_targetMemUsage) {
+      long id = m_refCountTable.getBestCandidateForDeletion();
+
+      if (id != -1) {
+         pAsset_t asset = m_assetManager.getAssetPointer(id);
 
          if (asset) {
+            m_currentMemUsage -= asset->getSize();
             m_deleteAssetFunc(asset);
-            m_assetManager.freeAsset(i->first);
+            m_assetManager.freeAsset(id);
+            m_refCountTable.erase(id);
          }
       }
+      else
+         break;
    }
 }
 
@@ -210,10 +283,10 @@ void MapLoader::unloadSegment(const Vec2i& indices) {
 
    mapSegment_t& seg = m_segments[indices.x][indices.y];
 
-   for (uint_t i = 0; i < seg.assetIds.size(); ++i) {
-      unsigned int c = m_refCounts[seg.assetIds[i]];
-      if (c > 0) m_refCounts[seg.assetIds[i]] = c - 1;
-   }
+   for (uint_t i = 0; i < seg.assetIds.size(); ++i)
+      m_refCountTable.decrRefCount(seg.assetIds[i]);
+
+   seg.loaded = false;
 }
 
 //===========================================
@@ -223,7 +296,13 @@ void MapLoader::loadSegment(const Vec2i& indices) {
    if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
       || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) return;
 
-   parseAssetsFile_r(m_segments[indices.x][indices.y].filePath, &m_segments[indices.x][indices.y]);
+   mapSegment_t& seg = m_segments[indices.x][indices.y];
+
+   if (!seg.loaded) {
+      seg.assetIds.clear();
+      parseAssetsFile_r(seg.filePath, &seg);
+      seg.loaded = true;
+   }
 }
 
 //===========================================
@@ -247,6 +326,8 @@ void MapLoader::update(const Vec2f& viewPos) {
       loadSegment(current + Vec2i(1, -1));
       loadSegment(current + Vec2i(1, 0));
       loadSegment(current + Vec2i(1, 1));
+
+      m_currentMemUsage = getMemoryUsage();
    }
    else {
       // If camera has moved

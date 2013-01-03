@@ -1,6 +1,6 @@
 /*
  * Author: Rob Jinman <admin@robjinman.com>
- * Date: 2012
+ * Date: 2013
  */
 
 #ifndef __APPLICATION_HPP__
@@ -16,14 +16,7 @@
 
 class Application {
    public:
-      Application()
-         : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
-           m_renderer(Dodge::Renderer::getInstance()),
-           m_frameRate(60.0),
-           m_mapLoader(m_assetManager,
-              Functor<void, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::setMapSettings),
-              Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::constructAsset),
-              Functor<void, TYPELIST_1(Dodge::pAsset_t)>(this, &Application::deleteAsset)) {}
+      Application();
 
       void onExit(Functor<void, TYPELIST_0()> callBack);
       void begin(int argc, char** argv);
