@@ -13,10 +13,8 @@ using namespace std;
 namespace Dodge {
 
 
-map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > > EventManager::m_callbacks
-   = map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > >();
-
-queue<EEvent*> EventManager::m_eventQueue = queue<EEvent*>();
+map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > > EventManager::m_callbacks;
+queue<EEvent*> EventManager::m_eventQueue;
 
 
 //===========================================
@@ -25,9 +23,7 @@ queue<EEvent*> EventManager::m_eventQueue = queue<EEvent*>();
 void EventManager::doEvents() {
 
    while (!m_eventQueue.empty()) {
-
-      map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > >::iterator it
-         = m_callbacks.find(m_eventQueue.front()->getType());
+      auto it = m_callbacks.find(m_eventQueue.front()->getType());
 
       if (it != m_callbacks.end()) {
          vector<Functor<void, TYPELIST_1(EEvent*)> >& funcs = it->second;
@@ -49,7 +45,7 @@ void EventManager::doEvents() {
 // EventManager::immediateDispatch
 //===========================================
 void EventManager::immediateDispatch(EEvent* event) {
-   map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > >::iterator it = m_callbacks.find(event->getType());
+   auto it = m_callbacks.find(event->getType());
 
    if (it != m_callbacks.end()) {
       vector<Functor<void, TYPELIST_1(EEvent*)> >& funcs = it->second;
@@ -71,8 +67,7 @@ void EventManager::clear() {
 // EventManager::unregisterCallback
 //===========================================
 void EventManager::unregisterCallback(long type, const Functor<void, TYPELIST_1(EEvent*)>& func) {
-
-   map<long, vector<Functor<void, TYPELIST_1(EEvent*)> > >::iterator it = m_callbacks.find(type);
+   auto it = m_callbacks.find(type);
 
    if (it != m_callbacks.end()) {
       for (uint_t i = 0; i < it->second.size(); ++i) {
