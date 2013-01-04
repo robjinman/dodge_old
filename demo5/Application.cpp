@@ -14,7 +14,7 @@
 #include "CPhysicalSprite.hpp"
 
 
-#define TARGET_MEM_USAGE 112000
+#define TARGET_MEM_USAGE 115000
 
 
 using namespace std;
@@ -27,12 +27,7 @@ using namespace Dodge;
 Application::Application()
    : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
      m_renderer(Dodge::Renderer::getInstance()),
-     m_frameRate(60.0),
-     m_mapLoader(m_assetManager,
-        Functor<void, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::setMapSettings),
-        Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::constructAsset),
-        Functor<void, TYPELIST_1(Dodge::pAsset_t)>(this, &Application::deleteAsset),
-        TARGET_MEM_USAGE) {}
+     m_frameRate(60.0) {}
 
 //===========================================
 // Application::onExit
@@ -57,7 +52,7 @@ void Application::quit() {
    m_items.clear();
    m_eventManager.clear();
    m_worldSpace.removeAll();
-   m_assetManager.freeAllAssets();
+   m_mapLoader.freeAllAssets();
    m_player.reset();
    m_win.destroyWindow();
 
@@ -89,6 +84,21 @@ void Application::keyDown(int key) {
       case WinIO::KEY_2: m_player->dbg_flags ^= Player::DBG_DRAW_SHAPE; break;
       case WinIO::KEY_3: dbg_worldSpaceVisible = !dbg_worldSpaceVisible; break;
 #endif
+      case WinIO::KEY_ADD: {
+         m_zoomLevel *= 0.9;
+         float32_t w = m_win.getWindowWidth();
+         float32_t h = m_win.getWindowHeight();
+         float32_t ratio = w / h;
+         m_renderer.getCamera().setProjection(ratio * m_zoomLevel, m_zoomLevel);
+      }
+      break;
+      case WinIO::KEY_SUBTRACT: {
+         m_zoomLevel *= 1.1;
+         float32_t w = m_win.getWindowWidth();
+         float32_t h = m_win.getWindowHeight();
+         float32_t ratio = w / h;
+         m_renderer.getCamera().setProjection(ratio * m_zoomLevel, m_zoomLevel);
+      }
    }
 
    m_keyState[key] = true;
@@ -312,7 +322,9 @@ void Application::draw() const {
 //===========================================
 void Application::updateViewArea() {
    Camera& cam = m_renderer.getCamera();
+
    Vec2f viewPos = m_player->getTranslation_abs() - cam.getViewSize() / 2.f;
+   Vec2f viewSz = cam.getViewSize();
 
    const Vec2f& mapPos = m_mapLoader.getMapBoundary().getPosition();
    const Vec2f& mapSz = m_mapLoader.getMapBoundary().getSize();
@@ -326,11 +338,11 @@ void Application::updateViewArea() {
    if (viewPos.y + cam.getViewSize().y > mapPos.y + mapSz.y)
       viewPos.y = mapPos.y + mapSz.y - cam.getViewSize().y;
 */
-   cam.setTranslation(viewPos);
+   cam.setTranslation(viewPos / m_zoomLevel);
    m_viewArea.setPosition(viewPos);
-   m_viewArea.setSize(cam.getViewSize());
+   m_viewArea.setSize(viewSz);
 
-   m_mapLoader.update(viewPos + cam.getViewSize() / 2.f);
+   m_mapLoader.update(viewPos + viewSz / 2.f);
 }
 
 //===========================================
@@ -357,6 +369,11 @@ void Application::begin(int argc, char** argv) {
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Application::keyUp));
    m_win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(this, &Application::onWindowResize));
 
+   m_mapLoader.initialise(Functor<void, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::setMapSettings),
+      Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)>(this, &Application::constructAsset),
+      Functor<void, TYPELIST_1(Dodge::pAsset_t)>(this, &Application::deleteAsset),
+      TARGET_MEM_USAGE);
+
    m_renderer.start();
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
@@ -364,6 +381,7 @@ void Application::begin(int argc, char** argv) {
 
    m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
+   m_zoomLevel = 1.0;
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    m_renderer.attachCamera(camera);
 

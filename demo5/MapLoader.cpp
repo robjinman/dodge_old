@@ -10,13 +10,45 @@ using namespace std;
 using namespace Dodge;
 
 
+void dummyFunc1(const XmlNode) {}
+pAsset_t dummyFunc2(const XmlNode) { return pAsset_t(); }
+void dummyFunc3(pAsset_t) {}
+
+
+bool MapLoader::m_init = false;
+
+MapLoader::refCountTable_t MapLoader::m_refCountTable;
+list<Vec2i> MapLoader::m_pendingUnload;
+AssetManager MapLoader::m_assetManager;
+
+Functor<void, TYPELIST_1(const XmlNode)> MapLoader::m_setMapSettingsFunc(dummyFunc1);
+Functor<pAsset_t, TYPELIST_1(const XmlNode)> MapLoader::m_factoryFunc(dummyFunc2);
+Functor<void, TYPELIST_1(pAsset_t)> MapLoader::m_deleteAssetFunc(dummyFunc3);
+
+Range MapLoader::m_mapBoundary;
+vector<vector<MapLoader::mapSegment_t> > MapLoader::m_segments;
+Vec2i MapLoader::m_centreSegment;
+Vec2f MapLoader::m_segmentSize;
+
+size_t MapLoader::m_targetMemUsage;
+size_t MapLoader::m_currentMemUsage = 0;
+
+
+//===========================================
+// MapLoader::refCountTable_t::clear
+//===========================================
+void MapLoader::refCountTable_t::clear() {
+   m_byRefCount.clear();
+   m_byId.clear();
+}
+
 //===========================================
 // MapLoader::refCountTable_t::erase
 //===========================================
 void MapLoader::refCountTable_t::erase(id_t id) {
    auto i = m_byId.find(id);
    if (i != m_byId.end()) {
-      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
+      m_byRefCount.erase(make_pair(i->second, i->first));
       m_byId.erase(i);
    }
 
@@ -26,11 +58,19 @@ void MapLoader::refCountTable_t::erase(id_t id) {
 //===========================================
 // MapLoader::refCountTable_t::insert
 //===========================================
-void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount, time_t time) {
-   m_byRefCount.insert(make_pair(refCount, make_pair(time, id)));
-   m_byId[id] = make_pair(refCount, time);
+void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount) {
+   m_byRefCount.insert(make_pair(refCount, id));
+   m_byId[id] = refCount;
 
    assert(m_byRefCount.size() == m_byId.size());
+}
+
+//===========================================
+// MapLoader::refCountTable_t::getRefCount
+//===========================================
+MapLoader::refCountTable_t::refCount_t MapLoader::refCountTable_t::getRefCount(id_t id) const {
+   auto i = m_byId.find(id);
+   return i != m_byId.end() ? i->second : -1;
 }
 
 //===========================================
@@ -38,27 +78,17 @@ void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount, time_t tim
 //===========================================
 void MapLoader::refCountTable_t::incrRefCount(id_t id) {
    auto i = m_byId.find(id);
+
    if (i != m_byId.end()) {
-      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
-
-      ++i->second.first;
-      i->second.second = -m_timer.getTime();
-
-      m_byRefCount.insert(make_pair(i->second.first, make_pair(i->second.second, id)));
+      m_byRefCount.erase(make_pair(i->second, i->first));
+      ++i->second;
+      m_byRefCount.insert(make_pair(i->second, i->first));
    }
    else {
-      insert(id, 1, m_timer.getTime());
+      insert(id, 1);
    }
 
    assert(m_byRefCount.size() == m_byId.size());
-}
-
-//===========================================
-// MapLoader::refCountTable_t::getBestCandidateForDeletion
-//===========================================
-MapLoader::refCountTable_t::id_t MapLoader::refCountTable_t::getBestCandidateForDeletion() const {
-   auto i = m_byRefCount.begin();
-   return i->first == 0 ? i->second.second : -1;
 }
 
 //===========================================
@@ -66,15 +96,30 @@ MapLoader::refCountTable_t::id_t MapLoader::refCountTable_t::getBestCandidateFor
 //===========================================
 void MapLoader::refCountTable_t::decrRefCount(id_t id) {
    auto i = m_byId.find(id);
-   if (i != m_byId.end() && i->second.first > 0) {
-      m_byRefCount.erase(make_pair(i->second.first, make_pair(i->second.second, id)));
 
-      --i->second.first;
-
-      m_byRefCount.insert(make_pair(i->second.first, make_pair(i->second.second, id)));
+   if (i != m_byId.end() && i->second > 0) {
+      m_byRefCount.erase(make_pair(i->second, i->first));
+      --i->second;
+      m_byRefCount.insert(make_pair(i->second, i->first));
    }
 
    assert(m_byRefCount.size() == m_byId.size());
+}
+
+//===========================================
+// MapLoader::initialise
+//===========================================
+void MapLoader::initialise(Functor<void, TYPELIST_1(const Dodge::XmlNode)> setMapSettingsFunc,
+   Functor<Dodge::pAsset_t, TYPELIST_1(const Dodge::XmlNode)> factoryFunc,
+   Functor<void, TYPELIST_1(Dodge::pAsset_t)> deleteAssetFunc,
+   size_t targetMemoryUsage) {
+
+   m_setMapSettingsFunc = setMapSettingsFunc;
+   m_factoryFunc = factoryFunc;
+   m_deleteAssetFunc = deleteAssetFunc;
+   m_targetMemUsage = targetMemoryUsage;
+
+   m_init = true;
 }
 
 //===========================================
@@ -99,9 +144,9 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
             m_currentMemUsage += asset->getSize();
          }
 
-         if (segment) segment->assetIds.push_back(id);
-
          m_refCountTable.incrRefCount(id);
+
+         if (segment) segment->assetIds.push_back(id);
 
          node = node.nextSibling();
       }
@@ -207,7 +252,10 @@ void MapLoader::loadMapSettings(const XmlNode data) {
 //===========================================
 // MapLoader::parseMapFile
 //===========================================
-void MapLoader::parseMapFile(const std::string& file) {
+void MapLoader::parseMapFile(const string& file) {
+   if (!m_init)
+      throw Dodge::Exception("Error parsing map file; MapLoader not initialised", __FILE__, __LINE__);
+
    m_segments.clear();
    m_centreSegment = Vec2i(-1, -1);
 
@@ -251,42 +299,37 @@ void MapLoader::parseMapFile(const std::string& file) {
 }
 
 //===========================================
-// MapLoader::unloadRefCountZeroAssets
+// MapLoader::unloadSegments
 //===========================================
-void MapLoader::unloadRefCountZeroAssets() {
+void MapLoader::unloadSegments() {
    while (m_currentMemUsage > m_targetMemUsage) {
-      long id = m_refCountTable.getBestCandidateForDeletion();
+      auto i = m_pendingUnload.begin();
 
-      if (id != -1) {
-         pAsset_t asset = m_assetManager.getAssetPointer(id);
+      if (i != m_pendingUnload.end()) {
+         mapSegment_t& seg = m_segments[i->x][i->y];
 
-         if (asset) {
-            m_currentMemUsage -= asset->getSize();
-            m_deleteAssetFunc(asset);
-            m_assetManager.freeAsset(id);
-            m_refCountTable.erase(id);
+         for (uint_t a = 0; a < seg.assetIds.size(); ++a) {
+            long id = seg.assetIds[a];
+
+            m_refCountTable.decrRefCount(id);
+
+            if (id != -1 && m_refCountTable.getRefCount(id) == 0) {
+               pAsset_t asset = m_assetManager.getAssetPointer(id);
+
+               if (asset) {
+                  m_currentMemUsage -= asset->getSize();
+                  m_deleteAssetFunc(asset);
+                  m_assetManager.freeAsset(id);
+               }
+            }
          }
+
+         seg.loaded = false;
+         m_pendingUnload.pop_front();
       }
       else
          break;
    }
-}
-
-//===========================================
-// MapLoader::unloadSegment
-//
-// Decrement ref. counts for assets used by segment
-//===========================================
-void MapLoader::unloadSegment(const Vec2i& indices) {
-   if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
-      || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) return;
-
-   mapSegment_t& seg = m_segments[indices.x][indices.y];
-
-   for (uint_t i = 0; i < seg.assetIds.size(); ++i)
-      m_refCountTable.decrRefCount(seg.assetIds[i]);
-
-   seg.loaded = false;
 }
 
 //===========================================
@@ -295,6 +338,8 @@ void MapLoader::unloadSegment(const Vec2i& indices) {
 void MapLoader::loadSegment(const Vec2i& indices) {
    if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
       || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) return;
+
+   setPendingUnload(indices, false);
 
    mapSegment_t& seg = m_segments[indices.x][indices.y];
 
@@ -306,9 +351,29 @@ void MapLoader::loadSegment(const Vec2i& indices) {
 }
 
 //===========================================
+// MapLoader::setPendingUnload
+//===========================================
+void MapLoader::setPendingUnload(const Vec2i& indices, bool b) {
+   if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
+      || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) return;
+
+   for (auto i = m_pendingUnload.begin(); i != m_pendingUnload.end(); ++i) {
+      if (*i == indices) {
+         m_pendingUnload.erase(i);
+         break;
+      }
+   }
+
+   if (b) m_pendingUnload.push_back(indices);
+}
+
+//===========================================
 // MapLoader::update
 //===========================================
 void MapLoader::update(const Vec2f& viewPos) {
+   if (!m_init)
+      throw Dodge::Exception("Error in MapLoader::update(); MapLoader not initialised", __FILE__, __LINE__);
+
    Vec2i current = getSegment(viewPos);
 
    if (current == Vec2i(-1, -1)) return;
@@ -326,11 +391,9 @@ void MapLoader::update(const Vec2f& viewPos) {
       loadSegment(current + Vec2i(1, -1));
       loadSegment(current + Vec2i(1, 0));
       loadSegment(current + Vec2i(1, 1));
-
-      m_currentMemUsage = getMemoryUsage();
    }
    else {
-      // If camera has moved
+      // If camera has moved into a new segment
       if (current != m_centreSegment) {
 
          set<pair<int, int> > prvSegs;
@@ -363,7 +426,7 @@ void MapLoader::update(const Vec2f& viewPos) {
 
          for (auto i = prvSegs.begin(); i != prvSegs.end(); ++i) {
             if (curSegs.find(*i) == curSegs.end())
-               unloadSegment(Vec2i(i->first, i->second));
+               setPendingUnload(Vec2i(i->first, i->second), true);
          }
 
          for (auto i = curSegs.begin(); i != curSegs.end(); ++i) {
@@ -371,31 +434,11 @@ void MapLoader::update(const Vec2f& viewPos) {
                loadSegment(Vec2i(i->first, i->second));
          }
 
-         unloadRefCountZeroAssets();
+         unloadSegments();
       }
    }
 
    m_centreSegment = current;
-}
-
-//===========================================
-// MapLoader::getSegmentRange
-//
-// Returns the range spanned by the map segment at position 'indices' in the m_segments array.
-//===========================================
-void MapLoader::getSegmentRange(const Vec2i& indices, Range* range) const {
-   if (indices.x < 0 || indices.x >= static_cast<int>(m_segments.size())
-      || indices.y < 0 || indices.y >= static_cast<int>(m_segments[indices.x].size())) {
-
-      throw Exception("Cannot retrieve map segment; Index out of range", __FILE__, __LINE__);
-   }
-
-   const Vec2f& mapPos = m_mapBoundary.getPosition();
-   Vec2f pos(mapPos.x + static_cast<float32_t>(indices.x) * m_segmentSize.x,
-             mapPos.y + static_cast<float32_t>(indices.y) * m_segmentSize.y);
-
-   range->setPosition(pos);
-   range->setSize(m_segmentSize);
 }
 
 //===========================================

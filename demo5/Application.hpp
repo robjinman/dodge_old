@@ -48,6 +48,7 @@ class Application {
       Dodge::WinIO               m_win;
       Dodge::EventManager        m_eventManager;
       Dodge::Range               m_viewArea;
+      Dodge::float32_t           m_zoomLevel;
 #ifdef DEBUG
       bool                       dbg_worldSpaceVisible;
 #endif
