@@ -3,11 +3,13 @@
  * Date: 2013
  */
 
-#include "MapLoader.hpp"
+#include <MapLoader.hpp>
 
 
 using namespace std;
-using namespace Dodge;
+
+
+namespace Dodge {
 
 
 void dummyFunc1(const XmlNode) {}
@@ -457,4 +459,7 @@ Vec2i MapLoader::getSegment(const Vec2f& pos) const {
    }
 
    return indices;
+}
+
+
 }

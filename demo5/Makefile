@@ -10,7 +10,6 @@ OBJS = Application.o \
 	CSprite.o \
 	Item.o \
 	main.o \
-	MapLoader.o \
 	Player.o \
 	Soil.o
 

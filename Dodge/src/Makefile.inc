@@ -16,6 +16,7 @@ OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/Exception.o \
 	$(BASE_DIR)/globals.o \
 	$(BASE_DIR)/KvpParser.o \
+	$(BASE_DIR)/MapLoader.o \
 	$(BASE_DIR)/ParallaxSprite.o \
 	$(BASE_DIR)/Range.o \
 	$(BASE_DIR)/ShapeFactory.o \

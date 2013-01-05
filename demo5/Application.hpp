@@ -11,7 +11,6 @@
 #include <string>
 #include <dodge/dodge.hpp>
 #include "Player.hpp"
-#include "MapLoader.hpp"
 
 
 class Application {
@@ -61,7 +60,7 @@ class Application {
 
       Dodge::Colour              m_bgColour;
 
-      MapLoader                  m_mapLoader;
+      Dodge::MapLoader           m_mapLoader;
 };
 
 
