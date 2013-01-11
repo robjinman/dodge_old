@@ -188,6 +188,10 @@ void Application::setMapSettings(const XmlNode data) {
       XmlNode node = data.firstChild();
       XML_NODE_CHECK(node, bgColour);
       m_bgColour = Colour(node.firstChild());
+
+      const Range& mb = m_mapLoader.getMapBoundary();
+      Range boundary(mb.getPosition() - Vec2f(0.1, 0.1), mb.getSize() + Vec2f(0.2, 0.2));
+      m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, boundary)));
    }
    catch (XmlException& e) {
       e.prepend("Error loading map settings; ");
@@ -230,40 +234,45 @@ void Application::deleteAsset(pAsset_t asset) {
 // Application::constructAsset
 //===========================================
 pAsset_t Application::constructAsset(const XmlNode data) {
+   long proto = -1;
+   bool addToWorld = false;
+
+   XmlAttribute attr = data.firstAttribute();
+   attr = attr.nextAttribute();
+
+   if (!attr.isNull() && attr.name() == "proto") {
+      proto = attr.getLong();
+      attr = attr.nextAttribute();
+   }
+
+   if (!attr.isNull() && attr.name() == "addToWorld") {
+      addToWorld = attr.getBool();
+   }
+
+   XmlNode node = data.firstChild();
+
 
    // Construct non-Item assets
 
-   if (data.name() == "Texture") return pAsset_t(new Texture(data));
+   if (node.name() == "Texture") return pAsset_t(new Texture(node));
    // ...
 
 
    // Construct Items
 
-   long proto = -1;
-   bool addToWorld;
-
-   XmlAttribute attr = data.firstAttribute();
-   if (!attr.isNull() && attr.name() == "addToWorld") {
-      addToWorld = attr.getBool();
-      attr = attr.nextAttribute();
-   }
-
-   if (!attr.isNull() && attr.name() == "proto")
-      proto = attr.getLong();
-
    pItem_t item;
    if (proto != -1) {
       item = pItem_t(dynamic_cast<Item*>(m_assetManager.cloneAsset(proto)));
-      item->assignData(data);
+      item->assignData(node);
    }
    else {
-      if (data.name() == "Player") item = pItem_t(new Player(data));
-      if (data.name() == "Soil") item = pItem_t(new Soil(data));
-      if (data.name() == "Item") item = pItem_t(new Item(data));
-      if (data.name() == "CParallaxSprite") item = pItem_t(new CParallaxSprite(data));
-      if (data.name() == "CSprite") item = pItem_t(new CSprite(data));
-      if (data.name() == "CPhysicalEntity") item = pItem_t(new CPhysicalEntity(data));
-      if (data.name() == "CPhysicalSprite") item = pItem_t(new CPhysicalSprite(data));
+      if (node.name() == "Player") item = pItem_t(new Player(node));
+      if (node.name() == "Soil") item = pItem_t(new Soil(node));
+      if (node.name() == "Item") item = pItem_t(new Item(node));
+      if (node.name() == "CParallaxSprite") item = pItem_t(new CParallaxSprite(node));
+      if (node.name() == "CSprite") item = pItem_t(new CSprite(node));
+      if (node.name() == "CPhysicalEntity") item = pItem_t(new CPhysicalEntity(node));
+      if (node.name() == "CPhysicalSprite") item = pItem_t(new CPhysicalSprite(node));
    }
 
    if (!item)
@@ -328,7 +337,7 @@ void Application::updateViewArea() {
 
    const Vec2f& mapPos = m_mapLoader.getMapBoundary().getPosition();
    const Vec2f& mapSz = m_mapLoader.getMapBoundary().getSize();
-/*
+
    if (viewPos.x < 0.f) viewPos.x = mapPos.x;
    if (viewPos.y < 0.f) viewPos.y = mapPos.y;
 
@@ -337,7 +346,7 @@ void Application::updateViewArea() {
 
    if (viewPos.y + cam.getViewSize().y > mapPos.y + mapSz.y)
       viewPos.y = mapPos.y + mapSz.y - cam.getViewSize().y;
-*/
+
    cam.setTranslation(viewPos / m_zoomLevel);
    m_viewArea.setPosition(viewPos);
    m_viewArea.setSize(viewSz);
@@ -361,7 +370,7 @@ void Application::begin(int argc, char** argv) {
       }
    }
 #endif
-   m_win.init("Shit Game", 640, 480, false);
+   m_win.init("Terraform", 640, 480, false);
    gInitialise();
 
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
@@ -378,8 +387,6 @@ void Application::begin(int argc, char** argv) {
 
    m_eventManager.registerCallback(internString("pendingDeletion"),
       Functor<void, TYPELIST_1(EEvent*)>(this, &Application::deletePending));
-
-   m_worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(-1.f, -1.f, 4.f, 4.f))));
 
    m_zoomLevel = 1.0;
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));

@@ -11,7 +11,6 @@
 #include <vector>
 #include <list>
 #include <map>
-#include <set>
 #include "../utils/Functor.hpp"
 #include "xml/xml.hpp"
 #include "AssetManager.hpp"
@@ -58,19 +57,16 @@ class MapLoader {
             typedef long id_t;
 
          public:
-            void incrRefCount(id_t id);
-            void decrRefCount(id_t id);
-            refCount_t getRefCount(id_t id) const;
-            void clear();
+            inline void incrRefCount(id_t id);
+            inline void decrRefCount(id_t id);
+            inline refCount_t getRefCount(id_t id) const;
+            inline void clear();
 
          private:
             void insert(id_t id, refCount_t refCount);
             void erase(id_t id);
 
-            // We want to look-up by id, but sort by reference count.
-            // This requires two separate containers.
-            std::set<std::pair<refCount_t, id_t> > m_byRefCount;
-            std::map<id_t, refCount_t> m_byId;
+            std::map<id_t, refCount_t> m_container;
       };
 
       static bool m_init;
@@ -104,6 +100,57 @@ class MapLoader {
 
       size_t getMemoryUsage() const;
 };
+
+//===========================================
+// MapLoader::refCountTable_t::clear
+//===========================================
+inline void MapLoader::refCountTable_t::clear() {
+   m_container.clear();
+}
+
+//===========================================
+// MapLoader::refCountTable_t::erase
+//===========================================
+inline void MapLoader::refCountTable_t::erase(id_t id) {
+   m_container.erase(id);
+}
+
+//===========================================
+// MapLoader::refCountTable_t::insert
+//===========================================
+inline void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount) {
+   m_container[id] = refCount;
+}
+
+//===========================================
+// MapLoader::refCountTable_t::getRefCount
+//===========================================
+inline MapLoader::refCountTable_t::refCount_t MapLoader::refCountTable_t::getRefCount(id_t id) const {
+   auto i = m_container.find(id);
+   return i != m_container.end() ? i->second : -1;
+}
+
+//===========================================
+// MapLoader::refCountTable_t::incrRefCount
+//===========================================
+inline void MapLoader::refCountTable_t::incrRefCount(id_t id) {
+   auto i = m_container.find(id);
+
+   if (i != m_container.end())
+      ++i->second;
+   else
+      insert(id, 1);
+}
+
+//===========================================
+// MapLoader::refCountTable_t::decrRefCount
+//===========================================
+inline void MapLoader::refCountTable_t::decrRefCount(id_t id) {
+   auto i = m_container.find(id);
+
+   if (i != m_container.end() && i->second > 0)
+      --i->second;
+}
 
 #ifdef DEBUG
 //===========================================

@@ -4,11 +4,11 @@
       <boundary>
          <Range>
             <pos><Vec2f x="0.0" y="0.0"/></pos>
-            <size><Vec2f x="2.6" y="1.4"/></size>
+            <size><Vec2f x="5.0" y="5.0"/></size>
          </Range>
       </boundary>
-      <numSegments><Vec2i x="1" y="1"/></numSegments>
-      <segmentSize><Vec2f x="2.6" y="1.4"/></segmentSize>
+      <numSegments><Vec2i x="4" y="4"/></numSegments>
+      <segmentSize><Vec2f x="0.3" y="0.3"/></segmentSize>
       <segmentsDir>data/xml/0</segmentsDir>
    </settings>
    <customSettings>
@@ -17,11 +17,9 @@
    <using>
       <file>data/xml/player.xml</file>
       <file>data/xml/soil.xml</file>
-      <file>data/xml/stopBlock.xml</file>
-      <file>data/xml/stationaryPlatform.xml</file>
    </using>
    <assets>
-      <asset id="111"><Texture path="data/textures/cave01.png"/></asset>
-      <asset id="99" proto="10" addToWorld="true"><Player><Item solid="true"><Entity name="player" x="0.0" y="0.0" z="8"/></Item></Player></asset>
+      <asset id="990"><Texture path="data/textures/img01.png"/></asset>
+      <asset id="99"><Player addToWorld="true" proto="10"><Item solid="true"><Entity name="player" x="0.0" y="0.0" z="8"/></Item></Player></asset>
    </assets>
 </MAPFILE>

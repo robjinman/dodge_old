@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ASSETFILE>
+   <assets>
+      <asset id="97">
+         <CSprite addToWorld="true">
+            <Item solid="false">
+               <Entity type="image" name="img01" x="0.1" y="0.1" z="3" rot="0.0">
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0.0" y="0.0"/>
+                        <Vec2f x="0.1" y="0.0"/>
+                        <Vec2f x="0.1" y="0.1"/>
+                        <Vec2f x="0.0" y="0.1"/>
+                     </Polygon>
+                  </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                  <lineWidth>0</lineWidth>
+                  <children/>
+               </Entity>
+            </Item>
+            <Sprite>
+               <Entity/>
+               <EntityAnimations>
+                  <texture ptr="990"/>
+                  <textureSection>
+                     <Range>
+                        <pos><Vec2f x="0" y="0"/></pos>
+                        <size><Vec2f x="32" y="32"/></size>
+                     </Range>
+                  </textureSection>
+                  <onScreenSize>
+                     <Vec2f x="0.1" y="0.1"/>
+                  </onScreenSize>
+               </EntityAnimations>
+               <EntityTransformations/>
+            </Sprite>
+         </CSprite>
+      </asset>
+   </assets>
+</ASSETFILE>

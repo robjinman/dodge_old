@@ -73,11 +73,33 @@ int main() {
    renderer.attachCamera(camera);
 
    unique_ptr<Polygon> pPoly(new Polygon);
-   pPoly->addVertex(Vec2f(0.09, 0.0));
-   pPoly->addVertex(Vec2f(0.31, 0.0));
-   pPoly->addVertex(Vec2f(0.4, 0.23));
-   pPoly->addVertex(Vec2f(0.2, 0.4));
-   pPoly->addVertex(Vec2f(0.0, 0.23));
+   pPoly->addVertex(Vec2f(0.2, 0.0));     // A
+   pPoly->addVertex(Vec2f(0.3, 0.1));     // B
+   pPoly->addVertex(Vec2f(0.45, 0.15));   // C
+   pPoly->addVertex(Vec2f(0.5, 0.2));     // D
+   pPoly->addVertex(Vec2f(0.45, 0.3));    // E
+   pPoly->addVertex(Vec2f(0.3, 0.35));    // F
+   pPoly->addVertex(Vec2f(0.6, 0.5));     // G
+   pPoly->addVertex(Vec2f(0.55, 0.6));    // H
+   pPoly->addVertex(Vec2f(0.4, 0.55));    // I
+   pPoly->addVertex(Vec2f(0.35, 0.45));   // J
+   pPoly->addVertex(Vec2f(0.0, 0.35));    // K
+   pPoly->addVertex(Vec2f(0.15, 0.15));   // L
+/*
+   pPoly->addVertex(Vec2f(0.0, 0.0));  // A
+   pPoly->addVertex(Vec2f(0.1, 0.0));  // B
+   pPoly->addVertex(Vec2f(0.2, 0.1));  // C
+   pPoly->addVertex(Vec2f(0.4, 0.1));  // D
+   pPoly->addVertex(Vec2f(0.7, 0.0));  // E
+   pPoly->addVertex(Vec2f(0.9, 0.2));  // F
+   pPoly->addVertex(Vec2f(0.9, 0.4));  // G
+   pPoly->addVertex(Vec2f(0.4, 0.4));  // H
+   pPoly->addVertex(Vec2f(0.6, 0.7));  // I
+   pPoly->addVertex(Vec2f(0.5, 0.8));  // J
+   pPoly->addVertex(Vec2f(0.3, 0.8));  // K
+   pPoly->addVertex(Vec2f(0.1, 0.5));  // L
+   pPoly->addVertex(Vec2f(0.1, 0.3));  // M
+   pPoly->addVertex(Vec2f(0.0, 0.2));  // N*/
 
    shape = pEntity_t(new Entity(internString("polygon"), internString("bigPentagon")));
    shape->setShape(move(pPoly));

@@ -3,6 +3,7 @@
  * Date: 2013
  */
 
+#include <set>
 #include <MapLoader.hpp>
 
 
@@ -37,78 +38,6 @@ size_t MapLoader::m_currentMemUsage = 0;
 
 
 //===========================================
-// MapLoader::refCountTable_t::clear
-//===========================================
-void MapLoader::refCountTable_t::clear() {
-   m_byRefCount.clear();
-   m_byId.clear();
-}
-
-//===========================================
-// MapLoader::refCountTable_t::erase
-//===========================================
-void MapLoader::refCountTable_t::erase(id_t id) {
-   auto i = m_byId.find(id);
-   if (i != m_byId.end()) {
-      m_byRefCount.erase(make_pair(i->second, i->first));
-      m_byId.erase(i);
-   }
-
-   assert(m_byRefCount.size() == m_byId.size());
-}
-
-//===========================================
-// MapLoader::refCountTable_t::insert
-//===========================================
-void MapLoader::refCountTable_t::insert(id_t id, refCount_t refCount) {
-   m_byRefCount.insert(make_pair(refCount, id));
-   m_byId[id] = refCount;
-
-   assert(m_byRefCount.size() == m_byId.size());
-}
-
-//===========================================
-// MapLoader::refCountTable_t::getRefCount
-//===========================================
-MapLoader::refCountTable_t::refCount_t MapLoader::refCountTable_t::getRefCount(id_t id) const {
-   auto i = m_byId.find(id);
-   return i != m_byId.end() ? i->second : -1;
-}
-
-//===========================================
-// MapLoader::refCountTable_t::incrRefCount
-//===========================================
-void MapLoader::refCountTable_t::incrRefCount(id_t id) {
-   auto i = m_byId.find(id);
-
-   if (i != m_byId.end()) {
-      m_byRefCount.erase(make_pair(i->second, i->first));
-      ++i->second;
-      m_byRefCount.insert(make_pair(i->second, i->first));
-   }
-   else {
-      insert(id, 1);
-   }
-
-   assert(m_byRefCount.size() == m_byId.size());
-}
-
-//===========================================
-// MapLoader::refCountTable_t::decrRefCount
-//===========================================
-void MapLoader::refCountTable_t::decrRefCount(id_t id) {
-   auto i = m_byId.find(id);
-
-   if (i != m_byId.end() && i->second > 0) {
-      m_byRefCount.erase(make_pair(i->second, i->first));
-      --i->second;
-      m_byRefCount.insert(make_pair(i->second, i->first));
-   }
-
-   assert(m_byRefCount.size() == m_byId.size());
-}
-
-//===========================================
 // MapLoader::initialise
 //===========================================
 void MapLoader::initialise(Functor<void, TYPELIST_1(const Dodge::XmlNode)> setMapSettingsFunc,
@@ -141,7 +70,7 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
 
          // If asset is not already loaded
          if (!m_assetManager.getAssetPointer(id)) {
-            boost::shared_ptr<Asset> asset = m_factoryFunc(node.firstChild());
+            boost::shared_ptr<Asset> asset = m_factoryFunc(node);
             m_assetManager.addAsset(id, asset);
             m_currentMemUsage += asset->getSize();
          }
@@ -272,14 +201,14 @@ void MapLoader::parseMapFile(const string& file) {
       XML_NODE_CHECK(node, MAPFILE);
 
       node = node.firstChild();
+      loadMapSettings(node);
+      node = node.nextSibling();
+
       if (!node.isNull() && node.name() == "customSettings") {
          m_setMapSettingsFunc(node);
          node = node.nextSibling();
       }
 
-      loadMapSettings(node);
-
-      node = node.nextSibling();
       if (!node.isNull() && node.name() == "using") {
 
          XmlNode node_ = node.firstChild();

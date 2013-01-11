@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Nodes with names that begin with an uppercase letter represent
-classes, and are passed to their respective class constructors. -->
-
-<!-- Nodes with lowercase names represent internal data members. Their
-'ptr' attribute, if they have one, means the data member is a pointer
-to the asset with id=ptr. The 'proto' attribute refers to the asset
-which the object is a copy of. -->
-
-<!-- Every asset defined at the top level is wrapped in the 'asset'
-tag and has a 'class' attribute, and an 'id' attribute which uniquely
-identifies it. -->
 <ASSETFILE>
    <assets>
-      <!-- 'soil' texture -->
-      <asset id="49">
-         <Texture path="data/textures/soil64.png"/>
-      </asset>
-      <!-- 'soil' prototype -->
-      <asset id="50">
-         <Soil addToWorld="false">
+      <asset id="49"><Texture path="data/textures/soil64.png"/></asset>
+      <asset id="50" addToWorld="false">
+         <Soil>
             <Item solid="true">
                <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="4" rot="0.0">
                   <shape>

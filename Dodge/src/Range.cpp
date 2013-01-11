@@ -136,10 +136,10 @@ bool Range::overlaps(const Range& range) const {
 // Range::contains
 //===========================================
 bool Range::contains(const Range& range) const {
-   return range.m_pos.x > m_pos.x && range.m_pos.x < m_pos.x + m_size.x
-      && range.m_pos.x + range.m_size.x < m_pos.x + m_size.x
-      && range.m_pos.y > m_pos.y && range.m_pos.y < m_pos.y + m_size.y
-      && range.m_pos.y + range.m_size.y < m_pos.y + m_size.y;
+   return range.m_pos.x >= m_pos.x && range.m_pos.x <= m_pos.x + m_size.x
+      && range.m_pos.x + range.m_size.x <= m_pos.x + m_size.x
+      && range.m_pos.y >= m_pos.y && range.m_pos.y <= m_pos.y + m_size.y
+      && range.m_pos.y + range.m_size.y <= m_pos.y + m_size.y;
 }
 
 
