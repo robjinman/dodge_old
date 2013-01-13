@@ -79,7 +79,7 @@ class UiButton : public Sprite, public EntityUi {
       virtual size_t getSize() const;
       virtual UiButton* clone() const;
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out) const;
+      virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif
       virtual void assignData(const XmlNode data);
 

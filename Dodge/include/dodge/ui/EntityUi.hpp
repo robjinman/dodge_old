@@ -50,6 +50,8 @@ class EntityUi {
       virtual ~EntityUi();
 
    private:
+      void init();
+
       void btn1PressHandler(int x, int y);
       void btn1ReleaseHandler(int x, int y);
       void btn3PressHandler(int x, int y);

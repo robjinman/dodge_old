@@ -23,7 +23,25 @@ EventManager EntityUi::m_eventManager = EventManager();
 //===========================================
 // EntityUi::EntityUi
 //===========================================
-EntityUi::EntityUi(Entity* entity) : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {
+EntityUi::EntityUi(Entity* entity)
+   : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {
+
+   init();
+}
+
+//===========================================
+// EntityUi::EntityUi
+//===========================================
+EntityUi::EntityUi(const EntityUi& copy, Entity* entity)
+   : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {
+
+   init();
+}
+
+//===========================================
+// EntityUi::init
+//===========================================
+void EntityUi::init() {
    m_winIO.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1PressHandler));
    m_winIO.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1ReleaseHandler));
    m_winIO.registerCallback(WinIO::EVENT_BTN3PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3PressHandler));
@@ -32,11 +50,6 @@ EntityUi::EntityUi(Entity* entity) : m_entity(entity), m_hasFocus(false), m_mous
    m_winIO.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyDownHandler));
    m_winIO.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyUpHandler));
 }
-
-//===========================================
-// EntityUi::EntityUi
-//===========================================
-EntityUi::EntityUi(const EntityUi& copy, Entity* entity) : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {}
 
 //===========================================
 // EntityUi::EntityUi

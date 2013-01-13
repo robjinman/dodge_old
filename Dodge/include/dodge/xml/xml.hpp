@@ -17,12 +17,12 @@
 
 #define XML_NODE_CHECK(node, strName) \
    if (node.isNull() || node.name() != #strName) { \
-      throw XmlException("Expected '" #strName "' tag", __FILE__, __LINE__); \
+      throw Dodge::XmlException("Expected '" #strName "' tag", __FILE__, __LINE__); \
    }
 
 #define XML_ATTR_CHECK(attr, strName) \
    if (attr.isNull() || attr.name() != #strName) { \
-      throw XmlException("Expected '" #strName "' attribute", __FILE__, __LINE__); \
+      throw Dodge::XmlException("Expected '" #strName "' attribute", __FILE__, __LINE__); \
    }
 
 

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MAPFILE>
+   <settings>
+      <boundary>
+         <Range>
+            <pos><Vec2f x="0.0" y="0.0"/></pos>
+            <size><Vec2f x="2.6" y="1.4"/></size>
+         </Range>
+      </boundary>
+      <numSegments><Vec2i x="1" y="1"/></numSegments>
+      <segmentSize><Vec2f x="2.6" y="1.4"/></segmentSize>
+      <segmentsDir>data/xml/0</segmentsDir>
+   </settings>
+   <customSettings>
+      <windowSize><Vec2i x="300" y="300"/></windowSize>
+      <bgColour><Colour r="0.2" g="1.0" b="0.2" a="1.0"/></bgColour>
+   </customSettings>
+   <using>
+   </using>
+   <assets>
+      <asset id="100">
+         <Texture path="data/textures/ss8x8squares128x128y.png"/>
+      </asset>
+      <asset id="1">
+         <Tile addToWorld="false">
+            <Item>
+               <Entity type="tile" name="tileProto" x="0.0" y="0.0" z="3" rot="0.0">
+                  <shape>
+                     <Polygon>
+                        <Vec2f x="0.0" y="0.0"/>
+                        <Vec2f x="0.1" y="0.0"/>
+                        <Vec2f x="0.1" y="0.1"/>
+                        <Vec2f x="0.0" y="0.1"/>
+                     </Polygon>
+                  </shape>
+                  <scale>
+                     <Vec2f x="1.0" y="1.0"/>
+                  </scale>
+                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                  <lineWidth>0</lineWidth>
+                  <children/>
+               </Entity>
+            </Item>
+            <UiButton>
+               <Sprite>
+                  <Entity/>
+                  <EntityAnimations>
+                     <texture ptr="100"/>
+                     <textureSection>
+                        <Range>
+                           <pos><Vec2f x="0" y="0"/></pos>
+                           <size><Vec2f x="16" y="16"/></size>
+                        </Range>
+                     </textureSection>
+                     <onScreenSize>
+                        <Vec2f x="0.1" y="0.1"/>
+                     </onScreenSize>
+                     <animation>
+                        <Animation name="press" duration="0.16667">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="16" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="48" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="release" duration="0.16667">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="16" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="48" y="16"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="hoverOn" duration="0.16667">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="16" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="48" y="32"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                     <animation>
+                        <Animation name="hoverOff" duration="0.2">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="16" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="32" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="48" y="48"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="16" y="16"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                  </EntityAnimations>
+                  <EntityTransformations/>
+               </Sprite>
+               <EntityUi/>
+            </UiButton>
+         </Tile>
+      </asset>
+   </assets>
+</MAPFILE>

@@ -167,6 +167,9 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
          Entity::update();
       }
 
+      //===========================================
+      // PhysicalEntity::~PhysicalEntity
+      //===========================================
       virtual ~PhysicalEntity() {}
 };
 

@@ -17,7 +17,7 @@ namespace Dodge {
 //===========================================
 // UiButton::dbg_print
 //===========================================
-void UiButton::dbg_print(ostream& out) const {
+void UiButton::dbg_print(ostream& out, int tab) const {
    // TODO
 }
 #endif
