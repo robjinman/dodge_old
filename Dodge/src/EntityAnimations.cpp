@@ -384,6 +384,103 @@ void EntityAnimations::update() {
 }
 
 //===========================================
+// EntityAnimations::setAnimationDuration
+//===========================================
+void EntityAnimations::setAnimationDuration(float32_t duration) {
+   if (m_activeAnim) m_activeAnim->setDuration(duration);
+}
+
+//===========================================
+// EntityAnimations::setTexture
+//===========================================
+void EntityAnimations::setTexture(pTexture_t texture) {
+   m_texture = texture;
+   updateModel();
+}
+
+//===========================================
+// EntityAnimations::setTextureSection
+//===========================================
+void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h) {
+   m_texSection = Range(x, y, w, h);
+   updateModel();
+}
+
+//===========================================
+// EntityAnimations::setOnScreenSize
+//===========================================
+void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
+   m_onScreenSize.x = w;
+   m_onScreenSize.y = h;
+}
+
+//===========================================
+// EntityAnimations::playAnimation
+//===========================================
+bool EntityAnimations::playAnimation(bool repeat) {
+   if (m_activeAnim) return m_activeAnim->play(repeat);
+}
+
+//===========================================
+// EntityAnimations::pauseAnimation
+//===========================================
+void EntityAnimations::pauseAnimation() {
+   if (m_activeAnim) m_activeAnim->pause();
+}
+
+//===========================================
+// EntityAnimations::stepAnimation
+//===========================================
+void EntityAnimations::stepAnimation() {
+   if (m_activeAnim) m_activeAnim->step();
+}
+
+//===========================================
+// EntityAnimations::stopAnimation
+//===========================================
+void EntityAnimations::stopAnimation() {
+   if (m_activeAnim) {
+      m_activeAnim->stop();
+      m_activeAnim = pAnimation_t();
+   }
+}
+
+//===========================================
+// EntityAnimations::getTexture
+//===========================================
+pTexture_t EntityAnimations::getTexture() const {
+   return m_texture;
+}
+
+//===========================================
+// EntityAnimations::getTextureSection
+//===========================================
+const Range& EntityAnimations::getTextureSection() const {
+   return m_texSection;
+}
+
+//===========================================
+// EntityAnimations::getOnScreenSize
+//===========================================
+const Vec2f& EntityAnimations::getOnScreenSize() const {
+   return m_onScreenSize;
+}
+
+//===========================================
+// EntityAnimations::getAnimState
+//===========================================
+Animation::state_t EntityAnimations::getAnimState() const {
+   return m_activeAnim ? m_activeAnim->getState() : Animation::STOPPED;
+}
+
+//===========================================
+// EntityAnimations::getAnimName
+//===========================================
+long EntityAnimations::getAnimName() const {
+   return m_activeAnim ? m_activeAnim->getName() : 0;
+}
+
+//===========================================
 // EntityAnimations::~EntityAnimations
 //===========================================
 EntityAnimations::~EntityAnimations() {}

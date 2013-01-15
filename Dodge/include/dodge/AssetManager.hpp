@@ -24,122 +24,31 @@ class AssetManager {
          friend class AssetManager;
 
          public:
-            inline const std::pair<long, assetMapEntry_t>& operator*();
-            inline const std::pair<long, assetMapEntry_t>* operator->();
-            inline bool operator==(const iterator& rhs) const;
-            inline bool operator!=(const iterator& rhs) const;
-            inline iterator& operator++();
+            const std::pair<long, assetMapEntry_t>& operator*();
+            const std::pair<long, assetMapEntry_t>* operator->();
+            bool operator==(const iterator& rhs) const;
+            bool operator!=(const iterator& rhs) const;
+            iterator& operator++();
 
          private:
-            iterator(assetMap_t::const_iterator i)
-               : m_i(i), m_pair(*i) {}
+            iterator(assetMap_t::const_iterator i, bool end = false);
 
             assetMap_t::const_iterator m_i;
             std::pair<long, assetMapEntry_t> m_pair;
       };
 
-      inline iterator begin() const;
-      inline iterator end() const;
+      iterator begin() const;
+      iterator end() const;
 
-      inline void addAsset(long name, pAsset_t obj);
-      inline void freeAsset(long name);
-      inline void freeAllAssets();
-      inline Asset* cloneAsset(long name) const;
-      inline pAsset_t getAssetPointer(long name) const;
+      void addAsset(long name, pAsset_t obj);
+      void freeAsset(long name);
+      void freeAllAssets();
+      Asset* cloneAsset(long name) const;
+      pAsset_t getAssetPointer(long name) const;
 
    private:
       static assetMap_t m_assets;
 };
-
-//===========================================
-// AssetManager::begin
-//===========================================
-inline AssetManager::iterator AssetManager::begin() const {
-   return iterator(m_assets.begin());
-}
-
-//===========================================
-// AssetManager::end
-//===========================================
-inline AssetManager::iterator AssetManager::end() const {
-   return iterator(m_assets.end());
-}
-
-//===========================================
-// AssetManager::addAsset
-//===========================================
-inline void AssetManager::addAsset(long name, pAsset_t obj) {
-   obj->m_id = name;
-   m_assets[name] = obj;
-}
-
-//===========================================
-// AssetManager::freeAsset
-//===========================================
-inline void AssetManager::freeAsset(long name) {
-   m_assets.erase(name);
-}
-
-//===========================================
-// AssetManager::freeAllAssets
-//===========================================
-inline void AssetManager::freeAllAssets() {
-   m_assets.clear();
-}
-
-//===========================================
-// AssetManager::cloneAsset
-//===========================================
-inline Asset* AssetManager::cloneAsset(long name) const {
-   assetMap_t::const_iterator i = m_assets.find(name);
-   return i != m_assets.end() ? i->second->clone() : NULL;
-}
-
-//===========================================
-// AssetManager::getAssetPointer
-//===========================================
-inline pAsset_t AssetManager::getAssetPointer(long name) const {
-   assetMap_t::const_iterator i = m_assets.find(name);
-   return i != m_assets.end() ? i->second : pAsset_t();
-}
-
-//===========================================
-// AssetManager::iterator::operator*
-//===========================================
-inline const std::pair<long, AssetManager::assetMapEntry_t>& AssetManager::iterator::operator*() {
-   m_pair = *m_i;
-   return m_pair;
-}
-
-//===========================================
-// AssetManager::iterator::operator->
-//===========================================
-inline const std::pair<long, AssetManager::assetMapEntry_t>* AssetManager::iterator::operator->() {
-   m_pair = *m_i;
-   return &m_pair;
-}
-
-//===========================================
-// AssetManager::iterator::operator==
-//===========================================
-inline bool AssetManager::iterator::operator==(const iterator& rhs) const {
-   return m_i == rhs.m_i;
-}
-
-//===========================================
-// AssetManager::iterator::operator!=
-//===========================================
-inline bool AssetManager::iterator::operator!=(const iterator& rhs) const {
-   return !(*this == rhs);
-}
-
-//===========================================
-// AssetManager::iterator::operator++
-//===========================================
-inline AssetManager::iterator& AssetManager::iterator::operator++() {
-   ++m_i;
-   return *this;
-}
 
 
 }

@@ -30,25 +30,25 @@ class EntityAnimations {
       virtual size_t getSize() const;
       virtual void assignData(const XmlNode data);
 
-      inline void setTexture(pTexture_t texture);
-      inline void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
-      inline void setOnScreenSize(float32_t w, float32_t h);
-      inline void setAnimationDuration(float32_t duration);
+      void setTexture(pTexture_t texture);
+      void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
+      void setOnScreenSize(float32_t w, float32_t h);
+      void setAnimationDuration(float32_t duration);
 
       void addAnimation(pAnimation_t anim);
       void removeAnimation(long anim);
 
-      inline const Range& getTextureSection() const;
-      inline const Vec2f& getOnScreenSize() const;
-      inline const Colour& getColour() const;
-      inline Animation::state_t getAnimState() const;
-      inline long getAnimName() const;
+      const Range& getTextureSection() const;
+      const Vec2f& getOnScreenSize() const;
+      const Colour& getColour() const;
+      Animation::state_t getAnimState() const;
+      long getAnimName() const;
 
       bool playAnimation(long name, bool repeat = false);
-      inline bool playAnimation(bool repeat = false);
-      inline void stepAnimation();
-      inline void pauseAnimation();
-      inline void stopAnimation();
+      bool playAnimation(bool repeat = false);
+      void stepAnimation();
+      void pauseAnimation();
+      void stopAnimation();
 
       virtual void onEvent(const EEvent* event);
 
@@ -65,8 +65,8 @@ class EntityAnimations {
       virtual ~EntityAnimations() = 0;
 
    protected:
-      inline pTexture_t getTexture() const;
-      inline std::map<long, pAnimation_t>& getAnimations();
+      pTexture_t getTexture() const;
+      std::map<long, pAnimation_t>& getAnimations();
 
    private:
       void updateModel();
@@ -81,101 +81,6 @@ class EntityAnimations {
       mutable PlainTexturedAlphaModel m_model;
       Renderer& m_renderer;
 };
-
-//===========================================
-// EntityAnimations::setAnimationDuration
-//===========================================
-inline void EntityAnimations::setAnimationDuration(float32_t duration) {
-   if (m_activeAnim) m_activeAnim->setDuration(duration);
-}
-
-//===========================================
-// EntityAnimations::setTexture
-//===========================================
-inline void EntityAnimations::setTexture(pTexture_t texture) {
-   m_texture = texture;
-}
-
-//===========================================
-// EntityAnimations::setTextureSection
-//===========================================
-inline void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h) {
-   m_texSection = Range(x, y, w, h);
-}
-
-//===========================================
-// EntityAnimations::setOnScreenSize
-//===========================================
-inline void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
-   m_onScreenSize.x = w;
-   m_onScreenSize.y = h;
-}
-
-//===========================================
-// EntityAnimations::playAnimation
-//===========================================
-inline bool EntityAnimations::playAnimation(bool repeat) {
-   if (m_activeAnim) return m_activeAnim->play(repeat);
-}
-
-//===========================================
-// EntityAnimations::pauseAnimation
-//===========================================
-inline void EntityAnimations::pauseAnimation() {
-   if (m_activeAnim) m_activeAnim->pause();
-}
-
-//===========================================
-// EntityAnimations::stepAnimation
-//===========================================
-inline void EntityAnimations::stepAnimation() {
-   if (m_activeAnim) m_activeAnim->step();
-}
-
-//===========================================
-// EntityAnimations::stopAnimation
-//===========================================
-inline void EntityAnimations::stopAnimation() {
-   if (m_activeAnim) {
-      m_activeAnim->stop();
-      m_activeAnim = pAnimation_t();
-   }
-}
-
-//===========================================
-// EntityAnimations::getTexture
-//===========================================
-inline pTexture_t EntityAnimations::getTexture() const {
-   return m_texture;
-}
-
-//===========================================
-// EntityAnimations::getTextureSection
-//===========================================
-inline const Range& EntityAnimations::getTextureSection() const {
-   return m_texSection;
-}
-
-//===========================================
-// EntityAnimations::getOnScreenSize
-//===========================================
-inline const Vec2f& EntityAnimations::getOnScreenSize() const {
-   return m_onScreenSize;
-}
-
-//===========================================
-// EntityAnimations::getAnimState
-//===========================================
-inline Animation::state_t EntityAnimations::getAnimState() const {
-   return m_activeAnim ? m_activeAnim->getState() : Animation::STOPPED;
-}
-
-//===========================================
-// EntityAnimations::getAnimName
-//===========================================
-inline long EntityAnimations::getAnimName() const {
-   return m_activeAnim ? m_activeAnim->getName() : 0;
-}
 
 
 }

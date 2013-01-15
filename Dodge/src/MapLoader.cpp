@@ -92,6 +92,7 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
 // MapLoader::getMemoryUsage
 //===========================================
 size_t MapLoader::getMemoryUsage() const {
+
    size_t total = 0;
    for (auto i = m_assetManager.begin(); i != m_assetManager.end(); ++i)
       total += i->second->getSize();
