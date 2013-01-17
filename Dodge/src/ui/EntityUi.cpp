@@ -24,7 +24,7 @@ EventManager EntityUi::m_eventManager = EventManager();
 // EntityUi::EntityUi
 //===========================================
 EntityUi::EntityUi(Entity* entity)
-   : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {
+   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false) {
 
    init();
 }
@@ -33,7 +33,7 @@ EntityUi::EntityUi(Entity* entity)
 // EntityUi::EntityUi
 //===========================================
 EntityUi::EntityUi(const EntityUi& copy, Entity* entity)
-   : m_entity(entity), m_hasFocus(false), m_mouseOver(false) {
+   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false) {
 
    init();
 }
@@ -84,6 +84,29 @@ bool EntityUi::inRange(int x, int y, float32_t& wx, float32_t& wy) const {
 }
 
 //===========================================
+// EntityUi::update
+//===========================================
+void EntityUi::update() {
+   m_hasFocus = m_hasFocus_;
+}
+
+//===========================================
+// EntityUi::setFocus
+//
+// Doesn't take effect until next call to update().
+// This is to prevent a widget's focus from being changed
+// while keyboard/mouse callbacks are being processed.
+//===========================================
+void EntityUi::setFocus(bool b) {
+   m_hasFocus_ = b;
+
+   if (b)
+      onGainFocus();
+   else
+      onLoseFocus();
+}
+
+//===========================================
 // EntityUi::getSize
 //===========================================
 size_t EntityUi::getSize() const {
@@ -105,7 +128,7 @@ void EntityUi::btn1PressHandler(int x, int y) {
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_BTN1_PRESS, m_entity->getSharedPtr());
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -129,7 +152,7 @@ void EntityUi::btn1ReleaseHandler(int x, int y) {
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_BTN1_RELEASE, m_entity->getSharedPtr());
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -153,7 +176,7 @@ void EntityUi::btn3PressHandler(int x, int y) {
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_BTN3_PRESS, m_entity->getSharedPtr());
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -177,7 +200,7 @@ void EntityUi::btn3ReleaseHandler(int x, int y) {
             boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_BTN3_RELEASE, m_entity->getSharedPtr());
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -200,7 +223,7 @@ void EntityUi::keyDownHandler(int key) {
             boost::get<Functor<void, TYPELIST_2(pEntity_t, int)> >(i->second)(m_entity->getSharedPtr(), key);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_KEY_DOWN, m_entity->getSharedPtr()); // TODO
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -223,7 +246,7 @@ void EntityUi::keyUpHandler(int key) {
             boost::get<Functor<void, TYPELIST_2(pEntity_t, int)> >(i->second)(m_entity->getSharedPtr(), key);
 
          EUiEvent* uiEvent = new EUiEvent(UIEVENT_KEY_UP, m_entity->getSharedPtr()); // TODO
-         m_eventManager.queueEvent(uiEvent);
+         m_eventManager.immediateDispatch(uiEvent);
       }
       catch (boost::bad_get& e) {
          Exception ex("Bad callback function; ", __FILE__, __LINE__);
@@ -249,7 +272,7 @@ void EntityUi::mouseMoveHandler(int x, int y) {
                boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
             EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_ON, m_entity->getSharedPtr()); // TODO
-            m_eventManager.queueEvent(uiEvent);
+            m_eventManager.immediateDispatch(uiEvent);
          }
          catch (boost::bad_get& e) {
             m_mouseOver = true;
@@ -270,7 +293,7 @@ void EntityUi::mouseMoveHandler(int x, int y) {
                boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
             EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_OFF, m_entity->getSharedPtr()); // TODO
-            m_eventManager.queueEvent(uiEvent);
+            m_eventManager.immediateDispatch(uiEvent);
          }
          catch (boost::bad_get& e) {
             m_mouseOver = false;

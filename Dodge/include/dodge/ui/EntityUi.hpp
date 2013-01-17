@@ -32,11 +32,12 @@ class EntityUi {
       explicit EntityUi(Entity* entity);
       EntityUi(const EntityUi& copy, Entity* entity);
 
-      bool hasFocus() const;
-      void registerCallback(uiEvent_t event, callback_t func);
+      void setFocus(bool b);
+      inline bool hasFocus() const;
+      inline void registerCallback(uiEvent_t event, callback_t func);
 
       virtual size_t getSize() const;
-      virtual void update() = 0;
+      virtual void update();
 
       virtual void onBtn1Press(float32_t x, float32_t y) {}
       virtual void onBtn1Release(float32_t x, float32_t y) {}
@@ -46,6 +47,8 @@ class EntityUi {
       virtual void onKeyUp(int code) {}
       virtual void onHoverOn(float32_t x, float32_t y) {}
       virtual void onHoverOff(float32_t x, float32_t y) {}
+      virtual void onGainFocus() {}
+      virtual void onLoseFocus() {}
 
       virtual ~EntityUi();
 
@@ -62,6 +65,7 @@ class EntityUi {
       bool inRange(int x, int y, float32_t& wx, float32_t& wy) const;
 
       Entity* m_entity;
+      bool m_hasFocus_;
       bool m_hasFocus;
       bool m_mouseOver;
 

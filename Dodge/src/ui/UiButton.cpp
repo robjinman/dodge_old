@@ -62,45 +62,77 @@ void UiButton::assignData(const XmlNode data) {
 // UiButton::update
 //===========================================
 void UiButton::update() {
-   static long idleStr = internString("idle");
-   static long hoverOffStr = internString("hoverOff");
-   static long hoverOnStr = internString("hoverOn");
+   static long noFocusIdleStr = internString("noFocusIdle");
+   static long focusIdleStr = internString("focusIdle");
    static long releaseStr = internString("release");
 
    Sprite::update();
+   EntityUi::update();
 
    if (getAnimState() == Animation::STOPPED) {
       switch (m_state) {
-         case BTN_IDLE:
-            playAnimation(idleStr);
+         case LOSE_FOCUS:
+         case NO_FOCUS_IDLE:
+            playAnimation(noFocusIdleStr);
          break;
-         case BTN_HOVER_OFF:
-            if (m_mouseOver) {
-               playAnimation(hoverOnStr);
-               m_state = BTN_HOVER_ON;
-            }
+         case GAIN_FOCUS:
+         case FOCUS_IDLE:
+            playAnimation(focusIdleStr);
          break;
-         case BTN_HOVER_ON:
-            if (!m_mouseOver) {
-               playAnimation(hoverOffStr);
-               m_state = BTN_HOVER_OFF;
-            }
+         case RELEASE:
+            m_onRelease(shared_from_this());
+            m_state = FOCUS_IDLE;
          break;
-         case BTN_RELEASE:
-            if (m_mouseOver)
-               m_state = BTN_HOVER_ON;
-            else {
-               playAnimation(hoverOffStr);
-               m_state = BTN_HOVER_OFF;
-            }
-         break;
-         case BTN_PRESS:
+         case PRESS:
+            m_onClick(shared_from_this());
             if (!m_btn1Pressed || !m_mouseOver) {
                playAnimation(releaseStr);
-               m_state = BTN_RELEASE;
+               m_state = RELEASE;
             }
          break;
       }
+   }
+}
+
+//===========================================
+// UiButton::onGainFocus
+//===========================================
+void UiButton::onGainFocus() {
+   static long gainFocusStr = internString("gainFocus");
+
+   switch (m_state) {
+      case RELEASE:
+      case LOSE_FOCUS:
+      case NO_FOCUS_IDLE:
+         stopAnimation();
+         playAnimation(gainFocusStr);
+         m_state = GAIN_FOCUS;
+      break;
+      case PRESS:
+      case GAIN_FOCUS:
+      case FOCUS_IDLE:
+      break;
+   }
+}
+
+//===========================================
+// UiButton::onLoseFocus
+//===========================================
+void UiButton::onLoseFocus() {
+   static long loseFocusStr = internString("loseFocus");
+
+   switch (m_state) {
+      case PRESS:
+      case GAIN_FOCUS:
+      case FOCUS_IDLE:
+      case RELEASE:
+         stopAnimation();
+         playAnimation(loseFocusStr);
+         m_state = LOSE_FOCUS;
+      break;
+      case LOSE_FOCUS:
+      case NO_FOCUS_IDLE:
+      break;
    }
 }
 
@@ -113,16 +145,16 @@ void UiButton::onBtn1Press(float32_t x, float32_t y) {
    m_btn1Pressed = true;
 
    switch (m_state) {
-      case BTN_PRESS:
-      case BTN_RELEASE:
+      case PRESS:
       break;
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
-      case BTN_IDLE:
+      case RELEASE:
+      case GAIN_FOCUS:
+      case LOSE_FOCUS:
+      case FOCUS_IDLE:
+      case NO_FOCUS_IDLE:
          stopAnimation();
          playAnimation(pressStr);
-         m_state = BTN_PRESS;
-         m_onClick(shared_from_this());
+         m_state = PRESS;
       break;
    }
 }
@@ -136,17 +168,37 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
    m_btn1Pressed = false;
 
    switch (m_state) {
-      case BTN_IDLE:
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
+      case NO_FOCUS_IDLE:
+      case RELEASE:
+      case GAIN_FOCUS:
+      case LOSE_FOCUS:
+      case FOCUS_IDLE:
       break;
-      case BTN_PRESS:
+      case PRESS:
          if (playAnimation(releaseStr)) {
-            m_state = BTN_RELEASE;
-            m_onRelease(shared_from_this());
+            m_state = RELEASE;
          }
       break;
+   }
+}
+
+//===========================================
+// UiButton::onKeyDown
+//===========================================
+void UiButton::onKeyDown(int key) {
+   switch (key) {
+      case WinIO::KEY_ENTER: onBtn1Press(0.f, 0.f); break;
+      // ...
+   }
+}
+
+//===========================================
+// UiButton::onKeyUp
+//===========================================
+void UiButton::onKeyUp(int key) {
+   switch (key) {
+      case WinIO::KEY_ENTER: onBtn1Release(0.f, 0.f); break;
+      // ...
    }
 }
 
@@ -154,48 +206,14 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
 // UiButton::onHoverOn
 //===========================================
 void UiButton::onHoverOn(float32_t x, float32_t y) {
-   static long hoverOnStr = internString("hoverOn");
-
    m_mouseOver = true;
-
-   switch (m_state) {
-      case BTN_IDLE:
-         stopAnimation();
-         playAnimation(hoverOnStr);
-         m_state = BTN_HOVER_ON;
-      break;
-      case BTN_PRESS:
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
-      break;
-   }
 }
 
 //===========================================
 // UiButton::onHoverOff
 //===========================================
 void UiButton::onHoverOff(float32_t x, float32_t y) {
-   static long hoverOffStr = internString("hoverOff");
-   static long releaseStr = internString("release");
-
    m_mouseOver = false;
-
-   switch (m_state) {
-      case BTN_PRESS:
-         if (playAnimation(releaseStr))
-            m_state = BTN_RELEASE;
-      break;
-      case BTN_RELEASE:
-      case BTN_HOVER_ON:
-      case BTN_HOVER_OFF:
-      break;
-      case BTN_IDLE:
-         stopAnimation();
-         playAnimation(hoverOffStr);
-         m_state = BTN_HOVER_OFF;
-      break;
-   }
 }
 
 

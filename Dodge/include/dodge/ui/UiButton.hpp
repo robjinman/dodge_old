@@ -26,6 +26,9 @@ class UiButton : public Sprite, public EntityUi {
            Entity(data.firstChild().firstChild()),
            Sprite(data.firstChild()),
            EntityUi(this),
+           m_state(NO_FOCUS_IDLE),
+           m_mouseOver(false),
+           m_btn1Pressed(false),
            m_onClick(&UiButton::void_entityPtr),
            m_onRelease(&UiButton::void_entityPtr) {
 
@@ -37,7 +40,7 @@ class UiButton : public Sprite, public EntityUi {
            Entity(type),
            Sprite(type, texture),
            EntityUi(this),
-           m_state(BTN_IDLE),
+           m_state(NO_FOCUS_IDLE),
            m_mouseOver(false),
            m_btn1Pressed(false),
            m_onClick(&UiButton::void_entityPtr),
@@ -48,7 +51,7 @@ class UiButton : public Sprite, public EntityUi {
            Entity(name, type),
            Sprite(name, type, texture),
            EntityUi(this),
-           m_state(BTN_IDLE),
+           m_state(NO_FOCUS_IDLE),
            m_mouseOver(false),
            m_btn1Pressed(false),
            m_onClick(&UiButton::void_entityPtr),
@@ -59,7 +62,7 @@ class UiButton : public Sprite, public EntityUi {
            Entity(copy),
            Sprite(copy),
            EntityUi(copy, this),
-           m_state(BTN_IDLE),
+           m_state(NO_FOCUS_IDLE),
            m_mouseOver(false),
            m_btn1Pressed(false),
            m_onClick(&UiButton::void_entityPtr),
@@ -70,7 +73,7 @@ class UiButton : public Sprite, public EntityUi {
            Entity(copy, name),
            Sprite(copy, name),
            EntityUi(copy, this),
-           m_state(BTN_IDLE),
+           m_state(NO_FOCUS_IDLE),
            m_mouseOver(false),
            m_btn1Pressed(false),
            m_onClick(&UiButton::void_entityPtr),
@@ -85,8 +88,12 @@ class UiButton : public Sprite, public EntityUi {
 
       virtual void update();
 
+      virtual void onKeyDown(int key);
+      virtual void onKeyUp(int key);
       virtual void onBtn1Press(float32_t x, float32_t y);
       virtual void onBtn1Release(float32_t x, float32_t y);
+      virtual void onGainFocus();
+      virtual void onLoseFocus();
       virtual void onHoverOn(float32_t x, float32_t y);
       virtual void onHoverOff(float32_t x, float32_t y);
 
@@ -98,11 +105,12 @@ class UiButton : public Sprite, public EntityUi {
 
    private:
       typedef enum {
-         BTN_IDLE,
-         BTN_PRESS,
-         BTN_RELEASE,
-         BTN_HOVER_ON,
-         BTN_HOVER_OFF
+         NO_FOCUS_IDLE,
+         GAIN_FOCUS,
+         LOSE_FOCUS,
+         FOCUS_IDLE,
+         PRESS,
+         RELEASE
       } state_t;
 
       state_t m_state;
