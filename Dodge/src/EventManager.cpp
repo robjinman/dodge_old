@@ -59,7 +59,11 @@ void EventManager::immediateDispatch(EEvent* event) {
 // EventManager::clear
 //===========================================
 void EventManager::clear() {
-   while (!m_eventQueue.empty()) m_eventQueue.pop();
+   while (!m_eventQueue.empty()) {
+      delete m_eventQueue.front();
+      m_eventQueue.pop();
+   }
+
    EEvent::m_stack.clear();
 }
 

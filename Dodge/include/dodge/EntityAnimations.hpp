@@ -43,6 +43,7 @@ class EntityAnimations {
       const Colour& getColour() const;
       Animation::state_t getAnimState() const;
       long getAnimName() const;
+      bool hasAnimation(long name) const;
 
       bool playAnimation(long name, bool repeat = false);
       bool playAnimation(bool repeat = false);

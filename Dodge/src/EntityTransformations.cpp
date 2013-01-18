@@ -159,6 +159,7 @@ void EntityTransformations::update() {
          if (part != it->second->getCurrentPartIdx()) {
             ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), it->second);
             m_entity->onEvent(event);
+            delete event;
          }
 
          if (delta) {
@@ -169,6 +170,7 @@ void EntityTransformations::update() {
             if (it->second->getCurrentFrameNumber() == it->second->getNumFrames()) {
                ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), it->second);
                m_entity->onEvent(event);
+               delete event;
             }
          }
       }

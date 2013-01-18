@@ -260,6 +260,13 @@ void EntityAnimations::removeAnimation(long anim) {
 }
 
 //===========================================
+// EntityAnimations::hasAnimation
+//===========================================
+bool EntityAnimations::hasAnimation(long name) const {
+   return m_animations.find(name) != m_animations.end();
+}
+
+//===========================================
 // EntityAnimations::updateModel
 //===========================================
 void EntityAnimations::updateModel() {
@@ -419,6 +426,8 @@ void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
 //===========================================
 bool EntityAnimations::playAnimation(bool repeat) {
    if (m_activeAnim) return m_activeAnim->play(repeat);
+
+   return false;
 }
 
 //===========================================

@@ -24,44 +24,59 @@ EventManager EntityUi::m_eventManager = EventManager();
 // EntityUi::EntityUi
 //===========================================
 EntityUi::EntityUi(Entity* entity)
-   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false) {
+   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false), m_active(false) {
 
-   init();
+   m_winIO.registerCallback(WinIO::EVENT_MOUSEMOVE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::mouseMoveHandler));
 }
 
 //===========================================
 // EntityUi::EntityUi
 //===========================================
 EntityUi::EntityUi(const EntityUi& copy, Entity* entity)
-   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false) {
+   : m_entity(entity), m_hasFocus_(false), m_hasFocus(false), m_mouseOver(false), m_active(false) {
 
-   init();
+   m_winIO.registerCallback(WinIO::EVENT_MOUSEMOVE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::mouseMoveHandler));
 }
 
 //===========================================
-// EntityUi::init
+// EntityUi::addToWorld
 //===========================================
-void EntityUi::init() {
+void EntityUi::addToWorld() {
    m_winIO.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1PressHandler));
    m_winIO.registerCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1ReleaseHandler));
    m_winIO.registerCallback(WinIO::EVENT_BTN3PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3PressHandler));
    m_winIO.registerCallback(WinIO::EVENT_BTN3RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3ReleaseHandler));
-   m_winIO.registerCallback(WinIO::EVENT_MOUSEMOVE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::mouseMoveHandler));
    m_winIO.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyDownHandler));
    m_winIO.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyUpHandler));
+
+   m_active = true;
+
+   if (m_mouseOver) {
+      m_mouseOver = false;
+      mouseMoveHandler(m_latestCursorPos.x, m_latestCursorPos.y);
+   }
+}
+
+//===========================================
+// EntityUi::removeFromWorld
+//===========================================
+void EntityUi::removeFromWorld() {
+   m_winIO.unregisterCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1PressHandler));
+   m_winIO.unregisterCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1ReleaseHandler));
+   m_winIO.unregisterCallback(WinIO::EVENT_BTN3PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3PressHandler));
+   m_winIO.unregisterCallback(WinIO::EVENT_BTN3RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3ReleaseHandler));
+   m_winIO.unregisterCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyDownHandler));
+   m_winIO.unregisterCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyUpHandler));
+
+   m_active = false;
 }
 
 //===========================================
 // EntityUi::EntityUi
 //===========================================
 EntityUi::~EntityUi() {
-   m_winIO.unregisterCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1PressHandler));
-   m_winIO.unregisterCallback(WinIO::EVENT_BTN1RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn1ReleaseHandler));
-   m_winIO.unregisterCallback(WinIO::EVENT_BTN3PRESS, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3PressHandler));
-   m_winIO.unregisterCallback(WinIO::EVENT_BTN3RELEASE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::btn3ReleaseHandler));
+   EntityUi::removeFromWorld();
    m_winIO.unregisterCallback(WinIO::EVENT_MOUSEMOVE, Functor<void, TYPELIST_2(int, int)>(this, &EntityUi::mouseMoveHandler));
-   m_winIO.unregisterCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyDownHandler));
-   m_winIO.unregisterCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &EntityUi::keyUpHandler));
 }
 
 //===========================================
@@ -262,44 +277,50 @@ void EntityUi::keyUpHandler(int key) {
 void EntityUi::mouseMoveHandler(int x, int y) {
    float32_t wx, wy;
 
+   m_latestCursorPos = Vec2i(x, y);
+
    if (inRange(x, y, wx, wy)) {
       if (!m_mouseOver) {
-         onHoverOn(wx, wy);
+         if (m_active) {
+            onHoverOn(wx, wy);
 
-         try {
-            map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_ON);
-            if (i != m_callbacks.end())
-               boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
+            try {
+               map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_ON);
+               if (i != m_callbacks.end())
+                  boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
-            EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_ON, m_entity->getSharedPtr()); // TODO
-            m_eventManager.immediateDispatch(uiEvent);
-         }
-         catch (boost::bad_get& e) {
-            m_mouseOver = true;
-            Exception ex("Bad callback function; ", __FILE__, __LINE__);
-            ex.append(e.what());
-            throw ex;
+               EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_ON, m_entity->getSharedPtr()); // TODO
+               m_eventManager.immediateDispatch(uiEvent);
+            }
+            catch (boost::bad_get& e) {
+               m_mouseOver = true;
+               Exception ex("Bad callback function; ", __FILE__, __LINE__);
+               ex.append(e.what());
+               throw ex;
+            }
          }
       }
       m_mouseOver = true;
    }
    else {
       if (m_mouseOver) {
-         onHoverOff(wx, wy);
+         if (m_active) {
+            onHoverOff(wx, wy);
 
-         try {
-            map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_OFF);
-            if (i != m_callbacks.end())
-               boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
+            try {
+               map<uiEvent_t, callback_t>::iterator i = m_callbacks.find(UIEVENT_HOVER_OFF);
+               if (i != m_callbacks.end())
+                  boost::get<Functor<void, TYPELIST_3(pEntity_t, float32_t, float32_t)> >(i->second)(m_entity->getSharedPtr(), wx, wy);
 
-            EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_OFF, m_entity->getSharedPtr()); // TODO
-            m_eventManager.immediateDispatch(uiEvent);
-         }
-         catch (boost::bad_get& e) {
-            m_mouseOver = false;
-            Exception ex("Bad callback function; ", __FILE__, __LINE__);
-            ex.append(e.what());
-            throw ex;
+               EUiEvent* uiEvent = new EUiEvent(UIEVENT_HOVER_OFF, m_entity->getSharedPtr()); // TODO
+               m_eventManager.immediateDispatch(uiEvent);
+            }
+            catch (boost::bad_get& e) {
+               m_mouseOver = false;
+               Exception ex("Bad callback function; ", __FILE__, __LINE__);
+               ex.append(e.what());
+               throw ex;
+            }
          }
       }
       m_mouseOver = false;

@@ -14,6 +14,7 @@
 #include "../EventManager.hpp"
 #include "uiEventTypes.hpp"
 #include "../Range.hpp"
+#include "../math/Vec2i.hpp"
 
 
 namespace Dodge {
@@ -38,6 +39,9 @@ class EntityUi {
 
       virtual size_t getSize() const;
       virtual void update();
+
+      virtual void addToWorld();
+      virtual void removeFromWorld();
 
       virtual void onBtn1Press(float32_t x, float32_t y) {}
       virtual void onBtn1Release(float32_t x, float32_t y) {}
@@ -68,6 +72,8 @@ class EntityUi {
       bool m_hasFocus_;
       bool m_hasFocus;
       bool m_mouseOver;
+      bool m_active;
+      Vec2i m_latestCursorPos;
 
       typedef std::map<uiEvent_t, callback_t> callbackMap_t;
       callbackMap_t m_callbacks;

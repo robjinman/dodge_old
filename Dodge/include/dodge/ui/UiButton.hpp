@@ -86,6 +86,9 @@ class UiButton : public Sprite, public EntityUi {
 #endif
       virtual void assignData(const XmlNode data);
 
+      virtual void addToWorld();
+      virtual void removeFromWorld();
+
       virtual void update();
 
       virtual void onKeyDown(int key);

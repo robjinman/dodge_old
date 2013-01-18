@@ -41,6 +41,22 @@ UiButton* UiButton::clone() const {
 }
 
 //===========================================
+// UiButton::addToWorld
+//===========================================
+void UiButton::addToWorld() {
+   Sprite::addToWorld();
+   EntityUi::addToWorld();
+}
+
+//===========================================
+// UiButton::removeFromWorld
+//===========================================
+void UiButton::removeFromWorld() {
+   Sprite::removeFromWorld();
+   EntityUi::removeFromWorld();
+}
+
+//===========================================
 // UiButton::assignData
 //===========================================
 void UiButton::assignData(const XmlNode data) {
@@ -65,6 +81,7 @@ void UiButton::update() {
    static long noFocusIdleStr = internString("noFocusIdle");
    static long focusIdleStr = internString("focusIdle");
    static long releaseStr = internString("release");
+   static long pressStr = internString("press");
 
    Sprite::update();
    EntityUi::update();
@@ -89,6 +106,8 @@ void UiButton::update() {
                playAnimation(releaseStr);
                m_state = RELEASE;
             }
+            if (!hasAnimation(pressStr))
+               playAnimation(focusIdleStr);
          break;
       }
    }
@@ -104,8 +123,10 @@ void UiButton::onGainFocus() {
       case RELEASE:
       case LOSE_FOCUS:
       case NO_FOCUS_IDLE:
-         stopAnimation();
-         playAnimation(gainFocusStr);
+         if (hasAnimation(gainFocusStr)) {
+            stopAnimation();
+            playAnimation(gainFocusStr);
+         }
          m_state = GAIN_FOCUS;
       break;
       case PRESS:
@@ -126,8 +147,11 @@ void UiButton::onLoseFocus() {
       case GAIN_FOCUS:
       case FOCUS_IDLE:
       case RELEASE:
-         stopAnimation();
-         playAnimation(loseFocusStr);
+         if (hasAnimation(loseFocusStr)) {
+            stopAnimation();
+            playAnimation(loseFocusStr);
+         }
+         if (m_state == RELEASE) m_onRelease(shared_from_this());
          m_state = LOSE_FOCUS;
       break;
       case LOSE_FOCUS:
@@ -152,8 +176,10 @@ void UiButton::onBtn1Press(float32_t x, float32_t y) {
       case LOSE_FOCUS:
       case FOCUS_IDLE:
       case NO_FOCUS_IDLE:
-         stopAnimation();
-         playAnimation(pressStr);
+         if (hasAnimation(pressStr)) {
+            stopAnimation();
+            playAnimation(pressStr);
+         }
          m_state = PRESS;
       break;
    }

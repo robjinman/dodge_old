@@ -131,6 +131,16 @@ void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
 
       XML_NODE_CHECK(node, assets);
       loadAssets(node, segment);
+      node = node.nextSibling();
+
+      if (!node.isNull() && node.name() == "using") {
+
+         XmlNode node_ = node.firstChild();
+         while (!node_.isNull() && node_.name() == "file") {
+            parseAssetsFile_r(node_.getString(), segment);
+            node_ = node_.nextSibling();
+         }
+      }
    }
    catch (XmlException& e) {
       e.prepend("Error loading assets from XML file; ");
@@ -221,8 +231,19 @@ void MapLoader::parseMapFile(const string& file) {
          node = node.nextSibling();
       }
 
-      if (!node.isNull() && node.name() == "assets")
+      if (!node.isNull() && node.name() == "assets") {
          loadAssets(node, NULL);
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "using") {
+
+         XmlNode node_ = node.firstChild();
+         while (!node_.isNull() && node_.name() == "file") {
+            parseAssetsFile_r(node_.getString(), NULL);
+            node_ = node_.nextSibling();
+         }
+      }
    }
    catch (XmlException& e) {
       e.prepend("Error loading map; ");

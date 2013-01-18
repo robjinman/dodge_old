@@ -18,7 +18,7 @@ class Asset {
 
    public:
       Asset(long typeId)
-         : m_typeId(typeId) {}
+         : m_id(-1), m_typeId(typeId) {}
 
       virtual Asset* clone() const = 0;
       virtual size_t getSize() const = 0;
