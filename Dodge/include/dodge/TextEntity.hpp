@@ -10,7 +10,7 @@
 namespace Dodge {
 
 
-class TextEntity : public Entity {
+class TextEntity : virtual public Entity {
    public:
       explicit TextEntity(const XmlNode data);
       explicit TextEntity(long type, const pFont_t font, const std::string& text, const Vec2f& size);
@@ -47,7 +47,7 @@ class TextEntity : public Entity {
    private:
       Renderer& m_renderer;
 
-      const pFont_t m_font;
+      pFont_t m_font;
       std::string m_text;
       Vec2f m_size;
 

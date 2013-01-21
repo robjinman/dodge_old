@@ -39,7 +39,7 @@ class Font : virtual public Asset {
       int m_charH;
 };
 
-typedef sharedPtr_t<Font> pFont_t;
+typedef boost::shared_ptr<Font> pFont_t;
 
 //===========================================
 // Font::getTexture

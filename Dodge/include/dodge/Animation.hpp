@@ -44,7 +44,7 @@ class Animation : virtual public Asset {
       inline const AnimFrame* getFrame(uint_t idx) const;
       inline uint_t getNumFrames() const;
 
-      void step();
+      void step(bool* justFinished = NULL);
       inline void setFrame(uint_t frame);
       bool play(bool repeat = false);
       inline void pause();

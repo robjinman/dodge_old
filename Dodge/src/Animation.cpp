@@ -139,7 +139,7 @@ bool Animation::play(bool repeat) {
 //===========================================
 // Animation::step
 //===========================================
-void Animation::step() {
+void Animation::step(bool* justFinished) {
    if (m_state == PAUSED) {
       ++m_frame;
 
@@ -147,8 +147,16 @@ void Animation::step() {
          m_frameReady = true;
       }
       else {
-         m_state = STOPPED;
-         m_frameReady = false;
+         if (m_repeat) {
+            m_frame = 0;
+            m_frameReady = true;
+         }
+         else {
+            m_state = STOPPED;
+            m_frameReady = false;
+         }
+
+         if (justFinished) *justFinished = true;
       }
    }
 }

@@ -218,24 +218,24 @@ void WinIO::doEvents() {
             case Expose: {
                callbackMap_t::iterator it = m_callbacks.find(EVENT_WINEXPOSE);
                if (it != m_callbacks.end()) {
-               for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                  boost::get<Functor<void, TYPELIST_0()> >(*f)();
+               for (uint_t f = 0; f < it->second.size(); ++f)
+                  boost::get<Functor<void, TYPELIST_0()> >(it->second[f])();
                }
             }
             break;
             case KeyPress: {
                callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYDOWN);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_1(int)> >(it->second[f])(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
                }
             }
             break;
             case KeyRelease: {
                callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYUP);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_1(int)> >(*f)(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_1(int)> >(it->second[f])(XkbKeycodeToKeysym(m_display, xEvent.xkey.keycode, 0, 0));
                }
             }
             break;
@@ -248,8 +248,8 @@ void WinIO::doEvents() {
                }
                callbackMap_t::iterator it = m_callbacks.find(kind);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(xEvent.xbutton.x, xEvent.xbutton.y);
                }
             }
             break;
@@ -262,24 +262,24 @@ void WinIO::doEvents() {
                }
                callbackMap_t::iterator it = m_callbacks.find(kind);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xbutton.x, xEvent.xbutton.y);
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(xEvent.xbutton.x, xEvent.xbutton.y);
                }
             }
             break;
             case MotionNotify: {
                callbackMap_t::iterator it = m_callbacks.find(EVENT_MOUSEMOVE);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xmotion.x, xEvent.xmotion.y);
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(xEvent.xmotion.x, xEvent.xmotion.y);
                }
             }
             break;
             case ClientMessage: {
                callbackMap_t::iterator it = m_callbacks.find(EVENT_WINCLOSE);
                if (it != m_callbacks.end()) {
-                  for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                     boost::get<Functor<void, TYPELIST_0()> >(*f)();
+                  for (uint_t f = 0; f < it->second.size(); ++f)
+                     boost::get<Functor<void, TYPELIST_0()> >(it->second[f])();
                }
             }
             break;
@@ -292,8 +292,8 @@ void WinIO::doEvents() {
                   callbackMap_t::iterator it = m_callbacks.find(EVENT_WINRESIZE);
 
                   if (it != m_callbacks.end()) {
-                     for (callbackList_t::iterator f = it->second.begin(); f != it->second.end(); ++f)
-                        boost::get<Functor<void, TYPELIST_2(int, int)> >(*f)(xEvent.xconfigure.width, xEvent.xconfigure.height);
+                     for (uint_t f = 0; f < it->second.size(); ++f)
+                        boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(xEvent.xconfigure.width, xEvent.xconfigure.height);
                   }
                }
             }

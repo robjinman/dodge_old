@@ -110,21 +110,8 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
 
       node = node.nextSibling();
       while (!node.isNull() && node.name() == "animation") {
-         XmlAttribute attr = node.firstAttribute();
-         if (!attr.isNull() && attr.name() == "proto") {
-            long id = attr.getLong();
-
-            pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
-
-            if (!anim)
-               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
-
-            m_animations[anim->getName()] = anim;
-         }
-         else {
-            pAnimation_t anim(new Animation(node.firstChild()));
-            m_animations[anim->getName()] = anim;
-         }
+         pAnimation_t anim(new Animation(node.firstChild()));
+         m_animations[anim->getName()] = anim;
 
          node = node.nextSibling();
       }
@@ -185,21 +172,8 @@ void EntityAnimations::assignData(const XmlNode data) {
       }
 
       while (!node.isNull() && node.name() == "animation") {
-         XmlAttribute attr = node.firstAttribute();
-         if (!attr.isNull() && attr.name() == "proto") {
-            long id = attr.getLong();
-
-            pAnimation_t anim(dynamic_cast<Animation*>(assetManager.cloneAsset(id)));
-
-            if (!anim)
-               throw XmlException("Bad entity asset id", __FILE__, __LINE__);
-
-            m_animations[anim->getName()] = anim;
-         }
-         else {
-            pAnimation_t anim(new Animation(node.firstChild()));
-            m_animations[anim->getName()] = anim;
-         }
+         pAnimation_t anim(new Animation(node.firstChild()));
+         m_animations[anim->getName()] = anim;
 
          node = node.nextSibling();
       }
@@ -391,6 +365,39 @@ void EntityAnimations::update() {
 }
 
 //===========================================
+// EntityAnimations::stepAnimation
+//===========================================
+void EntityAnimations::stepAnimation() {
+   if (m_activeAnim) {
+      bool justFinished = false;
+      m_activeAnim->step(&justFinished);
+
+      const AnimFrame* frame = m_activeAnim->getCurrentFrame();
+      if (frame) {
+         setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         m_entity->setFillColour(frame->col);
+         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+         updateModel();
+      }
+
+      if (justFinished) {
+         try {
+            EventManager eventManager;
+
+            EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), m_activeAnim);
+            m_entity->onEvent(event);
+            eventManager.queueEvent(event);
+         }
+         catch (bad_alloc& e) {
+            Exception ex("Error updating EntityAnimations; ", __FILE__, __LINE__);
+            ex.append(e.what());
+            throw ex;
+         }
+      }
+   }
+}
+
+//===========================================
 // EntityAnimations::setAnimationDuration
 //===========================================
 void EntityAnimations::setAnimationDuration(float32_t duration) {
@@ -435,13 +442,6 @@ bool EntityAnimations::playAnimation(bool repeat) {
 //===========================================
 void EntityAnimations::pauseAnimation() {
    if (m_activeAnim) m_activeAnim->pause();
-}
-
-//===========================================
-// EntityAnimations::stepAnimation
-//===========================================
-void EntityAnimations::stepAnimation() {
-   if (m_activeAnim) m_activeAnim->step();
 }
 
 //===========================================

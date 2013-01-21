@@ -1,6 +1,7 @@
 #include <TextEntity.hpp>
 #include <renderer/Renderer.hpp>
 #include <globals.hpp>
+#include <AssetManager.hpp>
 
 
 namespace Dodge {
@@ -15,12 +16,36 @@ TextEntity::TextEntity(const XmlNode data)
      m_renderer(Renderer::getInstance()),
      m_model(Renderer::TRIANGLES) {
 
-   XmlNode node = data.firstChild();
+   try {
+      XML_NODE_CHECK(data, TextEntity);
 
-   XML_NODE_CHECK(data, TextEntity);
+      XmlNode node = data.nthChild(1);
+      XML_NODE_CHECK(node, font);
 
-   node = node.nextSibling();
-   // TODO
+      XmlAttribute attr = node.firstAttribute();
+      XML_ATTR_CHECK(attr, ptr);
+      long fontId = attr.getLong();
+
+      AssetManager assetManager;
+      pFont_t font = boost::dynamic_pointer_cast<Dodge::Font>(assetManager.getAssetPointer(fontId));
+
+      if (!font)
+         throw XmlException("Bad asset id", __FILE__, __LINE__);
+
+      m_font = font;
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, textSize);
+      m_size = Vec2f(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, text);
+      setText(node.getString());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class TextEntity; ");
+      throw;
+   }
 }
 
 //===========================================
@@ -97,7 +122,40 @@ size_t TextEntity::getSize() const {
 // TextEntity::assignData
 //===========================================
 void TextEntity::assignData(const XmlNode data) {
-   // TODO
+   try {
+      if (data.isNull() || data.name() != "TextEntity") return;
+
+      XmlNode node = data.nthChild(1);
+      if (!node.isNull() && node.name() == "font") {
+
+         XmlAttribute attr = node.firstAttribute();
+         if (!attr.isNull() && attr.name() == "ptr") {
+            long fontId = attr.getLong();
+
+            AssetManager assetManager;
+            pFont_t font = boost::dynamic_pointer_cast<Dodge::Font>(assetManager.getAssetPointer(fontId));
+
+            if (!font)
+               throw XmlException("Bad asset id", __FILE__, __LINE__);
+
+            m_font = font;
+         }
+
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "textSize") {
+         m_size = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      XML_NODE_CHECK(node, text);
+      setText(node.getString());
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class TextEntity; ");
+      throw;
+   }
 }
 
 //===========================================
@@ -151,6 +209,7 @@ void TextEntity::setZ(int z) {
 void TextEntity::updateModel() const {
    float32_t x = getTranslation_abs().x;
    float32_t y = getTranslation_abs().y;
+   float32_t z = getZ();
 
    float32_t texSectionX1 = m_font->getTextureSection().getPosition().x;
    float32_t texSectionY1 = m_font->getTextureSection().getPosition().y;
@@ -176,12 +235,12 @@ void TextEntity::updateModel() const {
       float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((m_text[i] - ' ') % rowLen));
       float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((m_text[i] - ' ') / rowLen);
 
-      verts[v] = { chX + m_size.x, chY,            0,    (srcX + pxChW) / texW, (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, 0,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            0,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, 0,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY + m_size.y, 0,    srcX / texW,           srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            0,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
+      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
+      verts[v] = { chX,            chY + m_size.y, z,    srcX / texW,           srcY / texH           };    ++v;
+      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
    }
 
    m_model.eraseVertices();

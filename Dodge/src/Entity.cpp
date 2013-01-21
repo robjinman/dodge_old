@@ -511,7 +511,7 @@ Vec2f Entity::getTranslation_abs() const {
 //===========================================
 void Entity::recomputeBoundary() {
    Vec2f min = m_shape ? m_shape->getMinimum() : Vec2f(0.f, 0.f);
-   Vec2f max = m_shape ? m_shape->getMaximum() : Vec2f(0.f, 0.f);
+   Vec2f max = m_shape ? m_shape->getMaximum() : Vec2f(0.001f, 0.001f);
 
    m_boundary.setPosition(getTranslation_abs() + min);
    m_boundary.setSize(max - min);

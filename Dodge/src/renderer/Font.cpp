@@ -1,6 +1,7 @@
 #include <renderer/Font.hpp>
 #include <StringId.hpp>
 #include <xml/xml.hpp>
+#include <AssetManager.hpp>
 
 
 namespace Dodge {
@@ -12,9 +13,37 @@ namespace Dodge {
 Font::Font(const XmlNode data)
    : Asset(internString("Font")) {
 
-   XML_NODE_CHECK(data, Font);
+   try {
+      AssetManager assetManager;
 
-   // TODO
+      XML_NODE_CHECK(data, Font);
+
+      XmlNode node = data.firstChild();
+      XML_NODE_CHECK(node, texture);
+
+      XmlAttribute attr = node.firstAttribute();
+      XML_ATTR_CHECK(attr, ptr);
+
+      long id = attr.getLong();
+      m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
+
+      if (!m_texture)
+         throw XmlException("Bad texture asset id", __FILE__, __LINE__);
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, textureSection);
+      m_texSection = Range(node.firstChild());
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, charSize);
+      Vec2f sz(node.firstChild());
+      m_charW = sz.x;
+      m_charH = sz.y;
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class Font; ");
+      throw;
+   }
 }
 
 //===========================================

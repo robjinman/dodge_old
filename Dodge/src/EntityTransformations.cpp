@@ -152,6 +152,8 @@ void EntityTransformations::playTransformation(long name) {
 //===========================================
 void EntityTransformations::update() {
    try {
+      EventManager eventManager;
+
       for (auto it = m_transformations.begin(); it != m_transformations.end(); ++it) {
          uint_t part = it->second->getCurrentPartIdx();
          const Transformation::delta_t* delta = it->second->update();
@@ -159,7 +161,7 @@ void EntityTransformations::update() {
          if (part != it->second->getCurrentPartIdx()) {
             ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), it->second);
             m_entity->onEvent(event);
-            delete event;
+            eventManager.queueEvent(event);
          }
 
          if (delta) {
@@ -170,7 +172,7 @@ void EntityTransformations::update() {
             if (it->second->getCurrentFrameNumber() == it->second->getNumFrames()) {
                ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), it->second);
                m_entity->onEvent(event);
-               delete event;
+               eventManager.queueEvent(event);
             }
          }
       }
