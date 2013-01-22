@@ -126,7 +126,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void translate(const Vec2f& t);
       inline void translate_x(float32_t x);
       inline void translate_y(float32_t y);
-      virtual void setZ(int z);
+      virtual void setZ(float32_t z);
       inline void setRotation(float32_t deg);
       virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
       inline void setScale(float32_t s);
@@ -139,7 +139,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 
       // Relative to parent (parent's model space)
       inline Vec2f getTranslation() const;
-      inline int getZ() const;
+      inline float32_t getZ() const;
       inline float32_t getRotation() const;
 
       // Relative to origin (world space)
@@ -188,7 +188,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       Vec2f m_scale;
 
       Vec2f m_transl;
-      int m_z;
+      float32_t m_z;
       float32_t m_rot;
 
       std::unique_ptr<Shape> m_shape; // Bounding polygon/shape
@@ -321,7 +321,7 @@ inline void Entity::scale(const Vec2f& s) {
 //===========================================
 // Entity::getZ
 //===========================================
-inline int Entity::getZ() const {
+inline float32_t Entity::getZ() const {
    return m_z;
 }
 

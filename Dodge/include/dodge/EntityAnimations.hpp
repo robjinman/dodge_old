@@ -76,6 +76,7 @@ class EntityAnimations {
       pTexture_t m_texture;
       Range m_texSection;
       Vec2f m_onScreenSize;
+      Vec2f m_offset;
       std::map<long, pAnimation_t> m_animations;
       pAnimation_t m_activeAnim;
 

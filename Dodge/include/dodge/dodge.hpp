@@ -11,6 +11,7 @@
 #include "AnimFrame.hpp"
 #include "Asset.hpp"
 #include "AssetManager.hpp"
+#include "audio/Audio.hpp"
 #include "Box2dPhysics.hpp"
 #include "definitions.hpp"
 #include "EAnimFinished.hpp"

@@ -20,6 +20,16 @@ AnimFrame::AnimFrame(const XmlNode data) {
 
       XmlNode node = data.firstChild();
 
+      if (!node.isNull() && node.name() == "worldOffset") {
+         worldOffset = unique_ptr<Vec2f>(new Vec2f(node.firstChild()));
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "size") {
+         size = unique_ptr<Vec2f>(new Vec2f(node.firstChild()));
+         node = node.nextSibling();
+      }
+
       XML_NODE_CHECK(node, pos);
 
       pos = Vec2i(node.firstChild());
@@ -65,9 +75,11 @@ AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_)
 // AnimFrame::AnimFrame
 //===========================================
 AnimFrame::AnimFrame(const AnimFrame& copy) {
+   worldOffset = copy.worldOffset ? unique_ptr<Vec2f>(new Vec2f(*copy.worldOffset)) : unique_ptr<Vec2f>();
    pos = copy.pos;
    dim = copy.dim;
    shape = copy.shape ? unique_ptr<Shape>(copy.shape->clone()) : unique_ptr<Shape>();
+   size = copy.size ? unique_ptr<Vec2f>(new Vec2f(*copy.size)) : unique_ptr<Vec2f>();
    col = copy.col;
 }
 
@@ -105,9 +117,11 @@ void AnimFrame::dbg_print(std::ostream& out, int tab) const {
 // AnimFrame::operator=
 //===========================================
 AnimFrame& AnimFrame::operator=(const AnimFrame& rhs) {
+   worldOffset = rhs.worldOffset ? unique_ptr<Vec2f>(new Vec2f(*rhs.worldOffset)) : unique_ptr<Vec2f>();
+   size = rhs.size ? unique_ptr<Vec2f>(new Vec2f(*rhs.size)) : unique_ptr<Vec2f>();
    pos = rhs.pos;
    dim = rhs.dim;
-   shape = unique_ptr<Shape>(rhs.shape->clone());
+   shape = rhs.shape ? unique_ptr<Shape>(rhs.shape->clone()) : unique_ptr<Shape>();
    col = rhs.col;
 
    return *this;

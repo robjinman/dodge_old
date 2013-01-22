@@ -47,6 +47,7 @@ EntityAnimations::EntityAnimations(Entity* entity, pTexture_t texture)
    : m_entity(entity),
      m_texture(texture),
      m_texSection(),
+     m_offset(0.f, 0.f),
      m_activeAnim(),
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {}
@@ -62,6 +63,7 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
 
+   m_offset = copy.m_offset;
    m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
    m_texture = copy.m_texture;
@@ -79,6 +81,7 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 //===========================================
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    : m_entity(entity),
+     m_offset(0.f, 0.f),
      m_activeAnim(),
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
@@ -244,11 +247,11 @@ bool EntityAnimations::hasAnimation(long name) const {
 // EntityAnimations::updateModel
 //===========================================
 void EntityAnimations::updateModel() {
-   Vec2f pos = m_entity->getTranslation_abs();
+   Vec2f pos = m_entity->getTranslation_abs() + m_offset;
 
    float32_t x = pos.x;
    float32_t y = pos.y;
-   int z = m_entity->getZ();
+   float32_t z = m_entity->getZ();
 
    float32_t angle = m_entity->getRotation_abs();
 
@@ -263,7 +266,6 @@ void EntityAnimations::updateModel() {
 
    float32_t w = m_onScreenSize.x * m_entity->getScale().x;
    float32_t h = m_onScreenSize.y * m_entity->getScale().y;
-   float32_t fZ = static_cast<float32_t>(z);
 
    float32_t imgW = m_texture->getWidth();
    float32_t imgH = m_texture->getHeight();
@@ -278,12 +280,12 @@ void EntityAnimations::updateModel() {
    tY2 = 1.f - tY2;
 
    vvvtt_t verts[] = {
-      {w,   0.0,  fZ,    tX2, tY1},
-      {w,   h,    fZ,    tX2, tY2},
-      {0.0, 0.0,  fZ,    tX1, tY1},
-      {w,   h,    fZ,    tX2, tY2},
-      {0.0, h,    fZ,    tX1, tY2},
-      {0.0, 0.0,  fZ,    tX1, tY1}
+      {w,   0.0,  z,    tX2, tY1},
+      {w,   h,    z,    tX2, tY2},
+      {0.0, 0.0,  z,    tX1, tY1},
+      {w,   h,    z,    tX2, tY2},
+      {0.0, h,    z,    tX1, tY2},
+      {0.0, 0.0,  z,    tX1, tY1}
    };
 
    m_model.setVertices(0, verts, 6);
@@ -340,8 +342,15 @@ void EntityAnimations::update() {
       const AnimFrame* frame = it->second->getCurrentFrame();
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+
+         if (frame->worldOffset) m_offset = *frame->worldOffset;
+
          m_entity->setFillColour(frame->col);
+
+         if (frame->size) m_onScreenSize = *frame->size;
+
          if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+
          updateModel();
       }
 
@@ -375,8 +384,15 @@ void EntityAnimations::stepAnimation() {
       const AnimFrame* frame = m_activeAnim->getCurrentFrame();
       if (frame) {
          setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+
+         if (frame->worldOffset) m_offset = *frame->worldOffset;
+
          m_entity->setFillColour(frame->col);
+
+         if (frame->size) m_onScreenSize = *frame->size;
+
          if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+
          updateModel();
       }
 

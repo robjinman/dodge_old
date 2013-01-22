@@ -1,4 +1,5 @@
 include $(BASE_DIR)/$(PLATFORM)/Makefile.inc
+include $(BASE_DIR)/audio/Makefile.inc
 include $(BASE_DIR)/math/Makefile.inc
 include $(BASE_DIR)/renderer/Makefile.inc
 include $(BASE_DIR)/ui/Makefile.inc

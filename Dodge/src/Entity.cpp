@@ -108,7 +108,10 @@ Entity::Entity(const XmlNode data)
 
       attr = attr.nextAttribute();
       XML_ATTR_CHECK(attr, z);
-      m_z = attr.getInt();
+      m_z = attr.getFloat();
+
+      // So that no Z values are 'exactly' equal
+      m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
 
       attr = attr.nextAttribute();
       XML_ATTR_CHECK(attr, rot);
@@ -186,6 +189,9 @@ Entity::Entity(long name, long type)
      m_lineWidth(0),
      m_parent(NULL) {
 
+   // So that no Z values are 'exactly' equal
+   m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
+
    ++m_count;
 }
 
@@ -202,6 +208,9 @@ Entity::Entity(long type)
      m_rot(0.f),
      m_lineWidth(0),
      m_parent(NULL) {
+
+   // So that no Z values are 'exactly' equal
+   m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
 
    m_name = generateName();
 
@@ -255,6 +264,9 @@ void Entity::deepCopy(const Entity& copy) {
    m_transl = copy.m_transl;
    m_z = copy.m_z;
    m_rot = copy.m_rot;
+
+   // So that no Z values are 'exactly' equal
+   m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
 
    m_shape = copy.m_shape ? unique_ptr<Shape>(copy.m_shape->clone()) : unique_ptr<Shape>();
    m_boundary = copy.m_boundary;
@@ -317,7 +329,11 @@ void Entity::assignData(const XmlNode data) {
       setTranslation(transl);
 
       if (!attr.isNull() && attr.name() == "z") {
-         m_z = attr.getInt();
+         m_z = attr.getFloat();
+
+         // So that no Z values are 'exactly' equal
+         m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
+
          attr = attr.nextAttribute();
       }
 
@@ -478,8 +494,12 @@ void Entity::removeChild(pEntity_t child) {
 //===========================================
 // Entity::setZ
 //===========================================
-void Entity::setZ(int z) {
+void Entity::setZ(float32_t z) {
    m_z = z;
+
+   // So that no Z values are 'exactly' equal
+   m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
+
    if (m_shape) {
       Vec2f pos = getTranslation_abs();
       m_shape->setRenderTransform(pos.x, pos.y, m_z);
