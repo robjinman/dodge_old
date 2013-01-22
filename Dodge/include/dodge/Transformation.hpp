@@ -49,13 +49,15 @@ class Transformation : virtual public Asset {
       typedef enum { STOPPED, PLAYING, PAUSED } state_t;
 
       struct delta_t {
-         delta_t() : rot(0) {}
+         delta_t()
+            : transl(0, 0), rot(0), pivot(0, 0), scale(0, 0) {}
 
-         delta_t(const Vec2f& t, float32_t r, const Vec2f& s)
-            : transl(t), rot(r), scale(s) {}
+         delta_t(const Vec2f& t, float32_t r, const Vec2f& p, const Vec2f& s)
+            : transl(t), rot(r), pivot(p), scale(s) {}
 
          Vec2f transl;
          float32_t rot;
+         Vec2f pivot;
          Vec2f scale;
       };
 

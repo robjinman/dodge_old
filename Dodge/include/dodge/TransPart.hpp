@@ -22,15 +22,19 @@ class TransPart {
       float32_t duration;
       Vec2f transl;
       float32_t rot;
+      Vec2f pivot;
       Vec2f scale;
 
       TransPart()
-         : duration(0.f), transl(0, 0), rot(0), scale(0, 0) {}
+         : duration(0), transl(0, 0), rot(0), pivot(0, 0), scale(0, 0) {}
 
       explicit TransPart(const XmlNode data);
 
       TransPart(float32_t d, const Vec2f& t, float32_t r, const Vec2f& s)
-         : duration(d), transl(t), rot(r), scale(s) {}
+         : duration(d), transl(t), rot(r), pivot(0, 0), scale(s) {}
+
+      TransPart(float32_t d, const Vec2f& t, float32_t r, const Vec2f& p, const Vec2f& s)
+         : duration(d), transl(t), rot(r), pivot(p), scale(s) {}
 
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

@@ -28,7 +28,14 @@ TransPart::TransPart(const XmlNode data) {
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, rot);
-      rot = node.getFloat();
+
+      XmlNode child = node.firstChild();
+      XML_NODE_CHECK(child, angle);
+      rot = child.getFloat();
+
+      child = child.nextSibling();
+      XML_NODE_CHECK(child, pivot);
+      pivot = Vec2f(child.firstChild());
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, scale);
@@ -56,6 +63,9 @@ void TransPart::dbg_print(ostream& out, int tab) const {
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "rot: " << rot << "\n";
+
+   for (int i = 0; i < tab + 1; ++i) out << "\t";
+   out << "pivot: (" << pivot.x << ", " << pivot.y << ")\n";
 
    for (int i = 0; i < tab + 1; ++i) out << "\t";
    out << "scale: (" << scale.x << ", " << scale.y << ")\n";

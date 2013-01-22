@@ -166,7 +166,7 @@ void EntityTransformations::update() {
 
          if (delta) {
             m_entity->translate(delta->transl.x, delta->transl.y);
-            if (delta->rot != 0.f) m_entity->rotate(delta->rot);
+            if (delta->rot != 0.f) m_entity->rotate(delta->rot, delta->pivot);
             if (delta->scale != Vec2f(1.f, 1.f)) m_entity->scale(delta->scale);
 
             if (it->second->getCurrentFrameNumber() == it->second->getNumFrames()) {

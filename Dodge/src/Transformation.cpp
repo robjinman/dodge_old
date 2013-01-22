@@ -119,6 +119,7 @@ void Transformation::init() {
       m_delta.transl.x = m_parts[0].transl.x / n;
       m_delta.transl.y = m_parts[0].transl.y / n;
       m_delta.rot = m_parts[0].rot / n;
+      m_delta.pivot = m_parts[0].pivot;
       m_delta.scale.x = 1.f + ((m_parts[0].scale.x - 1.f) / n);
       m_delta.scale.y = 1.f + ((m_parts[0].scale.y - 1.f) / n);
    }
@@ -193,6 +194,7 @@ const Transformation::delta_t* Transformation::update() {
          m_delta.transl.x = m_parts[m_part].transl.x / n;
          m_delta.transl.y = m_parts[m_part].transl.y / n;
          m_delta.rot = m_parts[m_part].rot / n;
+         m_delta.pivot = m_parts[m_part].pivot;
          m_delta.scale.x = 1.f + ((m_parts[m_part].scale.x - 1.f) / n);
          m_delta.scale.y = 1.f + ((m_parts[m_part].scale.y - 1.f) / n);
       }
