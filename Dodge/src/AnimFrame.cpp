@@ -60,7 +60,7 @@ AnimFrame::AnimFrame(const XmlNode data) {
 // AnimFrame::AnimFrame
 //===========================================
 AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Shape> shape_, const Colour& col_)
-   : pos(pos_), dim(dim_), col(col_) {
+   : pos(pos_), dim(dim_), col(col_), number(0) {
 
    shape = std::move(shape_);
 }
@@ -69,7 +69,7 @@ AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Shape> shape_, cons
 // AnimFrame::AnimFrame
 //===========================================
 AnimFrame::AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_)
-   : pos(pos_), dim(dim_), col(col_) {}
+   : pos(pos_), dim(dim_), col(col_), number(0) {}
 
 //===========================================
 // AnimFrame::AnimFrame
@@ -81,6 +81,7 @@ AnimFrame::AnimFrame(const AnimFrame& copy) {
    shape = copy.shape ? unique_ptr<Shape>(copy.shape->clone()) : unique_ptr<Shape>();
    size = copy.size ? unique_ptr<Vec2f>(new Vec2f(*copy.size)) : unique_ptr<Vec2f>();
    col = copy.col;
+   number = copy.number;
 }
 
 //===========================================

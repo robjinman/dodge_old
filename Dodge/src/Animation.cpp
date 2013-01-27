@@ -57,11 +57,15 @@ Animation::Animation(const XmlNode data)
       XML_ATTR_CHECK(attr, duration);
       m_duration = attr.getFloat();
 
+      uint_t f = 0;
       XmlNode node = data.firstChild();
       while (!node.isNull() && node.name() == "AnimFrame") {
          AnimFrame frame(node);
+         frame.number = f;
+
          m_frames.push_back(frame);
 
+         ++f;
          node = node.nextSibling();
       }
    }
@@ -93,7 +97,11 @@ Animation::Animation(long name, float32_t duration, const std::vector<AnimFrame>
      m_duration(duration),
      m_frames(frames),
      m_state(STOPPED),
-     m_frameReady(false) {}
+     m_frameReady(false) {
+
+   for (uint_t i = 0; i < m_frames.size(); ++i)
+      m_frames[i].number = i;
+}
 
 //===========================================
 // Animation::clone

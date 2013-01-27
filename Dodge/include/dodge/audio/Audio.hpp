@@ -32,6 +32,10 @@ class Audio {
       void setSoundVolume(float32_t vol);
       void setMusicVolume(float32_t vol);
 
+      inline float32_t getMasterVolume() const;
+      inline float32_t getSoundVolume() const;
+      inline float32_t getMusicVolume() const;
+
       void playMusic(bool rep);
       void pauseMusic();
       void stopMusic();
@@ -59,6 +63,27 @@ class Audio {
       static float32_t m_musicVol;
       static pMusicTrack_t m_music;
 };
+
+//===========================================
+// Audio::getMasterVolume
+//===========================================
+inline float32_t Audio::getMasterVolume() const {
+   return m_masterVol;
+}
+
+//===========================================
+// Audio::getSoundVolume
+//===========================================
+inline float32_t Audio::getSoundVolume() const {
+   return m_soundVol;
+}
+
+//===========================================
+// Audio::getMusicVolume
+//===========================================
+inline float32_t Audio::getMusicVolume() const {
+   return m_musicVol;
+}
 
 
 }

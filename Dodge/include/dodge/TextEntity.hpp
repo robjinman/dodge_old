@@ -13,7 +13,7 @@ namespace Dodge {
 class TextEntity : virtual public Entity {
    public:
       explicit TextEntity(const XmlNode data);
-      explicit TextEntity(long type, const pFont_t font, const std::string& text, const Vec2f& size);
+      TextEntity(long type, const pFont_t font, const std::string& text, const Vec2f& size);
       TextEntity(long name, long type, const pFont_t font, const std::string& text, const Vec2f& size);
       TextEntity(const TextEntity& copy);
       TextEntity(const TextEntity& copy, long name);

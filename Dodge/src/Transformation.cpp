@@ -108,12 +108,13 @@ void Transformation::init() {
    for (uint_t i = 0; i < m_parts.size(); ++i)
       m_duration += m_parts[i].duration;
 
-   m_numFrames = static_cast<uint_t>(m_duration * gGetTargetFrameRate());
+   m_numFrames = static_cast<uint_t>(m_duration * gGetTargetFrameRate() + 0.5);
 
    m_frame = 0;
    m_part = 0;
    if (m_parts.size() > 0) {
-      float32_t n = gGetTargetFrameRate() * m_parts[0].duration;
+      float32_t n = floor(gGetTargetFrameRate() * m_parts[0].duration + 0.5);
+
       m_endOfPart = n;
 
       m_delta.transl.x = m_parts[0].transl.x / n;
@@ -132,7 +133,7 @@ void Transformation::addPart(const TransPart& part) {
    m_parts.push_back(part);
 
    m_duration += m_parts.back().duration;
-   m_numFrames = static_cast<uint_t>(m_duration * gGetTargetFrameRate());
+   m_numFrames = static_cast<uint_t>(m_duration * gGetTargetFrameRate() + 0.5);
 }
 
 //===========================================
@@ -179,15 +180,15 @@ const Transformation::delta_t* Transformation::update() {
    if (m_state != PLAYING) return NULL;
    if (m_parts.empty()) return NULL;
 
-   ++m_frame;
    if (m_frame == m_endOfPart) {
       ++m_part;
 
       if (m_part >= m_parts.size()) {
          m_state = STOPPED;
+         return NULL;
       }
       else {
-         float32_t n = gGetTargetFrameRate() * m_parts[m_part].duration;
+         float32_t n = floor(gGetTargetFrameRate() * m_parts[m_part].duration + 0.5);
 
          m_endOfPart += n;
 
@@ -199,6 +200,8 @@ const Transformation::delta_t* Transformation::update() {
          m_delta.scale.y = 1.f + ((m_parts[m_part].scale.y - 1.f) / n);
       }
    }
+
+   ++m_frame;
 
    return &m_delta;
 }

@@ -28,6 +28,8 @@ class AnimFrame {
       std::unique_ptr<Vec2f> size;
       Colour col;
 
+      uint_t number;
+
       explicit AnimFrame(const XmlNode data);
       AnimFrame(Vec2i pos_, Vec2i dim_, std::unique_ptr<Shape> shape_, const Colour& col_);
       AnimFrame(Vec2i pos_, Vec2i dim_, const Colour& col_);

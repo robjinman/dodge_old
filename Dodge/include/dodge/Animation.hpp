@@ -74,6 +74,7 @@ typedef boost::shared_ptr<Animation> pAnimation_t; // TODO: use unique_ptr inste
 //===========================================
 inline void Animation::addFrame(const AnimFrame& frame) {
    m_frames.push_back(frame);
+   m_frames.back().number = m_frames.size() - 1;
 }
 
 //===========================================

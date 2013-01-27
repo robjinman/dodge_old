@@ -32,7 +32,10 @@ class EntityAnimations {
 
       void setTexture(pTexture_t texture);
       void setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h);
+      inline void setTextureSection(const Vec2f& pos, const Vec2f& size);
+      inline void setTextureSection(const Range& range);
       void setOnScreenSize(float32_t w, float32_t h);
+      inline void restoreOnScreenSize();
       void setAnimationDuration(float32_t duration);
 
       void addAnimation(pAnimation_t anim);
@@ -75,6 +78,8 @@ class EntityAnimations {
       Entity* m_entity;
       pTexture_t m_texture;
       Range m_texSection;
+      Vec2f m_originalOnScreenSize;
+      Vec2f m_originalOffset;
       Vec2f m_onScreenSize;
       Vec2f m_offset;
       std::map<long, pAnimation_t> m_animations;
@@ -83,6 +88,28 @@ class EntityAnimations {
       mutable PlainTexturedAlphaModel m_model;
       Renderer& m_renderer;
 };
+
+//===========================================
+// EntityAnimations::setTextureSection
+//===========================================
+inline void EntityAnimations::setTextureSection(const Vec2f& pos, const Vec2f& size) {
+   setTextureSection(Range(pos, size));
+}
+
+//===========================================
+// EntityAnimations::setTextureSection
+//===========================================
+inline void EntityAnimations::setTextureSection(const Range& range) {
+   m_texSection = range;
+   updateModel();
+}
+
+//===========================================
+// EntityAnimations::restoreOnScreenSize
+//===========================================
+inline void EntityAnimations::restoreOnScreenSize() {
+   setOnScreenSize(m_originalOnScreenSize.x, m_originalOnScreenSize.y);
+}
 
 
 }

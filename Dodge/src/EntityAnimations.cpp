@@ -47,7 +47,8 @@ EntityAnimations::EntityAnimations(Entity* entity, pTexture_t texture)
    : m_entity(entity),
      m_texture(texture),
      m_texSection(),
-     m_offset(0.f, 0.f),
+     m_originalOffset(0, 0),
+     m_offset(0, 0),
      m_activeAnim(),
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {}
@@ -63,7 +64,9 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
 
+   m_originalOffset = copy.m_originalOffset;
    m_offset = copy.m_offset;
+   m_originalOnScreenSize = copy.m_originalOnScreenSize;
    m_onScreenSize = copy.m_onScreenSize;
    m_texSection = copy.m_texSection;
    m_texture = copy.m_texture;
@@ -81,7 +84,8 @@ EntityAnimations::EntityAnimations(const EntityAnimations& copy, Entity* entity)
 //===========================================
 EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
    : m_entity(entity),
-     m_offset(0.f, 0.f),
+     m_originalOffset(0, 0),
+     m_offset(0, 0),
      m_activeAnim(),
      m_model(Renderer::TRIANGLES),
      m_renderer(Renderer::getInstance()) {
@@ -109,9 +113,14 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, onScreenSize);
-      m_onScreenSize = Vec2f(node.firstChild());
+      m_originalOnScreenSize = m_onScreenSize = Vec2f(node.firstChild());
 
       node = node.nextSibling();
+      if (!node.isNull() && node.name() == "worldOffset") {
+         m_originalOffset = m_offset = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+
       while (!node.isNull() && node.name() == "animation") {
          pAnimation_t anim(new Animation(node.firstChild()));
          m_animations[anim->getName()] = anim;
@@ -170,7 +179,12 @@ void EntityAnimations::assignData(const XmlNode data) {
       }
 
       if (!node.isNull() && node.name() == "onScreenSize") {
-         m_onScreenSize = Vec2f(node.firstChild());
+         m_originalOnScreenSize = m_onScreenSize = Vec2f(node.firstChild());
+         node = node.nextSibling();
+      }
+
+      if (!node.isNull() && node.name() == "worldOffset") {
+         m_originalOffset = m_offset = Vec2f(node.firstChild());
          node = node.nextSibling();
       }
 
@@ -334,14 +348,18 @@ void EntityAnimations::addToWorld() {
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
-   map<long, pAnimation_t>::iterator it = m_animations.begin();
-   while (it != m_animations.end()) {
+   if (m_activeAnim) {
       bool justFinished = false;
-      it->second->update(&justFinished);
+      m_activeAnim->update(&justFinished);
 
-      const AnimFrame* frame = it->second->getCurrentFrame();
+      const AnimFrame* frame = m_activeAnim->getCurrentFrame();
       if (frame) {
-         setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         if (frame->number == 0) {
+            m_offset = m_originalOffset;
+            m_onScreenSize = m_originalOnScreenSize;
+         }
+
+         m_texSection = Range(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
 
          if (frame->worldOffset) m_offset = *frame->worldOffset;
 
@@ -358,7 +376,7 @@ void EntityAnimations::update() {
          try {
             EventManager eventManager;
 
-            EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), it->second);
+            EAnimFinished* event = new EAnimFinished(m_entity->getSharedPtr(), m_activeAnim);
             m_entity->onEvent(event);
             eventManager.queueEvent(event);
          }
@@ -368,8 +386,6 @@ void EntityAnimations::update() {
             throw ex;
          }
       }
-
-      ++it;
    }
 }
 
@@ -383,7 +399,12 @@ void EntityAnimations::stepAnimation() {
 
       const AnimFrame* frame = m_activeAnim->getCurrentFrame();
       if (frame) {
-         setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         if (frame->number == 0) {
+            m_offset = m_originalOffset;
+            m_onScreenSize = m_originalOnScreenSize;
+         }
+
+         m_texSection = Range(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
 
          if (frame->worldOffset) m_offset = *frame->worldOffset;
 
@@ -432,8 +453,7 @@ void EntityAnimations::setTexture(pTexture_t texture) {
 // EntityAnimations::setTextureSection
 //===========================================
 void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, float32_t h) {
-   m_texSection = Range(x, y, w, h);
-   updateModel();
+   setTextureSection(Range(x, y, w, h));
 }
 
 //===========================================
@@ -442,6 +462,7 @@ void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, 
 void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
    m_onScreenSize.x = w;
    m_onScreenSize.y = h;
+   updateModel();
 }
 
 //===========================================

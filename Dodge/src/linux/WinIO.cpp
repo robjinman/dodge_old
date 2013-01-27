@@ -232,6 +232,15 @@ void WinIO::doEvents() {
             }
             break;
             case KeyRelease: {
+               // If next event is KeyPress of the same key, then this event is likely caused by autorepeat and should be ignored.
+               if (XEventsQueued(m_display, QueuedAfterReading)) {
+                  XEvent next;
+                  XPeekEvent(m_display, &next);
+
+                  if (next.type == KeyPress && next.xkey.keycode == xEvent.xkey.keycode)
+                     break;
+               }
+
                callbackMap_t::iterator it = m_callbacks.find(EVENT_KEYUP);
                if (it != m_callbacks.end()) {
                   for (uint_t f = 0; f < it->second.size(); ++f)

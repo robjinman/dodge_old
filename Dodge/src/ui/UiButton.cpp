@@ -13,6 +13,106 @@ using namespace std;
 namespace Dodge {
 
 
+//===========================================
+// UiButton::UiButton
+//===========================================
+UiButton::UiButton(const XmlNode data)
+   : Asset(internString("UiButton")),
+     Entity(data.firstChild().firstChild()),
+     Sprite(data.firstChild()),
+     EntityUi(this),
+     m_state(NO_FOCUS_IDLE),
+     m_mouseOver(false),
+     m_btn1Pressed(false),
+     m_pressAndHold(false),
+     m_onClick(&UiButton::void_entityPtr),
+     m_onRelease(&UiButton::void_entityPtr) {
+
+   try {
+      XML_NODE_CHECK(data, UiButton);
+   }
+   catch (XmlException& e) {
+      e.prepend("Error parsing XML for instance of class UiButton; ");
+      throw;
+   }
+
+   m_activationKeys.insert(WinIO::KEY_ENTER);
+}
+
+//===========================================
+// UiButton::UiButton
+//===========================================
+UiButton::UiButton(long type, pTexture_t texture)
+   : Asset(internString("UiButton")),
+     Entity(type),
+     Sprite(type, texture),
+     EntityUi(this),
+     m_state(NO_FOCUS_IDLE),
+     m_mouseOver(false),
+     m_btn1Pressed(false),
+     m_pressAndHold(false),
+     m_onClick(&UiButton::void_entityPtr),
+     m_onRelease(&UiButton::void_entityPtr) {
+
+   m_activationKeys.insert(WinIO::KEY_ENTER);
+}
+
+//===========================================
+// UiButton::UiButton
+//===========================================
+UiButton::UiButton(long name, long type, pTexture_t texture)
+   : Asset(internString("UiButton")),
+     Entity(name, type),
+     Sprite(name, type, texture),
+     EntityUi(this),
+     m_state(NO_FOCUS_IDLE),
+     m_mouseOver(false),
+     m_btn1Pressed(false),
+     m_pressAndHold(false),
+     m_onClick(&UiButton::void_entityPtr),
+     m_onRelease(&UiButton::void_entityPtr) {
+
+   m_activationKeys.insert(WinIO::KEY_ENTER);
+}
+
+//===========================================
+// UiButton::UiButton
+//===========================================
+UiButton::UiButton(const UiButton& copy)
+   : Asset(internString("UiButton")),
+     Entity(copy),
+     Sprite(copy),
+     EntityUi(copy, this),
+     m_state(NO_FOCUS_IDLE),
+     m_mouseOver(false),
+     m_btn1Pressed(false),
+     m_pressAndHold(false),
+     m_activationKeys(copy.m_activationKeys),
+     m_onClick(&UiButton::void_entityPtr),
+     m_onRelease(&UiButton::void_entityPtr) {
+
+   m_activationKeys.insert(WinIO::KEY_ENTER);
+}
+
+//===========================================
+// UiButton::UiButton
+//===========================================
+UiButton::UiButton(const UiButton& copy, long name)
+   : Asset(internString("UiButton")),
+     Entity(copy, name),
+     Sprite(copy, name),
+     EntityUi(copy, this),
+     m_state(NO_FOCUS_IDLE),
+     m_mouseOver(false),
+     m_btn1Pressed(false),
+     m_pressAndHold(false),
+     m_activationKeys(copy.m_activationKeys),
+     m_onClick(&UiButton::void_entityPtr),
+     m_onRelease(&UiButton::void_entityPtr) {
+
+   m_activationKeys.insert(WinIO::KEY_ENTER);
+}
+
 #ifdef DEBUG
 //===========================================
 // UiButton::dbg_print
@@ -80,7 +180,6 @@ void UiButton::assignData(const XmlNode data) {
 void UiButton::update() {
    static long noFocusIdleStr = internString("noFocusIdle");
    static long focusIdleStr = internString("focusIdle");
-   static long releaseStr = internString("release");
    static long pressStr = internString("press");
 
    Sprite::update();
@@ -102,15 +201,45 @@ void UiButton::update() {
          break;
          case PRESS:
             m_onClick(shared_from_this());
-            if (!m_btn1Pressed || !m_mouseOver) {
-               playAnimation(releaseStr);
-               m_state = RELEASE;
-            }
+
+            if (!m_mouseOver && !m_pressAndHold)
+               onBtn1Release(0, 0);
+
             if (!hasAnimation(pressStr))
                playAnimation(focusIdleStr);
          break;
       }
    }
+}
+
+//===========================================
+// UiButton::press
+//===========================================
+void UiButton::press() {
+   onBtn1Press(0, 0);
+}
+
+//===========================================
+// UiButton::pressAndHold
+//===========================================
+void UiButton::pressAndHold() {
+   onBtn1Press(0, 0);
+   m_pressAndHold = true;
+}
+
+//===========================================
+// UiButton::release
+//===========================================
+void UiButton::release() {
+   onBtn1Release(0, 0);
+   m_pressAndHold = false;
+}
+
+//===========================================
+// UiButton::isPressed
+//===========================================
+bool UiButton::isPressed() const {
+   return m_state == PRESS;
 }
 
 //===========================================
@@ -150,8 +279,9 @@ void UiButton::onLoseFocus() {
          if (hasAnimation(loseFocusStr)) {
             stopAnimation();
             playAnimation(loseFocusStr);
+
+            if (m_state == RELEASE) m_onRelease(shared_from_this());
          }
-         if (m_state == RELEASE) m_onRelease(shared_from_this());
          m_state = LOSE_FOCUS;
       break;
       case LOSE_FOCUS:
@@ -179,6 +309,8 @@ void UiButton::onBtn1Press(float32_t x, float32_t y) {
          if (hasAnimation(pressStr)) {
             stopAnimation();
             playAnimation(pressStr);
+
+            if (m_state == RELEASE) m_onRelease(shared_from_this());
          }
          m_state = PRESS;
       break;
@@ -201,9 +333,9 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
       case FOCUS_IDLE:
       break;
       case PRESS:
-         if (playAnimation(releaseStr)) {
-            m_state = RELEASE;
-         }
+         stopAnimation();
+         playAnimation(releaseStr);
+         m_state = RELEASE;
       break;
    }
 }
@@ -212,9 +344,9 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
 // UiButton::onKeyDown
 //===========================================
 void UiButton::onKeyDown(int key) {
-   switch (key) {
-      case WinIO::KEY_ENTER: onBtn1Press(0.f, 0.f); break;
-      // ...
+   if (m_activationKeys.find(key) != m_activationKeys.end()) {
+      if (!m_pressAndHold)
+         pressAndHold();
    }
 }
 
@@ -222,10 +354,22 @@ void UiButton::onKeyDown(int key) {
 // UiButton::onKeyUp
 //===========================================
 void UiButton::onKeyUp(int key) {
-   switch (key) {
-      case WinIO::KEY_ENTER: onBtn1Release(0.f, 0.f); break;
-      // ...
-   }
+   if (m_activationKeys.find(key) != m_activationKeys.end())
+      release();
+}
+
+//===========================================
+// UiButton::addActivationKey
+//===========================================
+void UiButton::addActivationKey(int key) {
+   m_activationKeys.insert(key);
+}
+
+//===========================================
+// UiButton::removeActivationKey
+//===========================================
+void UiButton::removeActivationKey(int key) {
+   m_activationKeys.erase(key);
 }
 
 //===========================================

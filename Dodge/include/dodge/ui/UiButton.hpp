@@ -7,6 +7,7 @@
 #define __UI_BUTTON_HPP__
 
 
+#include <set>
 #include <boost/shared_ptr.hpp>
 #include "../Sprite.hpp"
 #include "EntityUi.hpp"
@@ -21,63 +22,11 @@ namespace Dodge {
 
 class UiButton : public Sprite, public EntityUi {
    public:
-      explicit UiButton(const XmlNode data)
-         : Asset(internString("UiButton")),
-           Entity(data.firstChild().firstChild()),
-           Sprite(data.firstChild()),
-           EntityUi(this),
-           m_state(NO_FOCUS_IDLE),
-           m_mouseOver(false),
-           m_btn1Pressed(false),
-           m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {
-
-         XML_NODE_CHECK(data, UiButton);
-      }
-
-      UiButton(long type, pTexture_t texture)
-         : Asset(internString("UiButton")),
-           Entity(type),
-           Sprite(type, texture),
-           EntityUi(this),
-           m_state(NO_FOCUS_IDLE),
-           m_mouseOver(false),
-           m_btn1Pressed(false),
-           m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {}
-
-      UiButton(long name, long type, pTexture_t texture)
-         : Asset(internString("UiButton")),
-           Entity(name, type),
-           Sprite(name, type, texture),
-           EntityUi(this),
-           m_state(NO_FOCUS_IDLE),
-           m_mouseOver(false),
-           m_btn1Pressed(false),
-           m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {}
-
-      UiButton(const UiButton& copy)
-         : Asset(internString("UiButton")),
-           Entity(copy),
-           Sprite(copy),
-           EntityUi(copy, this),
-           m_state(NO_FOCUS_IDLE),
-           m_mouseOver(false),
-           m_btn1Pressed(false),
-           m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {}
-
-      UiButton(const UiButton& copy, long name)
-         : Asset(internString("UiButton")),
-           Entity(copy, name),
-           Sprite(copy, name),
-           EntityUi(copy, this),
-           m_state(NO_FOCUS_IDLE),
-           m_mouseOver(false),
-           m_btn1Pressed(false),
-           m_onClick(&UiButton::void_entityPtr),
-           m_onRelease(&UiButton::void_entityPtr) {}
+      explicit UiButton(const XmlNode data);
+      UiButton(long type, pTexture_t texture);
+      UiButton(long name, long type, pTexture_t texture);
+      UiButton(const UiButton& copy);
+      UiButton(const UiButton& copy, long name);
 
       virtual size_t getSize() const;
       virtual UiButton* clone() const;
@@ -91,6 +40,10 @@ class UiButton : public Sprite, public EntityUi {
 
       virtual void update();
 
+      virtual void press();
+      virtual void pressAndHold();
+      virtual void release();
+
       virtual void onKeyDown(int key);
       virtual void onKeyUp(int key);
       virtual void onBtn1Press(float32_t x, float32_t y);
@@ -99,6 +52,11 @@ class UiButton : public Sprite, public EntityUi {
       virtual void onLoseFocus();
       virtual void onHoverOn(float32_t x, float32_t y);
       virtual void onHoverOff(float32_t x, float32_t y);
+
+      virtual void addActivationKey(int key);
+      virtual void removeActivationKey(int key);
+
+      bool isPressed() const;
 
       inline void setOnPressHandler(Functor<void, TYPELIST_1(pEntity_t)> func);
       inline void setOnReleaseHandler(Functor<void, TYPELIST_1(pEntity_t)> func);
@@ -119,6 +77,9 @@ class UiButton : public Sprite, public EntityUi {
       state_t m_state;
       bool m_mouseOver;
       bool m_btn1Pressed;
+      bool m_pressAndHold;
+
+      std::set<int> m_activationKeys;
 
       Functor<void, TYPELIST_1(pEntity_t)> m_onClick;
       Functor<void, TYPELIST_1(pEntity_t)> m_onRelease;
