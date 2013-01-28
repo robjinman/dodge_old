@@ -6,7 +6,6 @@
 #include <renderer/ogles2.0/ShaderProgram.hpp>
 #include <renderer/ogles2.0/NonTexturedAlphaShader.hpp>
 #include <renderer/ogles2.0/TexturedAlphaShader.hpp>
-#include <renderer/Model.hpp>
 #include <renderer/GL_CHECK.hpp>
 
 
@@ -46,18 +45,6 @@ void ShaderProgram::newShaderFromSource(const char** shaderSrc, GLint type, GLin
 
    GL_CHECK(glAttachShader(prog, shader));
 }
-
-//===========================================
-// Relay calls to model object. This is to allow derived classes to
-// access Model's private members.
-//===========================================
-Renderer::modelHandle_t ShaderProgram::model_getHandle(const IModel& model) const { return model.getHandle(); }
-void ShaderProgram::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.setHandle(handle); }
-bool ShaderProgram::model_containsPerVertexColourData(const IModel& model) const { return model.containsPerVertexColourData(); }
-size_t ShaderProgram::model_vertexDataSize(const IModel& model) const { return model.vertexDataSize(); }
-const void* ShaderProgram::model_getVertexData(const IModel& model) const { return model.getVertexData(); }
-const Renderer::matrixElement_t* ShaderProgram::model_getMatrix(const IModel& model) const { return model.getMatrix(); }
-//===========================================
 
 
 }

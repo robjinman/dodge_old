@@ -8,6 +8,7 @@
 
 
 #include "Renderer.hpp"
+#include "../Model.hpp"
 
 
 namespace Dodge {
@@ -24,13 +25,25 @@ class ShaderProgram {
       static void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
 
    protected:
-      Renderer::modelHandle_t model_getHandle(const IModel& model) const;
-      void model_setHandle(IModel& model, Renderer::modelHandle_t handle);
-      bool model_containsPerVertexColourData(const IModel& model) const;
-      size_t model_vertexDataSize(const IModel& model) const;
-      const void* model_getVertexData(const IModel& model) const;
-      const Renderer::matrixElement_t* model_getMatrix(const IModel& model) const;
+      inline Renderer::modelHandle_t model_getHandle(const IModel& model) const;
+      inline void model_setHandle(IModel& model, Renderer::modelHandle_t handle);
+      inline bool model_containsPerVertexColourData(const IModel& model) const;
+      inline size_t model_vertexDataSize(const IModel& model) const;
+      inline const void* model_getVertexData(const IModel& model) const;
+      inline const Renderer::matrixElement_t* model_getMatrix(const IModel& model) const;
 };
+
+//===========================================
+// Relay calls to model object. This is to allow derived classes to
+// access Model's private members.
+//===========================================
+inline Renderer::modelHandle_t ShaderProgram::model_getHandle(const IModel& model) const { return model.m_handle; }
+inline void ShaderProgram::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.m_handle = handle; }
+inline bool ShaderProgram::model_containsPerVertexColourData(const IModel& model) const { return model.m_colData; }
+inline size_t ShaderProgram::model_vertexDataSize(const IModel& model) const { return model.vertexDataSize(); }
+inline const void* ShaderProgram::model_getVertexData(const IModel& model) const { return model.getVertexData(); }
+inline const Renderer::matrixElement_t* ShaderProgram::model_getMatrix(const IModel& model) const { return model.m_matrix; }
+//===========================================
 
 
 }

@@ -19,39 +19,136 @@ class IModel {
    friend class Renderer;
 
    public:
-      virtual Renderer::primitive_t getPrimitiveType() const = 0;
+      //===========================================
+      // IModel::IModel
+      //===========================================
+      IModel() {}
+
+      //===========================================
+      // IModel::IModel
+      //===========================================
+      IModel(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType, bool perVertexColourData)
+         : m_matrix({1.f, 0.f, 0.f, 0.f,
+                     0.f, 1.f, 0.f, 0.f,
+                     0.f, 0.f, 1.f, 0.f,
+                     0.f, 0.f, 0.f, 1.f}),
+           m_primitiveType(primitiveType),
+           m_renderMode(renderMode),
+           m_handle(0),
+           m_colData(false) {}
+
+      //===========================================
+      // IModel::getPrimitiveType
+      //===========================================
+      inline Renderer::primitive_t getPrimitiveType() const {
+         return m_primitiveType;
+      }
+
+      //===========================================
+      // IModel::setMatrix
+      //===========================================
+      void setMatrix(const Renderer::matrixElement_t* matrix) {
+         memcpy(m_matrix, matrix, 16 * sizeof(Renderer::matrixElement_t));
+      }
+
+      //===========================================
+      // IModel::setMatrixElement
+      //===========================================
+      void setMatrixElement(uint_t idx, Renderer::matrixElement_t val) {
+         m_matrix[idx] = val;
+      }
+
+      //===========================================
+      // IModel::getMatrixElement
+      //===========================================
+      Renderer::matrixElement_t getMatrixElement(uint_t idx) const {
+         return m_matrix[idx];
+      }
+
+      //===========================================
+      // IModel::getMatrix
+      //===========================================
+      void getMatrix(Renderer::matrixElement_t* matrix) const {
+         memcpy(matrix, m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+      }
+
+      //===========================================
+      // IModel::getRenderMode
+      //===========================================
+      Renderer::mode_t getRenderMode() const {
+         return m_renderMode;
+      }
+
       virtual uint_t getNumVertices() const = 0;
-      virtual void setMatrix(const Renderer::matrixElement_t* matrix) = 0;
-      virtual void setMatrixElement(uint_t idx, Renderer::matrixElement_t val) = 0;
-      virtual Renderer::matrixElement_t getMatrixElement(uint_t idx) const = 0;
-      virtual void getMatrix(Renderer::matrixElement_t* matrix) const = 0;
       virtual void setColour(const Colour& colour) = 0;
       virtual Colour getColour() const = 0;
       virtual void setLineWidth(Renderer::int_t lineWidth) = 0;
       virtual Renderer::int_t getLineWidth() const = 0;
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) = 0;
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
-      virtual Renderer::mode_t getRenderMode() const = 0;
       virtual size_t getTotalSize() const = 0;
 
       // Returns transformed z-coord of first vertex
       virtual float32_t getDepth() const = 0;
 
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
+      //===========================================
+      // IModel::dbg_print
+      //===========================================
+      virtual void dbg_print(std::ostream& out, int tab = 0) const {
+         for (int t = 0; t < tab; ++t) out << "\t";
+         out << "IModel\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "matrix:\n";
+
+         for (int i = 0; i < 4; ++i) {
+            for (int t = 0; t < tab + 2; ++t) out << "\t";
+
+            for (int j = 0; j < 4; ++j)
+               out << m_matrix[i * 4 + j] << " ";
+
+            out << "\n";
+         }
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "primitiveType: " << m_primitiveType << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "renderMode: " << m_renderMode << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "containsPerVertexColourData: " << (m_colData ? "true" : "false") << "\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "handle: " << m_handle << "\n";
+      }
 #endif
 
       virtual ~IModel() {}
 
-   private:
-      virtual Renderer::modelHandle_t getHandle() const = 0;
-      virtual void setHandle(Renderer::modelHandle_t handle) = 0;
-      virtual bool containsPerVertexColourData() const = 0;
+   protected:
+      void shallowCopy(const IModel& cpy) {
+         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+         m_primitiveType = cpy.m_primitiveType;
+         m_renderMode = cpy.m_renderMode;
+         m_handle = 0;
+      }
+
+      inline bool containsPerVertexColourData() const {
+         return m_colData;
+      }
+
       virtual size_t getSizeOf() const = 0;
       virtual size_t vertexDataSize() const = 0;
       virtual const void* getVertexData() const = 0;
-      virtual const Renderer::matrixElement_t* getMatrix() const = 0;
       virtual void copyTo(void* ptr) const = 0;
+
+      Renderer::matrixElement_t m_matrix[16];
+      Renderer::primitive_t m_primitiveType;
+      Renderer::mode_t m_renderMode;
+      Renderer::modelHandle_t m_handle;
+      bool m_colData;
 };
 
 
@@ -66,18 +163,8 @@ class Model : public IModel {
       // Model::Model
       //===========================================
       Model(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType, bool perVertexColourData)
-         : m_matrix({1.f, 0.f, 0.f, 0.f,
-                     0.f, 1.f, 0.f, 0.f,
-                     0.f, 0.f, 1.f, 0.f,
-                     0.f, 0.f, 0.f, 1.f}),
-           m_verts(NULL),
-           m_n(0),
-           m_texHandle(0),
-           m_lineWidth(1),
-           m_primitiveType(primitiveType),
-           m_colData(perVertexColourData),
-           m_renderMode(renderMode),
-           m_handle(0) {}
+         : IModel(renderMode, primitiveType, perVertexColourData),
+           m_verts(NULL), m_n(0), m_texHandle(0), m_lineWidth(0) {}
 
       //===========================================
       // Model::Model
@@ -95,45 +182,10 @@ class Model : public IModel {
       }
 
       //===========================================
-      // Model::getPrimitiveType
-      //===========================================
-      virtual Renderer::primitive_t getPrimitiveType() const {
-         return m_primitiveType;
-      }
-
-      //===========================================
       // Model::getNumVertices
       //===========================================
       virtual uint_t getNumVertices() const {
          return m_n;
-      }
-
-      //===========================================
-      // Model::setMatrix
-      //===========================================
-      virtual void setMatrix(const Renderer::matrixElement_t* matrix) {
-         memcpy(m_matrix, matrix, 16 * sizeof(Renderer::matrixElement_t));
-      }
-
-      //===========================================
-      // Model::setMatrixElement
-      //===========================================
-      virtual void setMatrixElement(uint_t idx, Renderer::matrixElement_t val) {
-         m_matrix[idx] = val;
-      }
-
-      //===========================================
-      // Model::getMatrixElement
-      //===========================================
-      virtual Renderer::matrixElement_t getMatrixElement(uint_t idx) const {
-         return m_matrix[idx];
-      }
-
-      //===========================================
-      // Model::getMatrix
-      //===========================================
-      virtual void getMatrix(Renderer::matrixElement_t* matrix) const {
-         memcpy(matrix, m_matrix, 16 * sizeof(Renderer::matrixElement_t));
       }
 
       //===========================================
@@ -176,13 +228,6 @@ class Model : public IModel {
       //===========================================
       virtual Renderer::textureHandle_t getTextureHandle() const {
          return m_texHandle;
-      }
-
-      //===========================================
-      // Model::getRenderMode
-      //===========================================
-      virtual Renderer::mode_t getRenderMode() const {
-         return m_renderMode;
       }
 
       //===========================================
@@ -262,17 +307,7 @@ class Model : public IModel {
          for (int t = 0; t < tab; ++t) out << "\t";
          out << "Model\n";
 
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "matrix:\n";
-
-         for (int i = 0; i < 4; ++i) {
-            for (int t = 0; t < tab + 2; ++t) out << "\t";
-
-            for (int j = 0; j < 4; ++j)
-               out << m_matrix[i * 4 + j] << " ";
-
-            out << "\n";
-         }
+         IModel::dbg_print(out, tab + 1);
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "textureHandle: " << m_texHandle << "\n";
@@ -282,18 +317,6 @@ class Model : public IModel {
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "lineWidth: " << m_lineWidth << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "primitiveType: " << m_primitiveType << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "containsPerVertexColourData: " << (m_colData ? "true" : "false") << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "renderMode: " << m_renderMode << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "handle: " << m_handle << "\n";
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "vertices (" << m_n << "):\n";
@@ -318,39 +341,18 @@ class Model : public IModel {
       // Model::shallowCopy
       //===========================================
       void shallowCopy(const Model& cpy) {
-         memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
+         IModel::shallowCopy(cpy);
+
          m_texHandle = cpy.m_texHandle;
          m_colour = cpy.m_colour;
          m_lineWidth = cpy.m_lineWidth;
-         m_primitiveType = cpy.m_primitiveType;
-         m_colData = cpy.m_colData;
-         m_renderMode = cpy.m_renderMode;
-         m_handle = 0;
       }
 
-      Renderer::matrixElement_t m_matrix[16];
       T* m_verts;
       uint_t m_n;
       Renderer::textureHandle_t m_texHandle;
       Colour m_colour;
       Renderer::int_t m_lineWidth;
-      Renderer::primitive_t m_primitiveType;
-      bool m_colData;
-
-      Renderer::mode_t m_renderMode;
-      Renderer::modelHandle_t m_handle;
-
-      virtual Renderer::modelHandle_t getHandle() const {
-         return m_handle;
-      }
-
-      virtual void setHandle(Renderer::modelHandle_t handle) {
-         m_handle = handle;
-      }
-
-      virtual bool containsPerVertexColourData() const {
-         return m_colData;
-      }
 
       virtual size_t vertexDataSize() const {
          return m_n * sizeof(T);
@@ -358,10 +360,6 @@ class Model : public IModel {
 
       virtual const void* getVertexData() const {
          return m_verts;
-      }
-
-      virtual const Renderer::matrixElement_t* getMatrix() const {
-         return m_matrix;
       }
 
       virtual size_t getSizeOf() const {

@@ -224,12 +224,12 @@ void Renderer::draw(const IModel* model) {
 void Renderer::constructVBO(IModel* model) {
    modelHandle_t handle;
 
-   if (model->getHandle() != 0) {
+   if (model->m_handle != 0) {
       GL_CHECK(glGenBuffers(1, &handle));
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, handle));
       GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
 
-      model->setHandle(handle);
+      model->m_handle = handle;
    }
    else {
       freeBufferedModel(model);
@@ -240,10 +240,8 @@ void Renderer::constructVBO(IModel* model) {
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(IModel* model) {
-   modelHandle_t handle = model->getHandle();
-
-   GL_CHECK(glDeleteBuffers(1, &handle));
-   model->setHandle(0);
+   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
+   model->m_handle = 0;
 }
 
 //===========================================
