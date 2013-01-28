@@ -328,15 +328,15 @@ void WinIO::doEvents() {
 void WinIO::destroyWindow() {
    if (!m_init) return;
 
-   XDestroyWindow(m_display, m_win);
-   XFreeColormap(m_display, m_colorMap);
-   XFree(m_pVisual);
-   XCloseDisplay(m_display);
-
    EGL_CHECK(eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
    EGL_CHECK(eglDestroyContext(m_eglDisplay, m_eglContext));
    EGL_CHECK(eglDestroySurface(m_eglDisplay, m_eglSurface));
    EGL_CHECK(eglTerminate(m_eglDisplay));
+
+   XDestroyWindow(m_display, m_win);
+   XFreeColormap(m_display, m_colorMap);
+   XFree(m_pVisual);
+   XCloseDisplay(m_display);
 }
 
 

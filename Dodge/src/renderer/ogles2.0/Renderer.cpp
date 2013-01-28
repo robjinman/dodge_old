@@ -65,8 +65,8 @@ Renderer::Renderer()
 void Renderer::init() {
    GL_CHECK(glEnable(GL_CULL_FACE));
    GL_CHECK(glFrontFace(GL_CCW));
-   GL_CHECK(glEnable(GL_DEPTH_TEST));
-   GL_CHECK(glEnable(GL_STENCIL_TEST));
+//   GL_CHECK(glEnable(GL_DEPTH_TEST));
+//   GL_CHECK(glEnable(GL_STENCIL_TEST));
 
    constructShaderProgs();
    setMode(TEXTURED_ALPHA);
@@ -431,7 +431,7 @@ void Renderer::clear() {
    const Colour& col = m_state[m_idxRender].bgColour;
 
    GL_CHECK(glClearColor(col.r, col.g, col.b, col.a));
-   GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+   GL_CHECK(glClear(GL_COLOR_BUFFER_BIT/* | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT*/));
 }
 
 

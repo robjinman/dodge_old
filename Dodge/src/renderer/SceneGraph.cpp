@@ -23,8 +23,10 @@ void SceneGraph::insert(const IModel* model) {
 
    size_t totalSize = model->getSizeOf() + model->vertexDataSize();
 
-   if (m_scratchSpace.buffer.size() < offset + totalSize)
-      m_scratchSpace.buffer.resize(offset + totalSize);
+   while (m_scratchSpace.buffer.size() < offset + totalSize) {
+      m_scratchSpace.buffer.resize(m_scratchSpace.buffer.size() * 2 + 1);
+//      m_scratchSpace.buffer.resize(offset + totalSize);
+   }
 
    ptr = reinterpret_cast<IModel*>(m_scratchSpace.buffer.data() + offset);
    m_scratchSpace.cursor += totalSize;

@@ -720,7 +720,7 @@ void Entity::setShape(std::unique_ptr<Shape> shape) {
 //===========================================
 void Entity::scale(float32_t x, float32_t y) {
    Range bounds = m_boundary;
-   Shape* oldShape = m_shape ? m_shape->clone() : NULL;
+   pShape_t oldShape = m_shape ? pShape_t(m_shape->clone()) : pShape_t();
    float32_t oldRot_abs = getRotation_abs();
 
    if (m_shape) m_shape->scale(Vec2f(x, y));
@@ -731,7 +731,7 @@ void Entity::scale(float32_t x, float32_t y) {
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
 
-      EEvent* event2 = new EEntityShape(shared_from_this(), pShape_t(oldShape), oldRot_abs,
+      EEvent* event2 = new EEntityShape(shared_from_this(), oldShape, oldRot_abs,
          pShape_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
 
       onEvent(event1);
