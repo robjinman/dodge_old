@@ -18,7 +18,7 @@ class StackAllocator {
    public:
       typedef unsigned int marker_t;
 
-      StackAllocator(size_t size);
+      explicit StackAllocator(size_t size);
       ~StackAllocator();
 
       inline size_t getSize() const;
@@ -28,9 +28,14 @@ class StackAllocator {
       void clear();
 
    private:
+      StackAllocator(marker_t parentTop, size_t size);
+
       size_t m_size;
+      marker_t m_parentTop;
       byte_t* m_top;
       byte_t* m_bottom;
+
+      StackAllocator* m_child;
 };
 
 //===========================================

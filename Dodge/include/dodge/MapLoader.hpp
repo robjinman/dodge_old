@@ -34,7 +34,7 @@ class MapLoader {
 
       void parseMapFile(const std::string& file);
       void update(const Vec2f& cameraPos);
-      inline void freeAllAssets();
+      void freeAllAssets();
 
       inline const Range& getMapBoundary() const;
 
@@ -157,25 +157,11 @@ inline void MapLoader::refCountTable_t::decrRefCount(id_t id) {
 // MapLoader::dbg_getMemoryUsage
 //===========================================
 inline size_t MapLoader::dbg_getMemoryUsage() const {
-   if (!m_init)
-      throw Exception("Error retrieving memory usage; MapLoader not initialised", __FILE__, __LINE__);
+   if (!m_init) return 0;
 
    return getMemoryUsage();
 }
 #endif
-
-//===========================================
-// MapLoader::freeAllAssets
-//===========================================
-inline void MapLoader::freeAllAssets() {
-   if (!m_init)
-      throw Exception("Error freeing assets; MapLoader not initialised", __FILE__, __LINE__);
-
-   m_assetManager.freeAllAssets();
-   m_currentMemUsage = 0;
-   m_pendingUnload.clear();
-   
-}
 
 //===========================================
 // MapLoader::getMapBoundary

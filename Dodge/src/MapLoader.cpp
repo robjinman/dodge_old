@@ -413,5 +413,16 @@ Vec2i MapLoader::getSegment(const Vec2f& pos) const {
    return indices;
 }
 
+//===========================================
+// MapLoader::freeAllAssets
+//===========================================
+void MapLoader::freeAllAssets() {
+   if (m_init) {
+      m_assetManager.freeAllAssets();
+      m_currentMemUsage = 0;
+      m_pendingUnload.clear();
+   }   
+}
+
 
 }

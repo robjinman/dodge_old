@@ -24,14 +24,12 @@ void* EEvent::operator new(size_t size) {
 
    while (true) {
 #ifdef DEFAULT_NEW
-      void* p;
+      void* p = ::operator new(size);
+      if (p) return p;
 #else
       void* p = m_stack.alloc(size);
       if (p) return p;
 #endif
-      p = ::operator new(size);
-      if (p) return p;
-
       new_handler globalHandler = set_new_handler(0);
       set_new_handler(globalHandler);
 

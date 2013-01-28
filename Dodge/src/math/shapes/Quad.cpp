@@ -84,6 +84,13 @@ Quad::Quad(const Quad& copy)
      Polygon(copy) {}
 
 //===========================================
+// Quad::clone
+//===========================================
+Quad* Quad::clone() const {
+   return new Quad(*this);
+}
+
+//===========================================
 // Quad::operator=
 //===========================================
 Quad& Quad::operator=(const Quad& rhs) {

@@ -86,10 +86,12 @@ void Renderer::start() {
 // Renderer::stop
 //===========================================
 void Renderer::stop() {
-   m_running = false;
-   m_thread->join();
-   delete m_thread;
-   m_thread = NULL;
+   if (m_running) {
+      m_running = false;
+      m_thread->join();
+      delete m_thread;
+      m_thread = NULL;
+   }
 }
 
 //===========================================
@@ -222,11 +224,16 @@ void Renderer::draw(const IModel* model) {
 void Renderer::constructVBO(IModel* model) {
    modelHandle_t handle;
 
-   GL_CHECK(glGenBuffers(1, &handle));
-   GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, handle));
-   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
+   if (model->getHandle() != 0) {
+      GL_CHECK(glGenBuffers(1, &handle));
+      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, handle));
+      GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
 
-   model->setHandle(handle);
+      model->setHandle(handle);
+   }
+   else {
+      freeBufferedModel(model);
+   }
 }
 
 //===========================================

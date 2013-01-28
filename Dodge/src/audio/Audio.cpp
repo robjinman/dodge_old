@@ -33,6 +33,8 @@ void Audio::initialise() { // TODO: parameterise these options via a loadSetting
 
    if (Mix_OpenAudio(audioRate, audioFormat, audioChannels, audioBuffers))
       throw AudioException("Could not open audio", __FILE__, __LINE__);
+
+   Mix_AllocateChannels(8);
 }
 
 //===========================================
@@ -148,7 +150,8 @@ void Audio::setSoundVolume(pSound_t sound, float32_t vol) {
 // Audio::stopSound
 //===========================================
 void Audio::stopSound(pSound_t sound) {
-   Mix_HaltChannel(sound->m_channel);
+   if (sound->m_channel != -1)
+      Mix_HaltChannel(sound->m_channel);
 }
 
 //===========================================
