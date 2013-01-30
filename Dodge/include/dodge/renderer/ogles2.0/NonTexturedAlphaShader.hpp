@@ -24,6 +24,8 @@ class NonTexturedAlphaShader : public ShaderProgram {
       virtual ~NonTexturedAlphaShader() {}
 
    private:
+      bool isSupported(const IModel* model) const;
+
       GLint m_id;
 
       GLint m_locPosition;

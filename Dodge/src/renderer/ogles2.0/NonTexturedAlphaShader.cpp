@@ -77,9 +77,31 @@ void NonTexturedAlphaShader::setActive() {
 }
 
 //===========================================
+// NonTexturedAlphaShader::isSupported
+//===========================================
+bool NonTexturedAlphaShader::isSupported(const IModel* model) const {
+   static long vvv = internString("vvv");
+   static long vvvcccc = internString("vvvcccc");
+
+   long layout = model->getVertexLayout();
+
+   return layout == vvv
+      || layout == vvvcccc;
+}
+
+//===========================================
 // NonTexturedAlphaShader::sendData
 //===========================================
 void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projMat) {
+   if (!isSupported(model))
+      throw RendererException("Model type not supported by NonTexturedAlphaShader", __FILE__, __LINE__);
+
+
+//   static long vvv = internString("vvv");
+   static long vvvcccc = internString("vvvcccc");
+
+   long vertLayout = model->getVertexLayout();
+
    GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
    GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));
 
@@ -89,7 +111,7 @@ void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& pr
    }
 
    // If model contains per-vertex colour data
-   if (model_containsPerVertexColourData(*model)) {
+   if (vertLayout == vvvcccc) {
       GL_CHECK(glUniform1i(m_locBUniColour, 0));
       GL_CHECK(glEnableVertexAttribArray(m_locColour));
    }
@@ -102,14 +124,14 @@ void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& pr
    }
 
    const vvvcccc_t* verts = reinterpret_cast<const vvvcccc_t*>(model_getVertexData(*model));
-   Renderer::int_t stride = model_containsPerVertexColourData(*model) ? sizeof(vvvcccc_t) : sizeof(vvv_t);
+   Renderer::int_t stride = vertLayout == vvvcccc ? sizeof(vvvcccc_t) : sizeof(vvv_t);
 
    if (model_getHandle(*model) == 0) {
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
 
-      if (model_containsPerVertexColourData(*model))
+      if (vertLayout == vvvcccc)
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
    }
    else {
@@ -120,7 +142,7 @@ void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& pr
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
       offset += 3 * sizeof(Renderer::vertexElement_t);
 
-      if (model_containsPerVertexColourData(*model))
+      if (vertLayout == vvvcccc)
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    }
 

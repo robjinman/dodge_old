@@ -97,6 +97,19 @@ void TexturedAlphaShader::setActive() {
 }
 
 //===========================================
+// TexturedAlphaShader::isSupported
+//===========================================
+bool TexturedAlphaShader::isSupported(const IModel* model) const {
+   static long vvvtt = internString("vvvtt");
+   static long vvvttcccc = internString("vvvttcccc");
+
+   long layout = model->getVertexLayout();
+
+   return layout == vvvtt
+      || layout == vvvttcccc;
+}
+
+//===========================================
 // TexturedAlphaShader::hashByteArray
 //===========================================
 long TexturedAlphaShader::hashByteArray(const byte_t* array, size_t len) const {
@@ -115,10 +128,16 @@ long TexturedAlphaShader::hashByteArray(const byte_t* array, size_t len) const {
 // TexturedAlphaShader::hashModel
 //===========================================
 long TexturedAlphaShader::hashModel(const IModel* model) const {
+   static long vvvtt = internString("vvvtt");
+//   static long vvvttcccc = internString("vvvttcccc");
+
    long hashes[1];
    size_t sz = 1 * sizeof(long);
 
-   hashes[0] = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), model_vertexDataSize(*model));
+   uint_t n = model->getNumVertices();
+   size_t vertDataSz = model->getVertexLayout() == vvvtt ? (sizeof(vvvtt_t) * n) : (sizeof(vvvttcccc_t) * n);
+
+   hashes[0] = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
 
    return hashByteArray(reinterpret_cast<const byte_t*>(hashes), sz);
 }
@@ -167,17 +186,19 @@ void TexturedAlphaShader::transformVertex(GLfloat* vertex, const GLfloat* m) con
 // TexturedAlphaShader::batchAndRenderPendingModels
 //===========================================
 void TexturedAlphaShader::batchAndRenderPendingModels() {
+   static long vvvtt = internString("vvvtt");
+//   static long vvvttcccc = internString("vvvttcccc");
+
    uint_t geoCursor = 0;
    uint_t totalVerts = 0;
    uint_t nModels = m_pending.size();
-   size_t vertSz = 0;
 
    for (uint_t i = 0; i < m_pending.size(); ++i) {
       const IModel* model = m_pending[i];
 
       uint_t nVerts = model->getNumVertices();
-      vertSz = model_getVertexSize(*model);
-      size_t vertDataSz = model_vertexDataSize(*model);
+      size_t vertSz = model->getVertexLayout() == vvvtt ? sizeof(vvvtt_t) : sizeof(vvvttcccc_t);
+      size_t vertDataSz = nVerts * vertSz;
       const GLfloat* matrix = model_getMatrix(*model);
 
       while (m_geometry.size() < geoCursor + vertDataSz)
@@ -213,12 +234,15 @@ void TexturedAlphaShader::batchAndRenderPendingModels() {
 // TexturedAlphaShader::renderBatch
 //===========================================
 void TexturedAlphaShader::renderBatch(const batch_t& batch) {
-   bool colData = model_containsPerVertexColourData(*m_pending.back());
+   static long vvvtt = internString("vvvtt");
+   static long vvvttcccc = internString("vvvttcccc");
+
+   long vertLayout = m_pending.back()->getVertexLayout();
    Renderer::primitive_t primType = m_pending.back()->getPrimitiveType();
    const Colour& colour = m_pending.back()->getColour();
    GLuint texHandle = m_pending.back()->getTextureHandle();
    GLint lineWidth = m_pending.back()->getLineWidth();
-   size_t vertSz = model_getVertexSize(*m_pending.back());
+   size_t vertSz = vertLayout == vvvtt ? sizeof(vvvtt_t) : sizeof(vvvttcccc_t);
 
    GLfloat mat[] = { 1.f, 0.f, 0.f, 0.f,
                      0.f, 1.f, 0.f, 0.f,
@@ -233,7 +257,7 @@ void TexturedAlphaShader::renderBatch(const batch_t& batch) {
          GL_CHECK(glLineWidth(lineWidth));
    }
 
-   if (colData) {
+   if (vertLayout == vvvttcccc) {
       GL_CHECK(glUniform1i(m_locBUniColour, 0));
       GL_CHECK(glEnableVertexAttribArray(m_locColour));
    }
@@ -257,7 +281,7 @@ void TexturedAlphaShader::renderBatch(const batch_t& batch) {
    GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    offset += 2 * sizeof(GLfloat);
 
-   if (colData) {
+   if (vertLayout == vvvttcccc) {
       GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
       offset += 4 * sizeof(GLfloat);
    }
@@ -269,6 +293,9 @@ void TexturedAlphaShader::renderBatch(const batch_t& batch) {
 // TexturedAlphaShader::sendData
 //===========================================
 void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projMat) {
+   if (!isSupported(model))
+      throw RendererException("Model type not supported by TexturedAlphaShader", __FILE__, __LINE__);
+
    // Queue model for batching
 
    if (isCompatibleWithPending(model)) {
@@ -338,6 +365,11 @@ void TexturedAlphaShader::flush() {
 // TexturedAlphaShader::renderModel
 //===========================================
 void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& projMat) {
+//   static long vvvtt = internString("vvvtt");
+   static long vvvttcccc = internString("vvvttcccc");
+
+   long vertLayout = m_pending.back()->getVertexLayout();
+
    GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
    GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));
 
@@ -347,7 +379,7 @@ void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& pr
    }
 
    // If model contains per-vertex colour data
-   if (model_containsPerVertexColourData(*model)) {
+   if (vertLayout == vvvttcccc) {
       GL_CHECK(glUniform1i(m_locBUniColour, 0));
       GL_CHECK(glEnableVertexAttribArray(m_locColour));
    }
@@ -362,7 +394,7 @@ void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& pr
    GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
 
    const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model_getVertexData(*model));
-   GLint stride = model_containsPerVertexColourData(*model) ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
+   GLint stride = vertLayout == vvvttcccc ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
 
    if (model_getHandle(*model) == 0) {
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
@@ -370,7 +402,7 @@ void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& pr
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
       GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
 
-      if (model_containsPerVertexColourData(*model))
+      if (vertLayout == vvvttcccc)
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
    }
    else {
@@ -384,7 +416,7 @@ void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& pr
       GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
       offset += 2 * sizeof(GLfloat);
 
-      if (model_containsPerVertexColourData(*model))
+      if (vertLayout == vvvttcccc)
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    }
 

@@ -7,6 +7,7 @@
 #define __MODEL_HPP__
 
 
+#include "../StringId.hpp"
 #include "Renderer.hpp"
 
 
@@ -27,15 +28,14 @@ class IModel {
       //===========================================
       // IModel::IModel
       //===========================================
-      IModel(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType, bool perVertexColourData)
+      IModel(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType)
          : m_matrix({1.f, 0.f, 0.f, 0.f,
                      0.f, 1.f, 0.f, 0.f,
                      0.f, 0.f, 1.f, 0.f,
                      0.f, 0.f, 0.f, 1.f}),
            m_primitiveType(primitiveType),
            m_renderMode(renderMode),
-           m_handle(0),
-           m_colData(false) {}
+           m_handle(0) {}
 
       //===========================================
       // IModel::getPrimitiveType
@@ -88,9 +88,7 @@ class IModel {
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
       virtual size_t getTotalSize() const = 0;
       virtual void getVertices(void* dest, uint_t startIdx, uint_t endIdx) const = 0;
-
-      // Returns transformed z-coord of first vertex
-      virtual float32_t getDepth() const = 0;
+      virtual long getVertexLayout() const = 0;
 
 #ifdef DEBUG
       //===========================================
@@ -119,9 +117,6 @@ class IModel {
          out << "renderMode: " << m_renderMode << "\n";
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "containsPerVertexColourData: " << (m_colData ? "true" : "false") << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "handle: " << m_handle << "\n";
       }
 #endif
@@ -136,12 +131,10 @@ class IModel {
          m_handle = 0;
       }
 
-      inline bool containsPerVertexColourData() const {
-         return m_colData;
-      }
+      // Returns transformed z-coord of first vertex
+      virtual float32_t getDepth() const = 0;
 
       virtual size_t getSizeOf() const = 0;
-      virtual size_t getVertexSize() const = 0;
       virtual size_t vertexDataSize() const = 0;
       virtual const void* getVertexData() const = 0;
       virtual void copyTo(void* ptr) const = 0;
@@ -150,7 +143,6 @@ class IModel {
       Renderer::primitive_t m_primitiveType;
       Renderer::mode_t m_renderMode;
       Renderer::modelHandle_t m_handle;
-      bool m_colData;
 };
 
 
@@ -164,9 +156,9 @@ class Model : public IModel {
       //===========================================
       // Model::Model
       //===========================================
-      Model(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType, bool perVertexColourData)
-         : IModel(renderMode, primitiveType, perVertexColourData),
-           m_verts(NULL), m_n(0), m_texHandle(0), m_lineWidth(0) {}
+      Model(long vertLayout, Renderer::mode_t renderMode, Renderer::primitive_t primitiveType)
+         : IModel(renderMode, primitiveType),
+           m_vertLayout(vertLayout), m_verts(NULL), m_n(0), m_texHandle(0), m_lineWidth(0) {}
 
       //===========================================
       // Model::Model
@@ -280,18 +272,17 @@ class Model : public IModel {
       }
 
       //===========================================
-      // Model::getDepth
-      //===========================================
-      virtual float32_t getDepth() const {
-         float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
-         return z + m_matrix[14];
-      }
-
-      //===========================================
       // Model::getTotalSize
       //===========================================
       virtual size_t getTotalSize() const {
-         return getSizeOf() + vertexDataSize();
+         return getSizeOf() + sizeof(T) * m_n + sizeof(Renderer::matrixElement_t) * 16;
+      }
+
+      //===========================================
+      // Model::getVertexLayout
+      //===========================================
+      virtual long getVertexLayout() const {
+         return m_vertLayout;
       }
 
       //===========================================
@@ -310,6 +301,9 @@ class Model : public IModel {
          out << "Model\n";
 
          IModel::dbg_print(out, tab + 1);
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "vertex layout: " << getInternedString(m_vertLayout) << "\n";
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "textureHandle: " << m_texHandle << "\n";
@@ -345,11 +339,13 @@ class Model : public IModel {
       void shallowCopy(const Model& cpy) {
          IModel::shallowCopy(cpy);
 
+         m_vertLayout = cpy.m_vertLayout;
          m_texHandle = cpy.m_texHandle;
          m_colour = cpy.m_colour;
          m_lineWidth = cpy.m_lineWidth;
       }
 
+      long m_vertLayout;
       T* m_verts;
       uint_t m_n;
       Renderer::textureHandle_t m_texHandle;
@@ -368,8 +364,9 @@ class Model : public IModel {
          return sizeof(Model<T>);
       }
 
-      virtual size_t getVertexSize() const {
-         return sizeof(T);
+      virtual float32_t getDepth() const {
+         float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
+         return z + m_matrix[14];
       }
 
       virtual void copyTo(void* ptr) const {
@@ -450,25 +447,25 @@ struct vvvtt_t {
 class ColouredNonTexturedAlphaModel : public Model<vvvcccc_t> {
    public:
       ColouredNonTexturedAlphaModel(Renderer::primitive_t primitiveType)
-         : Model(Renderer::NONTEXTURED_ALPHA, primitiveType, true) {}
+         : Model(internString("vvvcccc"), Renderer::NONTEXTURED_ALPHA, primitiveType) {}
 };
 
 class PlainNonTexturedAlphaModel : public Model<vvv_t> {
    public:
       PlainNonTexturedAlphaModel(Renderer::primitive_t primitiveType)
-         : Model(Renderer::NONTEXTURED_ALPHA, primitiveType, false) {}
+         : Model(internString("vvv"), Renderer::NONTEXTURED_ALPHA, primitiveType) {}
 };
 
 class ColouredTexturedAlphaModel : public Model<vvvttcccc_t> {
    public:
       ColouredTexturedAlphaModel(Renderer::primitive_t primitiveType)
-         : Model(Renderer::TEXTURED_ALPHA, primitiveType, true) {}
+         : Model(internString("vvvttcccc"), Renderer::TEXTURED_ALPHA, primitiveType) {}
 };
 
 class PlainTexturedAlphaModel : public Model<vvvtt_t> {
    public:
       PlainTexturedAlphaModel(Renderer::primitive_t primitiveType)
-         : Model(Renderer::TEXTURED_ALPHA, primitiveType, false) {}
+         : Model(internString("vvvtt"), Renderer::TEXTURED_ALPHA, primitiveType) {}
 };
 
 

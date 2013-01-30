@@ -46,6 +46,7 @@ class TexturedAlphaShader : public ShaderProgram {
       long hashModel(const IModel* model) const;
       long hashPendingModels() const;
       void transformVertex(GLfloat* vertex, const GLfloat* matrix) const;
+      bool isSupported(const IModel* model) const;
 
       GLint m_id;
 
@@ -59,7 +60,6 @@ class TexturedAlphaShader : public ShaderProgram {
 
       std::map<long, batch_t> m_VBOs;
       std::vector<byte_t> m_geometry;
-//      std::vector<byte_t> m_mvData;
 
       std::vector<const IModel*> m_pending;
       const cml::matrix44f_c* m_P;
@@ -80,7 +80,7 @@ inline bool TexturedAlphaShader::isCompatibleWithPending(const IModel* A) const 
 
    const IModel* B = m_pending.back();
 
-   return model_containsPerVertexColourData(*A) == model_containsPerVertexColourData(*B)
+   return A->getVertexLayout() == B->getVertexLayout()
       && A->getPrimitiveType() == B->getPrimitiveType()
       && A->getTextureHandle() == B->getTextureHandle()
       && A->getColour() == B->getColour()
