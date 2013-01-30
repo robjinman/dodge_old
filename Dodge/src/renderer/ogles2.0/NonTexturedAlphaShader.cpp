@@ -123,6 +123,8 @@ void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& pr
       if (model_containsPerVertexColourData(*model))
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    }
+
+   GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
 }
 
 

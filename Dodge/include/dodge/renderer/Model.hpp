@@ -87,6 +87,7 @@ class IModel {
       virtual void setTextureHandle(Renderer::textureHandle_t texHandle) = 0;
       virtual Renderer::textureHandle_t getTextureHandle() const = 0;
       virtual size_t getTotalSize() const = 0;
+      virtual void getVertices(void* dest, uint_t startIdx, uint_t endIdx) const = 0;
 
       // Returns transformed z-coord of first vertex
       virtual float32_t getDepth() const = 0;
@@ -140,6 +141,7 @@ class IModel {
       }
 
       virtual size_t getSizeOf() const = 0;
+      virtual size_t getVertexSize() const = 0;
       virtual size_t vertexDataSize() const = 0;
       virtual const void* getVertexData() const = 0;
       virtual void copyTo(void* ptr) const = 0;
@@ -257,7 +259,7 @@ class Model : public IModel {
       //===========================================
       // Model::getVertices
       //===========================================
-      void getVertices(T* dest, uint_t startIdx, uint_t endIdx) const {
+      virtual void getVertices(void* dest, uint_t startIdx, uint_t endIdx) const {
          memcpy(dest, m_verts + startIdx, sizeof(T) * (endIdx - startIdx));
       }
 
@@ -364,6 +366,10 @@ class Model : public IModel {
 
       virtual size_t getSizeOf() const {
          return sizeof(Model<T>);
+      }
+
+      virtual size_t getVertexSize() const {
+         return sizeof(T);
       }
 
       virtual void copyTo(void* ptr) const {

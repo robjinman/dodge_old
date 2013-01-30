@@ -19,6 +19,7 @@ class NonTexturedAlphaShader : public ShaderProgram {
 
       virtual void setActive();
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat);
+      virtual void flush() {}
 
       virtual ~NonTexturedAlphaShader() {}
 

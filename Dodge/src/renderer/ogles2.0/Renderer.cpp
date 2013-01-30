@@ -381,9 +381,8 @@ void Renderer::renderLoop() {
             setMode(model->getRenderMode());
 
             m_activeShaderProg->sendData(model, m_state[m_idxRender].P);
-
-            GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));
          }
+         m_activeShaderProg->flush();
 
          win.swapBuffers();
 

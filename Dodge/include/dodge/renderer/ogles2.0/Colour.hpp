@@ -28,6 +28,14 @@ class Colour {
 
       Colour(const GLfloat col[4])
          : r(col[0]), g(col[1]), b(col[2]), a(col[3]) {}
+
+      bool operator==(const Colour& rhs) const {
+         return r == rhs.r && g == rhs.g && b == rhs.b && a == rhs.a;
+      }
+
+      bool operator!=(const Colour& rhs) const {
+         return !(*this == rhs);
+      }
 };
 
 
