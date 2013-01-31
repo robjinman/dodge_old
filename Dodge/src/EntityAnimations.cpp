@@ -284,10 +284,17 @@ void EntityAnimations::updateModel() {
    float32_t imgW = m_texture->getWidth();
    float32_t imgH = m_texture->getHeight();
 
+   Vec2f halfPixel(0.5 / imgW, 0.5 / imgH);
+
    float32_t tX1 = m_texSection.getPosition().x / imgW;
    float32_t tX2 = (m_texSection.getPosition().x + m_texSection.getSize().x) / imgW;
    float32_t tY1 = m_texSection.getPosition().y / imgH;
    float32_t tY2 = (m_texSection.getPosition().y + m_texSection.getSize().y) / imgH;
+
+   tX1 += halfPixel.x;
+   tX2 -= halfPixel.x;
+   tY1 += halfPixel.y;
+   tY2 -= halfPixel.y;
 
    // Flip texture vertically
    tY1 = 1.f - tY1;

@@ -213,7 +213,8 @@ void TextEntity::updateModel() const {
 
    float32_t texSectionX1 = m_font->getTextureSection().getPosition().x;
    float32_t texSectionY1 = m_font->getTextureSection().getPosition().y;
-   float32_t texSectionX2 = m_font->getTextureSection().getSize().x;
+   float32_t texSectionX2 = texSectionX1 + m_font->getTextureSection().getSize().x;
+   float32_t texSectionY2 = texSectionY1 + m_font->getTextureSection().getSize().y;
 
    float32_t texW = m_font->getTexture()->getWidth();
    float32_t texH = m_font->getTexture()->getHeight();
@@ -221,7 +222,7 @@ void TextEntity::updateModel() const {
    float32_t pxChW = m_font->getCharWidth();    // Char dimensions in pixels
    float32_t pxChH = m_font->getCharHeight();
 
-   int rowLen = (static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW)) + 0.5;
+   int rowLen = static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW);
 
    StackAllocator::marker_t marker = gGetMemStack().getMarker();
    vvvtt_t* verts = reinterpret_cast<vvvtt_t*>(gGetMemStack().alloc(m_text.size() * 6 * sizeof(vvvtt_t)));
@@ -232,15 +233,20 @@ void TextEntity::updateModel() const {
       float32_t chX = x + static_cast<float32_t>(i) * m_size.x;
       float32_t chY = y;
 
-      float32_t srcX = texSectionX1 + pxChW * (static_cast<float32_t>((m_text[i] - ' ') % rowLen));
-      float32_t srcY = texSectionY1 + pxChH * static_cast<float32_t>((m_text[i] - ' ') / rowLen);
+      float32_t srcX = texSectionX1 + pxChW * static_cast<float32_t>((m_text[i] - ' ') % rowLen);
+      float32_t srcY = texSectionY2 - pxChH * static_cast<float32_t>((m_text[i] - ' ') / rowLen + 1);
 
-      verts[v] = { chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, srcY / texH           };    ++v;
-      verts[v] = { chX,            chY + m_size.y, z,    srcX / texW,           srcY / texH           };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           (srcY + pxChH) / texH };    ++v;
+      float32_t tY1 = srcY / texH;
+      float32_t tY2 = (srcY + pxChH) / texH;
+      tY1 = 1.f - tY1;
+      tY2 = 1.f - tY2;
+
+      verts[v] = { chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, tY1 };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2 };    ++v;
+      verts[v] = { chX,            chY,            z,    srcX / texW,           tY1 };    ++v;
+      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2 };    ++v;
+      verts[v] = { chX,            chY + m_size.y, z,    srcX / texW,           tY2 };    ++v;
+      verts[v] = { chX,            chY,            z,    srcX / texW,           tY1 };    ++v;
    }
 
    m_model.eraseVertices();
