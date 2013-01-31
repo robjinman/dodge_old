@@ -131,15 +131,12 @@ long TexturedAlphaShader::hashModel(const IModel* model) const {
    static long vvvtt = internString("vvvtt");
 //   static long vvvttcccc = internString("vvvttcccc");
 
-   long hashes[1];
-   size_t sz = 1 * sizeof(long);
-
    uint_t n = model->getNumVertices();
    size_t vertDataSz = model->getVertexLayout() == vvvtt ? (sizeof(vvvtt_t) * n) : (sizeof(vvvttcccc_t) * n);
 
-   hashes[0] = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
+   long hash = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
 
-   return hashByteArray(reinterpret_cast<const byte_t*>(hashes), sz);
+   return hashByteArray(reinterpret_cast<const byte_t*>(&hash), sizeof(long));
 }
 
 //===========================================
@@ -169,6 +166,13 @@ long TexturedAlphaShader::hashPendingModels() const {
 void TexturedAlphaShader::renderPendingModels() {
    for (uint_t i = 0; i < m_pending.size(); ++i)
       renderModel(m_pending[i], *m_P);
+}
+
+//===========================================
+// TexturedAlphaShader::hasPending
+//===========================================
+bool TexturedAlphaShader::hasPending() const{
+   return m_pending.size() > 0;
 }
 
 //===========================================
@@ -296,6 +300,7 @@ void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projM
    if (!isSupported(model))
       throw RendererException("Model type not supported by TexturedAlphaShader", __FILE__, __LINE__);
 
+
    // Queue model for batching
 
    if (isCompatibleWithPending(model)) {
@@ -338,6 +343,7 @@ void TexturedAlphaShader::processPending() {
       renderPendingModels();
 
    m_pending.clear();
+   m_P = NULL;
 }
 
 //===========================================
@@ -368,7 +374,7 @@ void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& pr
 //   static long vvvtt = internString("vvvtt");
    static long vvvttcccc = internString("vvvttcccc");
 
-   long vertLayout = m_pending.back()->getVertexLayout();
+   long vertLayout = model->getVertexLayout();
 
    GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
    GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));

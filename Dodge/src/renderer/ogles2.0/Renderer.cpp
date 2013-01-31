@@ -376,10 +376,19 @@ void Renderer::renderLoop() {
 
             if (model->getNumVertices() == 0) continue;
 
-            setMode(model->getRenderMode());
+            mode_t mode = model->getRenderMode();
 
+            for (auto j = m_shaderProgs.begin(); j != m_shaderProgs.end(); ++j) {
+               if (j->first != mode && j->second->hasPending()) {
+                  setMode(j->first);
+                  j->second->flush();
+               }
+            }
+
+            setMode(mode);
             m_activeShaderProg->sendData(model, m_state[m_idxRender].P);
          }
+
          m_activeShaderProg->flush();
 
          win.swapBuffers();

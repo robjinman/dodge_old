@@ -19,6 +19,7 @@ class TexturedAlphaShader : public ShaderProgram {
    public:
       TexturedAlphaShader();
 
+      virtual bool hasPending() const;
       virtual void setActive();
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat);
       virtual void flush();
@@ -32,7 +33,7 @@ class TexturedAlphaShader : public ShaderProgram {
          bool rendered;
       };
 
-      static const uint_t MIN_BATCH_SIZE = 16;
+      static const uint_t MIN_BATCH_SIZE = 24;
       static const uint_t MAX_BATCH_SIZE = 512;
 
       void processPending();
@@ -40,7 +41,6 @@ class TexturedAlphaShader : public ShaderProgram {
       void renderBatch(const batch_t& batch);
       void renderPendingModels();
       void renderModel(const IModel* model, const cml::matrix44f_c& projMat);
-      inline bool matEquals(const GLfloat* A, const GLfloat* B) const;
       inline bool isCompatibleWithPending(const IModel* A) const;
       long hashByteArray(const byte_t* array, size_t len) const;
       long hashModel(const IModel* model) const;
@@ -66,13 +66,6 @@ class TexturedAlphaShader : public ShaderProgram {
 };
 
 //===========================================
-// TexturedAlphaShader::matEquals
-//===========================================
-inline bool TexturedAlphaShader::matEquals(const GLfloat* A, const GLfloat* B) const {
-   return memcmp(A, B, 16 * sizeof(GLfloat));
-}
-
-//===========================================
 // TexturedAlphaShader::isCompatibleWithPending
 //===========================================
 inline bool TexturedAlphaShader::isCompatibleWithPending(const IModel* A) const {
@@ -84,8 +77,7 @@ inline bool TexturedAlphaShader::isCompatibleWithPending(const IModel* A) const 
       && A->getPrimitiveType() == B->getPrimitiveType()
       && A->getTextureHandle() == B->getTextureHandle()
       && A->getColour() == B->getColour()
-      && A->getLineWidth() == B->getLineWidth()
-      && matEquals(model_getMatrix(*A), m_P->data());
+      && A->getLineWidth() == B->getLineWidth();
 }
 
 

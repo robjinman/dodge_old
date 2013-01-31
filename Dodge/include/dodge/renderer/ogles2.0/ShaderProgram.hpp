@@ -17,6 +17,7 @@ namespace Dodge {
 
 class ShaderProgram {
    public:
+      virtual bool hasPending() const = 0;
       virtual void setActive() = 0;
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat) = 0;
       virtual void flush() = 0;
@@ -31,9 +32,6 @@ class ShaderProgram {
 
       inline Renderer::modelHandle_t model_getHandle(const IModel& model) const;
       inline void model_setHandle(IModel& model, Renderer::modelHandle_t handle);
-//      inline bool model_containsPerVertexColourData(const IModel& model) const;
-//      inline size_t model_getVertexSize(const IModel& model) const;
-//      inline size_t model_vertexDataSize(const IModel& model) const;
       inline const void* model_getVertexData(const IModel& model) const;
       inline const Renderer::matrixElement_t* model_getMatrix(const IModel& model) const;
 };
@@ -57,9 +55,6 @@ inline GLint ShaderProgram::primitiveToGLType(Renderer::primitive_t primitiveTyp
 //===========================================
 inline Renderer::modelHandle_t ShaderProgram::model_getHandle(const IModel& model) const { return model.m_handle; }
 inline void ShaderProgram::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.m_handle = handle; }
-//inline bool ShaderProgram::model_containsPerVertexColourData(const IModel& model) const { return model.m_colData; }
-//inline size_t ShaderProgram::model_getVertexSize(const IModel& model) const { return model.getVertexSize(); }
-//inline size_t ShaderProgram::model_vertexDataSize(const IModel& model) const { return model.vertexDataSize(); }
 inline const void* ShaderProgram::model_getVertexData(const IModel& model) const { return model.getVertexData(); }
 inline const Renderer::matrixElement_t* ShaderProgram::model_getMatrix(const IModel& model) const { return model.m_matrix; }
 //===========================================

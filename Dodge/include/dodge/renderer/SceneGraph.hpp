@@ -7,6 +7,7 @@
 #include <vector>
 #include "Renderer.hpp"
 #include "Model.hpp"
+#include "../StackAllocator.hpp"
 
 
 namespace Dodge {
@@ -19,10 +20,12 @@ class SceneGraph {
    private:
       typedef std::pair<float32_t, Renderer::mode_t> subKey_t;
       typedef std::pair<subKey_t, Renderer::textureHandle_t> key_t;
-      typedef std::pair<key_t, uint_t> entry_t;
+      typedef std::pair<key_t, IModel*> entry_t;
       typedef std::set<entry_t> container_t;
 
    public:
+      static const size_t INIT_STACK_SIZE = 1024; // 1KB
+
       class iterator {
          friend class SceneGraph;
 
@@ -35,10 +38,9 @@ class SceneGraph {
             iterator& operator++();
 
          private:
-            iterator(SceneGraph* sg, SceneGraph::container_t::iterator i)
-               : m_sg(sg), m_i(i) {}
+            iterator(SceneGraph::container_t::iterator i)
+               : m_i(i) {}
 
-            SceneGraph* m_sg;
             SceneGraph::container_t::iterator m_i;
       };
 
@@ -51,29 +53,22 @@ class SceneGraph {
       iterator end();
 
    private:
-      struct scratchSpace_t {
-         scratchSpace_t() : cursor(0) {}
-
-         std::vector<byte_t> buffer;
-         uint_t cursor;
-      };
-
       container_t m_container;
-      scratchSpace_t m_scratchSpace;
+      StackAllocator m_scratchSpace;
 };
 
 //===========================================
 // SceneGraph::iterator::operator*
 //===========================================
 inline const IModel* SceneGraph::iterator::operator*() {
-   return reinterpret_cast<const IModel*>(m_sg->m_scratchSpace.buffer.data() + m_i->second);
+   return reinterpret_cast<const IModel*>(m_i->second);
 }
 
 //===========================================
 // SceneGraph::iterator::operator->
 //===========================================
 inline const IModel* SceneGraph::iterator::operator->() {
-   return reinterpret_cast<const IModel*>(m_sg->m_scratchSpace.buffer.data() + m_i->second);
+   return reinterpret_cast<const IModel*>(m_i->second);
 }
 
 //===========================================

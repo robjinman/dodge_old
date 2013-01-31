@@ -275,7 +275,7 @@ class Model : public IModel {
       // Model::getTotalSize
       //===========================================
       virtual size_t getTotalSize() const {
-         return getSizeOf() + sizeof(T) * m_n + sizeof(Renderer::matrixElement_t) * 16;
+         return getSizeOf() + sizeof(T) * m_n;
       }
 
       //===========================================
@@ -370,13 +370,14 @@ class Model : public IModel {
       }
 
       virtual void copyTo(void* ptr) const {
+         memcpy(ptr, this, sizeof(Model<T>));
+
          byte_t* p = reinterpret_cast<byte_t*>(ptr);
          byte_t* verts = p + sizeof(Model<T>);
-         Model<T>* pModel = reinterpret_cast<Model<T>*>(p);
 
-         new (p) Model<T>;
-         pModel->shallowCopy(*this);
          memcpy(verts, m_verts, m_n * sizeof(T));
+
+         Model<T>* pModel = reinterpret_cast<Model<T>*>(ptr);
          pModel->m_verts = reinterpret_cast<T*>(verts);
          pModel->m_n = m_n;
       }
@@ -444,6 +445,7 @@ struct vvvtt_t {
 };
 
 
+// DO NOT STORE DATA IN THESE CLASSES.
 class ColouredNonTexturedAlphaModel : public Model<vvvcccc_t> {
    public:
       ColouredNonTexturedAlphaModel(Renderer::primitive_t primitiveType)

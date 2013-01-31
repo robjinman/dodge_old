@@ -12,26 +12,20 @@ namespace Dodge {
 //===========================================
 // SceneGraph::SceneGraph
 //===========================================
-SceneGraph::SceneGraph() {}
+SceneGraph::SceneGraph()
+   : m_scratchSpace(INIT_STACK_SIZE) {}
 
 //===========================================
 // SceneGraph::insert
 //===========================================
 void SceneGraph::insert(const IModel* model) {
-   IModel* ptr;
-   uint_t offset = m_scratchSpace.cursor;
+   size_t totalSize = model->getTotalSize();
 
-   size_t totalSize = model->getSizeOf() + model->vertexDataSize();
-
-   while (m_scratchSpace.buffer.size() < offset + totalSize)
-      m_scratchSpace.buffer.resize(m_scratchSpace.buffer.size() * 2 + 1);
-
-   ptr = reinterpret_cast<IModel*>(m_scratchSpace.buffer.data() + offset);
-   m_scratchSpace.cursor += totalSize;
+   IModel* ptr = reinterpret_cast<IModel*>(m_scratchSpace.alloc(totalSize));
 
    model->copyTo(ptr);
 
-   m_container.insert(entry_t(key_t(subKey_t(ptr->getDepth(), ptr->getRenderMode()), ptr->getTextureHandle()), offset));
+   m_container.insert(entry_t(key_t(subKey_t(ptr->getDepth(), ptr->getRenderMode()), ptr->getTextureHandle()), ptr));
 }
 
 //===========================================
@@ -39,22 +33,21 @@ void SceneGraph::insert(const IModel* model) {
 //===========================================
 void SceneGraph::clear() {
    m_container.clear();
-   m_scratchSpace.buffer.clear();
-   m_scratchSpace.cursor = 0;
+   m_scratchSpace.clear();
 }
 
 //===========================================
 // SceneGraph::begin
 //===========================================
 SceneGraph::iterator SceneGraph::begin() {
-   return iterator(this, m_container.begin());
+   return iterator(m_container.begin());
 }
 
 //===========================================
 // SceneGraph::end
 //===========================================
 SceneGraph::iterator SceneGraph::end() {
-   return iterator(this, m_container.end());
+   return iterator(m_container.end());
 }
 
 
