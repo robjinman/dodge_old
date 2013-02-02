@@ -27,6 +27,12 @@ namespace Dodge {
 // thereby duplicating it. Erasing assets from the asset manager is safe, however.
 class MapLoader {
    public:
+      static MapLoader& getInstance() {
+         if (!m_instance) m_instance = new MapLoader;
+
+         return *m_instance;
+      }
+
       void initialise(Functor<void, TYPELIST_1(const XmlNode)> setMapSettingsFunc,
          Functor<pAsset_t, TYPELIST_1(const XmlNode)> factoryFunc,
          Functor<void, TYPELIST_1(pAsset_t)> deleteAssetFunc,
@@ -43,6 +49,10 @@ class MapLoader {
 #endif
 
    private:
+      MapLoader();
+
+      static MapLoader* m_instance;
+
       struct mapSegment_t {
          mapSegment_t() : loaded(false) {}
 
@@ -69,26 +79,26 @@ class MapLoader {
             std::map<id_t, refCount_t> m_container;
       };
 
-      static bool m_init;
+      bool m_init;
 
-      static refCountTable_t m_refCountTable;
+      refCountTable_t m_refCountTable;
 
       // Segments at the front of the list have been pending the longest
-      static std::list<Vec2i> m_pendingUnload;
+      std::list<Vec2i> m_pendingUnload;
 
-      static AssetManager m_assetManager;
+      AssetManager m_assetManager;
 
-      static Functor<void, TYPELIST_1(const XmlNode)> m_setMapSettingsFunc;
-      static Functor<pAsset_t, TYPELIST_1(const XmlNode)> m_factoryFunc;
-      static Functor<void, TYPELIST_1(pAsset_t)> m_deleteAssetFunc;
+      Functor<void, TYPELIST_1(const XmlNode)> m_setMapSettingsFunc;
+      Functor<pAsset_t, TYPELIST_1(const XmlNode)> m_factoryFunc;
+      Functor<void, TYPELIST_1(pAsset_t)> m_deleteAssetFunc;
 
-      static Range m_mapBoundary;
-      static std::vector<std::vector<mapSegment_t> > m_segments;
-      static Vec2i m_centreSegment;
-      static Vec2f m_segmentSize;
+      Range m_mapBoundary;
+      std::vector<std::vector<mapSegment_t> > m_segments;
+      Vec2i m_centreSegment;
+      Vec2f m_segmentSize;
 
-      static size_t m_targetMemUsage;
-      static size_t m_currentMemUsage;
+      size_t m_targetMemUsage;
+      size_t m_currentMemUsage;
 
       Vec2i getSegment(const Vec2f& pos) const;
       void setPendingUnload(const Vec2i& indices, bool b);

@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{71DB79CD-D788-4FD3-BDAF-9143DAFFFD0D}</ProjectGuid>
+    <RootNamespace>Dodge</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\lib</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_51;D:\Code\projects\Dodge\Dodge\include\SDL;D:\Code\projects\Dodge\Dodge\include\dodge;D:\Code\projects\Dodge\Dodge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\dodge\Animation.hpp" />
+    <ClInclude Include="..\..\include\dodge\AnimFrame.hpp" />
+    <ClInclude Include="..\..\include\dodge\Asset.hpp" />
+    <ClInclude Include="..\..\include\dodge\AssetManager.hpp" />
+    <ClInclude Include="..\..\include\dodge\audio\Audio.hpp" />
+    <ClInclude Include="..\..\include\dodge\audio\AudioException.hpp" />
+    <ClInclude Include="..\..\include\dodge\audio\MusicTrack.hpp" />
+    <ClInclude Include="..\..\include\dodge\audio\Sound.hpp" />
+    <ClInclude Include="..\..\include\dodge\Box2dPhysics.hpp" />
+    <ClInclude Include="..\..\include\dodge\definitions.hpp" />
+    <ClInclude Include="..\..\include\dodge\dodge.hpp" />
+    <ClInclude Include="..\..\include\dodge\EAnimFinished.hpp" />
+    <ClInclude Include="..\..\include\dodge\EEvent.hpp" />
+    <ClInclude Include="..\..\include\dodge\EGL_CHECK.hpp" />
+    <ClInclude Include="..\..\include\dodge\Entity.hpp" />
+    <ClInclude Include="..\..\include\dodge\EntityAnimations.hpp" />
+    <ClInclude Include="..\..\include\dodge\EntityParallax.hpp" />
+    <ClInclude Include="..\..\include\dodge\EntityPhysics.hpp" />
+    <ClInclude Include="..\..\include\dodge\EntityTransformations.hpp" />
+    <ClInclude Include="..\..\include\dodge\EventManager.hpp" />
+    <ClInclude Include="..\..\include\dodge\Exception.hpp" />
+    <ClInclude Include="..\..\include\dodge\globals.hpp" />
+    <ClInclude Include="..\..\include\dodge\KvpParser.hpp" />
+    <ClInclude Include="..\..\include\dodge\MapLoader.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\common.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\fAreEqual.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\fContains.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\fIntersect.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\fOverlap.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\math.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\Ellipse.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\LineSegment.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\Polygon.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\Quad.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\Shape.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\shapes\shapes.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\Vec2f.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\Vec2i.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\Vec3f.hpp" />
+    <ClInclude Include="..\..\include\dodge\math\Vec3i.hpp" />
+    <ClInclude Include="..\..\include\dodge\ParallaxSprite.hpp" />
+    <ClInclude Include="..\..\include\dodge\PhysicalEntity.hpp" />
+    <ClInclude Include="..\..\include\dodge\PhysicalSprite.hpp" />
+    <ClInclude Include="..\..\include\dodge\platformUtils.hpp" />
+    <ClInclude Include="..\..\include\dodge\PNG_CHECK.hpp" />
+    <ClInclude Include="..\..\include\dodge\Quadtree.hpp" />
+    <ClInclude Include="..\..\include\dodge\Range.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Camera.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Colour.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Font.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\GL_CHECK.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Model.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Colour.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\NonTexturedAlphaShader.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Renderer.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\ShaderProgram.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Texture.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\TexturedAlphaShader.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Renderer.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\RendererException.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\SceneGraph.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\Texture.hpp" />
+    <ClInclude Include="..\..\include\dodge\ShapeFactory.hpp" />
+    <ClInclude Include="..\..\include\dodge\SpatialContainer.hpp" />
+    <ClInclude Include="..\..\include\dodge\Sprite.hpp" />
+    <ClInclude Include="..\..\include\dodge\StackAllocator.hpp" />
+    <ClInclude Include="..\..\include\dodge\StringId.hpp" />
+    <ClInclude Include="..\..\include\dodge\TextEntity.hpp" />
+    <ClInclude Include="..\..\include\dodge\Timer.hpp" />
+    <ClInclude Include="..\..\include\dodge\Transformation.hpp" />
+    <ClInclude Include="..\..\include\dodge\TransPart.hpp" />
+    <ClInclude Include="..\..\include\dodge\ui\EntityUi.hpp" />
+    <ClInclude Include="..\..\include\dodge\ui\EUiEvent.hpp" />
+    <ClInclude Include="..\..\include\dodge\ui\ui.hpp" />
+    <ClInclude Include="..\..\include\dodge\ui\UiButton.hpp" />
+    <ClInclude Include="..\..\include\dodge\ui\uiEventTypes.hpp" />
+    <ClInclude Include="..\..\include\dodge\windows\Timer.hpp" />
+    <ClInclude Include="..\..\include\dodge\windows\utils.hpp" />
+    <ClInclude Include="..\..\include\dodge\windows\WinIO.hpp" />
+    <ClInclude Include="..\..\include\dodge\WinIO.hpp" />
+    <ClInclude Include="..\..\include\dodge\WorldSpace.hpp" />
+    <ClInclude Include="..\..\include\dodge\xml\xml.hpp" />
+    <ClInclude Include="..\..\include\dodge\xml\XmlAttribute.hpp" />
+    <ClInclude Include="..\..\include\dodge\xml\XmlDocument.hpp" />
+    <ClInclude Include="..\..\include\dodge\xml\XmlException.hpp" />
+    <ClInclude Include="..\..\include\dodge\xml\XmlNode.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Animation.cpp" />
+    <ClCompile Include="..\..\src\AnimFrame.cpp" />
+    <ClCompile Include="..\..\src\AssetManager.cpp" />
+    <ClCompile Include="..\..\src\audio\Audio.cpp" />
+    <ClCompile Include="..\..\src\audio\MusicTrack.cpp" />
+    <ClCompile Include="..\..\src\audio\Sound.cpp" />
+    <ClCompile Include="..\..\src\Box2dPhysics.cpp" />
+    <ClCompile Include="..\..\src\EEvent.cpp" />
+    <ClCompile Include="..\..\src\Entity.cpp" />
+    <ClCompile Include="..\..\src\EntityAnimations.cpp" />
+    <ClCompile Include="..\..\src\EntityParallax.cpp" />
+    <ClCompile Include="..\..\src\EntityTransformations.cpp" />
+    <ClCompile Include="..\..\src\EventManager.cpp" />
+    <ClCompile Include="..\..\src\Exception.cpp" />
+    <ClCompile Include="..\..\src\globals.cpp" />
+    <ClCompile Include="..\..\src\KvpParser.cpp" />
+    <ClCompile Include="..\..\src\MapLoader.cpp" />
+    <ClCompile Include="..\..\src\math\common.cpp" />
+    <ClCompile Include="..\..\src\math\fAreEqual.cpp" />
+    <ClCompile Include="..\..\src\math\fContains.cpp" />
+    <ClCompile Include="..\..\src\math\fIntersect.cpp" />
+    <ClCompile Include="..\..\src\math\fOverlap.cpp" />
+    <ClCompile Include="..\..\src\math\shapes\Ellipse.cpp" />
+    <ClCompile Include="..\..\src\math\shapes\LineSegment.cpp" />
+    <ClCompile Include="..\..\src\math\shapes\Polygon.cpp" />
+    <ClCompile Include="..\..\src\math\shapes\Quad.cpp" />
+    <ClCompile Include="..\..\src\math\Vec2f.cpp" />
+    <ClCompile Include="..\..\src\math\Vec2i.cpp" />
+    <ClCompile Include="..\..\src\math\Vec3f.cpp" />
+    <ClCompile Include="..\..\src\math\Vec3i.cpp" />
+    <ClCompile Include="..\..\src\ParallaxSprite.cpp" />
+    <ClCompile Include="..\..\src\Range.cpp" />
+    <ClCompile Include="..\..\src\renderer\Camera.cpp" />
+    <ClCompile Include="..\..\src\renderer\Font.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\Colour.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\NonTexturedAlphaShader.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\Renderer.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\ShaderProgram.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\Texture.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogles2.0\TexturedAlphaShader.cpp" />
+    <ClCompile Include="..\..\src\renderer\SceneGraph.cpp" />
+    <ClCompile Include="..\..\src\ShapeFactory.cpp" />
+    <ClCompile Include="..\..\src\Sprite.cpp" />
+    <ClCompile Include="..\..\src\StackAllocator.cpp" />
+    <ClCompile Include="..\..\src\StringId.cpp" />
+    <ClCompile Include="..\..\src\TextEntity.cpp" />
+    <ClCompile Include="..\..\src\Transformation.cpp" />
+    <ClCompile Include="..\..\src\TransPart.cpp" />
+    <ClCompile Include="..\..\src\ui\EntityUi.cpp" />
+    <ClCompile Include="..\..\src\ui\UiButton.cpp" />
+    <ClCompile Include="..\..\src\windows\Timer.cpp" />
+    <ClCompile Include="..\..\src\windows\WinIO.cpp" />
+    <ClCompile Include="..\..\src\WorldSpace.cpp" />
+    <ClCompile Include="..\..\src\xml\XmlAttribute.cpp" />
+    <ClCompile Include="..\..\src\xml\XmlDocument.cpp" />
+    <ClCompile Include="..\..\src\xml\XmlNode.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

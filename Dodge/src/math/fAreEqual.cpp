@@ -51,7 +51,7 @@ bool lsegPolyAreEqual(const Shape& lseg, const Shape& poly) {
 // ellipseEllipseAreEqual
 //===========================================
 bool ellipseEllipseAreEqual(const Shape& elps1, const Shape& elps2) {
-   return static_cast<const Ellipse&>(elps1).Ellipse::operator==(static_cast<const Ellipse&>(elps2));
+   return static_cast<const Dodge::Ellipse&>(elps1).Ellipse::operator==(static_cast<const Dodge::Ellipse&>(elps2));
 }
 
 //===========================================
@@ -72,7 +72,7 @@ bool ellipseBoxAreEqual(const Shape& elps, const Shape& box) {
 // polyPolyAreEqual
 //===========================================
 bool polyPolyAreEqual(const Shape& poly1, const Shape& poly2) {
-   return static_cast<const Polygon&>(poly1).Polygon::operator==(static_cast<const Polygon&>(poly2));
+   return static_cast<const Dodge::Polygon&>(poly1).Polygon::operator==(static_cast<const Dodge::Polygon&>(poly2));
 }
 
 //===========================================

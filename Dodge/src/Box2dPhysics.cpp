@@ -27,7 +27,7 @@ EventManager Box2dPhysics::m_eventManager = EventManager();
 set<EEvent*> Box2dPhysics::m_ignore = set<EEvent*>();
 map<Entity*, Box2dPhysics*> Box2dPhysics::m_physEnts = map<Entity*, Box2dPhysics*>();
 b2Vec2 Box2dPhysics::m_gravity = b2Vec2(0.0, -9.8);
-b2World Box2dPhysics::m_world = b2World(m_gravity, true);
+b2World Box2dPhysics::m_world = b2World(m_gravity);
 
 
 //===========================================

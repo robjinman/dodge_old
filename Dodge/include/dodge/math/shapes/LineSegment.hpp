@@ -65,7 +65,7 @@ class LineSegment : public Shape {
 // LineSegment::setPoint1
 //===========================================
 inline void LineSegment::setPoint1(float32_t x, float32_t y) {
-   m_model.setVertex(0, {x, y, 0.f});
+   m_model.setVertex(0, vvv_t(x, y, 0.f));
 }
 
 //===========================================
@@ -79,7 +79,7 @@ inline void LineSegment::setPoint1(const Vec2f& p1) {
 // LineSegment::setPoint2
 //===========================================
 inline void LineSegment::setPoint2(float32_t x, float32_t y) {
-   m_model.setVertex(1, {x, y, 0.f});
+   m_model.setVertex(1, vvv_t(x, y, 0.f));
 }
 
 //===========================================

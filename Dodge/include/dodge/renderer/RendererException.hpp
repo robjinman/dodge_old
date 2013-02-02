@@ -21,7 +21,8 @@ class RendererException : public Exception {
          : Exception(msg, file, line) {}
 
       virtual Renderer::exceptionWrapper_t constructWrapper() const {
-         return { Renderer::RENDERER_EXCEPTION, new RendererException(*this) };
+         Renderer::exceptionWrapper_t ret(Renderer::RENDERER_EXCEPTION, new RendererException(*this));
+         return ret;
       }
 
       virtual ~RendererException() throw() {}

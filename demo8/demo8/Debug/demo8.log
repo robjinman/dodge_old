@@ -1,0 +1,17 @@
+﻿Build started 02/02/2013 22:22:02.
+     1>Project "D:\Code\projects\Dodge\demo8\demo8\demo8.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     1>Link:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\demo8.exe" /INCREMENTAL /NOLOGO /LIBPATH:D:\Code\projects\Dodge\Dodge\lib Box2D.lib Dodge.lib glew32.lib glew32mx.lib Opengl32.lib SDL.lib SDL_mixer.lib SDLmain.lib pnglite.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"..\demo8.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"..\demo8.lib" /MACHINE:X86 Debug\main.obj
+         pnglite.lib(pnglite.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+     1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+     1>main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+     1>LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+         Generating code
+         Finished generating code
+         demo8.vcxproj -> D:\Code\projects\Dodge\demo8\demo8\..\demo8.exe
+     1>Done Building Project "D:\Code\projects\Dodge\demo8\demo8\demo8.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.30

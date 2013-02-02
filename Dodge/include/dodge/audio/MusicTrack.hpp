@@ -8,6 +8,7 @@
 
 
 #include <boost/shared_ptr.hpp>
+#include <SDL_mixer/SDL_mixer.h>
 #include <boost/enable_shared_from_this.hpp>
 #include <string>
 #include "../xml/xml.hpp"

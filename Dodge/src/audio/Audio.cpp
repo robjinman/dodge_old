@@ -3,7 +3,7 @@
  * Date: 2013
  */
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <audio/AudioException.hpp>
 #include <audio/Audio.hpp>
 

@@ -29,13 +29,15 @@ class IModel {
       // IModel::IModel
       //===========================================
       IModel(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType)
-         : m_matrix({1.f, 0.f, 0.f, 0.f,
-                     0.f, 1.f, 0.f, 0.f,
-                     0.f, 0.f, 1.f, 0.f,
-                     0.f, 0.f, 0.f, 1.f}),
-           m_primitiveType(primitiveType),
+         : m_primitiveType(primitiveType),
            m_renderMode(renderMode),
-           m_handle(0) {}
+           m_handle(0) {
+
+         m_matrix[0] = 1.0; m_matrix[4] = 0.0; m_matrix[8]  = 0.0; m_matrix[12] = 0.0;
+         m_matrix[1] = 0.0; m_matrix[5] = 1.0; m_matrix[9]  = 0.0; m_matrix[13] = 0.0;
+         m_matrix[2] = 0.0; m_matrix[6] = 0.0; m_matrix[10] = 1.0; m_matrix[14] = 0.0;
+         m_matrix[3] = 0.0; m_matrix[7] = 0.0; m_matrix[11] = 0.0; m_matrix[15] = 1.0;
+      }
 
       //===========================================
       // IModel::getPrimitiveType
@@ -385,6 +387,12 @@ class Model : public IModel {
 
 
 struct vvvcccc_t {
+   vvvcccc_t() {}
+   vvvcccc_t(Renderer::vertexElement_t v1_, Renderer::vertexElement_t v2_, Renderer::vertexElement_t v3_,
+      Renderer::colourElement_t c1_, Renderer::colourElement_t c2_, Renderer::colourElement_t c3_,
+      Renderer::colourElement_t c4_)
+         : v1(v1_), v2(v2_), v3(v3_), c1(c1_), c2(c2_), c3(c3_), c4(c4_) {}
+
    Renderer::vertexElement_t v1;
    Renderer::vertexElement_t v2;
    Renderer::vertexElement_t v3;
@@ -401,6 +409,10 @@ struct vvvcccc_t {
 };
 
 struct vvv_t {
+   vvv_t() {}
+   vvv_t(Renderer::vertexElement_t v1_, Renderer::vertexElement_t v2_, Renderer::vertexElement_t v3_)
+      : v1(v1_), v2(v2_), v3(v3_) {}
+
    Renderer::vertexElement_t v1;
    Renderer::vertexElement_t v2;
    Renderer::vertexElement_t v3;
@@ -413,6 +425,12 @@ struct vvv_t {
 };
 
 struct vvvttcccc_t {
+   vvvttcccc_t() {}
+   vvvttcccc_t(Renderer::vertexElement_t v1_, Renderer::vertexElement_t v2_, Renderer::vertexElement_t v3_,
+      Renderer::texCoordElement_t t1_, Renderer::texCoordElement_t t2_, Renderer::colourElement_t c1_,
+      Renderer::colourElement_t c2_, Renderer::colourElement_t c3_, Renderer::colourElement_t c4_)
+         : v1(v1_), v2(v2_), v3(v3_), t1(t1_), t2(t2_), c1(c1_), c2(c2_), c3(c3_), c4(c4_) {}
+
    Renderer::vertexElement_t v1;
    Renderer::vertexElement_t v2;
    Renderer::vertexElement_t v3;
@@ -431,6 +449,11 @@ struct vvvttcccc_t {
 };
 
 struct vvvtt_t {
+   vvvtt_t() {}
+   vvvtt_t(Renderer::vertexElement_t v1_, Renderer::vertexElement_t v2_, Renderer::vertexElement_t v3_,
+      Renderer::texCoordElement_t t1_, Renderer::texCoordElement_t t2_)
+         : v1(v1_), v2(v2_), v3(v3_), t1(t1_), t2(t2_) {}
+
    Renderer::vertexElement_t v1;
    Renderer::vertexElement_t v2;
    Renderer::vertexElement_t v3;

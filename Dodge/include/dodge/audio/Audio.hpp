@@ -8,7 +8,7 @@
 
 
 #include <string>
-#include <SDL_mixer.h>
+#include <SDL_mixer/SDL_mixer.h>
 #include "../definitions.hpp"
 #include "Sound.hpp"
 #include "MusicTrack.hpp"

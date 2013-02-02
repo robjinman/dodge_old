@@ -1,0 +1,70 @@
+﻿Build started 02/02/2013 22:21:40.
+     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D DEBUG /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\windows\WinIO.cpp
+         WinIO.cpp
+     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodge.lib" /NOLOGO Debug\Animation.obj
+         Debug\AnimFrame.obj
+         Debug\AssetManager.obj
+         Debug\Audio.obj
+         Debug\MusicTrack.obj
+         Debug\Sound.obj
+         Debug\Box2dPhysics.obj
+         Debug\EEvent.obj
+         Debug\Entity.obj
+         Debug\EntityAnimations.obj
+         Debug\EntityParallax.obj
+         Debug\EntityTransformations.obj
+         Debug\EventManager.obj
+         Debug\Exception.obj
+         Debug\globals.obj
+         Debug\KvpParser.obj
+         Debug\MapLoader.obj
+         Debug\common.obj
+         Debug\fAreEqual.obj
+         Debug\fContains.obj
+         Debug\fIntersect.obj
+         Debug\fOverlap.obj
+         Debug\Ellipse.obj
+         Debug\LineSegment.obj
+         Debug\Polygon.obj
+         Debug\Quad.obj
+         Debug\Vec2f.obj
+         Debug\Vec2i.obj
+         Debug\Vec3f.obj
+         Debug\Vec3i.obj
+         Debug\ParallaxSprite.obj
+         Debug\Range.obj
+         Debug\Camera.obj
+         Debug\Font.obj
+         Debug\Colour.obj
+         Debug\NonTexturedAlphaShader.obj
+         Debug\Renderer.obj
+         Debug\ShaderProgram.obj
+         Debug\Texture.obj
+         Debug\TexturedAlphaShader.obj
+         Debug\SceneGraph.obj
+         Debug\ShapeFactory.obj
+         Debug\Sprite.obj
+         Debug\StackAllocator.obj
+         Debug\StringId.obj
+         Debug\TextEntity.obj
+         Debug\Transformation.obj
+         Debug\TransPart.obj
+         Debug\EntityUi.obj
+         Debug\UiButton.obj
+         Debug\Timer.obj
+         Debug\WinIO.obj
+         Debug\WorldSpace.obj
+         Debug\XmlAttribute.obj
+         Debug\XmlDocument.obj
+         Debug\XmlNode.obj
+         Dodge.vcxproj -> D:\Code\projects\Dodge\Dodge\vcpp\Dodge\..\..\lib\Dodge.lib
+     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:16.22

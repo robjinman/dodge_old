@@ -35,7 +35,7 @@ Renderer::Renderer()
      m_running(false),
      m_thread(NULL),
      m_msgQueueEmpty(true),
-     m_exception({UNKNOWN_EXCEPTION, NULL}),
+     m_exception(UNKNOWN_EXCEPTION, NULL),
      m_errorPending(false)
 #ifdef DEBUG
    , m_frameRate(0)
@@ -415,13 +415,13 @@ void Renderer::renderLoop() {
    }
    catch (Exception& e) {
       e.prepend("Exception caught in render loop; ");
-      m_exception = { EXCEPTION, new Exception(e) };
+      m_exception = exceptionWrapper_t(EXCEPTION, new Exception(e));
       m_errorPending = true;
 
       while (m_running) {}
    }
    catch (...) {
-      m_exception = { UNKNOWN_EXCEPTION, NULL };
+      m_exception = exceptionWrapper_t(UNKNOWN_EXCEPTION, NULL);
       m_errorPending = true;
 
       while (m_running) {}

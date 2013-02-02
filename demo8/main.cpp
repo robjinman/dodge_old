@@ -29,7 +29,9 @@ void keyDown(int key) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F:
          cout << "Frame rate (main loop): " << frameRate << "fps\n";
+#ifdef DEBUG
          cout << "Frame rate (render loop): " << renderer.getFrameRate() << "fps\n" << flush;
+#endif
       break;
    }
 }
@@ -65,12 +67,12 @@ void constructModels() {
          b = !b;
 
          vvvtt_t verts[] = {
-            {x + w,   y,       1.0,    1.0, 0.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0},
-            {x + w,   y + h,   1.0,    1.0, 1.0},
-            {x    ,   y + h,   1.0,    0.0, 1.0},
-            {x    ,   y,       1.0,    0.0, 0.0}
+            vvvtt_t(x + w,   y,       1.0,    1.0, 0.0),
+            vvvtt_t(x + w,   y + h,   1.0,    1.0, 1.0),
+            vvvtt_t(x    ,   y,       1.0,    0.0, 0.0),
+            vvvtt_t(x + w,   y + h,   1.0,    1.0, 1.0),
+            vvvtt_t(x    ,   y + h,   1.0,    0.0, 1.0),
+            vvvtt_t(x    ,   y,       1.0,    0.0, 0.0)
          };
 
          Colour col = b ? Colour(1.0, 0.0, 0.0, 1.0) : Colour(0.0, 0.0, 1.0, 1.0);
@@ -113,7 +115,9 @@ int main() {
          win.doEvents();
          computeFrameRate();
          drawModels();
+#ifdef DEBUG
          range.dbg_draw(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 1.f), 2, 2);
+#endif
          renderer.tick(Colour(1.0, 1.0, 0.0, 1.0));
       }
    }

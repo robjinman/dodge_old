@@ -9,6 +9,7 @@
 #include <math/shapes/Polygon.hpp>
 #include <StringId.hpp>
 #include <cml/cml.h>
+#include <globals.hpp>
 
 
 using namespace cml;
@@ -312,18 +313,23 @@ void Polygon::updateModels() const {
 // Polygon::updateOutlineModel
 //===========================================
 void Polygon::updateOutlineModel() const {
-   vvv_t verts[m_nVerts * 2];
+   StackAllocator& stack = gGetMemStack();
+   StackAllocator::marker_t marker = stack.getMarker();
+
+   vvv_t* verts = reinterpret_cast<vvv_t*>(stack.alloc(m_nVerts * 2 * sizeof(vvv_t)));
 
    int i = 0;
    for (int v = 0; v < m_nVerts; ++v) {
-      verts[i] = { getVertex(v).x, getVertex(v % m_nVerts).y, 0.f };
+      verts[i] = vvv_t(getVertex(v).x, getVertex(v % m_nVerts).y, 0.f);
       ++i;
 
-      verts[i] = { getVertex((v + 1) % m_nVerts).x, getVertex((v + 1) % m_nVerts).y, 0.f };
+      verts[i] = vvv_t(getVertex((v + 1) % m_nVerts).x, getVertex((v + 1) % m_nVerts).y, 0.f);
       ++i;
    }
 
    m_outlineModel.setVertices(0, verts, m_nVerts * 2);
+
+   stack.freeToMarker(marker);
 }
 
 //===========================================
@@ -334,23 +340,29 @@ void Polygon::updateInteriorModel() const { // TODO: for each convex child
 
    // Construct triangle fan
 
+
+   StackAllocator& stack = gGetMemStack();
+   StackAllocator::marker_t marker = stack.getMarker();
+
    // The number of vertices in a triangle fan is 3n-6,
    // where n is the number of vertices in the polygon.
-   vvv_t verts[3 * m_nVerts - 6];
+   vvv_t* verts = reinterpret_cast<vvv_t*>(stack.alloc((3 * m_nVerts - 6) * sizeof(vvv_t)));
 
    int i = 0;
    for (int v = 1; v < m_nVerts - 1; ++v) {
-      verts[i] = { getVertex(0).x, getVertex(0).y, 0.f };
+      verts[i] = vvv_t(getVertex(0).x, getVertex(0).y, 0.f);
       ++i;
 
-      verts[i] = { getVertex(v).x, getVertex(v).y, 0.f };
+      verts[i] = vvv_t(getVertex(v).x, getVertex(v).y, 0.f);
       ++i;
 
-      verts[i] = { getVertex(v + 1).x, getVertex(v + 1).y, 0.f };
+      verts[i] = vvv_t(getVertex(v + 1).x, getVertex(v + 1).y, 0.f);
       ++i;
    }
 
    m_interiorModel.setVertices(0, verts, 3 * m_nVerts - 6);
+
+   stack.freeToMarker(marker);
 }
 
 //===========================================
@@ -359,14 +371,14 @@ void Polygon::updateInteriorModel() const { // TODO: for each convex child
 Vec2f Polygon::getMinimum() const {
    if (m_nVerts == 0) return Vec2f(0, 0);
 
-   Vec2f min(m_verts[0]->x, m_verts[0]->y);
+   Vec2f m(m_verts[0]->x, m_verts[0]->y);
 
    for (int i = 1; i < m_nVerts; ++i) {
-      if (m_verts[i]->x < min.x) min.x = m_verts[i]->x;
-      if (m_verts[i]->y < min.y) min.y = m_verts[i]->y;
+      if (m_verts[i]->x < m.x) m.x = m_verts[i]->x;
+      if (m_verts[i]->y < m.y) m.y = m_verts[i]->y;
    }
 
-   return min;
+   return m;
 }
 
 //===========================================
@@ -375,14 +387,14 @@ Vec2f Polygon::getMinimum() const {
 Vec2f Polygon::getMaximum() const {
    if (m_nVerts == 0) return Vec2f(0, 0);
 
-   Vec2f max(m_verts[0]->x, m_verts[0]->y);
+   Vec2f m(m_verts[0]->x, m_verts[0]->y);
 
    for (int i = 1; i < m_nVerts; ++i) {
-      if (m_verts[i]->x > max.x) max.x = m_verts[i]->x;
-      if (m_verts[i]->y > max.y) max.y = m_verts[i]->y;
+      if (m_verts[i]->x > m.x) m.x = m_verts[i]->x;
+      if (m_verts[i]->y > m.y) m.y = m_verts[i]->y;
    }
 
-   return max;
+   return m;
 }
 
 //===========================================
