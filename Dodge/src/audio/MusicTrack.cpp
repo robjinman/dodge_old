@@ -3,7 +3,6 @@
  * Date: 2013
  */
 
-#include <SDL_mixer.h>
 #include <StringId.hpp>
 #include <audio/MusicTrack.hpp>
 #include <audio/Audio.hpp>

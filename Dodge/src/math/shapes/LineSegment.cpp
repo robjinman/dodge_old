@@ -27,8 +27,8 @@ LineSegment::LineSegment(float32_t p1x, float32_t p1y, float32_t p2x, float32_t 
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
-      {p1x, p1y, 0.f},
-      {p2x, p2y, 0.f}
+      vvv_t(p1x, p1y, 0.f),
+      vvv_t(p2x, p2y, 0.f)
    };
 
    m_model.setVertices(0, verts, 2);
@@ -43,8 +43,8 @@ LineSegment::LineSegment(const Vec2f& p1, const Vec2f& p2)
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
-      {p1.x, p1.y, 0.f},
-      {p2.x, p2.y, 0.f}
+      vvv_t(p1.x, p1.y, 0.f),
+      vvv_t(p2.x, p2.y, 0.f)
    };
 
    m_model.setVertices(0, verts, 2);
@@ -59,8 +59,8 @@ LineSegment::LineSegment(const XmlNode data)
      m_renderer(Renderer::getInstance()) {
 
    vvv_t verts[] = {
-      {0.f, 0.f, 0.f},
-      {0.f, 0.f, 0.f}
+      vvv_t(0.f, 0.f, 0.f),
+      vvv_t(0.f, 0.f, 0.f)
    };
 
    m_model.setVertices(0, verts, 2);
@@ -76,8 +76,8 @@ LineSegment::LineSegment(const XmlNode data)
       XML_NODE_CHECK(node, Vec2f);
       Vec2f p2(node);
 
-      m_model.setVertex(0, {p1.x, p1.y, 0.f});
-      m_model.setVertex(1, {p2.x, p2.y, 0.f});
+      m_model.setVertex(0, vvv_t(p1.x, p1.y, 0.f));
+      m_model.setVertex(1, vvv_t(p2.x, p2.y, 0.f));
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class LineSegment; ");

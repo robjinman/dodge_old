@@ -7,7 +7,13 @@
 #define __RENDERER_HPP__
 
 
+#ifdef WIN32
+#include <windows.h>
+#include <windowsx.h>
+#include <GLEW/glew.h>
+#else
 #include <GLES2/gl2.h>
+#endif
 #include <cml/cml.h>
 #include <map>
 #include <queue>
@@ -69,6 +75,9 @@ class Renderer {
       };
 
       struct exceptionWrapper_t {
+         exceptionWrapper_t(exceptionType_t t, void* d)
+            : type(t), data(d) {}
+
          exceptionType_t type;
          void* data;
       };

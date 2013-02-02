@@ -7,7 +7,13 @@
 #define __COLOUR_HPP__
 
 
+#ifdef WIN32
+#include <windows.h>
+#include <windowsx.h>
+#include <GLEW/glew.h>
+#else
 #include <GLES2/gl2.h>
+#endif
 #include "../../xml/xml.hpp"
 
 

@@ -301,12 +301,12 @@ void EntityAnimations::updateModel() {
    tY2 = 1.f - tY2;
 
    vvvtt_t verts[] = {
-      {w,   0.0,  z,    tX2, tY1},
-      {w,   h,    z,    tX2, tY2},
-      {0.0, 0.0,  z,    tX1, tY1},
-      {w,   h,    z,    tX2, tY2},
-      {0.0, h,    z,    tX1, tY2},
-      {0.0, 0.0,  z,    tX1, tY1}
+      vvvtt_t(w,   0.0,  z,    tX2, tY1),
+      vvvtt_t(w,   h,    z,    tX2, tY2),
+      vvvtt_t(0.0, 0.0,  z,    tX1, tY1),
+      vvvtt_t(w,   h,    z,    tX2, tY2),
+      vvvtt_t(0.0, h,    z,    tX1, tY2),
+      vvvtt_t(0.0, 0.0,  z,    tX1, tY1)
    };
 
    m_model.setVertices(0, verts, 6);

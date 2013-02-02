@@ -136,7 +136,7 @@ size_t Sprite::getSize() const {
       - sizeof(EntityTransformations)
       - sizeof(EntityAnimations)
       + Entity::getSize()
-      + EntityTransformations::getSize();
+      + EntityTransformations::getSize()
       + EntityAnimations::getSize();
 }
 

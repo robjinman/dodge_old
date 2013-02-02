@@ -10,6 +10,7 @@
 #ifdef DEBUG
 #include <ostream>
 #endif
+#include <vector>
 #include "xml/xml.hpp"
 #include <boost/shared_ptr.hpp>
 #include "math/Vec2f.hpp"

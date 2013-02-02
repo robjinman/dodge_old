@@ -14,29 +14,23 @@ using namespace std;
 namespace Dodge {
 
 
+MapLoader* MapLoader::m_instance = NULL;
+
+
 void dummyFunc1(const XmlNode) {}
 pAsset_t dummyFunc2(const XmlNode) { return pAsset_t(); }
 void dummyFunc3(pAsset_t) {}
 
 
-bool MapLoader::m_init = false;
-
-MapLoader::refCountTable_t MapLoader::m_refCountTable;
-list<Vec2i> MapLoader::m_pendingUnload;
-AssetManager MapLoader::m_assetManager;
-
-Functor<void, TYPELIST_1(const XmlNode)> MapLoader::m_setMapSettingsFunc(dummyFunc1);
-Functor<pAsset_t, TYPELIST_1(const XmlNode)> MapLoader::m_factoryFunc(dummyFunc2);
-Functor<void, TYPELIST_1(pAsset_t)> MapLoader::m_deleteAssetFunc(dummyFunc3);
-
-Range MapLoader::m_mapBoundary;
-vector<vector<MapLoader::mapSegment_t> > MapLoader::m_segments;
-Vec2i MapLoader::m_centreSegment;
-Vec2f MapLoader::m_segmentSize;
-
-size_t MapLoader::m_targetMemUsage;
-size_t MapLoader::m_currentMemUsage = 0;
-
+//===========================================
+// MapLoader::MapLoader
+//===========================================
+MapLoader::MapLoader()
+   : m_init(false),
+     m_setMapSettingsFunc(dummyFunc1),
+     m_factoryFunc(dummyFunc2),
+     m_deleteAssetFunc(dummyFunc3),
+     m_currentMemUsage(0) {}
 
 //===========================================
 // MapLoader::initialise

@@ -148,7 +148,7 @@ bool intersect(const Shape& obj1, const Vec2f& pos1, const Shape& obj2, const Ve
 
    dispatchTable_t::iterator it = tbl->find(makePair(obj1.typeId(), obj2.typeId()));
    if (it == tbl->end())
-      throw Exception("Error in Math::intersect(); unrecognised shape types", __FILE__, __LINE__);
+      throw Exception("Error in Math::intersect(); Unrecognised shape types", __FILE__, __LINE__);
 
    return it->second(obj1, pos1, obj2, pos2);
 }

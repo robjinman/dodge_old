@@ -241,12 +241,12 @@ void TextEntity::updateModel() const {
       tY1 = 1.f - tY1;
       tY2 = 1.f - tY2;
 
-      verts[v] = { chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, tY1 };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2 };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           tY1 };    ++v;
-      verts[v] = { chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2 };    ++v;
-      verts[v] = { chX,            chY + m_size.y, z,    srcX / texW,           tY2 };    ++v;
-      verts[v] = { chX,            chY,            z,    srcX / texW,           tY1 };    ++v;
+      verts[v] = vvvtt_t(chX + m_size.x, chY,            z,    (srcX + pxChW) / texW, tY1);    ++v;
+      verts[v] = vvvtt_t(chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2);    ++v;
+      verts[v] = vvvtt_t(chX,            chY,            z,    srcX / texW,           tY1);    ++v;
+      verts[v] = vvvtt_t(chX + m_size.x, chY + m_size.y, z,    (srcX + pxChW) / texW, tY2);    ++v;
+      verts[v] = vvvtt_t(chX,            chY + m_size.y, z,    srcX / texW,           tY2);    ++v;
+      verts[v] = vvvtt_t(chX,            chY,            z,    srcX / texW,           tY1);    ++v;
    }
 
    m_model.eraseVertices();

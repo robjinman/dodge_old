@@ -1,6 +1,6 @@
 PLATFORM = linux
 BASE_DIR = src
-INCL = -I/usr/include -Iinclude -Iinclude/dodge
+INCL = -Iinclude -Iinclude/dodge
 include src/Makefile.inc
 CC = g++
 FLAGS = -std=c++0x `sdl-config --cflags` -O3 -Wall -g -DDEBUG
