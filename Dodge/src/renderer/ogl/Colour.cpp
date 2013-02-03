@@ -6,7 +6,7 @@
 #include <cstring>
 #include <cstdio>
 #include <Exception.hpp>
-#include <renderer/ogles2.0/Colour.hpp>
+#include <renderer/ogl/Colour.hpp>
 
 
 using namespace std;

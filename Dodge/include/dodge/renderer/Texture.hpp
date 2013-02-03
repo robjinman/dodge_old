@@ -4,7 +4,7 @@
  */
 
 #ifdef WIN32
-   #include "ogles2.0/Texture.hpp"
+   #include "ogl/Texture.hpp"
 #else
-   #include "ogles2.0/Texture.hpp"
+   #include "ogl/Texture.hpp"
 #endif

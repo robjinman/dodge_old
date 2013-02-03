@@ -118,6 +118,14 @@ void WinIO::createGLContext() {
 }
 
 //===========================================
+// WinIO::isSupportedGLVersion
+//===========================================
+bool WinIO::isSupportedGLVersion(glVersion_t version) const {
+   // TODO
+   return true;
+}
+
+//===========================================
 // WinIO::unregisterCallback
 //===========================================
 void WinIO::unregisterCallback(winEvent_t event, callback_t func) {

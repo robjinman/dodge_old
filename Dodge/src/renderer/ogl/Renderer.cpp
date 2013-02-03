@@ -5,11 +5,11 @@
 
 #include <cstdlib>
 #include <cassert>
-#include <renderer/ogles2.0/Renderer.hpp>
+#include <renderer/ogl/Renderer.hpp>
 #include <renderer/RendererException.hpp>
 #include <renderer/Model.hpp>
 #include <renderer/SceneGraph.hpp>
-#include <renderer/ogles2.0/ShaderProgram.hpp>
+#include <renderer/ogl/RenderMode.hpp>
 #include <renderer/GL_CHECK.hpp>
 #include <Timer.hpp>
 
@@ -28,7 +28,7 @@ Renderer* Renderer::m_instance = NULL;
 // Renderer::Renderer
 //===========================================
 Renderer::Renderer()
-   : m_activeShaderProg(NULL),
+   : m_activeRenderMode(NULL),
      m_mode(UNDEFINED),
      m_init(false),
      m_camera(new Camera(1.f, 1.f)),
@@ -63,11 +63,21 @@ Renderer::Renderer()
 // Renderer::init
 //===========================================
 void Renderer::init() {
+   WinIO win;
+   win.createGLContext();
+
+   m_fixedPipeline = !win.isSupportedGLVersion(WinIO::GL_2_0);
+
    GL_CHECK(glEnable(GL_CULL_FACE));
    GL_CHECK(glFrontFace(GL_CCW));
 
-   constructShaderProgs();
-   setMode(TEXTURED_ALPHA);
+   if (m_fixedPipeline) {
+      m_activeRenderMode = RenderMode::create(FIXED_FUNCTION);
+   }
+   else {
+      constructRenderModes();
+      setMode(TEXTURED_ALPHA);
+   }
 }
 
 //===========================================
@@ -165,26 +175,29 @@ GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
 // Renderer::setMode
 //===========================================
 void Renderer::setMode(mode_t mode) {
+   if (m_fixedPipeline) return;
    if (mode == m_mode) return;
 
-   map<mode_t, ShaderProgram*>::iterator it = m_shaderProgs.find(mode);
-   assert(it != m_shaderProgs.end());
+   map<mode_t, RenderMode*>::iterator it = m_renderModes.find(mode);
+   assert(it != m_renderModes.end());
 
-   m_activeShaderProg = it->second;
-   m_activeShaderProg->setActive();
+   m_activeRenderMode = it->second;
+   m_activeRenderMode->setActive();
 
    m_mode = mode;
 }
 
 //===========================================
-// Renderer::constructShaderProgs
+// Renderer::constructRenderModes
 //===========================================
-void Renderer::constructShaderProgs() {
-   ShaderProgram* prog = ShaderProgram::create(NONTEXTURED_ALPHA);
-   m_shaderProgs[NONTEXTURED_ALPHA] = prog;
+void Renderer::constructRenderModes() {
+   if (m_fixedPipeline) return;
 
-   prog = ShaderProgram::create(TEXTURED_ALPHA);
-   m_shaderProgs[TEXTURED_ALPHA] = prog;
+   RenderMode* mode = RenderMode::create(NONTEXTURED_ALPHA);
+   m_renderModes[NONTEXTURED_ALPHA] = mode;
+
+   mode = RenderMode::create(TEXTURED_ALPHA);
+   m_renderModes[TEXTURED_ALPHA] = mode;
 }
 
 //===========================================
@@ -362,8 +375,6 @@ void Renderer::processMessages() {
 void Renderer::renderLoop() {
    try {
       WinIO win;
-      win.createGLContext();
-
       init();
 
       while (m_running) {
@@ -376,20 +387,23 @@ void Renderer::renderLoop() {
 
             if (model->getNumVertices() == 0) continue;
 
-            mode_t mode = model->getRenderMode();
+            if (!m_fixedPipeline) {
+               mode_t mode = model->getRenderMode();
 
-            for (auto j = m_shaderProgs.begin(); j != m_shaderProgs.end(); ++j) {
-               if (j->first != mode && j->second->hasPending()) {
-                  setMode(j->first);
-                  j->second->flush();
+               for (auto j = m_renderModes.begin(); j != m_renderModes.end(); ++j) {
+                  if (j->first != mode && j->second->hasPending()) {
+                     setMode(j->first);
+                     j->second->flush();
+                  }
                }
+
+               setMode(mode);
             }
 
-            setMode(mode);
-            m_activeShaderProg->sendData(model, m_state[m_idxRender].P);
+            m_activeRenderMode->sendData(model, m_state[m_idxRender].P);
          }
 
-         m_activeShaderProg->flush();
+         m_activeRenderMode->flush();
 
          win.swapBuffers();
 

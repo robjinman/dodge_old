@@ -3,28 +3,28 @@
  * Date: 2012
  */
 
-#ifndef __TEXTURED_ALPHA_SHADER_HPP__
-#define __TEXTURED_ALPHA_SHADER_HPP__
+#ifndef __TEXTURED_ALPHA_MODE_HPP__
+#define __TEXTURED_ALPHA_MODE_HPP__
 
 
 #include <memory>
-#include "ShaderProgram.hpp"
+#include "RenderMode.hpp"
 #include "../../definitions.hpp"
 
 
 namespace Dodge {
 
 
-class TexturedAlphaShader : public ShaderProgram {
+class TexturedAlphaMode : public RenderMode {
    public:
-      TexturedAlphaShader();
+      TexturedAlphaMode();
 
       virtual bool hasPending() const;
       virtual void setActive();
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat);
       virtual void flush();
 
-      virtual ~TexturedAlphaShader() {}
+      virtual ~TexturedAlphaMode() {}
 
    private:
       struct batch_t {
@@ -66,9 +66,9 @@ class TexturedAlphaShader : public ShaderProgram {
 };
 
 //===========================================
-// TexturedAlphaShader::isCompatibleWithPending
+// TexturedAlphaMode::isCompatibleWithPending
 //===========================================
-inline bool TexturedAlphaShader::isCompatibleWithPending(const IModel* A) const {
+inline bool TexturedAlphaMode::isCompatibleWithPending(const IModel* A) const {
    if (m_pending.size() == 0) return true;
 
    const IModel* B = m_pending.back();

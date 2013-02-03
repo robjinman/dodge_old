@@ -4,8 +4,8 @@
  */
 
 #include <cstring>
-#include <renderer/ogles2.0/Texture.hpp>
-#include <renderer/ogles2.0/Renderer.hpp>
+#include <renderer/ogl/Texture.hpp>
+#include <renderer/ogl/Renderer.hpp>
 #include <PNG_CHECK.hpp>
 #include <StringId.hpp>
 

@@ -29,8 +29,6 @@ bool WinIO::m_init = false;
 
 //===========================================
 // WinIO::init
-//
-//! @brief Opens a window and performs various setup operations.
 //===========================================
 void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    m_width = w;
@@ -130,18 +128,39 @@ void WinIO::createWindow(const string& title, int width, int height, bool fullsc
       0, 0, 0                             // Layer Masks Ignored
    };
 
-   if (!(m_hDC = GetDC(m_hWnd))) { destroyWindow(); throw Exception("Error creating GL window", __FILE__, __LINE__); }
-   if (!(PixelFormat = ChoosePixelFormat(m_hDC, &pfd))) { destroyWindow(); throw Exception("Error creating GL window", __FILE__, __LINE__); }
-   if (!SetPixelFormat(m_hDC, PixelFormat, &pfd)) { destroyWindow(); throw Exception("Error creating GL window", __FILE__, __LINE__); }
+   if (!(m_hDC = GetDC(m_hWnd))) {
+      destroyWindow();
+      throw Exception("Error creating GL window", __FILE__, __LINE__);
+   }
+
+   if (!(PixelFormat = ChoosePixelFormat(m_hDC, &pfd))) {
+      destroyWindow();
+      throw Exception("Error creating GL window", __FILE__, __LINE__);
+   }
+
+   if (!SetPixelFormat(m_hDC, PixelFormat, &pfd)) {
+      destroyWindow();
+      throw Exception("Error creating GL window", __FILE__, __LINE__);
+   }
 
    ShowWindow(m_hWnd,SW_SHOW);
    SetForegroundWindow(m_hWnd);
    SetFocus(m_hWnd);
 }
 
+//===========================================
+// WinIO::createGLContext
+//===========================================
 void WinIO::createGLContext() {
-   if (!(m_hRC = wglCreateContext(m_hDC))) { destroyWindow(); throw Exception("Error creating GL context", __FILE__, __LINE__); }
-   if (!wglMakeCurrent(m_hDC, m_hRC)) { destroyWindow(); throw Exception("Error creating GL context", __FILE__, __LINE__); }
+   if (!(m_hRC = wglCreateContext(m_hDC))) {
+      destroyWindow();
+      throw Exception("Error creating GL context", __FILE__, __LINE__);
+   }
+
+   if (!wglMakeCurrent(m_hDC, m_hRC)) {
+      destroyWindow();
+      throw Exception("Error creating GL context", __FILE__, __LINE__);
+   }
 
    if (glewInit() != GLEW_OK) {
       destroyWindow();
@@ -150,9 +169,33 @@ void WinIO::createGLContext() {
 }
 
 //===========================================
+// WinIO::isSupportedGLVersion
+//===========================================
+bool WinIO::isSupportedGLVersion(glVersion_t version) const {
+   switch (version) {
+      case: GL_1_1:     return GLEW_VERSION_1_1;      break;
+      case: GL_1_2:     return GLEW_VERSION_1_2;      break;
+      case: GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
+      case: GL_1_3:     return GLEW_VERSION_1_3;      break;
+      case: GL_1_4:     return GLEW_VERSION_1_4;      break;
+      case: GL_1_5:     return GLEW_VERSION_1_5;      break;
+      case: GL_2_0:     return GLEW_VERSION_2_0;      break;
+      case: GL_2_1:     return GLEW_VERSION_2_1;      break;
+      case: GL_3_0:     return GLEW_VERSION_3_0;      break;
+      case: GL_3_1:     return GLEW_VERSION_3_1;      break;
+      case: GL_3_2:     return GLEW_VERSION_3_2;      break;
+      case: GL_3_3:     return GLEW_VERSION_3_3;      break;
+      case: GL_4_0:     return GLEW_VERSION_4_0;      break;
+      case: GL_4_1:     return GLEW_VERSION_4_1;      break;
+      case: GL_4_2:     return GLEW_VERSION_4_2;      break;
+      case: GL_4_3:     return GLEW_VERSION_4_3;      break;
+
+      default: return false;
+   };
+}
+
+//===========================================
 // WinIO::destroyWindow
-//
-//! @brief Destroys the window and calls exit(0)
 //===========================================
 void WinIO::destroyWindow() {
    if (m_fullscreen) {
@@ -190,6 +233,9 @@ void WinIO::destroyWindow() {
    m_init = false;
 }
 
+//===========================================
+// WinIO::wndProc
+//===========================================
 LRESULT CALLBACK WinIO::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
    try {
       switch (uMsg) {
@@ -283,6 +329,9 @@ LRESULT CALLBACK WinIO::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
    return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
+//===========================================
+// WinIO::doEvents
+//===========================================
 void WinIO::doEvents() {
    MSG msg;
 

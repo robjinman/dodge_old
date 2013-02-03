@@ -4,7 +4,7 @@
  */
 
 #ifdef WIN32
-   #include "ogles2.0/Renderer.hpp"
+   #include "ogl/Renderer.hpp"
 #else
-   #include "ogles2.0/Renderer.hpp"
+   #include "ogl/Renderer.hpp"
 #endif

@@ -4,7 +4,7 @@
  */
 
 #ifdef WIN32
-   #include "ogles2.0/Colour.hpp"
+   #include "ogl/Colour.hpp"
 #else
-   #include "ogles2.0/Colour.hpp"
+   #include "ogl/Colour.hpp"
 #endif
