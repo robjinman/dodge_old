@@ -32,7 +32,7 @@ namespace Dodge {
 
 
 class IModel;
-class ShaderProgram;
+class RenderMode;
 class SceneGraph;
 
 // OpenGL ES 2.0 implementation
@@ -56,7 +56,8 @@ class Renderer {
       enum mode_t {
          UNDEFINED,
          TEXTURED_ALPHA,
-         NONTEXTURED_ALPHA
+         NONTEXTURED_ALPHA,
+         FIXED_FUNCTION
          // ...
       };
 
@@ -173,7 +174,7 @@ class Renderer {
       void clear();
       void checkForErrors();
       void setMode(mode_t mode);
-      void constructShaderProgs();
+      void constructRenderModes();
       GLint primitiveToGLType(primitive_t primitiveType) const;
       void processMessage(const Message& msg);
       textureHandle_t loadGLTexture(const textureData_t* texture, int_t w, int_t h);
@@ -183,8 +184,10 @@ class Renderer {
       void computeFrameRate();
 #endif
 
-      std::map<mode_t, ShaderProgram*> m_shaderProgs;
-      ShaderProgram* m_activeShaderProg;
+      bool m_fixedPipeline;
+
+      std::map<mode_t, RenderMode*> m_renderModes;
+      RenderMode* m_activeRenderMode;
       mode_t m_mode;
 
       std::atomic<bool> m_init;

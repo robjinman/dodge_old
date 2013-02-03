@@ -1,8 +1,8 @@
 ifeq ($(PLATFORM), linux)
-	include $(BASE_DIR)/renderer/ogles2.0/Makefile.inc
+	include $(BASE_DIR)/renderer/ogl/Makefile.inc
 else
 	ifeq ($(PLATFORM), windows)
-		include $(BASE_DIR)/renderer/ogles2.0/Makefile.inc
+		include $(BASE_DIR)/renderer/ogl/Makefile.inc
 	endif
 endif
 OBJS += $(BASE_DIR)/renderer/Camera.o \

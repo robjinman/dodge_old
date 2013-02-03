@@ -3,7 +3,7 @@
  * Date: 2012
  */
 
-#include <renderer/ogles2.0/TexturedAlphaShader.hpp>
+#include <renderer/ogl/TexturedAlphaMode.hpp>
 #include <renderer/Model.hpp>
 #include <renderer/GL_CHECK.hpp>
 #include <cml/matrix.h>
@@ -18,9 +18,9 @@ namespace Dodge {
 
 
 //===========================================
-// TexturedAlphaShader::TexturedAlphaShader
+// TexturedAlphaMode::TexturedAlphaMode
 //===========================================
-TexturedAlphaShader::TexturedAlphaShader() {
+TexturedAlphaMode::TexturedAlphaMode() {
 
    m_id = GL_CHECK(glCreateProgram());
 
@@ -52,7 +52,7 @@ TexturedAlphaShader::TexturedAlphaShader() {
       "   vv2texcoord = av2texcoord;                     \n"
       "}                                                 \n";
 
-   ShaderProgram::newShaderFromSource(vertShader, GL_VERTEX_SHADER, m_id);
+   RenderMode::newShaderFromSource(vertShader, GL_VERTEX_SHADER, m_id);
 
    const char* fragShader[1] = { NULL };
    fragShader[0] =
@@ -68,15 +68,15 @@ TexturedAlphaShader::TexturedAlphaShader() {
       "   gl_FragColor = vv4colour * tex;                \n"
       "}                                                 \n";
 
-   ShaderProgram::newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, m_id);
+   RenderMode::newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, m_id);
 
    GL_CHECK(glLinkProgram(m_id));
 }
 
 //===========================================
-// TexturedAlphaShader::setActive
+// TexturedAlphaMode::setActive
 //===========================================
-void TexturedAlphaShader::setActive() {
+void TexturedAlphaMode::setActive() {
    GL_CHECK(glUseProgram(m_id));
 
    m_locPosition = GL_CHECK(glGetAttribLocation(m_id, "av4position"));
@@ -97,9 +97,9 @@ void TexturedAlphaShader::setActive() {
 }
 
 //===========================================
-// TexturedAlphaShader::isSupported
+// TexturedAlphaMode::isSupported
 //===========================================
-bool TexturedAlphaShader::isSupported(const IModel* model) const {
+bool TexturedAlphaMode::isSupported(const IModel* model) const {
    static long vvvtt = internString("vvvtt");
    static long vvvttcccc = internString("vvvttcccc");
 
@@ -110,9 +110,9 @@ bool TexturedAlphaShader::isSupported(const IModel* model) const {
 }
 
 //===========================================
-// TexturedAlphaShader::hashByteArray
+// TexturedAlphaMode::hashByteArray
 //===========================================
-long TexturedAlphaShader::hashByteArray(const byte_t* array, size_t len) const {
+long TexturedAlphaMode::hashByteArray(const byte_t* array, size_t len) const {
    long hash = 5381;
    int c;
 
@@ -125,24 +125,27 @@ long TexturedAlphaShader::hashByteArray(const byte_t* array, size_t len) const {
 }
 
 //===========================================
-// TexturedAlphaShader::hashModel
+// TexturedAlphaMode::hashModel
 //===========================================
-long TexturedAlphaShader::hashModel(const IModel* model) const {
+long TexturedAlphaMode::hashModel(const IModel* model) const {
    static long vvvtt = internString("vvvtt");
 //   static long vvvttcccc = internString("vvvttcccc");
 
    uint_t n = model->getNumVertices();
    size_t vertDataSz = model->getVertexLayout() == vvvtt ? (sizeof(vvvtt_t) * n) : (sizeof(vvvttcccc_t) * n);
+   size_t matDataSz = 16 * sizeof(GLfloat);
 
-   long hash = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
+   long hashes[2];
+   hashes[0] = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
+   hashes[1] = hashByteArray(reinterpret_cast<const byte_t*>(model_getMatrix(*model)), matDataSz);
 
-   return hashByteArray(reinterpret_cast<const byte_t*>(&hash), sizeof(long));
+   return hashByteArray(reinterpret_cast<const byte_t*>(hashes), sizeof(long) * 2);
 }
 
 //===========================================
-// TexturedAlphaShader::hashPendingModels
+// TexturedAlphaMode::hashPendingModels
 //===========================================
-long TexturedAlphaShader::hashPendingModels() const {
+long TexturedAlphaMode::hashPendingModels() const {
    StackAllocator& stack = gGetMemStack();
    StackAllocator::marker_t marker = stack.getMarker();
 
@@ -161,24 +164,24 @@ long TexturedAlphaShader::hashPendingModels() const {
 }
 
 //===========================================
-// TexturedAlphaShader::renderPendingModels
+// TexturedAlphaMode::renderPendingModels
 //===========================================
-void TexturedAlphaShader::renderPendingModels() {
+void TexturedAlphaMode::renderPendingModels() {
    for (uint_t i = 0; i < m_pending.size(); ++i)
       renderModel(m_pending[i], *m_P);
 }
 
 //===========================================
-// TexturedAlphaShader::hasPending
+// TexturedAlphaMode::hasPending
 //===========================================
-bool TexturedAlphaShader::hasPending() const{
+bool TexturedAlphaMode::hasPending() const{
    return m_pending.size() > 0;
 }
 
 //===========================================
-// TexturedAlphaShader::transformVertex
+// TexturedAlphaMode::transformVertex
 //===========================================
-void TexturedAlphaShader::transformVertex(GLfloat* vertex, const GLfloat* m) const {
+void TexturedAlphaMode::transformVertex(GLfloat* vertex, const GLfloat* m) const {
    GLfloat v[4] = { vertex[0], vertex[1], vertex[2], 1.0 };
 
    vertex[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
@@ -187,9 +190,9 @@ void TexturedAlphaShader::transformVertex(GLfloat* vertex, const GLfloat* m) con
 }
 
 //===========================================
-// TexturedAlphaShader::batchAndRenderPendingModels
+// TexturedAlphaMode::batchAndRenderPendingModels
 //===========================================
-void TexturedAlphaShader::batchAndRenderPendingModels() {
+void TexturedAlphaMode::batchAndRenderPendingModels() {
    static long vvvtt = internString("vvvtt");
 //   static long vvvttcccc = internString("vvvttcccc");
 
@@ -235,9 +238,9 @@ void TexturedAlphaShader::batchAndRenderPendingModels() {
 }
 
 //===========================================
-// TexturedAlphaShader::renderBatch
+// TexturedAlphaMode::renderBatch
 //===========================================
-void TexturedAlphaShader::renderBatch(const batch_t& batch) {
+void TexturedAlphaMode::renderBatch(const batch_t& batch) {
    static long vvvtt = internString("vvvtt");
    static long vvvttcccc = internString("vvvttcccc");
 
@@ -294,11 +297,11 @@ void TexturedAlphaShader::renderBatch(const batch_t& batch) {
 }
 
 //===========================================
-// TexturedAlphaShader::sendData
+// TexturedAlphaMode::sendData
 //===========================================
-void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projMat) {
+void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat) {
    if (!isSupported(model))
-      throw RendererException("Model type not supported by TexturedAlphaShader", __FILE__, __LINE__);
+      throw RendererException("Model type not supported by TexturedAlphaMode", __FILE__, __LINE__);
 
 
    // Queue model for batching
@@ -323,9 +326,9 @@ void TexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projM
 }
 
 //===========================================
-// TexturedAlphaShader::processPending
+// TexturedAlphaMode::processPending
 //===========================================
-void TexturedAlphaShader::processPending() {
+void TexturedAlphaMode::processPending() {
    if (m_pending.size() >= MIN_BATCH_SIZE) {
 
       // Find out if batch has already been sent to video card
@@ -347,11 +350,11 @@ void TexturedAlphaShader::processPending() {
 }
 
 //===========================================
-// TexturedAlphaShader::flush
+// TexturedAlphaMode::flush
 //
 // Called at end of frame.
 //===========================================
-void TexturedAlphaShader::flush() {
+void TexturedAlphaMode::flush() {
    processPending();
 
    // Delete VBOs that were not used this frame
@@ -368,9 +371,9 @@ void TexturedAlphaShader::flush() {
 }
 
 //===========================================
-// TexturedAlphaShader::renderModel
+// TexturedAlphaMode::renderModel
 //===========================================
-void TexturedAlphaShader::renderModel(const IModel* model, const matrix44f_c& projMat) {
+void TexturedAlphaMode::renderModel(const IModel* model, const matrix44f_c& projMat) {
 //   static long vvvtt = internString("vvvtt");
    static long vvvttcccc = internString("vvvttcccc");
 

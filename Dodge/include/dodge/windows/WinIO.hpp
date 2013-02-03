@@ -162,7 +162,27 @@ class WinIO {
 #endif
 
    private:
+      enum glVersion_t {
+         GL_1_1,
+         GL_1_2,
+         GL_1_2_1,
+         GL_1_3,
+         GL_1_4,
+         GL_1_5,
+         GL_2_0,
+         GL_2_1,
+         GL_3_0,
+         GL_3_1,
+         GL_3_2,
+         GL_3_3,
+         GL_4_0,
+         GL_4_1,
+         GL_4_2,
+         GL_4_3
+      };
+
       void createGLContext();
+      bool isSupportedGLVersion(glVersion_t version) const;
 
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;

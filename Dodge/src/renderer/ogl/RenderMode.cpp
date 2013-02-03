@@ -3,9 +3,15 @@
  * Date: 2012
  */
 
-#include <renderer/ogles2.0/ShaderProgram.hpp>
-#include <renderer/ogles2.0/NonTexturedAlphaShader.hpp>
-#include <renderer/ogles2.0/TexturedAlphaShader.hpp>
+#include <renderer/ogl/RenderMode.hpp>
+
+#ifndef WIN32
+   #include <renderer/ogl/NonTexturedAlphaMode.hpp>
+   #include <renderer/ogl/TexturedAlphaMode.hpp>
+#else
+   #include <renderer/ogl/FixedFunctionMode.hpp>
+#endif
+
 #include <renderer/GL_CHECK.hpp>
 
 
@@ -13,21 +19,25 @@ namespace Dodge {
 
 
 //===========================================
-// ShaderProgram::create
+// RenderMode::create
 //===========================================
-ShaderProgram* ShaderProgram::create(Renderer::mode_t kind) {
+RenderMode* RenderMode::create(Renderer::mode_t kind) {
    switch (kind) {
-      case Renderer::NONTEXTURED_ALPHA: return new NonTexturedAlphaShader();
-      case Renderer::TEXTURED_ALPHA:    return new TexturedAlphaShader();
+#ifndef WIN32
+      case Renderer::NONTEXTURED_ALPHA: return new NonTexturedAlphaMode();
+      case Renderer::TEXTURED_ALPHA:    return new TexturedAlphaMode();
+#else
+      case Renderer::FIXED_FUNCTION:    return new FixedFunctionMode();
+#endif
       default:
          throw RendererException("Error constructing shader program; Unrecognised type", __FILE__, __LINE__);
    };
 }
 
 //===========================================
-// ShaderProgram::newShaderFromSource
+// RenderMode::newShaderFromSource
 //===========================================
-void ShaderProgram::newShaderFromSource(const char** shaderSrc, GLint type, GLint prog) {
+void RenderMode::newShaderFromSource(const char** shaderSrc, GLint type, GLint prog) {
    GLint shader;
    GLint success = GL_FALSE;
 

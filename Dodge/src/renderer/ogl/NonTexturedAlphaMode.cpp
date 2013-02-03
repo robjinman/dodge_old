@@ -3,7 +3,7 @@
  * Date: 2012
  */
 
-#include <renderer/ogles2.0/NonTexturedAlphaShader.hpp>
+#include <renderer/ogl/NonTexturedAlphaMode.hpp>
 #include <renderer/Model.hpp>
 #include <renderer/GL_CHECK.hpp>
 
@@ -15,9 +15,9 @@ namespace Dodge {
 
 
 //===========================================
-// NonTexturedAlphaShader::NonTexturedAlphaShader
+// NonTexturedAlphaMode::NonTexturedAlphaMode
 //===========================================
-NonTexturedAlphaShader::NonTexturedAlphaShader() {
+NonTexturedAlphaMode::NonTexturedAlphaMode() {
    m_id = GL_CHECK(glCreateProgram());
 
    const char* vertShader[1] = { NULL };
@@ -40,7 +40,7 @@ NonTexturedAlphaShader::NonTexturedAlphaShader() {
       "   gl_Position = p * mv * av4position;            \n"
       "}                                                 \n";
 
-   ShaderProgram::newShaderFromSource(vertShader, GL_VERTEX_SHADER, m_id);
+   RenderMode::newShaderFromSource(vertShader, GL_VERTEX_SHADER, m_id);
 
    const char* fragShader[1] = { NULL };
    fragShader[0] =
@@ -50,15 +50,15 @@ NonTexturedAlphaShader::NonTexturedAlphaShader() {
       "   gl_FragColor = vv4colour;                      \n"
       "}                                                 \n";
 
-   ShaderProgram::newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, m_id);
+   RenderMode::newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, m_id);
 
    GL_CHECK(glLinkProgram(m_id));
 }
 
 //===========================================
-// NonTexturedAlphaShader::setActive
+// NonTexturedAlphaMode::setActive
 //===========================================
-void NonTexturedAlphaShader::setActive() {
+void NonTexturedAlphaMode::setActive() {
    GL_CHECK(glUseProgram(m_id));
 
    m_locPosition = GL_CHECK(glGetAttribLocation(m_id, "av4position"));
@@ -77,9 +77,9 @@ void NonTexturedAlphaShader::setActive() {
 }
 
 //===========================================
-// NonTexturedAlphaShader::isSupported
+// NonTexturedAlphaMode::isSupported
 //===========================================
-bool NonTexturedAlphaShader::isSupported(const IModel* model) const {
+bool NonTexturedAlphaMode::isSupported(const IModel* model) const {
    static long vvv = internString("vvv");
    static long vvvcccc = internString("vvvcccc");
 
@@ -90,11 +90,11 @@ bool NonTexturedAlphaShader::isSupported(const IModel* model) const {
 }
 
 //===========================================
-// NonTexturedAlphaShader::sendData
+// NonTexturedAlphaMode::sendData
 //===========================================
-void NonTexturedAlphaShader::sendData(const IModel* model, const matrix44f_c& projMat) {
+void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat) {
    if (!isSupported(model))
-      throw RendererException("Model type not supported by NonTexturedAlphaShader", __FILE__, __LINE__);
+      throw RendererException("Model type not supported by NonTexturedAlphaMode", __FILE__, __LINE__);
 
 
 //   static long vvv = internString("vvv");

@@ -3,26 +3,26 @@
  * Date: 2012
  */
 
-#ifndef __NONTEXTURED_ALPHA_SHADER_HPP__
-#define __NONTEXTURED_ALPHA_SHADER_HPP__
+#ifndef __NONTEXTURED_ALPHA_MODE_HPP__
+#define __NONTEXTURED_ALPHA_MODE_HPP__
 
 
-#include "ShaderProgram.hpp"
+#include "RenderMode.hpp"
 
 
 namespace Dodge {
 
 
-class NonTexturedAlphaShader : public ShaderProgram {
+class NonTexturedAlphaMode : public RenderMode {
    public:
-      NonTexturedAlphaShader();
+      NonTexturedAlphaMode();
 
       virtual bool hasPending() const { return false; }
       virtual void setActive();
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat);
       virtual void flush() {}
 
-      virtual ~NonTexturedAlphaShader() {}
+      virtual ~NonTexturedAlphaMode() {}
 
    private:
       bool isSupported(const IModel* model) const;

@@ -3,8 +3,8 @@
  * Date: 2012
  */
 
-#ifndef __SHADER_PROGRAM_HPP__
-#define __SHADER_PROGRAM_HPP__
+#ifndef __RENDER_MODE_HPP__
+#define __RENDER_MODE_HPP__
 
 
 #include "Renderer.hpp"
@@ -15,16 +15,16 @@
 namespace Dodge {
 
 
-class ShaderProgram {
+class RenderMode {
    public:
       virtual bool hasPending() const = 0;
       virtual void setActive() = 0;
       virtual void sendData(const IModel* model, const cml::matrix44f_c& projMat) = 0;
       virtual void flush() = 0;
 
-      virtual ~ShaderProgram() {}
+      virtual ~RenderMode() {}
 
-      static ShaderProgram* create(Renderer::mode_t kind);
+      static RenderMode* create(Renderer::mode_t kind);
       static void newShaderFromSource(const char** shaderSrc, GLint type, GLint prog);
 
    protected:
@@ -37,9 +37,9 @@ class ShaderProgram {
 };
 
 //===========================================
-// ShaderProgram::primitiveToGLType
+// RenderMode::primitiveToGLType
 //===========================================
-inline GLint ShaderProgram::primitiveToGLType(Renderer::primitive_t primitiveType) const {
+inline GLint RenderMode::primitiveToGLType(Renderer::primitive_t primitiveType) const {
    switch (primitiveType) {
       case Renderer::TRIANGLES:      return GL_TRIANGLES;
       case Renderer::LINES:          return GL_LINES;
@@ -53,10 +53,10 @@ inline GLint ShaderProgram::primitiveToGLType(Renderer::primitive_t primitiveTyp
 // Relay calls to model object. This is to allow derived classes to
 // access Model's private members.
 //===========================================
-inline Renderer::modelHandle_t ShaderProgram::model_getHandle(const IModel& model) const { return model.m_handle; }
-inline void ShaderProgram::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.m_handle = handle; }
-inline const void* ShaderProgram::model_getVertexData(const IModel& model) const { return model.getVertexData(); }
-inline const Renderer::matrixElement_t* ShaderProgram::model_getMatrix(const IModel& model) const { return model.m_matrix; }
+inline Renderer::modelHandle_t RenderMode::model_getHandle(const IModel& model) const { return model.m_handle; }
+inline void RenderMode::model_setHandle(IModel& model, Renderer::modelHandle_t handle) { model.m_handle = handle; }
+inline const void* RenderMode::model_getVertexData(const IModel& model) const { return model.getVertexData(); }
+inline const Renderer::matrixElement_t* RenderMode::model_getMatrix(const IModel& model) const { return model.m_matrix; }
 //===========================================
 
 

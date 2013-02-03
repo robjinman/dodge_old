@@ -16,7 +16,7 @@ namespace Dodge {
 
 class IModel {
    friend class SceneGraph;
-   friend class ShaderProgram;
+   friend class RenderMode;
    friend class Renderer;
 
    public:
@@ -151,7 +151,7 @@ class IModel {
 template <class T>
 class Model : public IModel {
 
-   friend class ShaderProgram;
+   friend class RenderMode;
    friend class Renderer;
 
    public:
