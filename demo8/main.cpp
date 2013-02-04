@@ -84,7 +84,7 @@ void constructModels() {
          model->setTextureHandle(b ? tex0->getHandle() : tex1->getHandle());
          model->setColour(col);
 
-         renderer.bufferModel(model.get());
+//         renderer.bufferModel(model.get());
       }
    }
 }
@@ -94,6 +94,7 @@ int main() {
 #ifdef DEBUG
       WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
 #endif
+      gInitialise();
       win.init("Demo8 - renderer", 640, 480, false);
       win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
       win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));

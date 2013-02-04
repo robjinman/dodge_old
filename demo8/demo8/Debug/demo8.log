@@ -1,4 +1,4 @@
-﻿Build started 02/02/2013 22:22:02.
+﻿Build started 04/02/2013 05:38:23.
      1>Project "D:\Code\projects\Dodge\demo8\demo8\demo8.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>Link:
@@ -14,4 +14,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.30
+Time Elapsed 00:00:01.26

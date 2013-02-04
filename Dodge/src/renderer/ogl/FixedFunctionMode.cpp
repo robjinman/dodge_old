@@ -23,6 +23,7 @@ FixedFunctionMode::FixedFunctionMode() {}
 // FixedFunctionMode::setActive
 //===========================================
 void FixedFunctionMode::setActive() {
+   GL_CHECK(glEnable(GL_TEXTURE_2D));
    GL_CHECK(glEnable(GL_BLEND));
    GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
@@ -39,8 +40,8 @@ bool FixedFunctionMode::isSupported(const IModel* model) const {
    long layout = model->getVertexLayout();
 
    return layout == vvv
-      || layout == vvvcccc;
-      || layout == vvvtt;
+      || layout == vvvcccc
+      || layout == vvvtt
       || layout == vvvttcccc;
 }
 
@@ -64,12 +65,21 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
       GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
    }
 
+   glMatrixMode(GL_PROJECTION);
+   glLoadMatrixf(projMat.data());
+
+   glMatrixMode(GL_MODELVIEW);
+   glLoadMatrixf(model_getMatrix(*model));
+
+   const Colour& col = model->getColour();
+
    glBegin(primitiveToGLType(model->getPrimitiveType()));
    if (vertLayout == vvv) {
       const vvv_t* verts = reinterpret_cast<const vvv_t*>(model_getVertexData(*model));
 
       for (uint_t i = 0; i < nVerts; ++i) {
-         glVertex2f(verts[i].v1, verts[i].v3, verts[i].v3);
+         glColor4f(col.r, col.g, col.b, col.a);
+         glVertex3f(verts[i].v1, verts[i].v3, verts[i].v3);
       }
    }
    else if (vertLayout == vvvcccc) {
@@ -85,7 +95,8 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
 
       for (uint_t i = 0; i < nVerts; ++i) {
          glTexCoord2f(verts[i].t1, verts[i].t2);
-         glVertex3f(verts[i].v1, verts[i].v3, verts[i].v3);
+         glColor4f(col.r, col.g, col.b, col.a);
+         glVertex3f(verts[i].v1, verts[i].v2, verts[i].v3);
       }
    }
    else if (vertLayout == vvvttcccc) {

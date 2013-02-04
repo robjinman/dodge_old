@@ -1,10 +1,26 @@
-﻿Build started 02/02/2013 22:21:40.
+﻿Build started 04/02/2013 05:37:41.
      1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D DEBUG /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\windows\WinIO.cpp
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /ZI /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D DEBUG /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\windows\WinIO.cpp
          WinIO.cpp
      1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(179): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(180): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(181): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(182): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(183): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(184): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(185): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(186): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(187): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(188): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(189): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(190): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(191): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(192): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(193): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
+     1>d:\code\projects\dodge\dodge\src\windows\winio.cpp(194): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
        Lib:
          C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodge.lib" /NOLOGO Debug\Animation.obj
          Debug\AnimFrame.obj
@@ -41,11 +57,12 @@
          Debug\Camera.obj
          Debug\Font.obj
          Debug\Colour.obj
-         Debug\NonTexturedAlphaShader.obj
+         Debug\FixedFunctionMode.obj
+         Debug\NonTexturedAlphaMode.obj
          Debug\Renderer.obj
-         Debug\ShaderProgram.obj
+         Debug\RenderMode.obj
          Debug\Texture.obj
-         Debug\TexturedAlphaShader.obj
+         Debug\TexturedAlphaMode.obj
          Debug\SceneGraph.obj
          Debug\ShapeFactory.obj
          Debug\Sprite.obj
@@ -67,4 +84,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:16.22
+Time Elapsed 00:00:05.30

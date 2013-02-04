@@ -5,13 +5,11 @@
 
 #include <renderer/ogl/RenderMode.hpp>
 
-#ifndef WIN32
-   #include <renderer/ogl/NonTexturedAlphaMode.hpp>
-   #include <renderer/ogl/TexturedAlphaMode.hpp>
-#else
-   #include <renderer/ogl/FixedFunctionMode.hpp>
+#include <renderer/ogl/NonTexturedAlphaMode.hpp>
+#include <renderer/ogl/TexturedAlphaMode.hpp>
+#ifdef WIN32
+#include <renderer/ogl/FixedFunctionMode.hpp>
 #endif
-
 #include <renderer/GL_CHECK.hpp>
 
 
@@ -23,10 +21,9 @@ namespace Dodge {
 //===========================================
 RenderMode* RenderMode::create(Renderer::mode_t kind) {
    switch (kind) {
-#ifndef WIN32
       case Renderer::NONTEXTURED_ALPHA: return new NonTexturedAlphaMode();
       case Renderer::TEXTURED_ALPHA:    return new TexturedAlphaMode();
-#else
+#ifdef WIN32
       case Renderer::FIXED_FUNCTION:    return new FixedFunctionMode();
 #endif
       default:

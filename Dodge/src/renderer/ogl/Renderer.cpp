@@ -73,6 +73,7 @@ void Renderer::init() {
 
    if (m_fixedPipeline) {
       m_activeRenderMode = RenderMode::create(FIXED_FUNCTION);
+      m_activeRenderMode->setActive();
    }
    else {
       constructRenderModes();
@@ -235,7 +236,7 @@ void Renderer::draw(const IModel* model) {
 void Renderer::constructVBO(IModel* model) {
    modelHandle_t handle;
 
-   if (model->m_handle != 0) {
+   if (model->m_handle == 0) {
       GL_CHECK(glGenBuffers(1, &handle));
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, handle));
       GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));

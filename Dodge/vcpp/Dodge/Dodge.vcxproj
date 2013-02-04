@@ -47,6 +47,8 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_51;D:\Code\projects\Dodge\Dodge\include\SDL;D:\Code\projects\Dodge\Dodge\include\dodge;D:\Code\projects\Dodge\Dodge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -118,12 +120,13 @@
     <ClInclude Include="..\..\include\dodge\renderer\Font.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\GL_CHECK.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\Model.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Colour.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\NonTexturedAlphaShader.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Renderer.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\ShaderProgram.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\Texture.hpp" />
-    <ClInclude Include="..\..\include\dodge\renderer\ogles2.0\TexturedAlphaShader.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\Colour.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\FixedFunctionMode.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\NonTexturedAlphaMode.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\Renderer.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\RenderMode.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\Texture.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\TexturedAlphaMode.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\Renderer.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\RendererException.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\SceneGraph.hpp" />
@@ -188,12 +191,13 @@
     <ClCompile Include="..\..\src\Range.cpp" />
     <ClCompile Include="..\..\src\renderer\Camera.cpp" />
     <ClCompile Include="..\..\src\renderer\Font.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\Colour.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\NonTexturedAlphaShader.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\Renderer.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\ShaderProgram.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\Texture.cpp" />
-    <ClCompile Include="..\..\src\renderer\ogles2.0\TexturedAlphaShader.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\Colour.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\FixedFunctionMode.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\NonTexturedAlphaMode.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\Renderer.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\RenderMode.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\Texture.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\TexturedAlphaMode.cpp" />
     <ClCompile Include="..\..\src\renderer\SceneGraph.cpp" />
     <ClCompile Include="..\..\src\ShapeFactory.cpp" />
     <ClCompile Include="..\..\src\Sprite.cpp" />
