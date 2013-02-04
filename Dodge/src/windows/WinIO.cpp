@@ -25,6 +25,9 @@ bool WinIO::m_fullscreen = false;
 int WinIO::m_width;
 int WinIO::m_height;
 bool WinIO::m_init = false;
+#ifdef DEBUG
+byte_t WinIO::dbg_flags = 0;
+#endif
 
 
 //===========================================
@@ -101,7 +104,7 @@ void WinIO::createWindow(const string& title, int width, int height, bool fullsc
 
    // Create The Window
    if (!(m_hWnd = CreateWindowEx(dwExStyle, "OpenGL", title.data(), dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0,
-      WindowRect.right - WindowRect.left, WindowRect.bottom-WindowRect.top, NULL,NULL,m_hInstance, NULL))) {
+      WindowRect.right - WindowRect.left, WindowRect.bottom - WindowRect.top, NULL, NULL, m_hInstance, NULL))) {
 
       destroyWindow();
       throw Exception("Error creating GL window", __FILE__, __LINE__);
@@ -143,7 +146,7 @@ void WinIO::createWindow(const string& title, int width, int height, bool fullsc
       throw Exception("Error creating GL window", __FILE__, __LINE__);
    }
 
-   ShowWindow(m_hWnd,SW_SHOW);
+   ShowWindow(m_hWnd, SW_SHOW);
    SetForegroundWindow(m_hWnd);
    SetFocus(m_hWnd);
 }
@@ -173,22 +176,22 @@ void WinIO::createGLContext() {
 //===========================================
 bool WinIO::isSupportedGLVersion(glVersion_t version) const {
    switch (version) {
-      case: GL_1_1:     return GLEW_VERSION_1_1;      break;
-      case: GL_1_2:     return GLEW_VERSION_1_2;      break;
-      case: GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
-      case: GL_1_3:     return GLEW_VERSION_1_3;      break;
-      case: GL_1_4:     return GLEW_VERSION_1_4;      break;
-      case: GL_1_5:     return GLEW_VERSION_1_5;      break;
-      case: GL_2_0:     return GLEW_VERSION_2_0;      break;
-      case: GL_2_1:     return GLEW_VERSION_2_1;      break;
-      case: GL_3_0:     return GLEW_VERSION_3_0;      break;
-      case: GL_3_1:     return GLEW_VERSION_3_1;      break;
-      case: GL_3_2:     return GLEW_VERSION_3_2;      break;
-      case: GL_3_3:     return GLEW_VERSION_3_3;      break;
-      case: GL_4_0:     return GLEW_VERSION_4_0;      break;
-      case: GL_4_1:     return GLEW_VERSION_4_1;      break;
-      case: GL_4_2:     return GLEW_VERSION_4_2;      break;
-      case: GL_4_3:     return GLEW_VERSION_4_3;      break;
+      case GL_1_1:     return GLEW_VERSION_1_1;      break;
+      case GL_1_2:     return GLEW_VERSION_1_2;      break;
+      case GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
+      case GL_1_3:     return GLEW_VERSION_1_3;      break;
+      case GL_1_4:     return GLEW_VERSION_1_4;      break;
+      case GL_1_5:     return GLEW_VERSION_1_5;      break;
+      case GL_2_0:     return GLEW_VERSION_2_0;      break;
+      case GL_2_1:     return GLEW_VERSION_2_1;      break;
+      case GL_3_0:     return GLEW_VERSION_3_0;      break;
+      case GL_3_1:     return GLEW_VERSION_3_1;      break;
+      case GL_3_2:     return GLEW_VERSION_3_2;      break;
+      case GL_3_3:     return GLEW_VERSION_3_3;      break;
+      case GL_4_0:     return GLEW_VERSION_4_0;      break;
+      case GL_4_1:     return GLEW_VERSION_4_1;      break;
+      case GL_4_2:     return GLEW_VERSION_4_2;      break;
+      case GL_4_3:     return GLEW_VERSION_4_3;      break;
 
       default: return false;
    };
@@ -203,32 +206,16 @@ void WinIO::destroyWindow() {
       ShowCursor(true);
    }
 
-   try {
-      if (m_hRC) { // Do We Have A Rendering Context?
-         if (!wglMakeCurrent(NULL, NULL))
-            throw Exception("Error destroying window", __FILE__, __LINE__);
-
-         if (!wglDeleteContext(m_hRC))
-            throw Exception("Error destroying window", __FILE__, __LINE__);
-      }
-
-      if (m_hDC && !ReleaseDC(m_hWnd,m_hDC))
-         throw Exception("Error destroying window", __FILE__, __LINE__);
-
-      if (m_hWnd && !DestroyWindow(m_hWnd))
-         throw Exception("Error destroying window", __FILE__, __LINE__);
-
-      if (!UnregisterClass("OpenGL",m_hInstance))
-         throw Exception("Error destroying window", __FILE__, __LINE__);
+   if (m_hRC) { // Do We Have A Rendering Context?
+      wglMakeCurrent(NULL, NULL);
+      wglDeleteContext(m_hRC);
    }
-   catch (Exception&) {
-      m_hDC = NULL;
-      m_hRC = NULL;
-      m_hWnd = NULL;
-      m_hInstance = NULL;
-      m_init = false;
-      throw;
-   }
+
+   if (m_hDC) ReleaseDC(m_hWnd,m_hDC);
+
+   if (m_hWnd) DestroyWindow(m_hWnd);
+
+   UnregisterClass("OpenGL",m_hInstance);
 
    m_init = false;
 }
@@ -250,7 +237,6 @@ LRESULT CALLBACK WinIO::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break; // Exit
          }
          case WM_CLOSE: {
-//            PostQuitMessage(0); // Send A Quit Message
             callbackMap_t::iterator it = m_callbacks.find(EVENT_WINCLOSE);
             if (it != m_callbacks.end()) {
                for (uint_t f = 0; f < it->second.size(); ++f)
@@ -336,21 +322,8 @@ void WinIO::doEvents() {
    MSG msg;
 
    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-/*
-      if (msg.message == WM_QUIT) {
-         map<winEvent_t, funcPtr_t>::iterator it = m_callbacks.find(GFXEVENT_WINCLOSE);
-         if (it != m_callbacks.end()) {
-            boost::get<void(*)()>(it->second)();
-         }
-         else {
-            destroyWindow();
-            exit(0);
-         }
-      }
-      else {*/
-         TranslateMessage(&msg);
-         DispatchMessage(&msg);
-//      }
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
    }
 }
 
