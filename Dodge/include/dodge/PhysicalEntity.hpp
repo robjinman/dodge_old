@@ -103,7 +103,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       //===========================================
       // PhysicalEntity::clone
       //===========================================
-      virtual PhysicalEntity* clone() const {
+      virtual Asset* clone() const {
          return new PhysicalEntity(*this);
       }
 

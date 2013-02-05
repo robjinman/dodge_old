@@ -212,7 +212,7 @@ matrix_orthographic(matrix<E,A,B,L>& m, E left, E right, E bottom, E top,
     value_type inv_width = value_type(1) / (right - left);
     value_type inv_height = value_type(1) / (top - bottom);
     value_type inv_depth = value_type(1) / (f - n);
-    value_type s = handedness == left_handed ? 1 : -1;
+    value_type s = handedness == left_handed ? value_type(1) : value_type(-1);
 
     if (z_clip == z_clip_neg_one) {
         m.set_basis_element(2,2,s * value_type(2) * inv_depth);

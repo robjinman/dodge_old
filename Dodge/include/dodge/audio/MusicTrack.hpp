@@ -32,7 +32,7 @@ class MusicTrack : virtual public Asset, public boost::enable_shared_from_this<M
       void pause();
       void stop();
 
-      virtual MusicTrack* clone() const;
+      virtual Asset* clone() const;
       virtual size_t getSize() const;
 
       virtual ~MusicTrack();

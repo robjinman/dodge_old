@@ -43,8 +43,12 @@ class Quadtree : public SpatialContainer<T> {
       Quadtree(uint_t splittingThres, const Range& boundary)
          : m_splittingThres(splittingThres),
            m_boundary(boundary),
-           m_children({NULL, NULL, NULL, NULL}),
            m_n(0) {
+
+         m_children[0] = NULL;
+         m_children[1] = NULL;
+         m_children[2] = NULL;
+         m_children[3] = NULL;
 
          m_entries.reserve(splittingThres); // TODO: find optimum
       }
@@ -117,7 +121,7 @@ class Quadtree : public SpatialContainer<T> {
       //===========================================
       // Quadtree::dbg_draw
       //===========================================
-      virtual void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, int z) const {
+      virtual void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, float32_t z) const {
          if (hasChildren()) {
             const Vec2f& pos = m_boundary.getPosition();
             const Vec2f& sz = m_boundary.getSize();
@@ -127,7 +131,7 @@ class Quadtree : public SpatialContainer<T> {
             Vec2f l1p1(pos.x, pos.y + halfSz.y);
             Vec2f l1p2(pos.x + sz.x, pos.y + halfSz.y);
             LineSegment line1(l1p1, l1p2);
-            line1.setRenderTransform(0, 0, z);
+            line1.setRenderTransform(0.f, 0.f, z);
             line1.setLineColour(colour);
             line1.setLineWidth(lineWidth);
             line1.draw();
@@ -136,7 +140,7 @@ class Quadtree : public SpatialContainer<T> {
             Vec2f l2p1(pos.x + halfSz.x, pos.y);
             Vec2f l2p2(pos.x + halfSz.x, pos.y + sz.y);
             LineSegment line2(l2p1, l2p2);
-            line2.setRenderTransform(0, 0, z);
+            line2.setRenderTransform(0.f, 0.f, z);
             line2.setLineColour(colour);
             line2.setLineWidth(lineWidth);
             line2.draw();

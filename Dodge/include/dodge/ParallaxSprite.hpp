@@ -23,7 +23,7 @@ class ParallaxSprite : public Sprite, public EntityParallax {
       virtual void update();
 
       virtual size_t getSize() const;
-      virtual ParallaxSprite* clone() const;
+      virtual Asset* clone() const;
       virtual void assignData(const XmlNode data);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

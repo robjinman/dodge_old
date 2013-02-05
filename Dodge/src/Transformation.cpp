@@ -113,9 +113,9 @@ void Transformation::init() {
    m_frame = 0;
    m_part = 0;
    if (m_parts.size() > 0) {
-      float32_t n = floor(gGetTargetFrameRate() * m_parts[0].duration + 0.5);
+      float32_t n = floor(gGetTargetFrameRate() * m_parts[0].duration + 0.5f);
 
-      m_endOfPart = n;
+      m_endOfPart = static_cast<uint_t>(n);
 
       m_delta.transl.x = m_parts[0].transl.x / n;
       m_delta.transl.y = m_parts[0].transl.y / n;
@@ -148,7 +148,7 @@ void Transformation::addParts(const std::vector<TransPart>& parts) {
 //===========================================
 // Transformation::clone
 //===========================================
-Transformation* Transformation::clone() const {
+Asset* Transformation::clone() const {
    return new Transformation(*this);
 }
 
@@ -188,9 +188,9 @@ const Transformation::delta_t* Transformation::update() {
          return NULL;
       }
       else {
-         float32_t n = floor(gGetTargetFrameRate() * m_parts[m_part].duration + 0.5);
+         float32_t n = floor(gGetTargetFrameRate() * m_parts[m_part].duration + 0.5f);
 
-         m_endOfPart += n;
+         m_endOfPart += static_cast<uint_t>(n);
 
          m_delta.transl.x = m_parts[m_part].transl.x / n;
          m_delta.transl.y = m_parts[m_part].transl.y / n;

@@ -120,7 +120,7 @@ long LineSegment::typeId() const {
 //===========================================
 // LineSegment::clone
 //===========================================
-LineSegment* LineSegment::clone() const {
+Asset* LineSegment::clone() const {
    return new LineSegment(*this);
 }
 
@@ -157,10 +157,10 @@ void LineSegment::setLineWidth(int lineWidth) const {
 //===========================================
 // LineSegment::setRenderTransform
 //===========================================
-void LineSegment::setRenderTransform(float32_t x, float32_t y, int z) const {
+void LineSegment::setRenderTransform(float32_t x, float32_t y, float32_t z) const {
    m_model.setMatrixElement(12, x);
    m_model.setMatrixElement(13, y);
-   m_model.setMatrixElement(14, static_cast<float32_t>(z));
+   m_model.setMatrixElement(14, z);
 }
 
 //===========================================

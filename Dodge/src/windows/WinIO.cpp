@@ -43,6 +43,24 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
 }
 
 //===========================================
+// WinIO::unregisterCallback
+//===========================================
+void WinIO::unregisterCallback(winEvent_t event, callback_t func) {
+   callbackMap_t::iterator i = m_callbacks.find(event);
+
+   if (i != m_callbacks.end()) {
+
+     for (unsigned int f = 0; f < i->second.size(); f++) {
+        if (i->second[f] == func) {
+           i->second.erase(i->second.begin() + f);
+           --f;
+        }
+     }
+
+   }
+}
+
+//===========================================
 // WinIO::createGLWindow
 //===========================================
 void WinIO::createWindow(const string& title, int width, int height, bool fullscreenflag) {
@@ -174,7 +192,7 @@ void WinIO::createGLContext() {
 //===========================================
 // WinIO::isSupportedGLVersion
 //===========================================
-bool WinIO::isSupportedGLVersion(glVersion_t version) const {
+GLboolean WinIO::isSupportedGLVersion(glVersion_t version) const {
    switch (version) {
       case GL_1_1:     return GLEW_VERSION_1_1;      break;
       case GL_1_2:     return GLEW_VERSION_1_2;      break;
@@ -264,7 +282,7 @@ LRESULT CALLBACK WinIO::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN1PRESS);
             if (it != m_callbacks.end()) {
                for (uint_t f = 0; f < it->second.size(); ++f)
-                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(LOWORD(lParam), HIWORD(lParam));
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
             return 0;
          }
@@ -272,15 +290,47 @@ LRESULT CALLBACK WinIO::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN2PRESS);
             if (it != m_callbacks.end()) {
                for (uint_t f = 0; f < it->second.size(); ++f)
-                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(LOWORD(lParam), HIWORD(lParam));
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
             return 0;
          }
          case WM_RBUTTONDOWN: {
+            callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN3RELEASE);
+            if (it != m_callbacks.end()) {
+               for (uint_t f = 0; f < it->second.size(); ++f)
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            }
+            return 0;
+         }
+         case WM_LBUTTONUP: {
+            callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN1RELEASE);
+            if (it != m_callbacks.end()) {
+               for (uint_t f = 0; f < it->second.size(); ++f)
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            }
+            return 0;
+         }
+         case WM_MBUTTONUP: {
+            callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN2RELEASE);
+            if (it != m_callbacks.end()) {
+               for (uint_t f = 0; f < it->second.size(); ++f)
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            }
+            return 0;
+         }
+         case WM_RBUTTONUP: {
             callbackMap_t::iterator it = m_callbacks.find(EVENT_BTN3PRESS);
             if (it != m_callbacks.end()) {
                for (uint_t f = 0; f < it->second.size(); ++f)
-                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(LOWORD(lParam), HIWORD(lParam));
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            }
+            return 0;
+         }
+         case WM_MOUSEMOVE: {
+            callbackMap_t::iterator it = m_callbacks.find(EVENT_MOUSEMOVE);
+            if (it != m_callbacks.end()) {
+               for (uint_t f = 0; f < it->second.size(); ++f)
+                  boost::get<Functor<void, TYPELIST_2(int, int)> >(it->second[f])(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
             return 0;
          }

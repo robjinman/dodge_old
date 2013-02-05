@@ -78,7 +78,7 @@ size_t Texture::getSize() const {
 //===========================================
 // Texture::clone
 //===========================================
-Texture* Texture::clone() const {
+Asset* Texture::clone() const {
    throw Exception("Cannot clone Texture objects; Feature not implemented", __FILE__, __LINE__);
 }
 

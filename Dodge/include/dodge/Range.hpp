@@ -28,7 +28,7 @@ class Range {
 #ifdef DEBUG
       void dbg_print(std::ostream& out, int tab = 0) const;
 
-      void dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, int z) const;
+      void dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, float32_t z) const;
 #endif
 
       void setPosition(float32_t x, float32_t y);
@@ -48,7 +48,7 @@ class Range {
 
 #ifdef DEBUG
       Quad m_quad;
-      mutable int m_z;
+      mutable float32_t m_z;
 #endif
 };
 

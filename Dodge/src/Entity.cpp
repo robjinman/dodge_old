@@ -268,7 +268,7 @@ void Entity::deepCopy(const Entity& copy) {
    // So that no Z values are 'exactly' equal
    m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
 
-   m_shape = copy.m_shape ? unique_ptr<Shape>(copy.m_shape->clone()) : unique_ptr<Shape>();
+   m_shape = copy.m_shape ? unique_ptr<Shape>(dynamic_cast<Shape*>(copy.m_shape->clone())) : unique_ptr<Shape>();
    m_boundary = copy.m_boundary;
 }
 
@@ -684,7 +684,7 @@ void Entity::onAncestorTranslation(const Vec2f& ds) {
 //===========================================
 void Entity::setShape(std::unique_ptr<Shape> shape) {
    Range bounds = m_boundary;
-   Shape* oldShape = m_shape ? m_shape->clone() : NULL;
+   Shape* oldShape = m_shape ? dynamic_cast<Shape*>(m_shape->clone()) : NULL;
    float32_t oldRot_abs = getRotation_abs();
 
    m_shape = std::move(shape);
@@ -705,7 +705,7 @@ void Entity::setShape(std::unique_ptr<Shape> shape) {
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityShape(shared_from_this(), pShape_t(oldShape), oldRot_abs, pShape_t(m_shape->clone()), getRotation_abs());
+      EEvent* event2 = new EEntityShape(shared_from_this(), pShape_t(oldShape), oldRot_abs, pShape_t(dynamic_cast<Shape*>(m_shape->clone())), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -720,7 +720,7 @@ void Entity::setShape(std::unique_ptr<Shape> shape) {
 //===========================================
 void Entity::scale(float32_t x, float32_t y) {
    Range bounds = m_boundary;
-   pShape_t oldShape = m_shape ? pShape_t(m_shape->clone()) : pShape_t();
+   pShape_t oldShape = m_shape ? pShape_t(dynamic_cast<Shape*>(m_shape->clone())) : pShape_t();
    float32_t oldRot_abs = getRotation_abs();
 
    if (m_shape) m_shape->scale(Vec2f(x, y));
@@ -732,7 +732,7 @@ void Entity::scale(float32_t x, float32_t y) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
 
       EEvent* event2 = new EEntityShape(shared_from_this(), oldShape, oldRot_abs,
-         pShape_t(m_shape ? m_shape->clone() : NULL), getRotation_abs());
+         pShape_t(m_shape ? dynamic_cast<Shape*>(m_shape->clone()) : NULL), getRotation_abs());
 
       onEvent(event1);
       onEvent(event2);
@@ -752,7 +752,7 @@ void Entity::setSilent(bool b) {
 //===========================================
 // Entity::clone
 //===========================================
-Entity* Entity::clone() const {
+Asset* Entity::clone() const {
    return new Entity(*this);
 }
 

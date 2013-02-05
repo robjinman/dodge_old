@@ -40,7 +40,7 @@ class Polygon : public Shape {
       void clear();
 
       virtual size_t getSize() const;
-      virtual Polygon* clone() const;
+      virtual Asset* clone() const;
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
@@ -54,7 +54,7 @@ class Polygon : public Shape {
       virtual void setLineColour(const Colour& colour) const;
       virtual void setLineWidth(int lineWidth) const;
 
-      virtual void setRenderTransform(float32_t x, float32_t y, int z) const;
+      virtual void setRenderTransform(float32_t x, float32_t y, float32_t z) const;
       virtual void draw() const;
 
       Polygon& operator=(const Polygon& rhs);

@@ -129,7 +129,7 @@ void WorldSpace::getEntities(const Range& region, std::vector<pEntity_t>& entiti
 //===========================================
 // WorldSpace::dbg_draw
 //===========================================
-void WorldSpace::dbg_draw(const Colour& colour, Renderer::int_t lineWidth, int z) const {
+void WorldSpace::dbg_draw(const Colour& colour, Renderer::int_t lineWidth, float32_t z) const {
    if (!m_init)
       throw Exception("Error drawing worldspace; WorldSpace not initialised", __FILE__, __LINE__);
 

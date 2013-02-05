@@ -8,6 +8,7 @@
 #include <string>
 #include <KvpParser.hpp>
 #include <Exception.hpp>
+#include <definitions.hpp>
 
 
 using namespace std;
@@ -73,7 +74,7 @@ void KvpParser::parseFile(const string& file) {
    string buf;
 
    buf = getLine(fin);
-   while (sscanf(buf.data(), "!%s", str) == 1) {
+   while (SSCANF(buf.data(), "!%s", str) == 1) {
       m_metaData.push_back(string(str));
       buf = getLine(fin);
    }
@@ -81,7 +82,7 @@ void KvpParser::parseFile(const string& file) {
       if (buf.length() > 0) {
          char strKey[BUF_SIZE], strVal[BUF_SIZE];
 
-         if (sscanf(buf.data(), "%s = %s", strKey, strVal) != 2)
+         if (SSCANF(buf.data(), "%s = %s", strKey, strVal) != 2)
             throw Exception("Error parsing file", __FILE__, __LINE__);
 
          m_data[string(strKey)] = strVal;

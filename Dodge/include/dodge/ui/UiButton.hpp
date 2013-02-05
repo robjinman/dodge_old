@@ -29,7 +29,7 @@ class UiButton : public Sprite, public EntityUi {
       UiButton(const UiButton& copy, long name);
 
       virtual size_t getSize() const;
-      virtual UiButton* clone() const;
+      virtual Asset* clone() const;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;
 #endif

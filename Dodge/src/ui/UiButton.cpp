@@ -136,7 +136,7 @@ size_t UiButton::getSize() const {
 //===========================================
 // UiButton::clone
 //===========================================
-UiButton* UiButton::clone() const {
+Asset* UiButton::clone() const {
    return new UiButton(*this);
 }
 

@@ -20,7 +20,7 @@ class Ellipse : public Shape {
 
       virtual long typeId() const;
       virtual size_t getSize() const;
-      virtual Ellipse* clone() const;
+      virtual Asset* clone() const;
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
@@ -34,7 +34,7 @@ class Ellipse : public Shape {
       virtual void setLineColour(const Colour& colour) const {}
       virtual void setLineWidth(int lineWidth) const {}
 
-      virtual void setRenderTransform(float32_t x, float32_t y, int z) const {}
+      virtual void setRenderTransform(float32_t x, float32_t y, float32_t z) const {}
       virtual void draw() const {}
 
       Ellipse& operator=(const Ellipse& rhs) { return *this; } // TODO

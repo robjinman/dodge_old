@@ -37,8 +37,8 @@ Font::Font(const XmlNode data)
       node = node.nextSibling();
       XML_NODE_CHECK(node, charSize);
       Vec2f sz(node.firstChild());
-      m_charW = sz.x;
-      m_charH = sz.y;
+      m_charW = static_cast<int>(sz.x);
+      m_charH = static_cast<int>(sz.y);
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Font; ");
@@ -70,7 +70,7 @@ Font::Font(pTexture_t texture, float32_t texX, float32_t texY, float32_t texW, f
 //===========================================
 // Font::clone
 //===========================================
-Font* Font::clone() const {
+Asset* Font::clone() const {
    return new Font(*this);
 }
 

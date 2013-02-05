@@ -233,7 +233,7 @@ void Renderer::draw(const IModel* model) {
 //===========================================
 // Renderer::constructVBO
 //===========================================
-void Renderer::constructVBO(IModel* model) {
+void Renderer::constructVBO(IModel* model) {/*
    modelHandle_t handle;
 
    if (model->m_handle == 0) {
@@ -245,15 +245,15 @@ void Renderer::constructVBO(IModel* model) {
    }
    else {
       freeBufferedModel(model);
-   }
+   }*/
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(IModel* model) {
-   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
-   model->m_handle = 0;
+//   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
+//   model->m_handle = 0;
 }
 
 //===========================================
@@ -348,7 +348,7 @@ void Renderer::computeFrameRate() {
    i++;
 
    if (i % 10 == 0) {
-      m_frameRate = 10.0 / timer.getTime();
+      m_frameRate = static_cast<long>(10.0 / timer.getTime());
       timer.reset();
    }
 }

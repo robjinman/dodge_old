@@ -88,7 +88,7 @@ bool polyPolyContains(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2
 
    if (!(xMin1 <= xMax2 && xMax1 >= xMin2 && yMin1 <= yMax2 && yMax1 >= yMin2)) return false;
 
-   Vec2f inf(xMax1 * 1.1, yMax1 * 1.1);
+   Vec2f inf(xMax1 * 1.1f, yMax1 * 1.1f);
 
    for (int j = 0; j < poly2.getNumVertices(); ++j) {
       LineSegment l2(poly2.getVertex(j), poly2.getVertex((j + 1) % poly2.getNumVertices()));

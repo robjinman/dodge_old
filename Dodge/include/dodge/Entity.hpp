@@ -97,7 +97,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       Entity(const Entity& copy, long name);
 
       virtual size_t getSize() const;
-      virtual Entity* clone() const;
+      virtual Asset* clone() const;
 
       // The XML node needn't contain a complete description of the object.
       virtual void assignData(const XmlNode data);

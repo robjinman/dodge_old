@@ -21,11 +21,17 @@
       Dodge::sleepThread(lpEnd_wait); \
    }
 
+#ifdef WIN32
+   #define SSCANF sscanf_s
+#else
+   #define SSCANF sscanf
+#endif
+
 
 namespace Dodge {
 
 
-const float PI = 3.14159265;
+const float PI = 3.14159265f;
 
 
 #ifdef WIN32

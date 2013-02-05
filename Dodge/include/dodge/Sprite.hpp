@@ -33,7 +33,7 @@ class Sprite
       Sprite(const Sprite& copy, long name);
 
       virtual size_t getSize() const;
-      virtual Sprite* clone() const;
+      virtual Asset* clone() const;
       virtual void assignData(const XmlNode data);
 
       virtual void onEvent(const EEvent* event);

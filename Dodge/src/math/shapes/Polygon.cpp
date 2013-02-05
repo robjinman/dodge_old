@@ -128,7 +128,7 @@ Polygon& Polygon::operator=(const Polygon& rhs) {
 //===========================================
 // Polygon::clone
 //===========================================
-Polygon* Polygon::clone() const {
+Asset* Polygon::clone() const {
    return new Polygon(*this);
 }
 
@@ -283,14 +283,14 @@ void Polygon::setLineWidth(int lineWidth) const {
 //===========================================
 // Polygon::setRenderTransform
 //===========================================
-void Polygon::setRenderTransform(float32_t x, float32_t y, int z) const {
+void Polygon::setRenderTransform(float32_t x, float32_t y, float32_t z) const {
    m_outlineModel.setMatrixElement(12, x);
    m_outlineModel.setMatrixElement(13, y);
-   m_outlineModel.setMatrixElement(14, static_cast<float32_t>(z + 1));
+   m_outlineModel.setMatrixElement(14, z + 1);
 
    m_interiorModel.setMatrixElement(12, x);
    m_interiorModel.setMatrixElement(13, y);
-   m_interiorModel.setMatrixElement(14, static_cast<float32_t>(z));
+   m_interiorModel.setMatrixElement(14, z);
 }
 
 //===========================================

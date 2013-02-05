@@ -25,7 +25,7 @@ class Font : virtual public Asset {
       Font(const Font& copy);
 
       virtual size_t getSize() const;
-      virtual Font* clone() const;
+      virtual Asset* clone() const;
 
       inline const pTexture_t getTexture() const;
       inline int getCharWidth() const;

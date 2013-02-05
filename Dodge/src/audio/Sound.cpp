@@ -75,7 +75,7 @@ void Sound::stop() {
 //===========================================
 // Sound::clone
 //===========================================
-Sound* Sound::clone() const {
+Asset* Sound::clone() const {
    throw Exception("Cannot clone Sound", __FILE__, __LINE__);
 }
 

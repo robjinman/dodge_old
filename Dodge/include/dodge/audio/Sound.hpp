@@ -31,7 +31,7 @@ class Sound : virtual public Asset, public boost::enable_shared_from_this<Sound>
       void play();
       void stop();
 
-      virtual Sound* clone() const;
+      virtual Asset* clone() const;
       virtual size_t getSize() const;
 
       virtual ~Sound();
