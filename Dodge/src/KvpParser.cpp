@@ -6,6 +6,7 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
+#include <sstream>
 #include <KvpParser.hpp>
 #include <Exception.hpp>
 #include <definitions.hpp>
@@ -40,8 +41,7 @@ const string& KvpParser::getMetaData(unsigned int index) const {
 //===========================================
 const string& KvpParser::getValue(const string& key) const {
    map<string, string>::const_iterator it = m_data.find(key);
-   if (it == m_data.end())
-      throw Exception("Error retrieving key-value pair; key not found", __FILE__, __LINE__);
+   if (it == m_data.end()) return string("");
 
    return it->second;
 }
@@ -63,12 +63,68 @@ string KvpParser::getLine(ifstream& fin) const {
 }
 
 //===========================================
+// KvpParser::insertPair
+//===========================================
+void KvpParser::insertPair(const string& key, const string& value) {
+   m_data[key] = value;
+}
+
+//===========================================
+// KvpParser::removePair
+//===========================================
+void KvpParser::removePair(const string& key) {
+   m_data.erase(key);
+}
+
+//===========================================
+// KvpParser::addMetaData
+//===========================================
+void KvpParser::addMetaData(const std::string& value, int index = -1) {
+   if (index == -1)
+      m_metaData.push_back(value);
+   else
+      m_metaData.insert(m_metaData.begin() + index, value);
+}
+
+//===========================================
+// KvpParser::eraseMetaData
+//===========================================
+void KvpParser::eraseMetaData(unsigned int index) {
+   m_metaData.erase(m_metaData.begin() + index);
+}
+
+//===========================================
+// KvpParser::writeToFile
+//===========================================
+void KvpParser::writeToFile(const string& file) const {
+   ofstream fout(file.data());
+
+   if (!fout.good()) {
+      fout.close();
+
+      stringstream msg;
+      msg << "Error writing to file " << file;
+      throw Exception(msg.str(), __FILE__, __LINE__);
+   }
+
+   for (uint_t i = 0; i < m_metaData.size(); ++i)
+      fout << "!" << m_metaData[i] << "\n";
+
+   fout << "\n";
+
+   for (auto i = m_data.begin(); i != m_data.end(); ++i) {
+      fout << i->first << " = " << i->second << "\n";
+   }
+
+   fout.close();
+}
+
+//===========================================
 // KvpParser::parseFile
 //===========================================
 void KvpParser::parseFile(const string& file) {
    ifstream fin(file.data());
-   if (!fin.is_open())
-      throw Exception("Could not open file", __FILE__, __LINE__);
+   if (!fin.is_open()) return;
 
    char str[BUF_SIZE];
    string buf;

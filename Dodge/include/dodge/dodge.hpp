@@ -24,6 +24,7 @@
 #include "EventManager.hpp"
 #include "Exception.hpp"
 #include "globals.hpp"
+#include "KvpParser.hpp"
 #include "MapLoader.hpp"
 #include "math/math.hpp"
 #include "ParallaxSprite.hpp"

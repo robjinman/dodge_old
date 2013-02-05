@@ -20,8 +20,17 @@ namespace Dodge {
 class KvpParser {
    public:
       void parseFile(const std::string& file);
+
       const std::string& getValue(const std::string& key) const;
+
+      void insertPair(const std::string& key, const std::string& value);
+      void removePair(const std::string& key);
+
       const std::string& getMetaData(unsigned int index) const;
+      void addMetaData(const std::string& value, int index);
+      void eraseMetaData(unsigned int index);
+
+      void writeToFile(const std::string& file) const;
 
    private:
       std::map<std::string, std::string> m_data;

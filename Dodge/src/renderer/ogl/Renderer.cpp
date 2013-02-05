@@ -233,7 +233,8 @@ void Renderer::draw(const IModel* model) {
 //===========================================
 // Renderer::constructVBO
 //===========================================
-void Renderer::constructVBO(IModel* model) {/*
+void Renderer::constructVBO(IModel* model) {
+#ifndef WIN32
    modelHandle_t handle;
 
    if (model->m_handle == 0) {
@@ -245,15 +246,18 @@ void Renderer::constructVBO(IModel* model) {/*
    }
    else {
       freeBufferedModel(model);
-   }*/
+   }
+#endif
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(IModel* model) {
-//   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
-//   model->m_handle = 0;
+#ifndef WIN32
+   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
+   model->m_handle = 0;
+#endif
 }
 
 //===========================================
