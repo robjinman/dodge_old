@@ -396,7 +396,7 @@ void MapLoader::update(const Vec2f& viewPos) {
 //===========================================
 Vec2i MapLoader::getSegment(const Vec2f& pos) const {
    Vec2f tmp = pos - m_mapBoundary.getPosition();
-   Vec2i indices(floor(tmp.x / m_segmentSize.x), floor(tmp.y / m_segmentSize.y));
+   Vec2i indices(static_cast<int>(floor(tmp.x / m_segmentSize.x)), static_cast<int>(floor(tmp.y / m_segmentSize.y)));
 
    if (indices.x < 0 || indices.x > static_cast<int>(m_segments.size())
       || indices.y < 0 || indices.y > static_cast<int>(m_segments[indices.x].size())) {

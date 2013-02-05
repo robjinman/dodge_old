@@ -80,7 +80,7 @@ size_t ParallaxSprite::getSize() const {
 //===========================================
 // ParallaxSprite::clone
 //===========================================
-ParallaxSprite* ParallaxSprite::clone() const {
+Asset* ParallaxSprite::clone() const {
    return new ParallaxSprite(*this);
 }
 

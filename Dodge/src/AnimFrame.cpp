@@ -78,7 +78,7 @@ AnimFrame::AnimFrame(const AnimFrame& copy) {
    worldOffset = copy.worldOffset ? unique_ptr<Vec2f>(new Vec2f(*copy.worldOffset)) : unique_ptr<Vec2f>();
    pos = copy.pos;
    dim = copy.dim;
-   shape = copy.shape ? unique_ptr<Shape>(copy.shape->clone()) : unique_ptr<Shape>();
+   shape = copy.shape ? unique_ptr<Shape>(dynamic_cast<Shape*>(copy.shape->clone())) : unique_ptr<Shape>();
    size = copy.size ? unique_ptr<Vec2f>(new Vec2f(*copy.size)) : unique_ptr<Vec2f>();
    col = copy.col;
    number = copy.number;
@@ -122,7 +122,7 @@ AnimFrame& AnimFrame::operator=(const AnimFrame& rhs) {
    size = rhs.size ? unique_ptr<Vec2f>(new Vec2f(*rhs.size)) : unique_ptr<Vec2f>();
    pos = rhs.pos;
    dim = rhs.dim;
-   shape = rhs.shape ? unique_ptr<Shape>(rhs.shape->clone()) : unique_ptr<Shape>();
+   shape = rhs.shape ? unique_ptr<Shape>(dynamic_cast<Shape*>(rhs.shape->clone())) : unique_ptr<Shape>();
    col = rhs.col;
 
    return *this;

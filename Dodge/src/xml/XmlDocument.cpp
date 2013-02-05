@@ -26,7 +26,7 @@ XmlNode XmlDocument::parse(const string& file) {
 
    // Get file length
    fin.seekg (0, ios::end);
-   int len = fin.tellg();
+   long len = static_cast<long>(fin.tellg());
    fin.seekg (0, ios::beg);
 
    // Load data and add null byte

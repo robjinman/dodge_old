@@ -32,7 +32,7 @@ class LineSegment : public Shape {
       inline Vec2f getPoint2() const;
 
       virtual size_t getSize() const;
-      virtual LineSegment* clone() const;
+      virtual Asset* clone() const;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab) const;
 #endif
@@ -45,7 +45,7 @@ class LineSegment : public Shape {
       virtual void setLineColour(const Colour& colour) const;
       virtual void setLineWidth(int lineWidth) const;
 
-      virtual void setRenderTransform(float32_t x, float32_t y, int z) const;
+      virtual void setRenderTransform(float32_t x, float32_t y, float32_t z) const;
       virtual void draw() const;
 
       LineSegment& operator=(const LineSegment& rhs);

@@ -19,7 +19,8 @@ namespace Dodge {
 //===========================================
 // Vec2f::Vec2f
 //===========================================
-Vec2f::Vec2f(const Vec2i& v) : x(v.x), y(v.y) {}
+Vec2f::Vec2f(const Vec2i& v)
+   : x(static_cast<float32_t>(v.x)), y(static_cast<float32_t>(v.y)) {}
 
 //===========================================
 // Vec2f::Vec2f

@@ -46,7 +46,7 @@ class EntityPhysics {
       virtual void removeFromWorld() = 0;
 
       virtual size_t getSize() const = 0;
-      virtual EntityPhysics* clone() const = 0;
+      virtual Asset* clone() const = 0;
       virtual void assignData(const XmlNode data) = 0;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;

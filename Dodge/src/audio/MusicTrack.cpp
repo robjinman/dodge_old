@@ -83,7 +83,7 @@ void MusicTrack::stop() {
 //===========================================
 // MusicTrack::clone
 //===========================================
-MusicTrack* MusicTrack::clone() const {
+Asset* MusicTrack::clone() const {
    throw Exception("Cannot clone MusicTrack", __FILE__, __LINE__);
 }
 

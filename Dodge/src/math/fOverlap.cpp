@@ -75,15 +75,15 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
    const Polygon& poly1 = static_cast<const Polygon&>(poly1_);
    const Polygon& poly2 = static_cast<const Polygon&>(poly2_);
 
-   double xMin1 = pos1.x + poly1.getMinimum().x;
-   double xMax1 = pos1.x + poly1.getMaximum().x;
-   double yMin1 = pos1.y + poly1.getMinimum().y;
-   double yMax1 = pos1.y + poly1.getMaximum().y;
+   float32_t xMin1 = pos1.x + poly1.getMinimum().x;
+   float32_t xMax1 = pos1.x + poly1.getMaximum().x;
+   float32_t yMin1 = pos1.y + poly1.getMinimum().y;
+   float32_t yMax1 = pos1.y + poly1.getMaximum().y;
 
-   double xMin2 = pos2.x + poly2.getMinimum().x;
-   double xMax2 = pos2.x + poly2.getMaximum().x;
-   double yMin2 = pos2.y + poly2.getMinimum().y;
-   double yMax2 = pos2.y + poly2.getMaximum().y;
+   float32_t xMin2 = pos2.x + poly2.getMinimum().x;
+   float32_t xMax2 = pos2.x + poly2.getMaximum().x;
+   float32_t yMin2 = pos2.y + poly2.getMinimum().y;
+   float32_t yMax2 = pos2.y + poly2.getMaximum().y;
 
    if (!(xMin1 <= xMax2 && xMax1 >= xMin2 && yMin1 <= yMax2 && yMax1 >= yMin2)) return false;
 
@@ -96,7 +96,7 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
       Vec2f line = (poly1.getVertex(i) - poly1.getVertex((i + 1) % poly1.getNumVertices())) + pos1;
 
       // Normalise
-      double sf = sqrt(line.x * line.x + line.y * line.y);
+      float32_t sf = sqrt(line.x * line.x + line.y * line.y);
       line.x /= sf;
       line.y /= sf;
 
@@ -107,7 +107,7 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
       Vec2f line = (poly2.getVertex(i) - poly2.getVertex((i + 1) % poly2.getNumVertices())) + pos2;
 
       // Normalise
-      double sf = sqrt(line.x * line.x + line.y * line.y);
+      float32_t sf = sqrt(line.x * line.x + line.y * line.y);
       line.x /= sf;
       line.y /= sf;
 
@@ -115,12 +115,12 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
    }
 
    for (int l = 0; l < nLines; l++) {
-      double p1Min = 0, p1Max = 0, p2Min = 0, p2Max = 0;
+      float32_t p1Min = 0, p1Max = 0, p2Min = 0, p2Max = 0;
 
       for (int i = 0; i < poly1.getNumVertices(); ++i) {
 
          // Projected point
-         double pt = lines[l].x * (pos1.x + poly1.getVertex(i).x) + lines[l].y * (pos1.y + poly1.getVertex(i).y);
+         float32_t pt = lines[l].x * (pos1.x + poly1.getVertex(i).x) + lines[l].y * (pos1.y + poly1.getVertex(i).y);
 
          if (i == 0) {
             p1Min = pt;
@@ -134,7 +134,7 @@ bool polyPolyOverlap(const Shape& poly1_, const Vec2f& pos1, const Shape& poly2_
       for (int i = 0; i < poly2.getNumVertices(); ++i) {
 
          // Projected point
-         double pt = lines[l].x * (pos2.x + poly2.getVertex(i).x) + lines[l].y * (pos2.y + poly2.getVertex(i).y);
+         float32_t pt = lines[l].x * (pos2.x + poly2.getVertex(i).x) + lines[l].y * (pos2.y + poly2.getVertex(i).y);
 
          if (i == 0) {
             p2Min = pt;

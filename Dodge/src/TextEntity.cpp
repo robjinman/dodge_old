@@ -103,7 +103,7 @@ TextEntity::TextEntity(const TextEntity& copy, long name)
 //===========================================
 // TextEntity::clone
 //===========================================
-TextEntity* TextEntity::clone() const {
+Asset* TextEntity::clone() const {
    return new TextEntity(*this);
 }
 
@@ -198,7 +198,7 @@ void TextEntity::onEvent(const EEvent* event) {
 //===========================================
 // TextEntity::setZ
 //===========================================
-void TextEntity::setZ(int z) {
+void TextEntity::setZ(float32_t z) {
    Entity::setZ(z);
    m_model.setMatrixElement(14, z);
 }
@@ -216,13 +216,13 @@ void TextEntity::updateModel() const {
    float32_t texSectionX2 = texSectionX1 + m_font->getTextureSection().getSize().x;
    float32_t texSectionY2 = texSectionY1 + m_font->getTextureSection().getSize().y;
 
-   float32_t texW = m_font->getTexture()->getWidth();
-   float32_t texH = m_font->getTexture()->getHeight();
+   float32_t texW = static_cast<float32_t>(m_font->getTexture()->getWidth());
+   float32_t texH = static_cast<float32_t>(m_font->getTexture()->getHeight());
 
-   float32_t pxChW = m_font->getCharWidth();    // Char dimensions in pixels
-   float32_t pxChH = m_font->getCharHeight();
+   float32_t pxChW = static_cast<float32_t>(m_font->getCharWidth());    // Char dimensions in pixels
+   float32_t pxChH = static_cast<float32_t>(m_font->getCharHeight());
 
-   int rowLen = static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW);
+   int rowLen = static_cast<int>(static_cast<float32_t>(texSectionX2 - texSectionX1) / static_cast<float32_t>(pxChW));
 
    StackAllocator::marker_t marker = gGetMemStack().getMarker();
    vvvtt_t* verts = reinterpret_cast<vvvtt_t*>(gGetMemStack().alloc(m_text.size() * 6 * sizeof(vvvtt_t)));

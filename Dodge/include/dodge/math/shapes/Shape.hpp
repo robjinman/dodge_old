@@ -25,7 +25,7 @@ class Shape : virtual public Asset {
 
       virtual long typeId() const = 0;
 
-      virtual Shape* clone() const = 0;
+      virtual Asset* clone() const = 0;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
 #endif
@@ -38,7 +38,7 @@ class Shape : virtual public Asset {
       virtual void setLineColour(const Colour& colour) const = 0;
       virtual void setLineWidth(int lineWidth) const = 0;
 
-      virtual void setRenderTransform(float32_t x, float32_t y, int z) const = 0;
+      virtual void setRenderTransform(float32_t x, float32_t y, float32_t z) const = 0;
       virtual void draw() const = 0;
 
       virtual ~Shape() {};

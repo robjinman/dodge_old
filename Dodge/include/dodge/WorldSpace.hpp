@@ -37,7 +37,7 @@ class WorldSpace {
       void getEntities(const Range& region, std::vector<pEntity_t>& entities) const;
 
 #ifdef DEBUG
-      void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, int z) const;
+      void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, float32_t z) const;
 #endif
 
    private:

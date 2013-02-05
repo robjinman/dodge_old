@@ -50,7 +50,7 @@ size_t Ellipse::getSize() const {
 //===========================================
 // Ellipse::clone
 //===========================================
-Ellipse* Ellipse::clone() const {
+Asset* Ellipse::clone() const {
    return new Ellipse(*this);
 }
 

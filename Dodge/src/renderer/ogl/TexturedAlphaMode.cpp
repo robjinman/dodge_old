@@ -261,7 +261,7 @@ void TexturedAlphaMode::renderBatch(const batch_t& batch) {
 
    if (primType == Renderer::LINES) {
       if (lineWidth != 0)
-         GL_CHECK(glLineWidth(lineWidth));
+         GL_CHECK(glLineWidth(static_cast<GLfloat>(lineWidth)));
    }
 
    if (vertLayout == vvvttcccc) {
@@ -384,7 +384,7 @@ void TexturedAlphaMode::renderModel(const IModel* model, const matrix44f_c& proj
 
    if (model->getPrimitiveType() == Renderer::LINES) {
       if (model->getLineWidth() != 0)
-         GL_CHECK(glLineWidth(model->getLineWidth()));
+         GL_CHECK(glLineWidth(static_cast<GLfloat>(model->getLineWidth())));
    }
 
    // If model contains per-vertex colour data

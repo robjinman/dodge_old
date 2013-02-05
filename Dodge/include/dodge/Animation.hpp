@@ -31,7 +31,7 @@ class Animation : virtual public Asset {
       Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
 
       virtual size_t getSize() const;
-      virtual Animation* clone() const;
+      virtual Asset* clone() const;
 
       inline void addFrame(const AnimFrame& frame);
       inline void setDuration(float32_t duration);

@@ -107,7 +107,7 @@ void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& proj
 
    if (model->getPrimitiveType() == Renderer::LINES) {
       if (model->getLineWidth() != 0)
-         GL_CHECK(glLineWidth(model->getLineWidth()));
+         GL_CHECK(glLineWidth(static_cast<GLfloat>(model->getLineWidth())));
    }
 
    // If model contains per-vertex colour data

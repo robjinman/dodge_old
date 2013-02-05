@@ -1,0 +1,69 @@
+﻿Build started 04/02/2013 23:37:11.
+     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D DEBUG /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\WorldSpace.cpp
+         WorldSpace.cpp
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodge.lib" /NOLOGO /LTCG Release\Animation.obj
+         Release\AnimFrame.obj
+         Release\AssetManager.obj
+         Release\Audio.obj
+         Release\MusicTrack.obj
+         Release\Sound.obj
+         Release\Box2dPhysics.obj
+         Release\EEvent.obj
+         Release\Entity.obj
+         Release\EntityAnimations.obj
+         Release\EntityParallax.obj
+         Release\EntityTransformations.obj
+         Release\EventManager.obj
+         Release\Exception.obj
+         Release\globals.obj
+         Release\KvpParser.obj
+         Release\MapLoader.obj
+         Release\common.obj
+         Release\fAreEqual.obj
+         Release\fContains.obj
+         Release\fIntersect.obj
+         Release\fOverlap.obj
+         Release\Ellipse.obj
+         Release\LineSegment.obj
+         Release\Polygon.obj
+         Release\Quad.obj
+         Release\Vec2f.obj
+         Release\Vec2i.obj
+         Release\Vec3f.obj
+         Release\Vec3i.obj
+         Release\ParallaxSprite.obj
+         Release\Range.obj
+         Release\Camera.obj
+         Release\Font.obj
+         Release\Colour.obj
+         Release\FixedFunctionMode.obj
+         Release\NonTexturedAlphaMode.obj
+         Release\Renderer.obj
+         Release\RenderMode.obj
+         Release\Texture.obj
+         Release\TexturedAlphaMode.obj
+         Release\SceneGraph.obj
+         Release\ShapeFactory.obj
+         Release\Sprite.obj
+         Release\StackAllocator.obj
+         Release\StringId.obj
+         Release\TextEntity.obj
+         Release\Transformation.obj
+         Release\TransPart.obj
+         Release\EntityUi.obj
+         Release\UiButton.obj
+         Release\Timer.obj
+         Release\WinIO.obj
+         Release\WorldSpace.obj
+         Release\XmlAttribute.obj
+         Release\XmlDocument.obj
+         Release\XmlNode.obj
+         Dodge.vcxproj -> D:\Code\projects\Dodge\Dodge\vcpp\Dodge\..\..\lib\Dodge.lib
+     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:47.26

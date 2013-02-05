@@ -86,7 +86,7 @@ Quad::Quad(const Quad& copy)
 //===========================================
 // Quad::clone
 //===========================================
-Quad* Quad::clone() const {
+Asset* Quad::clone() const {
    return new Quad(*this);
 }
 

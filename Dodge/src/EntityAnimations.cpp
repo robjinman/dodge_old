@@ -233,7 +233,10 @@ void EntityAnimations::addAnimation(pAnimation_t anim) {
    if (m_animations.size() == 1) {
       const AnimFrame* frame = anim->getFrame(0);
 
-      setTextureSection(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+      setTextureSection(
+         static_cast<float32_t>(frame->pos.x), static_cast<float32_t>(frame->pos.y),
+         static_cast<float32_t>(frame->dim.x), static_cast<float32_t>(frame->dim.y)
+      );
    }
 }
 
@@ -281,10 +284,10 @@ void EntityAnimations::updateModel() {
    float32_t w = m_onScreenSize.x * m_entity->getScale().x;
    float32_t h = m_onScreenSize.y * m_entity->getScale().y;
 
-   float32_t imgW = m_texture->getWidth();
-   float32_t imgH = m_texture->getHeight();
+   float32_t imgW = static_cast<float32_t>(m_texture->getWidth());
+   float32_t imgH = static_cast<float32_t>(m_texture->getHeight());
 
-   Vec2f halfPixel(0.5 / imgW, 0.5 / imgH);
+   Vec2f halfPixel(0.5f / imgW, 0.5f / imgH);
 
    float32_t tX1 = m_texSection.getPosition().x / imgW;
    float32_t tX2 = (m_texSection.getPosition().x + m_texSection.getSize().x) / imgW;
@@ -366,7 +369,10 @@ void EntityAnimations::update() {
             m_onScreenSize = m_originalOnScreenSize;
          }
 
-         m_texSection = Range(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         m_texSection = Range(
+            static_cast<float32_t>(frame->pos.x), static_cast<float32_t>(frame->pos.y),
+            static_cast<float32_t>(frame->dim.x), static_cast<float32_t>(frame->dim.y)
+         );
 
          if (frame->worldOffset) m_offset = *frame->worldOffset;
 
@@ -374,7 +380,7 @@ void EntityAnimations::update() {
 
          if (frame->size) m_onScreenSize = *frame->size;
 
-         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(dynamic_cast<Shape*>(frame->shape->clone()))); // TODO: ShapeDelta
 
          updateModel();
       }
@@ -411,7 +417,10 @@ void EntityAnimations::stepAnimation() {
             m_onScreenSize = m_originalOnScreenSize;
          }
 
-         m_texSection = Range(frame->pos.x, frame->pos.y, frame->dim.x, frame->dim.y);
+         m_texSection = Range(
+            static_cast<float32_t>(frame->pos.x), static_cast<float32_t>(frame->pos.y),
+            static_cast<float32_t>(frame->dim.x), static_cast<float32_t>(frame->dim.y)
+         );
 
          if (frame->worldOffset) m_offset = *frame->worldOffset;
 
@@ -419,7 +428,7 @@ void EntityAnimations::stepAnimation() {
 
          if (frame->size) m_onScreenSize = *frame->size;
 
-         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(frame->shape->clone())); // TODO: ShapeDelta
+         if (frame->shape) m_entity->setShape(unique_ptr<Shape>(dynamic_cast<Shape*>(frame->shape->clone()))); // TODO: ShapeDelta
 
          updateModel();
       }

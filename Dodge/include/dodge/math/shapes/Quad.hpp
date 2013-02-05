@@ -25,7 +25,7 @@ class Quad : public Polygon {
 
       inline void clear();
 
-      virtual Quad* clone() const;
+      virtual Asset* clone() const;
       virtual size_t getSize() const;
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

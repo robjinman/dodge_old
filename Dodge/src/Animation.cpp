@@ -106,7 +106,7 @@ Animation::Animation(long name, float32_t duration, const std::vector<AnimFrame>
 //===========================================
 // Animation::clone
 //===========================================
-Animation* Animation::clone() const {
+Asset* Animation::clone() const {
    return new Animation(*this);
 }
 

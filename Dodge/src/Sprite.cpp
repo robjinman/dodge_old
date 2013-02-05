@@ -78,7 +78,7 @@ void Sprite::deepCopy(const Sprite& copy) {}
 //===========================================
 // Sprite::clone
 //===========================================
-Sprite* Sprite::clone() const {
+Asset* Sprite::clone() const {
    return new Sprite(*this);
 }
 

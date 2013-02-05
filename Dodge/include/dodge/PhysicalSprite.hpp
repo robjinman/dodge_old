@@ -107,7 +107,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       //===========================================
       // PhysicalSprite::clone
       //===========================================
-      virtual PhysicalSprite* clone() const {
+      virtual Asset* clone() const {
          return new PhysicalSprite(*this);
       }
 

@@ -30,7 +30,7 @@ class SpatialContainer {
       virtual const Range& getBoundary() const = 0;
 
 #ifdef DEBUG
-      virtual void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, int z) const = 0;
+      virtual void dbg_draw(const Colour& colour, Renderer::int_t lineWidth, float32_t z) const = 0;
 #endif
 
       virtual ~SpatialContainer() {}

@@ -19,13 +19,13 @@ class TextEntity : virtual public Entity {
       TextEntity(const TextEntity& copy, long name);
 
       virtual size_t getSize() const;
-      virtual TextEntity* clone() const;
+      virtual Asset* clone() const;
       virtual void assignData(const XmlNode data);
 
       virtual void onEvent(const EEvent* event);
 
       virtual void setFillColour(const Colour& colour);
-      virtual void setZ(int z);
+      virtual void setZ(float32_t z);
 
       virtual void draw() const;
 

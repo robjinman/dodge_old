@@ -19,7 +19,8 @@ namespace Dodge {
 //===========================================
 // Vec3i::Vec3i
 //===========================================
-Vec3i::Vec3i(const Vec3f& v) : x(v.x), y(v.y), z(v.z) {}
+Vec3i::Vec3i(const Vec3f& v)
+   : x(static_cast<int>(v.x)), y(static_cast<int>(v.y)), z(static_cast<int>(v.z)) {}
 
 //===========================================
 // Vec3i::Vec3i

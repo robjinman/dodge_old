@@ -19,7 +19,8 @@ namespace Dodge {
 //===========================================
 // Vec2i::Vec2i
 //===========================================
-Vec2i::Vec2i(const Vec2f& v) : x(v.x), y(v.y) {}
+Vec2i::Vec2i(const Vec2f& v)
+   : x(static_cast<int>(v.x)), y(static_cast<int>(v.y)) {}
 
 //===========================================
 // Vec2i::Vec2i
@@ -46,9 +47,13 @@ Vec2i::Vec2i(const XmlNode data) {
 // Vec2i::rotate
 //===========================================
 void Vec2i::rotate(const Vec2i& p, float32_t a) {
-   float32_t x_ = x;
-   x = (x - p.x) * cos(DEG_TO_RAD(a)) - (y - p.y) * sin(DEG_TO_RAD(a)) + p.x;
-   y = (x_ - p.x) * sin(DEG_TO_RAD(a)) + (y - p.y) * cos(DEG_TO_RAD(a)) + p.y;
+   float32_t x_ = static_cast<float32_t>(x);
+
+   x = static_cast<int>(static_cast<float32_t>(x - p.x) * cos(DEG_TO_RAD(a))
+      - static_cast<float32_t>(y - p.y) * sin(DEG_TO_RAD(a)) + static_cast<float32_t>(p.x));
+
+   y = static_cast<int>(static_cast<float32_t>(x_ - p.x) * sin(DEG_TO_RAD(a))
+      + static_cast<float32_t>(y - p.y) * cos(DEG_TO_RAD(a)) + static_cast<float32_t>(p.y));
 }
 
 

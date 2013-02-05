@@ -33,7 +33,7 @@ class Texture : virtual public Asset {
       Texture(const char* file);
 
       virtual size_t getSize() const;
-      virtual Texture* clone() const;
+      virtual Asset* clone() const;
 
       inline GLint getWidth() const;
       inline GLint getHeight() const;
