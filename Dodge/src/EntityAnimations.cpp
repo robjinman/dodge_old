@@ -316,6 +316,8 @@ void EntityAnimations::updateModel() {
    m_model.setMatrix(mv.data());
    m_model.setColour(m_entity->getFillColour());
    m_model.setTextureHandle(m_texture->getHandle());
+
+//   m_renderer.bufferModel(&m_model);
 }
 
 //===========================================

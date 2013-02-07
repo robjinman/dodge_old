@@ -5,6 +5,7 @@
 
 #include <set>
 #include <sstream>
+#include <globals.hpp>
 #include <MapLoader.hpp>
 
 
@@ -117,7 +118,10 @@ void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
 
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
-            parseAssetsFile_r(node_.getString(), segment);
+            stringstream ss;
+            ss << gGetWorkingDir() << "/" << node_.getString();
+
+            parseAssetsFile_r(ss.str(), segment);
             node_ = node_.nextSibling();
          }
 
@@ -132,7 +136,10 @@ void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
 
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
-            parseAssetsFile_r(node_.getString(), segment);
+            stringstream ss;
+            ss << gGetWorkingDir() << "/" << node_.getString();
+
+            parseAssetsFile_r(ss.str(), segment);
             node_ = node_.nextSibling();
          }
       }
@@ -173,7 +180,7 @@ void MapLoader::loadMapSettings(const XmlNode data) {
             mapSegment_t seg;
 
             stringstream path;
-            path << dir << "/" << i << j << ".xml";
+            path << gGetWorkingDir() << "/" << dir << "/" << i << j << ".xml";
             seg.filePath = path.str();
 
             m_segments[i].push_back(seg);
@@ -199,7 +206,7 @@ void MapLoader::parseMapFile(const string& file) {
    try {
       XmlDocument doc;
 
-      XmlNode decl = doc.parse(file);
+      XmlNode decl = doc.parse(gGetWorkingDir() + "/" + file);
       if (decl.isNull())
          throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
@@ -219,7 +226,10 @@ void MapLoader::parseMapFile(const string& file) {
 
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
-            parseAssetsFile_r(node_.getString(), NULL);
+            stringstream ss;
+            ss << gGetWorkingDir() << "/" << node_.getString();
+
+            parseAssetsFile_r(ss.str(), NULL);
             node_ = node_.nextSibling();
          }
 
@@ -235,7 +245,10 @@ void MapLoader::parseMapFile(const string& file) {
 
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
-            parseAssetsFile_r(node_.getString(), NULL);
+            stringstream ss;
+            ss << gGetWorkingDir() << "/" << node_.getString();
+
+            parseAssetsFile_r(ss.str(), NULL);
             node_ = node_.nextSibling();
          }
       }

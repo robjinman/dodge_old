@@ -235,6 +235,8 @@ void Renderer::draw(const IModel* model) {
 //===========================================
 void Renderer::constructVBO(IModel* model) {
 #ifndef WIN32
+// TODO: NOT THREAD SAFE!!!!
+/*
    modelHandle_t handle;
 
    if (model->m_handle == 0) {
@@ -247,6 +249,7 @@ void Renderer::constructVBO(IModel* model) {
    else {
       freeBufferedModel(model);
    }
+*/
 #endif
 }
 

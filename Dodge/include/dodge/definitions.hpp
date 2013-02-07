@@ -22,7 +22,7 @@
    }
 
 #ifdef WIN32
-   #define SSCANF sscanf_s
+   #define SSCANF sscanf
 #else
    #define SSCANF sscanf
 #endif

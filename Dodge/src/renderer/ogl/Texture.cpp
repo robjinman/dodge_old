@@ -4,10 +4,12 @@
  */
 
 #include <cstring>
+#include <sstream>
 #include <renderer/ogl/Texture.hpp>
 #include <renderer/ogl/Renderer.hpp>
 #include <PNG_CHECK.hpp>
 #include <StringId.hpp>
+#include <globals.hpp>
 
 
 using namespace std;
@@ -41,7 +43,11 @@ Texture::Texture(const XmlNode data)
 
       XmlAttribute attr = data.firstAttribute();
       XML_ATTR_CHECK(attr, path);
-      string path = attr.getString();
+
+      stringstream ss;
+      ss << gGetWorkingDir() << "/" << attr.getString();
+
+      string path = ss.str();
 
       constructTexture(path.data());
    }

@@ -22,7 +22,7 @@ namespace Dodge {
 XmlNode XmlDocument::parse(const string& file) {
    ifstream fin(file);
    if (!fin.good())
-      throw Exception("Error parsing XML file; Bad file", __FILE__, __LINE__);
+      throw Exception("Error parsing XML file; Bad file (" + file + ")", __FILE__, __LINE__);
 
    // Get file length
    fin.seekg (0, ios::end);

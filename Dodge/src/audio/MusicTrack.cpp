@@ -3,9 +3,11 @@
  * Date: 2013
  */
 
+#include <sstream>
 #include <StringId.hpp>
 #include <audio/MusicTrack.hpp>
 #include <audio/Audio.hpp>
+#include <globals.hpp>
 
 
 using namespace std;
@@ -27,7 +29,11 @@ MusicTrack::MusicTrack(const XmlNode data)
 
       XmlAttribute attr = data.firstAttribute();
       XML_ATTR_CHECK(attr, path);
-      path = attr.getString();
+
+      stringstream ss;
+      ss << gGetWorkingDir() << "/" << attr.getString();
+
+      path = ss.str();
    }
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class MusicTrack; ");

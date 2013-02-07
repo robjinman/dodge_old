@@ -39,7 +39,7 @@ const string& KvpParser::getMetaData(unsigned int index) const {
 //
 // Retrieve value by key.
 //===========================================
-const string& KvpParser::getValue(const string& key) const {
+string KvpParser::getValue(const string& key) const {
    map<string, string>::const_iterator it = m_data.find(key);
    if (it == m_data.end()) return string("");
 

@@ -22,6 +22,7 @@ struct projectSettings_t {
 
    float32_t targetFrameRate;
    size_t globalStackSize;
+   std::string workingDir;
 };
 
 
@@ -30,6 +31,7 @@ extern void gInitialise(const projectSettings_t& settings = projectSettings_t())
 extern float32_t gGetTargetFrameRate();
 extern StackAllocator& gGetMemStack();
 extern Vec2f gGetPixelSize();
+extern const std::string& gGetWorkingDir();
 
 
 };
