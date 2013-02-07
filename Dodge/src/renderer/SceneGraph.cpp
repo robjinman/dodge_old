@@ -25,6 +25,9 @@ void SceneGraph::insert(const IModel* model) {
 
    model->copyTo(ptr);
 
+//   Renderer& renderer = Renderer::getInstance();
+//   renderer.bufferModel(ptr);
+
    m_container.insert(entry_t(key_t(subKey_t(ptr->getDepth(), ptr->getRenderMode()), ptr->getTextureHandle()), ptr));
 }
 

@@ -17,7 +17,7 @@ namespace Dodge {
 inline void sleepThread(double seconds) {
    Timer timer;
    Sleep(static_cast<DWORD>(floor(seconds * 1000.0)));
-   while (timer.getTime () < seconds) { Sleep(0); }
+   while (timer.getTime () < seconds) {}
 }
 
 

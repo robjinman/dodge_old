@@ -21,7 +21,7 @@ class KvpParser {
    public:
       void parseFile(const std::string& file);
 
-      const std::string& getValue(const std::string& key) const;
+      std::string getValue(const std::string& key) const;
 
       void insertPair(const std::string& key, const std::string& value);
       void removePair(const std::string& key);

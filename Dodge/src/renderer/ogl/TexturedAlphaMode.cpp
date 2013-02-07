@@ -303,7 +303,6 @@ void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat
    if (!isSupported(model))
       throw RendererException("Model type not supported by TexturedAlphaMode", __FILE__, __LINE__);
 
-
    // Queue model for batching
 
    if (isCompatibleWithPending(model)) {

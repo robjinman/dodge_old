@@ -17,17 +17,19 @@ namespace Dodge {
 bool init = false;
 unique_ptr<StackAllocator> memStack;
 float32_t targetFrameRate;
+projectSettings_t settings;
 
 
 //===========================================
 // gInitialise
 //===========================================
-void gInitialise(const projectSettings_t& settings) {
+void gInitialise(const projectSettings_t& s) {
    if (init)
       throw Exception("Error initialising globals; Globals already initialised", __FILE__, __LINE__);
 
-   memStack = unique_ptr<StackAllocator>(new StackAllocator(settings.globalStackSize));
-   targetFrameRate = settings.targetFrameRate;
+   settings = s;
+   memStack = unique_ptr<StackAllocator>(new StackAllocator(s.globalStackSize));
+   targetFrameRate = s.targetFrameRate;
 
    init = true;
 }
@@ -50,6 +52,16 @@ StackAllocator& gGetMemStack() {
       throw Exception("Error retrieving memory stack; Globals not initialised", __FILE__, __LINE__);
 
    return *memStack;
+}
+
+//===========================================
+// gGetWorkingDir
+//===========================================
+const string& gGetWorkingDir() {
+   if (!init)
+      throw Exception("Error retrieving working directory; Globals not initialised", __FILE__, __LINE__);
+
+   return settings.workingDir;
 }
 
 //===========================================
