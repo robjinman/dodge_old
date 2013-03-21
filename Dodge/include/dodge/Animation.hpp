@@ -28,7 +28,7 @@ class Animation : virtual public Asset {
 
       explicit Animation(const XmlNode data);
       Animation(const Animation& copy, long name);
-      Animation(long name, float32_t rate, const std::vector<AnimFrame>& frames);
+      Animation(long name, float32_t duration, const std::vector<AnimFrame>& frames);
 
       virtual size_t getSize() const;
       virtual Asset* clone() const;

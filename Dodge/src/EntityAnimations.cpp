@@ -105,7 +105,7 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));
 
       if (!m_texture)
-         throw XmlException("Bad texture asset id", __FILE__, __LINE__);
+         throw XmlException(string("Bad texture asset id in file \"") + node.file() + "\"", __FILE__, __LINE__);
 
       node = node.nextSibling();
       XML_NODE_CHECK(node, textureSection);
@@ -326,8 +326,12 @@ void EntityAnimations::updateModel() {
 void EntityAnimations::onEvent(const EEvent* event) {
    static long entityRotationStr = internString("entityRotation");
    static long entityTranslationStr = internString("entityTranslation");
+   static long entityShapeStr = internString("entityShape");
 
-   if (event->getType() == entityRotationStr
+   if (event->getType() == entityShapeStr) {
+      updateModel();
+   }
+   else if (event->getType() == entityRotationStr
       || event->getType() == entityTranslationStr) {
 
       Vec2f pos = m_entity->getTranslation_abs();
@@ -480,6 +484,7 @@ void EntityAnimations::setTextureSection(float32_t x, float32_t y, float32_t w, 
 void EntityAnimations::setOnScreenSize(float32_t w, float32_t h) {
    m_onScreenSize.x = w;
    m_onScreenSize.y = h;
+   m_originalOnScreenSize = m_onScreenSize;
    updateModel();
 }
 

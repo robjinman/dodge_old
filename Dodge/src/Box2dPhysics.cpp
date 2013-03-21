@@ -254,10 +254,21 @@ void Box2dPhysics::loadSettings(const string& file) {
    if (parser.getMetaData(0).compare("Box2D") != 0)
       throw PhysicsException("Error loading settings; File is not for this implementation (Box2D)", __FILE__, __LINE__);
 
-   m_timeStep = 1.f / static_cast<float32_t>(atof(parser.getValue("fps").data()));
-   m_worldUnitsPerMetre = static_cast<float32_t>(atof(parser.getValue("worldUnitsPerMetre").data()));
-   m_v_iterations = atoi(parser.getValue("vIterations").data());
-   m_p_iterations = atoi(parser.getValue("pIterations").data());
+   string val = parser.getValue("fps");
+   if (val.empty()) throw PhysicsException("Error loading settings; Expected 'fps' value", __FILE__, __LINE__);
+   m_timeStep = 1.f / static_cast<float32_t>(atof(val.data()));
+
+   val = parser.getValue("worldUnitsPerMetre");
+   if (val.empty()) throw PhysicsException("Error loading settings; Expected 'worldUnitsPerMetre' value", __FILE__, __LINE__);
+   m_worldUnitsPerMetre = static_cast<float32_t>(atof(val.data()));
+
+   val = parser.getValue("vIterations");
+   if (val.empty()) throw PhysicsException("Error loading settings; Expected 'vIterations' value", __FILE__, __LINE__);
+   m_v_iterations = atoi(val.data());
+
+   val = parser.getValue("pIterations");
+   if (val.empty()) throw PhysicsException("Error loading settings; Expected 'pIterations' value", __FILE__, __LINE__);
+   m_p_iterations = atoi(val.data());
 
    Functor<void, TYPELIST_1(EEvent*)> fEntMovedHandler(&Box2dPhysics::entityMovedHandler);
    m_eventManager.registerCallback(internString("entityTranslation"), fEntMovedHandler);
@@ -269,14 +280,14 @@ void Box2dPhysics::loadSettings(const string& file) {
 // Box2dPhysics::entityMovedHandler
 //===========================================
 void Box2dPhysics::entityMovedHandler(EEvent* event) {
-//   static long entityRotationStr = internString("entityRotation");
+   static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
 
    Entity* entity;
 
-//   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
-/*   else*/ if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
+   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
+   else if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
    else if (event->getType() == entityTranslationStr) entity = static_cast<EEntityTranslation*>(event)->entity.get();
 
    if (m_ignore.find(event) == m_ignore.end()) {
@@ -291,7 +302,7 @@ void Box2dPhysics::entityMovedHandler(EEvent* event) {
 // Box2dPhysics::updatePos
 //===========================================
 void Box2dPhysics::updatePos(EEvent* ev) {
-//   static long entityRotationStr = internString("entityRotation");
+   static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
 
@@ -306,11 +317,11 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       float32_t y = event->newTransl_abs.y;
 
       m_body->SetTransform(b2Vec2(x / m_worldUnitsPerMetre, y / m_worldUnitsPerMetre), m_body->GetAngle());
-   }/*
+   }
    else if (ev->getType() == entityRotationStr) {
       EEntityRotation* event = static_cast<EEntityRotation*>(ev);
       m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(event->newRotation_abs));
-   }*/
+   }
    else if (ev->getType() == entityShapeStr) {
       EEntityShape* event = static_cast<EEntityShape*>(ev);
 
@@ -349,7 +360,7 @@ void Box2dPhysics::update() {
    for (map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it) {
       if (!it->second->m_opts.dynamic) continue;
 
-      Entity* ent = it->second->m_entity;
+      Entity* ent = it->first;
 
       Vec2f pos(it->second->m_body->GetPosition()(0) * m_worldUnitsPerMetre,
          it->second->m_body->GetPosition()(1) * m_worldUnitsPerMetre);

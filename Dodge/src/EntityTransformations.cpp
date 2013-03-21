@@ -148,34 +148,60 @@ void EntityTransformations::playTransformation(long name) {
 }
 
 //===========================================
+// EntityTransformations::finishTransformation
+//===========================================
+void EntityTransformations::finishTransformation(long name) {
+   map<long, pTransformation_t>::iterator it = m_transformations.find(name);
+   if (it == m_transformations.end()) return;
+
+   while (it->second->getState() == Transformation::PLAYING)
+      updateTransformation(it->second);
+}
+
+//===========================================
+// EntityTransformations::finishTransformations
+//===========================================
+void EntityTransformations::finishTransformations() {
+   for (auto it = m_transformations.begin(); it != m_transformations.end(); ++it)
+      finishTransformation(it->second->getName());
+}
+
+//===========================================
+// EntityTransformations::updateTransformation
+//===========================================
+void EntityTransformations::updateTransformation(pTransformation_t t) {
+   EventManager eventManager;
+
+   uint_t part = t->getCurrentPartIdx();
+   const Transformation::delta_t* delta = t->update();
+
+   if (part != t->getCurrentPartIdx()) {
+      ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), t);
+      m_entity->onEvent(event);
+      eventManager.queueEvent(event);
+   }
+
+   if (delta) {
+      m_entity->translate(delta->transl.x, delta->transl.y);
+
+      if (delta->rot != 0.f) m_entity->rotate(delta->rot, delta->pivot);
+      if (delta->scale != Vec2f(1.f, 1.f)) m_entity->scale(delta->scale);
+
+      if (t->getCurrentFrameNumber() == t->getNumFrames()) {
+         ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), t);
+         m_entity->onEvent(event);
+         eventManager.queueEvent(event);
+      }
+   }
+}
+
+//===========================================
 // EntityTransformations::update
 //===========================================
 void EntityTransformations::update() {
    try {
-      EventManager eventManager;
-
       for (auto it = m_transformations.begin(); it != m_transformations.end(); ++it) {
-         uint_t part = it->second->getCurrentPartIdx();
-         const Transformation::delta_t* delta = it->second->update();
-
-         if (part != it->second->getCurrentPartIdx()) {
-            ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), it->second);
-            m_entity->onEvent(event);
-            eventManager.queueEvent(event);
-         }
-
-         if (delta) {
-            m_entity->translate(delta->transl.x, delta->transl.y);
-
-            if (delta->rot != 0.f) m_entity->rotate(delta->rot, delta->pivot);
-            if (delta->scale != Vec2f(1.f, 1.f)) m_entity->scale(delta->scale);
-
-            if (it->second->getCurrentFrameNumber() == it->second->getNumFrames()) {
-               ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), it->second);
-               m_entity->onEvent(event);
-               eventManager.queueEvent(event);
-            }
-         }
+         updateTransformation(it->second);
       }
    }
    catch (bad_alloc& e) {

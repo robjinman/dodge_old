@@ -9,7 +9,7 @@ using namespace Dodge;
 using namespace std;
 
 
-Graphics2d graphics2d;
+Renderer& renderer = Renderer::getInstance();
 map<int, bool> keys;
 double frameRate;
 vector<pSprite_t> sprites;
@@ -29,6 +29,7 @@ void keyDown(int code) {
    switch (code) {
       case WinIO::KEY_ESCAPE: quit(); break;
       case WinIO::KEY_F: std::cout << "frame rate: " << frameRate << "\n"; break;
+      case WinIO::KEY_P: sprites[0]->dbg_print(std::cout, 0); break;
    }
 }
 
@@ -69,41 +70,49 @@ void computeFrameRate() {
 }
 
 int main(int argc, char** argv) {
+   gInitialise();
+
    WinIO win;
    win.init("OpenGLES 2.0 Demo", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
 
-   graphics2d.init(640, 480);
+   renderer.start();
+
+   pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
+   renderer.attachCamera(camera);
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
 
    std::vector<AnimFrame> aFrames;
-   aFrames.push_back(AnimFrame(Vec2f(0.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(32.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(64.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(96.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(128.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(160.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(192.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(224.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(256.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(288.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(320.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   aFrames.push_back(AnimFrame(Vec2f(352.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t anim0(new Animation(internString("anim0"), 24.f, aFrames));
+   aFrames.push_back(AnimFrame(Vec2i(0, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(32, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(64, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(96, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(128, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(160, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(192, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(224, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(256, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(288, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(320, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   aFrames.push_back(AnimFrame(Vec2i(352, 0), Vec2i(32, 32), Colour(1.0, 1.0, 1.0, 1.0)));
+   pAnimation_t anim0(new Animation(internString("anim0"), 0.5f, aFrames));
 
    float32_t w = 32.f * gGetPixelSize().x;
    float32_t h = 32.f * gGetPixelSize().y;
 
    Sprite proto(internString("type0"), tex0);
-   proto.setOnScreenSize(w, h);
    proto.addAnimation(anim0);
+   proto.setOnScreenSize(w, h);
+   proto.setTextureSection(Vec2i(0, 0), Vec2i(32, 32));
 
    sprites.push_back(pSprite_t(new Sprite(proto, internString("mainDude"))));
+   sprites[0]->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
    sprites[0]->setTranslation(0.3, 0.3);
    sprites[0]->setZ(1);
+   sprites[0]->addToWorld();
 
    for (int i = 1; i < 6; ++i) {
       float32_t deg = (i - 1) * (360 / 5);
@@ -111,23 +120,28 @@ int main(int argc, char** argv) {
 
       sprites.push_back(pSprite_t(new Sprite(proto)));
       sprites[i]->setParent(sprites[0].get());
+      sprites[i]->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
       sprites[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)));
       sprites[i]->setZ(1);
+      sprites[i]->addToWorld();
    }
 
    while (1) {
+      LOOP_START;
+
       win.doEvents();
       keyboard();
       computeFrameRate();
-
-      graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
 
       for (uint_t i = 0; i < sprites.size(); ++i) {
          sprites[i]->update();
          sprites[i]->draw();
       }
 
+      renderer.tick(Colour(0.5f, 0.6f, 0.8f, 1.f));
       win.swapBuffers();
+
+      LOOP_END;
    }
 
    return 0;

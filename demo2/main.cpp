@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <memory>
 #include <dodge/dodge.hpp>
 
 
@@ -14,7 +15,7 @@ using namespace std;
 map<int, bool> keys;
 double frameRate;
 vector<pEntity_t> entities;
-Range dragRegion;
+unique_ptr<Range> pDragRegion;
 WorldSpace worldSpace;
 EventManager eventManager;
 Renderer& renderer = Renderer::getInstance();
@@ -49,7 +50,7 @@ void keyboard() {
       mainGuy->translate_x(-0.001);
    }
    if (keys[WinIO::KEY_SPACE]) {
-      mainGuy->rotate(0.8f, gGetPixelSize() * 16.f);
+      mainGuy->rotate(2.0f, gGetPixelSize() * 16.f);
    }
    if (keys[WinIO::KEY_UP]) {
       entities[1]->scale(1.01);
@@ -83,18 +84,18 @@ void btn1Click(int x, int y) {
    float32_t xx = gGetPixelSize().x * static_cast<float32_t>(x);
    float32_t yy = 1.f - gGetPixelSize().y * static_cast<float32_t>(y);
 
-   dragRegion = Range(xx, yy, 0.f, 0.f);
+   pDragRegion = unique_ptr<Range>(new Range(xx, yy, 0.f, 0.f));
 }
 
 void btn1Release(int x, int y) {
    float32_t xx = gGetPixelSize().x * static_cast<float32_t>(x);
    float32_t yy = 1.f - gGetPixelSize().y * static_cast<float32_t>(y);
 
-   Vec2f size = Vec2f(xx, yy) - dragRegion.getPosition();
+   Vec2f size = Vec2f(xx, yy) - pDragRegion->getPosition();
 
    pEntity_t shape(new Entity(internString("rectangle")));
    shape->setShape(unique_ptr<Shape>(new Quad(size)));
-   shape->setTranslation(dragRegion.getPosition());
+   shape->setTranslation(pDragRegion->getPosition());
    shape->setZ(1);
 
    shape->setFillColour(Colour(1.f, 0.f, 0.f, 0.2f));
@@ -106,11 +107,13 @@ void btn1Release(int x, int y) {
 
 void onWindowResize(int w, int h) {
    renderer.onWindowResize(w, h);
-   graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+   renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 int main(int argc, char** argv) {
    gInitialise();
+
+   pDragRegion = unique_ptr<Range>(new Range);
 
    WinIO win;
    win.init("OpenGLES 2.0 Demo", 640, 480, false);
@@ -149,16 +152,19 @@ int main(int argc, char** argv) {
    aFrames.push_back(AnimFrame(Vec2f(288.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(320.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
    aFrames.push_back(AnimFrame(Vec2f(352.f, 0.f), Vec2f(32.f, 32.f), Colour(1.0, 1.0, 1.0, 1.0)));
-   pAnimation_t anim0(new Animation(internString("anim0"), 24.f, aFrames));
+   pAnimation_t anim0(new Animation(internString("anim0"), 0.5f, aFrames));
 
    pSprite_t proto(new Sprite(internString("type0"), tex0));
    proto->addAnimation(anim0);
    proto->setShape(unique_ptr<Shape>(new Quad(Vec2f(0.f, 0.f), Vec2f(w, 0.f), Vec2f(w, h), Vec2f(0.f, h))));
    proto->setOnScreenSize(w, h);
+   proto->setTextureSection(0, 0, 32, 32);
+   proto->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
 
    entities.push_back(pSprite_t(new Sprite(*proto, internString("mainDude"))));
    entities[0]->setTranslation(0.3f, 0.3f);
    entities[0]->setZ(2);
+   entities[0]->addToWorld();
    worldSpace.trackEntity(entities[0]);
 
    for (int i = 1; i < 6; ++i) {
@@ -169,6 +175,7 @@ int main(int argc, char** argv) {
       entities[i]->setParent(entities[0].get());
       entities[i]->setTranslation(r * cos(DEG_TO_RAD(deg)), r * sin(DEG_TO_RAD(deg)));
       entities[i]->setZ(2);
+      entities[i]->addToWorld();
       worldSpace.trackEntity(entities[i]);
    }
 
@@ -179,7 +186,8 @@ int main(int argc, char** argv) {
    pPoly->addVertex(Vec2f(0.2, 0.4));
    pPoly->addVertex(Vec2f(0.0, 0.23));
 
-   pShape_t poly(new Shape(internString("polygon"), internString("bigPentagon"), move(pPoly)));
+   pEntity_t poly(new Entity(internString("polygon"), internString("bigPentagon")));
+   poly->setShape(move(pPoly));
    poly->setZ(0);
    poly->setTranslation(0.5f, 0.4f);
 
@@ -189,11 +197,12 @@ int main(int argc, char** argv) {
 
    static long strRectangle = internString("rectangle");
    while (1) {
+      LOOP_START;
+
       win.doEvents();
       keyboard();
       computeFrameRate();
 
-      graphics2d.clear(Colour(0.5, 0.6, 0.8, 1.0));
       poly->draw();
 
       worldSpace.dbg_draw(Colour(1.f, 0.f, 0.f, 1.f), 1, 5);
@@ -210,12 +219,11 @@ int main(int argc, char** argv) {
             entities[i]->update();
             entities[i]->draw();
 
-            graphics2d.setLineWidth(0);
-            graphics2d.setFillColour(Colour(0.f, 1.f, 0.f, 0.5f));
-            entities[i]->getBoundary().dbg_draw(3);
+            entities[i]->getBoundary().dbg_draw(Colour(0.f, 1.f, 0.f, 0.5f), Colour(0.f, 0.f, 0.f, 0.f), 0, 3.f);
 
-            graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
-            entities[i]->getShape().draw(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 4);
+            entities[i]->getShape().setFillColour(Colour(1.f, 0.f, 0.f, 0.5f));
+            entities[i]->getShape().setRenderTransform(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 4);
+            entities[i]->getShape().draw();
          }
       }
 
@@ -224,10 +232,12 @@ int main(int argc, char** argv) {
 //      graphics2d.setFillColour(Colour(1.f, 0.f, 0.f, 1.f));
 //      graphics2d.drawText(font1, Vec2f(0.02, 0.03), strFr.str(), 0.1, 0.9, 5, 0.f, Vec2f(0.f, 0.f));
 
-      renderer.tick();
+      renderer.tick(Colour(0.5, 0.6, 0.8, 1.0));
       eventManager.doEvents();
 
       win.swapBuffers();
+
+      LOOP_END;
    }
 
    return 0;

@@ -27,7 +27,8 @@ using namespace Dodge;
 Application::Application()
    : m_onExit(Functor<void, TYPELIST_0()>(this, &Application::exitDefault)),
      m_renderer(Dodge::Renderer::getInstance()),
-     m_frameRate(60.0) {}
+     m_frameRate(60.0),
+     m_mapLoader(MapLoader::getInstance()) {}
 
 //===========================================
 // Application::onExit
@@ -371,7 +372,6 @@ void Application::begin(int argc, char** argv) {
    }
 #endif
    m_win.init("Terraform", 640, 480, false);
-   gInitialise();
 
    m_win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(this, &Application::quit));
    m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Application::keyDown));

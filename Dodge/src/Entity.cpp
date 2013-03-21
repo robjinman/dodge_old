@@ -268,8 +268,13 @@ void Entity::deepCopy(const Entity& copy) {
    // So that no Z values are 'exactly' equal
    m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
 
-   m_shape = copy.m_shape ? unique_ptr<Shape>(dynamic_cast<Shape*>(copy.m_shape->clone())) : unique_ptr<Shape>();
+   if (copy.m_shape)
+      m_shape = unique_ptr<Shape>(dynamic_cast<Shape*>(copy.m_shape->clone()));
+
    m_boundary = copy.m_boundary;
+
+   if (copy.m_auxData)
+      m_auxData = unique_ptr<IAuxData>(dynamic_cast<IAuxData*>(copy.m_auxData->clone()));
 }
 
 //===========================================
@@ -278,7 +283,8 @@ void Entity::deepCopy(const Entity& copy) {
 size_t Entity::getSize() const {
    return sizeof(Entity)
       + (m_shape ? m_shape->getSize() : 0)
-      + m_children.size() * sizeof(pEntity_t);
+      + m_children.size() * sizeof(pEntity_t)
+      + (m_auxData ? m_auxData->getSize() : 0);
 }
 
 //===========================================

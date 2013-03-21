@@ -88,6 +88,22 @@ class EEntityRotation : public EEvent {
 };
 
 
+class IAuxData : virtual public Asset {
+   public:
+      IAuxData()
+         : Asset(internString("IAuxData")) {}
+
+      virtual size_t getSize() const = 0;
+      virtual Asset* clone() const = 0;
+      virtual void assignData(const XmlNode data) = 0;
+#ifdef DEBUG
+      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
+#endif
+
+      virtual ~IAuxData() {}
+};
+
+
 class Entity : virtual public Asset, virtual public boost::enable_shared_from_this<Entity> {
    public:
       explicit Entity(const XmlNode data);
@@ -116,6 +132,9 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 
       virtual void setSilent(bool b);
       inline bool isSilent() const;
+
+      inline void attachAuxData(std::unique_ptr<IAuxData> data);
+      inline IAuxData* getAuxDataPtr() const;
 
       // TODO: setTranslation_abs ?
       inline void setTranslation(float32_t x, float32_t y);
@@ -182,6 +201,8 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       void onAncestorRotation(float32_t da, const Vec2f& ds);
       void onNewAncestor(Entity* oldAncestor, Entity* newAncestor);
 
+      std::unique_ptr<IAuxData> m_auxData;
+
       long m_name;
       long m_type;
       bool m_silent; // If true, entity does not propagate any events
@@ -211,6 +232,20 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
 //===========================================
 inline pEntity_t Entity::getSharedPtr() {
    return shared_from_this();
+}
+
+//===========================================
+// Entity::attachAuxData
+//===========================================
+inline void Entity::attachAuxData(std::unique_ptr<IAuxData> data) {
+   m_auxData = std::move(data);
+}
+
+//===========================================
+// Entity::getAuxDataPtr
+//===========================================
+inline IAuxData* Entity::getAuxDataPtr() const {
+   return m_auxData.get();
 }
 
 //===========================================

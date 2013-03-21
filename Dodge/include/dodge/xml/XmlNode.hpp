@@ -19,9 +19,12 @@ namespace Dodge {
 class XmlNode {
    public:
       XmlNode() : m_node(NULL) {}
-      explicit XmlNode(const rapidxml::xml_node<>* node) : m_node(node) {}
+
+      XmlNode(const rapidxml::xml_node<>* node, const std::string& file)
+         : m_node(node), m_file(file) {}
 
       inline std::string name() const;
+      inline std::string file() const;
 
       inline std::string getString() const;
       int getInt() const;
@@ -39,6 +42,7 @@ class XmlNode {
 
    private:
       const rapidxml::xml_node<>* m_node;
+      std::string m_file;
 };
 
 //===========================================
@@ -64,7 +68,7 @@ inline std::string XmlNode::getString() const {
 //===========================================
 inline const XmlNode XmlNode::firstChild() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlNode(m_node->first_node());
+   return XmlNode(m_node->first_node(), m_file);
 }
 
 //===========================================
@@ -72,7 +76,7 @@ inline const XmlNode XmlNode::firstChild() const {
 //===========================================
 inline const XmlNode XmlNode::nextSibling() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlNode(m_node->next_sibling());
+   return XmlNode(m_node->next_sibling(), m_file);
 }
 
 //===========================================
@@ -80,7 +84,7 @@ inline const XmlNode XmlNode::nextSibling() const {
 //===========================================
 inline const XmlAttribute XmlNode::firstAttribute() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlAttribute(m_node->first_attribute());
+   return XmlAttribute(m_node->first_attribute(), m_file);
 }
 
 //===========================================
@@ -88,6 +92,13 @@ inline const XmlAttribute XmlNode::firstAttribute() const {
 //===========================================
 inline bool XmlNode::isNull() const {
    return m_node == NULL;
+}
+
+//===========================================
+// XmlNode::file
+//===========================================
+inline std::string XmlNode::file() const {
+   return m_file;
 }
 
 

@@ -60,7 +60,7 @@ class Application {
 
       Dodge::Colour              m_bgColour;
 
-      Dodge::MapLoader           m_mapLoader;
+      Dodge::MapLoader&          m_mapLoader;
 };
 
 

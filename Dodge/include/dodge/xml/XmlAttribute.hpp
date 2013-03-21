@@ -18,9 +18,12 @@ namespace Dodge {
 class XmlAttribute {
    public:
       XmlAttribute() : m_attr(NULL) {}
-      explicit XmlAttribute(const rapidxml::xml_attribute<>* attr) : m_attr(attr) {}
+
+      XmlAttribute(const rapidxml::xml_attribute<>* attr, const std::string& file)
+         : m_attr(attr), m_file(file) {}
 
       inline std::string name() const;
+      inline std::string file() const;
 
       inline std::string getString() const;
       int getInt() const;
@@ -34,6 +37,7 @@ class XmlAttribute {
 
    private:
       const rapidxml::xml_attribute<>* m_attr;
+      std::string m_file;
 };
 
 //===========================================
@@ -59,7 +63,7 @@ inline std::string XmlAttribute::getString() const {
 //===========================================
 inline const XmlAttribute XmlAttribute::nextAttribute() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
-   return XmlAttribute(m_attr->next_attribute());
+   return XmlAttribute(m_attr->next_attribute(), m_file);
 }
 
 //===========================================
@@ -67,6 +71,13 @@ inline const XmlAttribute XmlAttribute::nextAttribute() const {
 //===========================================
 inline bool XmlAttribute::isNull() const {
    return m_attr == NULL;
+}
+
+//===========================================
+// XmlAttribute::file
+//===========================================
+inline std::string XmlAttribute::file() const {
+   return m_file;
 }
 
 
