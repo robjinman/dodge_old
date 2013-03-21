@@ -79,7 +79,7 @@ int main() {
       shape.setRenderTransform(0.f, -0.1f, 1);
 
       pTexture_t tex(new Texture("font1.png"));
-      font1 = pFont_t(new Dodge::Font(tex, 0, 0, 192, 192, 16, 24));
+      font1 = pFont_t(new Dodge::Font(tex, 0, 64, 192, 192, 16, 24));
 
       Colour col(1, 1, 0, 1);
 

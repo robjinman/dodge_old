@@ -167,22 +167,22 @@
                         <Transformation name="moveDown">
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                         </Transformation>
@@ -191,22 +191,22 @@
                         <Transformation name="moveLeft">
                            <TransPart duration="0.05">
                               <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                         </Transformation>
@@ -215,22 +215,22 @@
                         <Transformation name="moveUp">
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                         </Transformation>
@@ -239,22 +239,22 @@
                         <Transformation name="moveRight">
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                            <TransPart duration="0.05">
                               <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot>0.0</rot>
+                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
                               <scale><Vec2f x="1.0" y="1.0"/></scale>
                            </TransPart>
                         </Transformation>

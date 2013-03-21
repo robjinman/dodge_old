@@ -71,6 +71,7 @@ class UiButton : public Sprite, public EntityUi {
          LOSE_FOCUS,
          FOCUS_IDLE,
          PRESS,
+         IS_PRESSED,
          RELEASE
       } state_t;
 

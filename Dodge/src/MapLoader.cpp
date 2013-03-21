@@ -100,53 +100,47 @@ size_t MapLoader::getMemoryUsage() const {
 // MapLoader::parseAssetsFile_r
 //===========================================
 void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
-   try {
-      XmlDocument doc;
-      XmlNode decl = doc.parse(path);
+   XmlDocument doc;
+   XmlNode decl = doc.parse(path);
 
-      if (decl.isNull())
-         throw XmlException("Expected XML declaration", __FILE__, __LINE__);
+   if (decl.isNull())
+      throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
-      XmlNode node = decl.nextSibling();
-      XML_NODE_CHECK(node, ASSETFILE);
+   XmlNode node = decl.nextSibling();
+   XML_NODE_CHECK(node, ASSETFILE);
 
-      node = node.firstChild();
-      if (node.isNull())
-         throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
+   node = node.firstChild();
+   if (node.isNull())
+      throw XmlException("Expected 'using' or 'assets' tag", __FILE__, __LINE__);
 
-      if (node.name() == "using") {
+   if (node.name() == "using") {
 
-         XmlNode node_ = node.firstChild();
-         while (!node_.isNull() && node_.name() == "file") {
-            stringstream ss;
-            ss << gGetWorkingDir() << "/" << node_.getString();
+      XmlNode node_ = node.firstChild();
+      while (!node_.isNull() && node_.name() == "file") {
+         stringstream ss;
+         ss << gGetWorkingDir() << "/" << node_.getString();
 
-            parseAssetsFile_r(ss.str(), segment);
-            node_ = node_.nextSibling();
-         }
-
-         node = node.nextSibling();
+         parseAssetsFile_r(ss.str(), segment);
+         node_ = node_.nextSibling();
       }
 
-      XML_NODE_CHECK(node, assets);
-      loadAssets(node, segment);
       node = node.nextSibling();
-
-      if (!node.isNull() && node.name() == "using") {
-
-         XmlNode node_ = node.firstChild();
-         while (!node_.isNull() && node_.name() == "file") {
-            stringstream ss;
-            ss << gGetWorkingDir() << "/" << node_.getString();
-
-            parseAssetsFile_r(ss.str(), segment);
-            node_ = node_.nextSibling();
-         }
-      }
    }
-   catch (XmlException& e) {
-      e.prepend("Error loading assets from XML file; ");
-      throw;
+
+   XML_NODE_CHECK(node, assets);
+   loadAssets(node, segment);
+   node = node.nextSibling();
+
+   if (!node.isNull() && node.name() == "using") {
+
+      XmlNode node_ = node.firstChild();
+      while (!node_.isNull() && node_.name() == "file") {
+         stringstream ss;
+         ss << gGetWorkingDir() << "/" << node_.getString();
+
+         parseAssetsFile_r(ss.str(), segment);
+         node_ = node_.nextSibling();
+      }
    }
 }
 

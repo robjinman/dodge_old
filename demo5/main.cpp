@@ -15,6 +15,8 @@ void programExit() {
 //===========================================
 int main(int argc, char** argv) {
    try {
+      Dodge::gInitialise();
+
       Application app;
       app.onExit(Functor<void, TYPELIST_0()>(programExit));
       app.begin(argc, argv);

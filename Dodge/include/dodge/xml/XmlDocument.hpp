@@ -30,6 +30,7 @@ class XmlDocument {
    private:
       rapidxml::xml_document<char> m_doc;
       char* m_data;
+      std::string m_file;
 };
 
 //===========================================

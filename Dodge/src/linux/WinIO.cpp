@@ -217,6 +217,9 @@ void WinIO::swapBuffers() {
 // callback functions.
 //===========================================
 void WinIO::doEvents() {
+   if (!m_init)
+      throw Exception("Error processing window events; WinIO not initialised", __FILE__, __LINE__);
+
    try {
       while (XPending(m_display)) {
          XEvent xEvent;

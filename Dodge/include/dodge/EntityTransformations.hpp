@@ -40,6 +40,8 @@ class EntityTransformations {
       void pauseTransformations();
       inline void stopTransformation(long name);
       void stopTransformations();
+      void finishTransformation(long name);
+      void finishTransformations();
 
       int numActiveTransformations() const;
       Transformation::state_t getTransState(long name) const;
@@ -52,6 +54,8 @@ class EntityTransformations {
       virtual ~EntityTransformations() {}
 
    private:
+      void updateTransformation(pTransformation_t t);
+
       std::map<long, pTransformation_t> m_transformations;
       Entity* m_entity;
 };

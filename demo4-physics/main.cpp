@@ -9,10 +9,10 @@ using namespace Dodge;
 
 
 WinIO win;
+Renderer& renderer = Renderer::getInstance();
 EventManager eventManager;
 vector<pEntity_t> entities;
 WorldSpace worldSpace;
-Graphics2d graphics2d;
 map<int, bool> keyState;
 double frameRate;
 pTexture_t tex0;
@@ -20,13 +20,17 @@ pTexture_t tex1;
 
 
 void quit() {
+   renderer.stop();
    exit(0);
 }
 
 void keyDown(int key) {
    switch (key) {
       case WinIO::KEY_ESCAPE: quit(); break;
-      case WinIO::KEY_F: cout << "Frame rate: " << frameRate << "fps\n" << flush; break;
+      case WinIO::KEY_F:
+         cout << "Frame rate (main): " << frameRate << "fps\n";
+         cout << "Frame rate (renderer): " << renderer.getFrameRate() << "fps\n" << flush;
+      break;
    }
 
    keyState[key] = true;
@@ -43,20 +47,18 @@ void drawEntities() {
    for (uint_t i = 0; i < entities.size(); ++i)
       entities[i]->draw();
 
-   graphics2d.setFillColour(Colour(0.f, 0.f, 0.f, 0.f));
-   graphics2d.setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
-   graphics2d.setLineWidth(3);
+   for (uint_t i = 0; i < entities.size(); ++i) {
+      entities[i]->getShape().setFillColour(Colour(0.f, 0.f, 0.f, 0.f));
+      entities[i]->getShape().setLineColour(Colour(1.f, 0.f, 0.f, 1.f));
+      entities[i]->getShape().setLineWidth(1);
+      entities[i]->getShape().setRenderTransform(entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5.f);
+      entities[i]->getShape().draw();
+   }
 
    for (uint_t i = 0; i < entities.size(); ++i)
-      graphics2d.drawPrimitive(entities[i]->getShape(), entities[i]->getTranslation_abs().x, entities[i]->getTranslation_abs().y, 5);
+      entities[i]->getBoundary().dbg_draw(Colour(0.f, 1.f, 0.f, 0.3f), Colour(0.f, 0.f, 0.f, 0.f), 0, 1.f);
 
-   graphics2d.setLineColour(Colour(0.f, 1.f, 0.f, 1.f));
-   for (uint_t i = 0; i < entities.size(); ++i)
-      entities[i]->getBoundary().dbg_draw(6);
-
-   graphics2d.setLineColour(Colour(0.f, 0.f, 1.f, 1.f));
-   graphics2d.setLineWidth(1);
-   worldSpace.dbg_draw(7);
+   worldSpace.dbg_draw(Colour(0.f, 0.f, 1.f, 1.f), 1, 7.f);
 }
 
 void keyboard() {
@@ -64,10 +66,10 @@ void keyboard() {
    if (keyState[WinIO::KEY_RIGHT]) entities[0]->rotate(-1.f);
    if (keyState[WinIO::KEY_UP]) entities[0]->scale(1.01f);
    if (keyState[WinIO::KEY_DOWN]) entities[0]->scale(0.99f);
-   if (keyState[WinIO::KEY_A]) graphics2d.getCamera()->translate_x(-0.01f);
-   if (keyState[WinIO::KEY_D]) graphics2d.getCamera()->translate_x(0.01f);
-   if (keyState[WinIO::KEY_W]) graphics2d.getCamera()->translate_y(0.01f);
-   if (keyState[WinIO::KEY_S]) graphics2d.getCamera()->translate_y(-0.01f);
+   if (keyState[WinIO::KEY_A]) renderer.getCamera().translate_x(-0.01f);
+   if (keyState[WinIO::KEY_D]) renderer.getCamera().translate_x(0.01f);
+   if (keyState[WinIO::KEY_W]) renderer.getCamera().translate_y(0.01f);
+   if (keyState[WinIO::KEY_S]) renderer.getCamera().translate_y(-0.01f);
 }
 
 void computeFrameRate() {
@@ -82,15 +84,13 @@ void computeFrameRate() {
 }
 
 void onWindowResize(int w, int h) {
-   Renderer renderer;
    renderer.onWindowResize(w, h);
-   graphics2d.getCamera()->setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
+   renderer.getCamera().setProjection(static_cast<float32_t>(w) / static_cast<float32_t>(h), 1.f);
 }
 
 void btn1Click(int x, int y) {
    y = win.getWindowHeight() - y;
 
-   Renderer renderer;
    Vec2f viewPos = renderer.getCamera().getTranslation();
 
    // World coords
@@ -109,6 +109,7 @@ void btn1Click(int x, int y) {
 
    sprite->setTranslation(wx, wy);
    sprite->setZ(2);
+   sprite->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
    sprite->setOnScreenSize(32.f / 480.f, 32.f / 480.f);
    sprite->setTextureSection(0, 0, 32, 32);
 
@@ -137,8 +138,18 @@ void entityTranslationHandler(EEvent* ev) {
    }
 }
 
-int main() {
+int main(int argc, char** argv) {
+   if (argc > 0) {
+      for (int i = 0; i < argc; ++i) {
+         if (strcmp(argv[i], "-novsync") == 0)
+            WinIO::dbg_flags |= WinIO::DBG_NO_VSYNC;
+      }
+   }
+
+   gInitialise();
+
    Box2dPhysics::loadSettings("physics.conf");
+
    win.init("Demo4 - physics", 640, 480, false);
    win.registerCallback(WinIO::EVENT_WINCLOSE, Functor<void, TYPELIST_0()>(quit));
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
@@ -146,9 +157,13 @@ int main() {
    win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
    win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
+   renderer.start();
+
+   pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
+   renderer.attachCamera(camera);
+
    eventManager.registerCallback(internString("entityTranslation"), Functor<void, TYPELIST_1(EEvent*)>(entityTranslationHandler));
 
-   graphics2d.init(640, 480);
    worldSpace.init(unique_ptr<Quadtree<pEntity_t> >(new Quadtree<pEntity_t>(1, Range(0.f, 0.f, 64.f / 48.f, 1.f))));
 
    tex0 = pTexture_t(new Texture("slab.png"));
@@ -167,6 +182,7 @@ int main() {
    sprite->setTextureSection(0, 0, 256, 32);
    sprite->setTranslation(0.f, 0.f);
    sprite->setZ(1);
+   sprite->setFillColour(Colour(1.f, 1.f, 1.f, 1.f));
    sprite->setOnScreenSize(256.f * gGetPixelSize().x, 32.f * gGetPixelSize().y);
    sprite->setScale(Vec2f(2.f, 1.5f));
    sprite->setRotation(0.f);
@@ -176,7 +192,8 @@ int main() {
    worldSpace.trackEntity(sprite);
 
    while (1) {
-      graphics2d.clear(Colour(0.5f, 0.5f, 0.5f, 1.f));
+      LOOP_START;
+
       win.doEvents();
       eventManager.doEvents();
       Box2dPhysics::update();
@@ -184,7 +201,10 @@ int main() {
       updateEntities();
       drawEntities();
       computeFrameRate();
+      renderer.tick(Colour(0.5f, 0.5f, 0.5f, 1.f));
       win.swapBuffers();
+
+      LOOP_END;
    }
 
    return 0;

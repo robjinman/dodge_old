@@ -200,6 +200,7 @@ void UiButton::update() {
             m_state = FOCUS_IDLE;
          break;
          case PRESS:
+            m_state = IS_PRESSED;
             m_onClick(shared_from_this());
 
             if (!m_mouseOver && !m_pressAndHold)
@@ -207,6 +208,10 @@ void UiButton::update() {
 
             if (!hasAnimation(pressStr))
                playAnimation(focusIdleStr);
+         break;
+         case IS_PRESSED:
+            if (!m_mouseOver && !m_pressAndHold)
+               onBtn1Release(0, 0);
          break;
       }
    }
@@ -239,7 +244,7 @@ void UiButton::release() {
 // UiButton::isPressed
 //===========================================
 bool UiButton::isPressed() const {
-   return m_state == PRESS;
+   return m_state == IS_PRESSED;
 }
 
 //===========================================
@@ -259,6 +264,7 @@ void UiButton::onGainFocus() {
          m_state = GAIN_FOCUS;
       break;
       case PRESS:
+      case IS_PRESSED:
       case GAIN_FOCUS:
       case FOCUS_IDLE:
       break;
@@ -273,6 +279,7 @@ void UiButton::onLoseFocus() {
 
    switch (m_state) {
       case PRESS:
+      case IS_PRESSED:
       case GAIN_FOCUS:
       case FOCUS_IDLE:
       case RELEASE:
@@ -300,6 +307,7 @@ void UiButton::onBtn1Press(float32_t x, float32_t y) {
 
    switch (m_state) {
       case PRESS:
+      case IS_PRESSED:
       break;
       case RELEASE:
       case GAIN_FOCUS:
@@ -333,6 +341,7 @@ void UiButton::onBtn1Release(float32_t x, float32_t y) {
       case FOCUS_IDLE:
       break;
       case PRESS:
+      case IS_PRESSED:
          stopAnimation();
          playAnimation(releaseStr);
          m_state = RELEASE;

@@ -73,6 +73,12 @@ int main() {
    renderer.attachCamera(camera);
 
    unique_ptr<Polygon> pPoly(new Polygon);
+   pPoly->addVertex(Vec2f(0.1, 0.0));     // A
+   pPoly->addVertex(Vec2f(0.2, 0.0));     // B
+   pPoly->addVertex(Vec2f(0.3, 0.15));   // C
+   pPoly->addVertex(Vec2f(0.15, 0.3));     // D
+   pPoly->addVertex(Vec2f(0.0, 0.15));    // E
+/*
    pPoly->addVertex(Vec2f(0.2, 0.0));     // A
    pPoly->addVertex(Vec2f(0.3, 0.1));     // B
    pPoly->addVertex(Vec2f(0.45, 0.15));   // C
@@ -85,6 +91,7 @@ int main() {
    pPoly->addVertex(Vec2f(0.35, 0.45));   // J
    pPoly->addVertex(Vec2f(0.0, 0.35));    // K
    pPoly->addVertex(Vec2f(0.15, 0.15));   // L
+*/
 /*
    pPoly->addVertex(Vec2f(0.0, 0.0));  // A
    pPoly->addVertex(Vec2f(0.1, 0.0));  // B

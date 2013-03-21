@@ -87,7 +87,7 @@ void Range::dbg_print(ostream& out, int tab) const {
 }
 
 //===========================================
-// Range::dbg_render
+// Range::dbg_draw
 //===========================================
 void Range::dbg_draw(const Colour& fillColour, const Colour& lineColour, Renderer::int_t lineWidth, float32_t z) const {
    m_z = z;
@@ -119,6 +119,7 @@ void Range::setSize(float32_t w, float32_t h) {
 #ifdef DEBUG
    m_quad.setVertex(1, Vec2f(m_size.x, 0.f));
    m_quad.setVertex(2, Vec2f(m_size.x, m_size.y));
+   m_quad.setVertex(3, Vec2f(0.f, m_size.y));
 #endif
 }
 

@@ -18,7 +18,8 @@ namespace Dodge {
 struct projectSettings_t {
    projectSettings_t()
       : targetFrameRate(120),
-        globalStackSize(102400) {}
+        globalStackSize(102400),
+        workingDir(".") {}
 
    float32_t targetFrameRate;
    size_t globalStackSize;

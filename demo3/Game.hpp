@@ -9,6 +9,9 @@
 
 class Game {
    public:
+      Game()
+         : m_renderer(Dodge::Renderer::getInstance()) {}
+
       void launch();
 
    private:
@@ -26,7 +29,7 @@ class Game {
       void uiSetup();
 
       Dodge::WinIO                     m_win;
-      Dodge::Graphics2d                m_graphics2d;
+      Dodge::Renderer&                 m_renderer;
       std::map<int, bool>              m_keys;
       std::vector<int>                 m_dirKeyStack;
       double                           m_frameRate;

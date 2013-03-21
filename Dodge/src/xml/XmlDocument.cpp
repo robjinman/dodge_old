@@ -37,7 +37,9 @@ XmlNode XmlDocument::parse(const string& file) {
    try {
       m_doc.parse<parse_full ^ parse_comment_nodes>(m_data);
       fin.close();
-      return XmlNode(m_doc.first_node());
+      m_file = file;
+
+      return XmlNode(m_doc.first_node(), file);
    }
    catch (parse_error& e) {
       fin.close();
@@ -54,7 +56,7 @@ XmlNode XmlDocument::parse(const string& file) {
 // XmlDocument::firstNode
 //===========================================
 XmlNode XmlDocument::firstNode() {
-   return isNull() ? XmlNode() : XmlNode(m_doc.first_node());
+   return isNull() ? XmlNode() : XmlNode(m_doc.first_node(), m_file);
 }
 
 //===========================================
