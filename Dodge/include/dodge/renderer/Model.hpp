@@ -30,8 +30,11 @@ class IModel {
 
          ++nextId;
 
-         memset(m_matrix, 0, 16 * sizeof(Renderer::matrixElement_t));
-}
+         m_matrix[0] = 1.0; m_matrix[4] = 0.0; m_matrix[8]  = 0.0; m_matrix[12] = 0.0;
+         m_matrix[1] = 0.0; m_matrix[5] = 1.0; m_matrix[9]  = 0.0; m_matrix[13] = 0.0;
+         m_matrix[2] = 0.0; m_matrix[6] = 0.0; m_matrix[10] = 1.0; m_matrix[14] = 0.0;
+         m_matrix[3] = 0.0; m_matrix[7] = 0.0; m_matrix[11] = 0.0; m_matrix[15] = 1.0;
+      }
 
       //===========================================
       // IModel::IModel
@@ -108,6 +111,9 @@ class IModel {
       virtual void dbg_print(std::ostream& out, int tab = 0) const {
          for (int t = 0; t < tab; ++t) out << "\t";
          out << "IModel\n";
+
+         for (int t = 0; t < tab + 1; ++t) out << "\t";
+         out << "id: " << m_id << "\n";
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "matrix:\n";
