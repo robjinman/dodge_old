@@ -7,16 +7,17 @@
 #define __WIN_IO_HPP__
 
 
-#include <EGL/egl.h>
-#include <windows.h>
-#include <windowsx.h>
 #include <map>
 #include <string>
 #include <vector>
 #include <boost/variant.hpp>
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <EGL/egl.h>
 #include "../../utils/Functor.hpp"
 #include "../../utils/TypeList.hpp"
 #include "../definitions.hpp"
+#include "../EGL_CHECK.hpp"
 
 
 namespace Dodge {
@@ -162,7 +163,32 @@ class WinIO {
 #endif
 
    private:
+      enum glVersion_t {
+         GL_1_1,
+         GL_1_2,
+         GL_1_2_1,
+         GL_1_3,
+         GL_1_4,
+         GL_1_5,
+         GL_2_0,
+         GL_2_1,
+         GL_3_0,
+         GL_3_1,
+         GL_3_2,
+         GL_3_3,
+         GL_4_0,
+         GL_4_1,
+         GL_4_2,
+         GL_4_3
+      };
+
       void createGLContext();
+      bool isSupportedGLVersion(glVersion_t version) const;
+
+      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr); // TODO: why is this static?
+
+      Window createXWindow(const char* title, int width, int height, Display* display,
+         EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual);
 
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;
@@ -171,18 +197,17 @@ class WinIO {
       static int m_width;
       static int m_height;
 
+      static Display* m_display;
+      static Window m_win;
+      static Colormap m_colorMap;
+      static XVisualInfo* m_pVisual;
+
+      static EGLConfig m_eglConfig;
+      static EGLDisplay m_eglDisplay;
+      static EGLContext m_eglContext;
+      static EGLSurface m_eglSurface;
+
       static bool m_init;
-
-      EGLNativeDisplayType m_display;
-      EGLNativeWindowType m_win;
-
-      EGLDisplay m_eglDisplay;
-      EGLSurface m_eglSurface;
-      EGLContext m_eglContext;
-      EGLConfig m_eglConfig;
-
-      void createWindow(const std::string& winTitle, int w, int h, bool fullscreen);
-      static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 //===========================================

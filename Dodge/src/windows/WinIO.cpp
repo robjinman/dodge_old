@@ -216,6 +216,13 @@ GLboolean WinIO::isSupportedGLVersion(glVersion_t version) const {
 }
 
 //===========================================
+// WinIO::hasVboSupport
+//===========================================
+bool WinIO::hasVboSupport() const {
+   return GL_ARB_vertex_buffer_object;
+}
+
+//===========================================
 // WinIO::destroyWindow
 //===========================================
 void WinIO::destroyWindow() {

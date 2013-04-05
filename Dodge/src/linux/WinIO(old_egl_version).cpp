@@ -4,12 +4,9 @@
  */
 
 #include <map>
-#include <cstdlib>
 #include <string>
 #include <X11/XKBlib.h>
-#include <GLEW/glew.h>
 #include <WinIO.hpp>
-#include <Exception.hpp>
 
 
 using namespace std;
@@ -19,13 +16,14 @@ namespace Dodge {
 
 
 Display* WinIO::m_display = NULL;
-Window WinIO::m_root = Window();
-XVisualInfo* WinIO::m_visual = NULL;
-Colormap WinIO::m_colourMap = Colormap();
-XSetWindowAttributes WinIO::m_setWinAttr = XSetWindowAttributes();
 Window WinIO::m_win = Window();
-GLXContext WinIO::m_context = GLXContext();
-XWindowAttributes WinIO::m_winAttr = XWindowAttributes();
+Colormap WinIO::m_colorMap = Colormap();
+XVisualInfo* WinIO::m_pVisual = NULL;
+
+EGLDisplay WinIO::m_eglDisplay = EGLDisplay();
+EGLContext WinIO::m_eglContext = EGLContext();
+EGLSurface WinIO::m_eglSurface = EGLSurface();
+EGLConfig WinIO::m_eglConfig = EGLConfig();
 
 WinIO::callbackMap_t WinIO::m_callbacks = WinIO::callbackMap_t();
 int WinIO::m_width = 0;
@@ -45,52 +43,55 @@ byte_t WinIO::dbg_flags = 0;
 void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    if (fullscreen) throw Exception("Fullscreen mode not supported", __FILE__, __LINE__);
 
-#ifdef DEBUG
-   if (dbg_flags & DBG_NO_VSYNC) {
-      char str[] = "vblank_mode=0";
-      putenv(str);
-   }
-#endif
-
    XInitThreads();
 
    m_width = w;
    m_height = h;
 
+#ifdef GL_FIXED_PIPELINE
+   EGL_CHECK(eglBindAPI(EGL_OPENGL_API));
+#else
+   EGL_CHECKeglBindAPI(EGL_OPENGL_ES_API));
+#endif
+
+   EGLint aEGLAttributes[] = {
+      EGL_RED_SIZE, 8,
+      EGL_GREEN_SIZE, 8,
+      EGL_BLUE_SIZE, 8,
+      EGL_DEPTH_SIZE, 16,
+#ifdef GL_FIXED_PIPELINE
+      EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+#else
+      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,  // For OpenGLES1.x, set to EGL_OPENGL_ES_BIT
+#endif
+      EGL_NONE
+   };
+
    m_display = XOpenDisplay(NULL);
    if (m_display == NULL)
-      throw Exception("Cannot connect to X server", __FILE__, __LINE__);
+      throw Exception("Error constructing window; could not create X Display", __FILE__, __LINE__);
 
-   m_root = DefaultRootWindow(m_display);
+   m_eglDisplay = EGL_CHECK(eglGetDisplay(m_display));
+   EGL_CHECK(eglInitialize(m_eglDisplay, NULL, NULL));
 
-   GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-   m_visual = glXChooseVisual(m_display, 0, att);
-   if (m_visual == NULL)
-      throw Exception("No appropriate visual found", __FILE__, __LINE__);
+   EGLint nConfigs;
+   EGL_CHECK(eglChooseConfig(m_eglDisplay, aEGLAttributes, &m_eglConfig, 1, &nConfigs));
 
-   m_colourMap = XCreateColormap(m_display, m_root, m_visual->visual, AllocNone);
-   m_setWinAttr.colormap = m_colourMap;
-   m_setWinAttr.event_mask = KeyPressMask | KeyReleaseMask | ButtonPressMask
-                           | ButtonReleaseMask | PointerMotionMask | Button1MotionMask
-                           | Button2MotionMask | ExposureMask | StructureNotifyMask;
+   m_win = createXWindow(winTitle.data(), w, h, m_display, m_eglDisplay, m_eglConfig, &m_colorMap, &m_pVisual);
+   if (!m_win) {
+      eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+      eglTerminate(m_eglDisplay);
+      XCloseDisplay(m_display);
 
-   m_win = XCreateWindow(m_display, m_root, 0, 0, w, h, 0, m_visual->depth, InputOutput,
-      m_visual->visual, CWColormap | CWEventMask, &m_setWinAttr);
+      throw Exception("Error constructing window; could not create X Window", __FILE__, __LINE__);
+   }
 
+   // This is necessary to ensure we receive an event when the window is closed.
+   // The event's type will be ClientMessage.
    Atom wmDelete = XInternAtom(m_display, "WM_DELETE_WINDOW", True);
    XSetWMProtocols(m_display, m_win, &wmDelete, 1);
 
-   XSizeHints sh;
-   sh.flags = USPosition;
-   sh.x = 10;
-   sh.y = 10;
-   XSetStandardProperties(m_display, m_win, winTitle.data(), winTitle.data(), None, 0, 0, &sh);
-
-   XMapWindow(m_display, m_win);
-
-   // Halt until window is "mapped".
-   XEvent e;
-   XIfEvent(m_display, &e, waitForMap, reinterpret_cast<XPointer>(&m_win));
+   m_eglSurface = EGL_CHECK(eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_win, 0));
 
 #ifdef DEBUG
    if (dbg_flags & DBG_NO_VSYNC)
@@ -101,8 +102,6 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
    XSynchronize(m_display, True);
 #endif
 
-   XFlush(m_display);
-
    m_init = true;
 }
 
@@ -110,46 +109,32 @@ void WinIO::init(const std::string& winTitle, int w, int h, bool fullscreen) {
 // WinIO::createGLContext
 //===========================================
 void WinIO::createGLContext() {
-   m_context = glXCreateContext(m_display, m_visual, NULL, GL_TRUE);
-   glXMakeCurrent(m_display, m_win, m_context);
+   EGLint aEGLContextAttributes[] = {
+#ifndef GL_FIXED_PIPELINE
+      EGL_CONTEXT_CLIENT_VERSION, 2,            // For OpenGLES1.x, set to 1
+#endif
+      EGL_NONE
+   };
 
-   if (glewInit() != GLEW_OK) {
-      destroyWindow();
-      throw Exception("Error creating GL context", __FILE__, __LINE__);
-   }
+   m_eglContext = EGL_CHECK(eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, aEGLContextAttributes));
+   EGL_CHECK(eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext));
+
+#ifdef DEBUG
+   if (dbg_flags & DBG_NO_VSYNC)
+      eglSwapInterval(m_eglDisplay, 0);
+   else
+      eglSwapInterval(m_eglDisplay, 1);
+#else
+   eglSwapInterval(m_eglDisplay, 1);
+#endif
 }
 
 //===========================================
 // WinIO::isSupportedGLVersion
 //===========================================
 bool WinIO::isSupportedGLVersion(glVersion_t version) const {
-   switch (version) {
-      case GL_1_1:     return GLEW_VERSION_1_1;      break;
-      case GL_1_2:     return GLEW_VERSION_1_2;      break;
-      case GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
-      case GL_1_3:     return GLEW_VERSION_1_3;      break;
-      case GL_1_4:     return GLEW_VERSION_1_4;      break;
-      case GL_1_5:     return GLEW_VERSION_1_5;      break;
-      case GL_2_0:     return GLEW_VERSION_2_0;      break;
-      case GL_2_1:     return GLEW_VERSION_2_1;      break;
-      case GL_3_0:     return GLEW_VERSION_3_0;      break;
-      case GL_3_1:     return GLEW_VERSION_3_1;      break;
-      case GL_3_2:     return GLEW_VERSION_3_2;      break;
-      case GL_3_3:     return GLEW_VERSION_3_3;      break;
-      case GL_4_0:     return GLEW_VERSION_4_0;      break;
-      case GL_4_1:     return GLEW_VERSION_4_1;      break;
-      case GL_4_2:     return GLEW_VERSION_4_2;      break;
-      case GL_4_3:     return GLEW_VERSION_4_3;      break;
-
-      default: return false;
-   };
-}
-
-//===========================================
-// WinIO::hasVboSupport
-//===========================================
-bool WinIO::hasVboSupport() const {
-   return GL_ARB_vertex_buffer_object;
+   // TODO
+   return true;
 }
 
 //===========================================
@@ -180,10 +165,61 @@ Bool WinIO::waitForMap(Display* d, XEvent* e, char* win_ptr) {
 }
 
 //===========================================
+// WinIO::createXWindow
+//===========================================
+Window WinIO::createXWindow(const char* title, int width, int height, Display* m_display,
+   EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual) {
+
+   long screen = DefaultScreen(m_display);
+
+   int vID;
+   eglGetConfigAttrib(sEGLDisplay, FBConfig, EGL_NATIVE_VISUAL_ID, &vID);
+
+   int n;
+   XVisualInfo tplate;
+   tplate.visualid = vID;
+   XVisualInfo* visual = XGetVisualInfo(m_display, VisualIDMask, &tplate, &n);
+
+   Colormap colorMap = XCreateColormap(m_display, RootWindow(m_display, screen), visual->visual, AllocNone);
+
+   XSetWindowAttributes wa;
+   wa.colormap = colorMap;
+   wa.background_pixel = 0xFFFFFFFF;
+   wa.border_pixel = 0;
+   wa.event_mask = KeyPressMask | KeyReleaseMask | ButtonPressMask
+      | ButtonReleaseMask | PointerMotionMask | Button1MotionMask
+      | Button2MotionMask | ExposureMask | StructureNotifyMask;
+
+   unsigned long mask = CWBackPixel | CWBorderPixel | CWEventMask | CWColormap;
+
+   Window window = XCreateWindow(m_display, RootWindow(m_display, screen), 0, 0, width, height,
+      0, visual->depth, InputOutput, visual->visual, mask, &wa);
+
+   XSizeHints sh;
+   sh.flags = USPosition;
+   sh.x = 10;
+   sh.y = 10;
+   XSetStandardProperties(m_display, window, title, title, None, 0, 0, &sh);
+   XMapWindow(m_display, window);
+
+   // Halt until window is "mapped".
+   XEvent e;
+   XIfEvent(m_display, &e, waitForMap, reinterpret_cast<XPointer>(&window));
+
+   XSetWMColormapWindows(m_display, window, &window, 1);
+   XFlush(m_display);
+
+   *pColormap = colorMap;
+   *ppVisual = visual;
+
+   return window;
+}
+
+//===========================================
 // WinIO::swapBuffers
 //===========================================
 void WinIO::swapBuffers() {
-   glXSwapBuffers(m_display, m_win);
+   eglSwapBuffers(m_eglDisplay, m_eglSurface);
 }
 
 //===========================================
@@ -315,9 +351,14 @@ void WinIO::doEvents() {
 void WinIO::destroyWindow() {
    if (!m_init) return;
 
-   glXMakeCurrent(m_display, None, NULL);
-   glXDestroyContext(m_display, m_context);
+   EGL_CHECK(eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+   EGL_CHECK(eglDestroyContext(m_eglDisplay, m_eglContext));
+   EGL_CHECK(eglDestroySurface(m_eglDisplay, m_eglSurface));
+   EGL_CHECK(eglTerminate(m_eglDisplay));
+
    XDestroyWindow(m_display, m_win);
+   XFreeColormap(m_display, m_colorMap);
+   XFree(m_pVisual);
    XCloseDisplay(m_display);
 }
 

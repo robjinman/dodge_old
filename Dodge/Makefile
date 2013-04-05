@@ -1,4 +1,5 @@
 PLATFORM = linux
+GL_MODE = 
 BASE_DIR = src
 INCL = -Iinclude -Iinclude/dodge
 include src/Makefile.inc

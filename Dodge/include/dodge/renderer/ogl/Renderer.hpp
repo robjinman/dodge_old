@@ -8,11 +8,17 @@
 
 
 #ifdef WIN32
-#include <windows.h>
-#include <windowsx.h>
-#include <GLEW/glew.h>
+   #include <windows.h>
+   #include <windowsx.h>
+   #include <GLEW/glew.h>
+#elif defined LINUX
+   #include <GLEW/glew.h>
 #else
-#include <GLES2/gl2.h>
+   #ifdef GL_FIXED_PIPELINE
+      #include <GLES/gl.h>
+   #else
+      #include <GLES2/gl2.h>
+   #endif
 #endif
 #include <cml/cml.h>
 #include <map>
@@ -25,6 +31,7 @@
 #include "Colour.hpp"
 #include "../Camera.hpp"
 #include "../../WinIO.hpp"
+#include "../../StackAllocator.hpp"
 #include "../../definitions.hpp"
 
 
@@ -35,7 +42,20 @@ class IModel;
 class RenderMode;
 class SceneGraph;
 
-// OpenGL ES 2.0 implementation
+
+#if defined WIN32 | defined LINUX
+inline void gl_bindBuffer(GLenum target, GLuint buf) { glBindBufferARB(target, buf); }
+inline void gl_genBuffers(GLsizei n, GLuint* bufs) { glGenBuffersARB(n, bufs); }
+inline void gl_bufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) { glBufferDataARB(target, size, data, usage); }
+inline void gl_deleteBuffers(GLsizei n, const GLuint* bufs) { glDeleteBuffersARB(n, bufs); }
+#else
+inline void gl_bindBuffer(GLenum target, GLuint buf) { glBindBuffer(target, buf); }
+inline void gl_genBuffers(GLsizei n, GLuint* bufs) { glGenBuffers(n, bufs); }
+inline void gl_bufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) { glBufferData(target, size, data, usage); }
+inline void gl_deleteBuffers(GLsizei n, const GLuint* bufs) { glDeleteBuffers(n, bufs); }
+#endif
+
+
 class Renderer {
    public:
       static Renderer& getInstance() {
@@ -51,7 +71,6 @@ class Renderer {
       typedef GLfloat texCoordElement_t;
       typedef byte_t textureData_t;
       typedef GLuint textureHandle_t;
-      typedef GLuint modelHandle_t;
 
       enum mode_t {
          UNDEFINED,
@@ -83,16 +102,17 @@ class Renderer {
          void* data;
       };
 
+      //-----Main Thread-----
       inline void attachCamera(pCamera_t camera);
       inline Camera& getCamera() const;
 
       void onWindowResize(int_t w, int_t h);
 
-      void loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
-      void unloadTexture(textureHandle_t handle);
-
       void bufferModel(IModel* model);
       void freeBufferedModel(IModel* model);
+
+      void loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle);
+      void unloadTexture(textureHandle_t handle);
 
       void draw(const IModel* model);
 #ifdef DEBUG
@@ -101,15 +121,17 @@ class Renderer {
       void start();
       void stop();
       void tick(const Colour& bgColour = Colour(0.f, 0.f, 0.f, 1.f));
+      //---------------------
 
-   protected:
+   private:
       Renderer();
 
       typedef enum {
          MSG_TEX_HANDLE_REQ,
          MSG_TEX_UNLOAD_REQ,
-         MSG_VP_RESIZE_REQ,
-         MSG_CONSTRUCT_VBO
+         MSG_CONSTRUCT_VBO,
+         MSG_DESTROY_VBO,
+         MSG_VP_RESIZE_REQ
          // ...
       } msgType_t;
 
@@ -134,11 +156,16 @@ class Renderer {
          IModel* model;
       };
 
+      struct msgDestroyVbo_t {
+         GLuint handle;
+      };
+
       typedef boost::variant<
          msgTexHandleReq_t,
          msgTexUnloadReq_t,
          msgVpResizeReq_t,
-         msgConstructVbo_t
+         msgConstructVbo_t,
+         msgDestroyVbo_t
          // ...
       > msgData_t;
 
@@ -164,27 +191,36 @@ class Renderer {
          Colour bgColour;
       };
 
-   private:
       static Renderer* m_instance;
 
+      //-----Main Thread-----
+      void checkForErrors();
+      void queueMsg(Message msg);
+      //---------------------
+
+      //----Render Thread----
       void renderLoop();
       void processMessages();
-
       void init();
       void clear();
-      void checkForErrors();
+      void constructVbo(IModel* model);
+      void destroyVbo(GLuint handle);
       void setMode(mode_t mode);
       void constructRenderModes();
-      GLint primitiveToGLType(primitive_t primitiveType) const;
       void processMessage(const Message& msg);
       textureHandle_t loadGLTexture(const textureData_t* texture, int_t w, int_t h);
-      void constructVBO(IModel* model);
-      void queueMsg(Message msg);
 #ifdef DEBUG
       void computeFrameRate();
 #endif
+      //---------------------
+
+      GLint primitiveToGLType(primitive_t primitiveType) const;
 
       bool m_fixedPipeline;
+      bool m_vboSupport;
+
+      std::map<long, GLuint> m_vboMap;
+      std::mutex m_vboMapMutex; // TODO: Make thread-safe map container
 
       std::map<mode_t, RenderMode*> m_renderModes;
       RenderMode* m_activeRenderMode;
@@ -197,6 +233,7 @@ class Renderer {
       int m_idxRender;
       int m_idxUpdate;
       mutable std::mutex m_stateChangeMutex;
+      std::atomic<long long> m_frameNumber;
 
       pCamera_t m_camera;
 
@@ -204,8 +241,8 @@ class Renderer {
       std::thread* m_thread;
 
       std::vector<Message> m_msgQueue;
+      StackAllocator m_scratchSpace;
       mutable std::mutex m_msgQueueMutex;
-
       std::atomic<bool> m_msgQueueEmpty;
 
       exceptionWrapper_t m_exception;

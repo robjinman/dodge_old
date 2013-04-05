@@ -8,11 +8,17 @@
 
 
 #ifdef WIN32
-#include <windows.h>
-#include <windowsx.h>
-#include <GLEW/glew.h>
+   #include <windows.h>
+   #include <windowsx.h>
+   #include <GLEW/glew.h>
+#elif defined LINUX
+   #include <GLEW/glew.h>
 #else
-#include <GLES2/gl2.h>
+   #ifdef GL_FIXED_PIPELINE
+      #include <GLES/gl.h>
+   #else
+      #include <GLES2/gl2.h>
+   #endif
 #endif
 #include "../../xml/xml.hpp"
 

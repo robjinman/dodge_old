@@ -182,7 +182,8 @@ class WinIO {
       };
 
       void createGLContext();
-      GLboolean isSupportedGLVersion(glVersion_t version) const;
+      bool isSupportedGLVersion(glVersion_t version) const;
+      bool hasVboSupport() const;
 
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;

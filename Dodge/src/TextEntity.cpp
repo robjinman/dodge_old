@@ -255,7 +255,6 @@ void TextEntity::updateModel() const {
    m_model.setLineWidth(0);
    m_model.setTextureHandle(m_font->getTexture()->getHandle());
 
-   m_renderer.freeBufferedModel(&m_model);
    m_renderer.bufferModel(&m_model);
 
    gGetMemStack().freeToMarker(marker);

@@ -110,271 +110,13 @@ bool TexturedAlphaMode::isSupported(const IModel* model) const {
 }
 
 //===========================================
-// TexturedAlphaMode::hashByteArray
-//===========================================
-long TexturedAlphaMode::hashByteArray(const byte_t* array, size_t len) const {
-   long hash = 5381;
-   int c;
-
-   for (uint_t i = 0; i < len; ++i) {
-      c = *(array + i);
-      hash = ((hash << 5) + hash) + c;
-   }
-
-   return hash;
-}
-
-//===========================================
-// TexturedAlphaMode::hashModel
-//===========================================
-long TexturedAlphaMode::hashModel(const IModel* model) const {
-   static long vvvtt = internString("vvvtt");
-//   static long vvvttcccc = internString("vvvttcccc");
-
-   uint_t n = model->getNumVertices();
-   size_t vertDataSz = model->getVertexLayout() == vvvtt ? (sizeof(vvvtt_t) * n) : (sizeof(vvvttcccc_t) * n);
-   size_t matDataSz = 16 * sizeof(GLfloat);
-
-   long hashes[2];
-   hashes[0] = hashByteArray(reinterpret_cast<const byte_t*>(model_getVertexData(*model)), vertDataSz);
-   hashes[1] = hashByteArray(reinterpret_cast<const byte_t*>(model_getMatrix(*model)), matDataSz);
-
-   return hashByteArray(reinterpret_cast<const byte_t*>(hashes), sizeof(long) * 2);
-}
-
-//===========================================
-// TexturedAlphaMode::hashPendingModels
-//===========================================
-long TexturedAlphaMode::hashPendingModels() const {
-   StackAllocator& stack = gGetMemStack();
-   StackAllocator::marker_t marker = stack.getMarker();
-
-   size_t sz = sizeof(long) * m_pending.size();
-   long* hashes = reinterpret_cast<long*>(stack.alloc(sz));
-
-   for (uint_t i = 0; i < m_pending.size(); ++i) {
-      hashes[i] = hashModel(m_pending[i]);
-   }
-
-   long hash = hashByteArray(reinterpret_cast<byte_t*>(hashes), sz);
-
-   stack.freeToMarker(marker);
-
-   return hash;
-}
-
-//===========================================
-// TexturedAlphaMode::renderPendingModels
-//===========================================
-void TexturedAlphaMode::renderPendingModels() {
-   for (uint_t i = 0; i < m_pending.size(); ++i)
-      renderModel(m_pending[i], *m_P);
-}
-
-//===========================================
-// TexturedAlphaMode::hasPending
-//===========================================
-bool TexturedAlphaMode::hasPending() const{
-   return m_pending.size() > 0;
-}
-
-//===========================================
-// TexturedAlphaMode::transformVertex
-//===========================================
-void TexturedAlphaMode::transformVertex(GLfloat* vertex, const GLfloat* m) const {
-   GLfloat v[4] = { vertex[0], vertex[1], vertex[2], 1.0 };
-
-   vertex[0] = v[0] * m[0] + v[1] * m[4] + v[2] * m[8] + v[3] * m[12];
-   vertex[1] = v[0] * m[1] + v[1] * m[5] + v[2] * m[9] + v[3] * m[13];
-   vertex[2] = v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + v[3] * m[14];
-}
-
-//===========================================
-// TexturedAlphaMode::batchAndRenderPendingModels
-//===========================================
-void TexturedAlphaMode::batchAndRenderPendingModels() {
-   static long vvvtt = internString("vvvtt");
-//   static long vvvttcccc = internString("vvvttcccc");
-
-   uint_t geoCursor = 0;
-   uint_t totalVerts = 0;
-   uint_t nModels = m_pending.size();
-
-   for (uint_t i = 0; i < m_pending.size(); ++i) {
-      const IModel* model = m_pending[i];
-
-      uint_t nVerts = model->getNumVertices();
-      size_t vertSz = model->getVertexLayout() == vvvtt ? sizeof(vvvtt_t) : sizeof(vvvttcccc_t);
-      size_t vertDataSz = nVerts * vertSz;
-      const GLfloat* matrix = model_getMatrix(*model);
-
-      while (m_geometry.size() < geoCursor + vertDataSz)
-         m_geometry.resize(m_geometry.size() * 2 + 1);
-
-      model->getVertices(m_geometry.data() + geoCursor, 0, nVerts);
-
-      for (uint_t v = 0; v < nVerts; ++v)
-         transformVertex(reinterpret_cast<GLfloat*>(m_geometry.data() + geoCursor + v * vertSz), matrix);
-
-      geoCursor += vertDataSz;
-
-      totalVerts += nVerts;
-   }
-
-   if (nModels > 0) {
-      GLuint vbo;
-
-      GL_CHECK(glGenBuffers(1, &vbo));
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-      GL_CHECK(glBufferData(GL_ARRAY_BUFFER, geoCursor, m_geometry.data(), GL_STATIC_DRAW));
-
-      batch_t batch = { vbo, totalVerts, true };
-
-      long hash = hashPendingModels();
-      m_VBOs[hash] = batch;
-
-      renderBatch(batch);
-   }
-}
-
-//===========================================
-// TexturedAlphaMode::renderBatch
-//===========================================
-void TexturedAlphaMode::renderBatch(const batch_t& batch) {
-   static long vvvtt = internString("vvvtt");
-   static long vvvttcccc = internString("vvvttcccc");
-
-   long vertLayout = m_pending.back()->getVertexLayout();
-   Renderer::primitive_t primType = m_pending.back()->getPrimitiveType();
-   const Colour& colour = m_pending.back()->getColour();
-   GLuint texHandle = m_pending.back()->getTextureHandle();
-   GLint lineWidth = m_pending.back()->getLineWidth();
-   size_t vertSz = vertLayout == vvvtt ? sizeof(vvvtt_t) : sizeof(vvvttcccc_t);
-
-   GLfloat mat[] = { 1.f, 0.f, 0.f, 0.f,
-                     0.f, 1.f, 0.f, 0.f,
-                     0.f, 0.f, 1.f, 0.f,
-                     0.f, 0.f, 0.f, 1.f };
-
-   GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, mat));
-   GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, m_P->data()));
-
-   if (primType == Renderer::LINES) {
-      if (lineWidth != 0)
-         GL_CHECK(glLineWidth(static_cast<GLfloat>(lineWidth)));
-   }
-
-   if (vertLayout == vvvttcccc) {
-      GL_CHECK(glUniform1i(m_locBUniColour, 0));
-      GL_CHECK(glEnableVertexAttribArray(m_locColour));
-   }
-   else {
-      GL_CHECK(glDisableVertexAttribArray(m_locColour));
-      GL_CHECK(glUniform1i(m_locBUniColour, 1));
-      GL_CHECK(glUniform4f(m_locUniColour, colour.r, colour.g, colour.b, colour.a));
-   }
-
-   GL_CHECK(glBindTexture(GL_TEXTURE_2D, texHandle));
-
-   GLint stride = vertSz;
-
-   GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, batch.vbo));
-
-   GLuint offset = 0;
-
-   GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-   offset += 3 * sizeof(GLfloat);
-
-   GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-   offset += 2 * sizeof(GLfloat);
-
-   if (vertLayout == vvvttcccc) {
-      GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
-      offset += 4 * sizeof(GLfloat);
-   }
-
-   GL_CHECK(glDrawArrays(primitiveToGLType(primType), 0, batch.nVerts));
-}
-
-//===========================================
 // TexturedAlphaMode::sendData
 //===========================================
-void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat) {
+void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat, GLuint vbo) {
+   static long vvvttcccc = internString("vvvttcccc");
+
    if (!isSupported(model))
       throw RendererException("Model type not supported by TexturedAlphaMode", __FILE__, __LINE__);
-
-   // Queue model for batching
-
-   if (isCompatibleWithPending(model)) {
-
-      // Add to batch
-      m_pending.push_back(model);
-      m_P = &projMat;
-
-      if (m_pending.size() >= MAX_BATCH_SIZE)
-         processPending();
-   }
-   else {
-      // Flush current batch and start a new one
-
-      processPending();
-
-      m_pending.push_back(model);
-      m_P = &projMat;
-   }
-}
-
-//===========================================
-// TexturedAlphaMode::processPending
-//===========================================
-void TexturedAlphaMode::processPending() {
-   if (m_pending.size() >= MIN_BATCH_SIZE) {
-
-      // Find out if batch has already been sent to video card
-      long hash = hashPendingModels();
-      auto i = m_VBOs.find(hash);
-
-      if (i != m_VBOs.end()) {
-         renderBatch(i->second);
-         i->second.rendered = true;
-      }
-      else
-         batchAndRenderPendingModels();
-   }
-   else
-      renderPendingModels();
-
-   m_pending.clear();
-   m_P = NULL;
-}
-
-//===========================================
-// TexturedAlphaMode::flush
-//
-// Called at end of frame.
-//===========================================
-void TexturedAlphaMode::flush() {
-   processPending();
-
-   // Delete VBOs that were not used this frame
-   for (auto i = m_VBOs.begin(); i != m_VBOs.end();) {
-      if (i->second.rendered == false) {
-         GL_CHECK(glDeleteBuffers(1, &i->second.vbo));
-         m_VBOs.erase(i++);
-      }
-      else {
-         i->second.rendered = false;
-         ++i;
-      }
-   }
-}
-
-//===========================================
-// TexturedAlphaMode::renderModel
-//===========================================
-void TexturedAlphaMode::renderModel(const IModel* model, const matrix44f_c& projMat) {
-//   static long vvvtt = internString("vvvtt");
-   static long vvvttcccc = internString("vvvttcccc");
 
    long vertLayout = model->getVertexLayout();
 
@@ -404,7 +146,7 @@ void TexturedAlphaMode::renderModel(const IModel* model, const matrix44f_c& proj
    const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model_getVertexData(*model));
    GLint stride = vertLayout == vvvttcccc ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
 
-   if (model_getHandle(*model) == 0) {
+   if (vbo == 0) {
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
@@ -414,7 +156,7 @@ void TexturedAlphaMode::renderModel(const IModel* model, const matrix44f_c& proj
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
    }
    else {
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model_getHandle(*model)));
+      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
 
       GLuint offset = 0;
 

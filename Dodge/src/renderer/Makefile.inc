@@ -7,4 +7,5 @@ else
 endif
 OBJS += $(BASE_DIR)/renderer/Camera.o \
 	$(BASE_DIR)/renderer/Font.o \
+	$(BASE_DIR)/renderer/Model.o \
 	$(BASE_DIR)/renderer/SceneGraph.o
