@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <sstream>
 #include <KvpParser.hpp>
@@ -51,6 +52,7 @@ string KvpParser::getValue(const string& key) const {
 //===========================================
 string KvpParser::getLine(ifstream& fin) const {
    char buf[BUF_SIZE];
+   memset(buf, 0, BUF_SIZE);
 
    fin.getline(buf, BUF_SIZE);
    for (unsigned int i = 0; i < BUF_SIZE; i++)

@@ -23,7 +23,15 @@ class IModel {
       //===========================================
       // IModel::IModel
       //===========================================
-      IModel() {}
+      IModel()
+         : m_primitiveType(Renderer::TRIANGLES),
+           m_renderMode(Renderer::UNDEFINED),
+           m_id(nextId) {
+
+         ++nextId;
+
+         memset(m_matrix, 0, 16 * sizeof(Renderer::matrixElement_t));
+}
 
       //===========================================
       // IModel::IModel
@@ -31,8 +39,9 @@ class IModel {
       IModel(Renderer::mode_t renderMode, Renderer::primitive_t primitiveType)
          : m_primitiveType(primitiveType),
            m_renderMode(renderMode),
-           m_handle(0) {
+           m_id(nextId) {
 
+         ++nextId;
          m_matrix[0] = 1.0; m_matrix[4] = 0.0; m_matrix[8]  = 0.0; m_matrix[12] = 0.0;
          m_matrix[1] = 0.0; m_matrix[5] = 1.0; m_matrix[9]  = 0.0; m_matrix[13] = 0.0;
          m_matrix[2] = 0.0; m_matrix[6] = 0.0; m_matrix[10] = 1.0; m_matrix[14] = 0.0;
@@ -117,9 +126,6 @@ class IModel {
 
          for (int t = 0; t < tab + 1; ++t) out << "\t";
          out << "renderMode: " << m_renderMode << "\n";
-
-         for (int t = 0; t < tab + 1; ++t) out << "\t";
-         out << "handle: " << m_handle << "\n";
       }
 #endif
 
@@ -130,7 +136,6 @@ class IModel {
          memcpy(m_matrix, cpy.m_matrix, 16 * sizeof(Renderer::matrixElement_t));
          m_primitiveType = cpy.m_primitiveType;
          m_renderMode = cpy.m_renderMode;
-         m_handle = 0;
       }
 
       // Returns transformed z-coord of first vertex
@@ -144,7 +149,10 @@ class IModel {
       Renderer::matrixElement_t m_matrix[16];
       Renderer::primitive_t m_primitiveType;
       Renderer::mode_t m_renderMode;
-      Renderer::modelHandle_t m_handle;
+      long m_id;
+
+   private:
+      static long nextId;
 };
 
 
@@ -325,7 +333,16 @@ class Model : public IModel {
 #endif
 
    private:
-      Model() {}
+      //===========================================
+      // Model::Model
+      //===========================================
+      Model()
+         : IModel(),
+           m_vertLayout(0),
+           m_verts(NULL),
+           m_n(0),
+           m_texHandle(0),
+           m_lineWidth(0) {}
 
       //===========================================
       // Model::deepCopy
@@ -347,42 +364,58 @@ class Model : public IModel {
          m_lineWidth = cpy.m_lineWidth;
       }
 
-      long m_vertLayout;
-      T* m_verts;
-      uint_t m_n;
-      Renderer::textureHandle_t m_texHandle;
-      Colour m_colour;
-      Renderer::int_t m_lineWidth;
-
+      //===========================================
+      // Model::vertexDataSize
+      //===========================================
       virtual size_t vertexDataSize() const {
          return m_n * sizeof(T);
       }
 
+      //===========================================
+      // Model::getVertexData
+      //===========================================
       virtual const void* getVertexData() const {
          return m_verts;
       }
 
+      //===========================================
+      // Model::getSizeOf
+      //===========================================
       virtual size_t getSizeOf() const {
          return sizeof(Model<T>);
       }
 
+      //===========================================
+      // Model::getDepth
+      //===========================================
       virtual float32_t getDepth() const {
          float32_t z = m_n > 0 ? m_verts[0].v3 : 0;
          return z + m_matrix[14];
       }
 
+      //===========================================
+      // Model::copyTo
+      //===========================================
       virtual void copyTo(void* ptr) const {
-         memcpy(ptr, this, sizeof(Model<T>));
+         Model<T>* pModel = new(ptr) Model<T>();
+         pModel->shallowCopy(*this);
+         pModel->m_id = m_id;
+         pModel->m_n = m_n;
 
          byte_t* p = reinterpret_cast<byte_t*>(ptr);
          byte_t* verts = p + sizeof(Model<T>);
 
          memcpy(verts, m_verts, m_n * sizeof(T));
 
-         Model<T>* pModel = reinterpret_cast<Model<T>*>(ptr);
          pModel->m_verts = reinterpret_cast<T*>(verts);
-         pModel->m_n = m_n;
       }
+
+      long m_vertLayout;
+      T* m_verts;
+      uint_t m_n;
+      Renderer::textureHandle_t m_texHandle;
+      Colour m_colour;
+      Renderer::int_t m_lineWidth;
 };
 
 

@@ -31,9 +31,11 @@ Renderer::Renderer()
    : m_activeRenderMode(NULL),
      m_mode(UNDEFINED),
      m_init(false),
+     m_frameNumber(0),
      m_camera(new Camera(1.f, 1.f)),
      m_running(false),
      m_thread(NULL),
+     m_scratchSpace(1024),
      m_msgQueueEmpty(true),
      m_exception(UNKNOWN_EXCEPTION, NULL),
      m_errorPending(false)
@@ -57,28 +59,6 @@ Renderer::Renderer()
    m_idxUpdate = 2;
 
    m_stateChangeMutex.unlock();
-}
-
-//===========================================
-// Renderer::init
-//===========================================
-void Renderer::init() {
-   WinIO win;
-   win.createGLContext();
-
-   m_fixedPipeline = !win.isSupportedGLVersion(WinIO::GL_2_0);
-
-   GL_CHECK(glEnable(GL_CULL_FACE));
-   GL_CHECK(glFrontFace(GL_CCW));
-
-   if (m_fixedPipeline) {
-      m_activeRenderMode = RenderMode::create(FIXED_FUNCTION);
-      m_activeRenderMode->setActive();
-   }
-   else {
-      constructRenderModes();
-      setMode(TEXTURED_ALPHA);
-   }
 }
 
 //===========================================
@@ -115,15 +95,21 @@ void Renderer::tick(const Colour& bgColour) {
 
    m_stateChangeMutex.lock();
 
+   // Any states that were pending render are now out of date, and will
+   // not be rendered.
    for (int i = 0; i < 3; ++i) {
       if (m_state[i].status == renderState_t::IS_PENDING_RENDER)
          m_state[i].status = renderState_t::IS_IDLE;
    }
 
+   // The state that has just finished being updated is now the latest,
+   // and is pending render.
    m_idxLatest = m_idxUpdate;
    m_state[m_idxLatest].status = renderState_t::IS_PENDING_RENDER;
+
    m_camera->getMatrix(m_state[m_idxLatest].P);
 
+   // Choose a new state for updating.
    m_idxUpdate = -1;
    for (int i = 0; i < 3; ++i)
       if (m_state[i].status == renderState_t::IS_IDLE) m_idxUpdate = i;
@@ -160,6 +146,97 @@ void Renderer::checkForErrors() {
 }
 
 //===========================================
+// Renderer::draw
+//===========================================
+void Renderer::draw(const IModel* model) {
+   m_state[m_idxUpdate].sceneGraph->insert(model);
+}
+
+//===========================================
+// Renderer::bufferModel
+//===========================================
+void Renderer::bufferModel(IModel* model) {
+   if (!m_vboSupport) return;
+
+   m_msgQueueMutex.lock();
+
+   size_t totalSize = model->getTotalSize();
+
+   IModel* ptr = reinterpret_cast<IModel*>(m_scratchSpace.alloc(totalSize));
+   model->copyTo(ptr);
+
+   msgConstructVbo_t data = { ptr };
+   queueMsg(Message(MSG_CONSTRUCT_VBO, data));
+
+   m_msgQueueMutex.unlock();
+}
+
+//===========================================
+// Renderer::freeBufferedModel
+//===========================================
+void Renderer::freeBufferedModel(IModel* model) {
+   if (!m_vboSupport) return;
+
+   m_msgQueueMutex.lock();
+   m_vboMapMutex.lock();
+
+   auto i = m_vboMap.find(model->m_id);
+   if (i != m_vboMap.end() && i->second != 0) {
+      msgDestroyVbo_t data = { i->second };
+      queueMsg(Message(MSG_DESTROY_VBO, data));
+
+      i->second = 0;
+   }
+
+   m_vboMapMutex.unlock();
+   m_msgQueueMutex.unlock();
+}
+
+//===========================================
+// Renderer::queueMsg
+//===========================================
+void Renderer::queueMsg(Message msg) {
+   m_msgQueueEmpty = false;
+   m_msgQueue.push_back(msg);
+}
+
+//===========================================
+// Renderer::loadTexture
+//===========================================
+void Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
+   msgTexHandleReq_t data = { texture, width, height, handle };
+
+   m_msgQueueMutex.lock();
+   queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
+   m_msgQueueMutex.unlock();
+
+   // Hang until message is processed
+   while (!m_msgQueueEmpty) { if (m_errorPending) break; }
+}
+
+//===========================================
+// Renderer::unloadTexture
+//===========================================
+void Renderer::unloadTexture(textureHandle_t handle) {
+   msgTexUnloadReq_t data = { handle };
+
+   m_msgQueueMutex.lock();
+   queueMsg(Message(MSG_TEX_UNLOAD_REQ, data));
+   m_msgQueueMutex.unlock();
+}
+
+//===========================================
+// Renderer::onWindowResize
+//===========================================
+void Renderer::onWindowResize(int_t x, int_t y) {
+   msgVpResizeReq_t data = { x, y };
+
+   m_msgQueueMutex.lock();
+   queueMsg(Message(MSG_VP_RESIZE_REQ, data));
+   m_msgQueueMutex.unlock();
+}
+
+//===========================================
 // Renderer::primitiveToGLType
 //===========================================
 GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
@@ -169,6 +246,34 @@ GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
       case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
       default:
          throw RendererException("Primitive type not supported", __FILE__, __LINE__);
+   }
+}
+
+//===========================================
+// Renderer::init
+//===========================================
+void Renderer::init() {
+   WinIO win;
+   win.createGLContext();
+
+#ifdef GL_FIXED_PIPELINE
+   m_fixedPipeline = true;
+#else
+   m_fixedPipeline = !win.isSupportedGLVersion(WinIO::GL_2_0);
+#endif
+
+   m_vboSupport = win.hasVboSupport();
+
+   GL_CHECK(glEnable(GL_CULL_FACE));
+   GL_CHECK(glFrontFace(GL_CCW));
+
+   if (m_fixedPipeline) {
+      m_activeRenderMode = RenderMode::create(FIXED_FUNCTION);
+      m_activeRenderMode->setActive();
+   }
+   else {
+      constructRenderModes();
+      setMode(TEXTURED_ALPHA);
    }
 }
 
@@ -224,90 +329,33 @@ Renderer::textureHandle_t Renderer::loadGLTexture(const textureData_t* texture, 
 }
 
 //===========================================
-// Renderer::draw
+// Renderer::constructVbo
 //===========================================
-void Renderer::draw(const IModel* model) {
-   m_state[m_idxUpdate].sceneGraph->insert(model);
+void Renderer::constructVbo(IModel* model) {
+   m_vboMapMutex.lock();
+
+   auto i = m_vboMap.find(model->m_id);
+
+   if (i != m_vboMap.end() && i->second != 0)
+      destroyVbo(i->second);
+
+   GLuint handle;
+
+   GL_CHECK(gl_genBuffers(1, &handle));
+   GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, handle));
+   GL_CHECK(gl_bufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
+
+   m_vboMap[model->m_id] = handle;
+
+   m_vboMapMutex.unlock();
 }
 
 //===========================================
-// Renderer::constructVBO
+// Renderer::destroyVbo
 //===========================================
-void Renderer::constructVBO(IModel* model) {
-#ifndef WIN32
-// TODO: NOT THREAD SAFE!!!!
-/*
-   modelHandle_t handle;
-
-   if (model->m_handle == 0) {
-      GL_CHECK(glGenBuffers(1, &handle));
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, handle));
-      GL_CHECK(glBufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
-
-      model->m_handle = handle;
-   }
-   else {
-      freeBufferedModel(model);
-   }
-*/
-#endif
-}
-
-//===========================================
-// Renderer::freeBufferedModel
-//===========================================
-void Renderer::freeBufferedModel(IModel* model) {
-#ifndef WIN32
-   GL_CHECK(glDeleteBuffers(1, &model->m_handle));
-   model->m_handle = 0;
-#endif
-}
-
-//===========================================
-// Renderer::queueMsg
-//===========================================
-void Renderer::queueMsg(Message msg) {
-   m_msgQueueMutex.lock();
-
-   m_msgQueueEmpty = false;
-   m_msgQueue.push_back(msg);
-
-   m_msgQueueMutex.unlock();
-}
-
-//===========================================
-// Renderer::loadTexture
-//===========================================
-void Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
-   msgTexHandleReq_t data = { texture, width, height, handle };
-   queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
-
-   // Hang until message is processed
-   while (!m_msgQueueEmpty) { if (m_errorPending) break; }
-}
-
-//===========================================
-// Renderer::unloadTexture
-//===========================================
-void Renderer::unloadTexture(textureHandle_t handle) {
-   msgTexUnloadReq_t data = { handle };
-   queueMsg(Message(MSG_TEX_UNLOAD_REQ, data));
-}
-
-//===========================================
-// Renderer::bufferModel
-//===========================================
-void Renderer::bufferModel(IModel* model) {
-   msgConstructVbo_t data = { model };
-   queueMsg(Message(MSG_CONSTRUCT_VBO, data));
-}
-
-//===========================================
-// Renderer::onWindowResize
-//===========================================
-void Renderer::onWindowResize(int_t x, int_t y) {
-   msgVpResizeReq_t data = { x, y };
-   queueMsg(Message(MSG_VP_RESIZE_REQ, data));
+void Renderer::destroyVbo(GLuint handle) {
+   if (handle != 0)
+      GL_CHECK(gl_deleteBuffers(1, &handle));
 }
 
 //===========================================
@@ -333,7 +381,12 @@ void Renderer::processMessage(const Message& msg) {
          break;
          case MSG_CONSTRUCT_VBO: {
             msgConstructVbo_t dat = boost::get<msgConstructVbo_t>(msg.data);
-            constructVBO(dat.model);
+            constructVbo(dat.model);
+         }
+         break;
+         case MSG_DESTROY_VBO: {
+            msgDestroyVbo_t dat = boost::get<msgDestroyVbo_t>(msg.data);
+            destroyVbo(dat.handle);
          }
          break;
       }
@@ -372,6 +425,7 @@ void Renderer::processMessages() {
    }
 
    m_msgQueue.clear();
+   m_scratchSpace.clear();
    m_msgQueueEmpty = true;
 
    m_msgQueueMutex.unlock();
@@ -397,21 +451,16 @@ void Renderer::renderLoop() {
 
             if (!m_fixedPipeline) {
                mode_t mode = model->getRenderMode();
-
-               for (auto j = m_renderModes.begin(); j != m_renderModes.end(); ++j) {
-                  if (j->first != mode && j->second->hasPending()) {
-                     setMode(j->first);
-                     j->second->flush();
-                  }
-               }
-
                setMode(mode);
             }
 
-            m_activeRenderMode->sendData(model, m_state[m_idxRender].P);
-         }
+            m_vboMapMutex.lock();
+            auto j = m_vboMap.find(model->m_id);
+            GLuint vbo = j == m_vboMap.end() ? 0 : j->second;
+            m_vboMapMutex.unlock();
 
-         m_activeRenderMode->flush();
+            m_activeRenderMode->sendData(model, m_state[m_idxRender].P, vbo);
+         }
 
          win.swapBuffers();
 
@@ -422,6 +471,8 @@ void Renderer::renderLoop() {
          m_state[m_idxRender].status = renderState_t::IS_BEING_RENDERED;
 
          m_stateChangeMutex.unlock();
+
+         ++m_frameNumber;
 #ifdef DEBUG
          computeFrameRate();
 #endif

@@ -317,7 +317,7 @@ void EntityAnimations::updateModel() {
    m_model.setColour(m_entity->getFillColour());
    m_model.setTextureHandle(m_texture->getHandle());
 
-//   m_renderer.bufferModel(&m_model);
+   m_renderer.bufferModel(&m_model);
 }
 
 //===========================================
@@ -552,7 +552,9 @@ long EntityAnimations::getAnimName() const {
 //===========================================
 // EntityAnimations::~EntityAnimations
 //===========================================
-EntityAnimations::~EntityAnimations() {}
+EntityAnimations::~EntityAnimations() {
+   m_renderer.freeBufferedModel(&m_model);
+}
 
 
 }

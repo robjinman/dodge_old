@@ -48,7 +48,7 @@ bool FixedFunctionMode::isSupported(const IModel* model) const {
 //===========================================
 // FixedFunctionMode::sendData
 //===========================================
-void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat) {
+void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat, GLuint vbo) {
    static long vvv = internString("vvv");
    static long vvvcccc = internString("vvvcccc");
    static long vvvtt = internString("vvvtt");
@@ -57,17 +57,8 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
    if (!isSupported(model))
       throw RendererException("Model type not supported by FixedFunctionMode", __FILE__, __LINE__);
 
-
    uint_t nVerts = model->getNumVertices();
    long vertLayout = model->getVertexLayout();
-
-   if (vertLayout == vvvtt || vertLayout == vvvttcccc) {
-      GL_CHECK(glEnable(GL_TEXTURE_2D));
-      GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
-   }
-   else {
-      GL_CHECK(glDisable(GL_TEXTURE_2D));
-   }
 
    glMatrixMode(GL_PROJECTION);
    glLoadMatrixf(projMat.data());
@@ -77,42 +68,74 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
 
    const Colour& col = model->getColour();
 
-   glBegin(primitiveToGLType(model->getPrimitiveType()));
-   if (vertLayout == vvv) {
-      const vvv_t* verts = reinterpret_cast<const vvv_t*>(model_getVertexData(*model));
+   GLint stride = 0;
 
-      for (uint_t i = 0; i < nVerts; ++i) {
-         glColor4f(col.r, col.g, col.b, col.a);
-         glVertex3f(verts[i].v1, verts[i].v2, verts[i].v3);
-      }
+   if (vertLayout == vvv) {
+      stride = sizeof(vvv_t);
+      GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));
+      GL_CHECK(glDisableClientState(GL_COLOR_ARRAY));
+      GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+      GL_CHECK(glColor4f(col.r, col.g, col.b, col.a));
+      GL_CHECK(glDisable(GL_TEXTURE_2D));
    }
    else if (vertLayout == vvvcccc) {
-      const vvvcccc_t* verts = reinterpret_cast<const vvvcccc_t*>(model_getVertexData(*model));
-
-      for (uint_t i = 0; i < nVerts; ++i) {
-         glColor4f(verts[i].c1, verts[i].c2, verts[i].c3, verts[i].c4);
-         glVertex3f(verts[i].v1, verts[i].v2, verts[i].v3);
-      }
+      stride = sizeof(vvvcccc_t);
+      GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));
+      GL_CHECK(glEnableClientState(GL_COLOR_ARRAY));
+      GL_CHECK(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+      GL_CHECK(glDisable(GL_TEXTURE_2D));
    }
    else if (vertLayout == vvvtt) {
-      const vvvtt_t* verts = reinterpret_cast<const vvvtt_t*>(model_getVertexData(*model));
-
-      for (uint_t i = 0; i < nVerts; ++i) {
-         glTexCoord2f(verts[i].t1, verts[i].t2);
-         glColor4f(col.r, col.g, col.b, col.a);
-         glVertex3f(verts[i].v1, verts[i].v2, verts[i].v3);
-      }
+      stride = sizeof(vvvtt_t);
+      GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));
+      GL_CHECK(glDisableClientState(GL_COLOR_ARRAY));
+      GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+      GL_CHECK(glColor4f(col.r, col.g, col.b, col.a));
+      GL_CHECK(glEnable(GL_TEXTURE_2D));
+      GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
    }
    else if (vertLayout == vvvttcccc) {
-      const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model_getVertexData(*model));
-
-      for (uint_t i = 0; i < nVerts; ++i) {
-         glTexCoord2f(verts[i].t1, verts[i].t2);
-         glColor4f(verts[i].c1, verts[i].c2, verts[i].c3, verts[i].c4);
-         glVertex3f(verts[i].v1, verts[i].v3, verts[i].v3);
-      }
+      stride = sizeof(vvvttcccc);
+      GL_CHECK(glEnableClientState(GL_VERTEX_ARRAY));
+      GL_CHECK(glEnableClientState(GL_COLOR_ARRAY));
+      GL_CHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+      GL_CHECK(glEnable(GL_TEXTURE_2D));
+      GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
    }
-   glEnd();
+
+   assert(stride > 0);
+
+   const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model_getVertexData(*model));
+
+   if (vbo == 0) {
+      GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, 0));
+
+      GL_CHECK(glVertexPointer(3, GL_FLOAT, stride, verts));
+
+      if (vertLayout == vvvtt || vertLayout == vvvttcccc)
+         GL_CHECK(glTexCoordPointer(2, GL_FLOAT, stride, &verts[0].t1));
+
+      if (vertLayout == vvvttcccc || vertLayout == vvvcccc)
+         GL_CHECK(glColorPointer(4, GL_FLOAT, stride, &verts[0].c1));
+   }
+   else {
+      GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, vbo));
+
+      GLuint offset = 0;
+
+      GL_CHECK(glVertexPointer(3, GL_FLOAT, stride, reinterpret_cast<const void*>(offset)));
+      offset += 3 * sizeof(GLfloat);
+
+      if (vertLayout == vvvtt || vertLayout == vvvttcccc) {
+         GL_CHECK(glTexCoordPointer(2, GL_FLOAT, stride, reinterpret_cast<const void*>(offset)));
+         offset += 2 * sizeof(GLfloat);
+      }
+
+      if (vertLayout == vvvttcccc || vertLayout == vvvcccc)
+         GL_CHECK(glColorPointer(4, GL_FLOAT, stride, reinterpret_cast<const void*>(offset)));
+   }
+
+   GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, nVerts));
 }
 
 

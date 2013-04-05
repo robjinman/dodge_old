@@ -63,7 +63,9 @@ Texture::Texture(const XmlNode data)
 void Texture::constructTexture(const char* file) {
    PNG_CHECK(png_open_file(&m_png, file));
 
-   m_data = new byte_t[m_png.bpp * m_png.width * m_png.height];
+   size_t bytes = m_png.bpp * m_png.width * m_png.height;
+   m_data = new byte_t[bytes]();
+
    PNG_CHECK(png_get_data(&m_png, m_data));
 
    m_width = m_png.width;

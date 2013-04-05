@@ -13,11 +13,10 @@
 #include <boost/variant.hpp>
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <EGL/egl.h>
+#include <GL/glx.h>
 #include "../../utils/Functor.hpp"
 #include "../../utils/TypeList.hpp"
 #include "../definitions.hpp"
-#include "../EGL_CHECK.hpp"
 
 
 namespace Dodge {
@@ -155,6 +154,7 @@ class WinIO {
       void doEvents();
       void destroyWindow();
       void swapBuffers();
+      void createGLContext();
 
 #ifdef DEBUG
       static const byte_t DBG_NO_VSYNC = 1 << 0;
@@ -182,13 +182,10 @@ class WinIO {
          GL_4_3
       };
 
-      void createGLContext();
       bool isSupportedGLVersion(glVersion_t version) const;
+      bool hasVboSupport() const;
 
-      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr); // TODO: why is this static?
-
-      Window createXWindow(const char* title, int width, int height, Display* display,
-         EGLDisplay sEGLDisplay, EGLConfig FBConfig, Colormap* pColormap, XVisualInfo** ppVisual);
+      static Bool waitForMap(Display* d, XEvent* e, char* win_ptr);
 
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;
@@ -197,15 +194,16 @@ class WinIO {
       static int m_width;
       static int m_height;
 
-      static Display* m_display;
-      static Window m_win;
-      static Colormap m_colorMap;
-      static XVisualInfo* m_pVisual;
-
-      static EGLConfig m_eglConfig;
-      static EGLDisplay m_eglDisplay;
-      static EGLContext m_eglContext;
-      static EGLSurface m_eglSurface;
+      //-------------------------------------
+      static Display*                m_display;
+      static Window                  m_root;
+      static XVisualInfo*            m_visual;
+      static Colormap                m_colourMap;
+      static XSetWindowAttributes    m_setWinAttr;
+      static Window                  m_win;
+      static GLXContext              m_context;
+      static XWindowAttributes       m_winAttr;
+      //-------------------------------------
 
       static bool m_init;
 };

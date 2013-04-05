@@ -8,11 +8,13 @@
 
 
 #ifdef WIN32
-#include <windows.h>
-#include <windowsx.h>
-#include <GLEW/glew.h>
+   #include <windows.h>
+   #include <windowsx.h>
+   #include <GLEW/glew.h>
+#elif defined LINUX
+   #include <GLEW/glew.h>
 #else
-#include <GLES2/gl2.h>
+   #include <GLES2/gl2.h>
 #endif
 #include <boost/shared_ptr.hpp>
 #include "../../xml/xml.hpp"

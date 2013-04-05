@@ -92,12 +92,10 @@ bool NonTexturedAlphaMode::isSupported(const IModel* model) const {
 //===========================================
 // NonTexturedAlphaMode::sendData
 //===========================================
-void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat) {
+void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat, GLuint vbo) {
    if (!isSupported(model))
       throw RendererException("Model type not supported by NonTexturedAlphaMode", __FILE__, __LINE__);
 
-
-//   static long vvv = internString("vvv");
    static long vvvcccc = internString("vvvcccc");
 
    long vertLayout = model->getVertexLayout();
@@ -126,7 +124,7 @@ void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& proj
    const vvvcccc_t* verts = reinterpret_cast<const vvvcccc_t*>(model_getVertexData(*model));
    Renderer::int_t stride = vertLayout == vvvcccc ? sizeof(vvvcccc_t) : sizeof(vvv_t);
 
-   if (model_getHandle(*model) == 0) {
+   if (vbo == 0) {
       GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
       GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
@@ -135,7 +133,7 @@ void NonTexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& proj
          GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
    }
    else {
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, model_getHandle(*model)));
+      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
 
       GLuint offset = 0;
 
