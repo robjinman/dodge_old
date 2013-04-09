@@ -39,7 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\lib</OutDir>
+    <OutDir>..\..\lib\</OutDir>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\lib\</OutDir>
@@ -49,10 +50,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_51;D:\Code\projects\Dodge\Dodge\include\SDL;D:\Code\projects\Dodge\Dodge\include\dodge;D:\Code\projects\Dodge\Dodge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;DEBUG;GLEW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -65,7 +66,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_51;D:\Code\projects\Dodge\Dodge\include\SDL;D:\Code\projects\Dodge\Dodge\include\dodge;D:\Code\projects\Dodge\Dodge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;GLEW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -129,6 +133,7 @@
     <ClInclude Include="..\..\include\dodge\renderer\ogl\Colour.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\ogl\FixedFunctionMode.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\ogl\NonTexturedAlphaMode.hpp" />
+    <ClInclude Include="..\..\include\dodge\renderer\ogl\OglWrapper.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\ogl\Renderer.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\ogl\RenderMode.hpp" />
     <ClInclude Include="..\..\include\dodge\renderer\ogl\Texture.hpp" />
@@ -197,9 +202,11 @@
     <ClCompile Include="..\..\src\Range.cpp" />
     <ClCompile Include="..\..\src\renderer\Camera.cpp" />
     <ClCompile Include="..\..\src\renderer\Font.cpp" />
+    <ClCompile Include="..\..\src\renderer\Model.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\Colour.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\FixedFunctionMode.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\NonTexturedAlphaMode.cpp" />
+    <ClCompile Include="..\..\src\renderer\ogl\OglWrapper.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\Renderer.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\RenderMode.cpp" />
     <ClCompile Include="..\..\src\renderer\ogl\Texture.cpp" />

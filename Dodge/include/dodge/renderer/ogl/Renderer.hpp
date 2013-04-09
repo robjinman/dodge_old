@@ -7,16 +7,13 @@
 #define __RENDERER_HPP__
 
 
-#ifdef WIN32
-   #include <windows.h>
-   #include <windowsx.h>
-   #include <GLEW/glew.h>
-#elif defined LINUX
+#ifdef GLEW
    #include <GLEW/glew.h>
 #else
-   #ifdef GL_FIXED_PIPELINE
+   #if defined GLES_1_1
       #include <GLES/gl.h>
-   #else
+      #define GL_FIXED_PIPELINE
+   #elif defined GLES_2_0
       #include <GLES2/gl2.h>
    #endif
 #endif
@@ -33,6 +30,7 @@
 #include "../../WinIO.hpp"
 #include "../../StackAllocator.hpp"
 #include "../../definitions.hpp"
+#include "OglWrapper.hpp"
 
 
 namespace Dodge {
@@ -41,19 +39,6 @@ namespace Dodge {
 class IModel;
 class RenderMode;
 class SceneGraph;
-
-
-#if defined WIN32 | defined LINUX
-inline void gl_bindBuffer(GLenum target, GLuint buf) { glBindBufferARB(target, buf); }
-inline void gl_genBuffers(GLsizei n, GLuint* bufs) { glGenBuffersARB(n, bufs); }
-inline void gl_bufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) { glBufferDataARB(target, size, data, usage); }
-inline void gl_deleteBuffers(GLsizei n, const GLuint* bufs) { glDeleteBuffersARB(n, bufs); }
-#else
-inline void gl_bindBuffer(GLenum target, GLuint buf) { glBindBuffer(target, buf); }
-inline void gl_genBuffers(GLsizei n, GLuint* bufs) { glGenBuffers(n, bufs); }
-inline void gl_bufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) { glBufferData(target, size, data, usage); }
-inline void gl_deleteBuffers(GLsizei n, const GLuint* bufs) { glDeleteBuffers(n, bufs); }
-#endif
 
 
 class Renderer {
@@ -118,6 +103,7 @@ class Renderer {
 #ifdef DEBUG
       inline long getFrameRate() const;
 #endif
+      void loadSettingsFromFile(const std::string& file);
       void start();
       void stop();
       void tick(const Colour& bgColour = Colour(0.f, 0.f, 0.f, 1.f));
@@ -134,6 +120,15 @@ class Renderer {
          MSG_VP_RESIZE_REQ
          // ...
       } msgType_t;
+
+      struct usrReqSettings_t {
+         usrReqSettings_t()
+            : fixedPipeline(false),
+              VBOs(true) {}
+
+         bool fixedPipeline;
+         bool VBOs;
+      };
 
       struct msgTexHandleReq_t {
          const textureData_t* texData;
@@ -216,8 +211,8 @@ class Renderer {
 
       GLint primitiveToGLType(primitive_t primitiveType) const;
 
-      bool m_fixedPipeline;
-      bool m_vboSupport;
+      usrReqSettings_t m_usrReqSettings;
+      oglSupport_t m_oglSupport;
 
       std::map<long, GLuint> m_vboMap;
       std::mutex m_vboMapMutex; // TODO: Make thread-safe map container
@@ -251,6 +246,8 @@ class Renderer {
 #ifdef DEBUG
       std::atomic<long> m_frameRate;
 #endif
+
+      OglWrapper m_gl;
 };
 
 #ifdef DEBUG

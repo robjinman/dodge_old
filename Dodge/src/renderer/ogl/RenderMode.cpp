@@ -5,11 +5,7 @@
 
 #include <renderer/ogl/RenderMode.hpp>
 
-#ifdef WIN32
-   #include <renderer/ogl/FixedFunctionMode.hpp>
-   #include <renderer/ogl/NonTexturedAlphaMode.hpp>
-   #include <renderer/ogl/TexturedAlphaMode.hpp>
-#elif defined LINUX
+#ifdef GLEW
    #include <renderer/ogl/FixedFunctionMode.hpp>
    #include <renderer/ogl/NonTexturedAlphaMode.hpp>
    #include <renderer/ogl/TexturedAlphaMode.hpp>
@@ -22,6 +18,7 @@
    #endif
 #endif
 #include <renderer/GL_CHECK.hpp>
+#include <renderer/ogl/OglWrapper.hpp>
 
 
 namespace Dodge {
@@ -32,11 +29,7 @@ namespace Dodge {
 //===========================================
 RenderMode* RenderMode::create(Renderer::mode_t kind) {
    switch (kind) {
-#ifdef WIN32
-      case Renderer::FIXED_FUNCTION:    return new FixedFunctionMode();
-      case Renderer::NONTEXTURED_ALPHA: return new NonTexturedAlphaMode();
-      case Renderer::TEXTURED_ALPHA:    return new TexturedAlphaMode();
-#elif defined LINUX
+#ifdef GLEW
       case Renderer::FIXED_FUNCTION:    return new FixedFunctionMode();
       case Renderer::NONTEXTURED_ALPHA: return new NonTexturedAlphaMode();
       case Renderer::TEXTURED_ALPHA:    return new TexturedAlphaMode();
@@ -58,22 +51,28 @@ RenderMode* RenderMode::create(Renderer::mode_t kind) {
 // RenderMode::newShaderFromSource
 //===========================================
 void RenderMode::newShaderFromSource(const char** shaderSrc, GLint type, GLint prog) {
-   GLint shader;
+   OglWrapper gl;
+
+   GLuint shader = GL_CHECK(gl.createShader(type));
+   GL_CHECK(gl.shaderSource(shader, 1, shaderSrc, NULL));
+   GL_CHECK(gl.compileShader(shader));
+
    GLint success = GL_FALSE;
+   GL_CHECK(gl.getShaderiv(shader, GL_COMPILE_STATUS, &success));
 
-   // Create shader and load into GL
-   shader = GL_CHECK(glCreateShader(type));
+   if (success != GL_TRUE) {
+      char log[512];
+      int len = 0;
+      GL_CHECK(gl.getShaderInfoLog(shader, 512, &len, log));
 
-   GL_CHECK(glShaderSource(shader, 1, shaderSrc, NULL));
+      std::string strLog(log);
+      if (strLog.length() > 0 && *(strLog.end() - 1) == '\n')
+         strLog.erase(strLog.end() - 1);
 
-   // Compile the shader
-   GL_CHECK(glCompileShader(shader));
-   GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+      throw RendererException("Could not process shader; Error in source: " + strLog, __FILE__, __LINE__);
+   }
 
-   if (success != GL_TRUE)
-      throw RendererException("Could not process shader; Error in source", __FILE__, __LINE__);
-
-   GL_CHECK(glAttachShader(prog, shader));
+   GL_CHECK(gl.attachShader(prog, shader));
 }
 #endif
 

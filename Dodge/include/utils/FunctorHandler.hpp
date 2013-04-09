@@ -17,8 +17,8 @@ class FunctorHandler
 
       bool operator==(const FunctorImpl<typename ParentFunctor::ResultType, typename ParentFunctor::ParmList>& func) const {
          try {
-            const FunctorHandler& ref = dynamic_cast<const FunctorHandler&>(func);
-            return m_fun == ref.m_fun;
+            const FunctorHandler* ptr = dynamic_cast<const FunctorHandler*>(&func);
+            return ptr && (m_fun == ptr->m_fun);
          }
          catch (std::bad_cast&) { return false; }
       }

@@ -19,15 +19,15 @@ namespace Dodge {
 
 
 Display* WinIO::m_display = NULL;
-Window WinIO::m_root = Window();
+Window WinIO::m_root;
 XVisualInfo* WinIO::m_visual = NULL;
-Colormap WinIO::m_colourMap = Colormap();
-XSetWindowAttributes WinIO::m_setWinAttr = XSetWindowAttributes();
-Window WinIO::m_win = Window();
-GLXContext WinIO::m_context = GLXContext();
-XWindowAttributes WinIO::m_winAttr = XWindowAttributes();
+Colormap WinIO::m_colourMap;
+XSetWindowAttributes WinIO::m_setWinAttr;
+Window WinIO::m_win;
+GLXContext WinIO::m_context;
+XWindowAttributes WinIO::m_winAttr;
 
-WinIO::callbackMap_t WinIO::m_callbacks = WinIO::callbackMap_t();
+WinIO::callbackMap_t WinIO::m_callbacks;
 int WinIO::m_width = 0;
 int WinIO::m_height = 0;
 
@@ -117,39 +117,6 @@ void WinIO::createGLContext() {
       destroyWindow();
       throw Exception("Error creating GL context", __FILE__, __LINE__);
    }
-}
-
-//===========================================
-// WinIO::isSupportedGLVersion
-//===========================================
-bool WinIO::isSupportedGLVersion(glVersion_t version) const {
-   switch (version) {
-      case GL_1_1:     return GLEW_VERSION_1_1;      break;
-      case GL_1_2:     return GLEW_VERSION_1_2;      break;
-      case GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
-      case GL_1_3:     return GLEW_VERSION_1_3;      break;
-      case GL_1_4:     return GLEW_VERSION_1_4;      break;
-      case GL_1_5:     return GLEW_VERSION_1_5;      break;
-      case GL_2_0:     return GLEW_VERSION_2_0;      break;
-      case GL_2_1:     return GLEW_VERSION_2_1;      break;
-      case GL_3_0:     return GLEW_VERSION_3_0;      break;
-      case GL_3_1:     return GLEW_VERSION_3_1;      break;
-      case GL_3_2:     return GLEW_VERSION_3_2;      break;
-      case GL_3_3:     return GLEW_VERSION_3_3;      break;
-      case GL_4_0:     return GLEW_VERSION_4_0;      break;
-      case GL_4_1:     return GLEW_VERSION_4_1;      break;
-      case GL_4_2:     return GLEW_VERSION_4_2;      break;
-      case GL_4_3:     return GLEW_VERSION_4_3;      break;
-
-      default: return false;
-   };
-}
-
-//===========================================
-// WinIO::hasVboSupport
-//===========================================
-bool WinIO::hasVboSupport() const {
-   return GL_ARB_vertex_buffer_object;
 }
 
 //===========================================

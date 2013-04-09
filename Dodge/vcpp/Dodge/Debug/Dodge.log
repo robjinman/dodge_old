@@ -1,242 +1,10 @@
-﻿Build started 04/02/2013 17:01:15.
-     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Rebuild target(s)).
-     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+﻿Build started 08/04/2013 23:07:38.
+     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D DEBUG /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\Animation.cpp ..\..\src\AnimFrame.cpp ..\..\src\AssetManager.cpp ..\..\src\audio\Audio.cpp ..\..\src\audio\MusicTrack.cpp ..\..\src\audio\Sound.cpp ..\..\src\Box2dPhysics.cpp ..\..\src\EEvent.cpp ..\..\src\Entity.cpp ..\..\src\EntityAnimations.cpp ..\..\src\EntityParallax.cpp ..\..\src\EntityTransformations.cpp ..\..\src\EventManager.cpp ..\..\src\Exception.cpp ..\..\src\globals.cpp ..\..\src\KvpParser.cpp ..\..\src\MapLoader.cpp ..\..\src\math\common.cpp ..\..\src\math\fAreEqual.cpp ..\..\src\math\fContains.cpp ..\..\src\math\fIntersect.cpp ..\..\src\math\fOverlap.cpp ..\..\src\math\shapes\Ellipse.cpp ..\..\src\math\shapes\LineSegment.cpp ..\..\src\math\shapes\Polygon.cpp ..\..\src\math\shapes\Quad.cpp ..\..\src\math\Vec2f.cpp ..\..\src\math\Vec2i.cpp ..\..\src\math\Vec3f.cpp ..\..\src\math\Vec3i.cpp ..\..\src\ParallaxSprite.cpp ..\..\src\Range.cpp ..\..\src\renderer\Camera.cpp ..\..\src\renderer\Font.cpp ..\..\src\renderer\ogl\Colour.cpp ..\..\src\renderer\ogl\FixedFunctionMode.cpp ..\..\src\renderer\ogl\NonTexturedAlphaMode.cpp ..\..\src\renderer\ogl\Renderer.cpp ..\..\src\renderer\ogl\RenderMode.cpp ..\..\src\renderer\ogl\Texture.cpp ..\..\src\renderer\ogl\TexturedAlphaMode.cpp ..\..\src\renderer\SceneGraph.cpp ..\..\src\ShapeFactory.cpp ..\..\src\Sprite.cpp ..\..\src\StackAllocator.cpp ..\..\src\StringId.cpp ..\..\src\TextEntity.cpp ..\..\src\Transformation.cpp ..\..\src\TransPart.cpp ..\..\src\ui\EntityUi.cpp ..\..\src\ui\UiButton.cpp ..\..\src\windows\Timer.cpp ..\..\src\windows\WinIO.cpp ..\..\src\WorldSpace.cpp ..\..\src\xml\XmlAttribute.cpp ..\..\src\xml\XmlDocument.cpp ..\..\src\xml\XmlNode.cpp
-     1>cl : Command line warning D9007: '/Gm' requires '/Zi or /ZI'; option ignored
-         Animation.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         AnimFrame.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         AssetManager.cpp
-         Audio.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\audio\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         MusicTrack.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Sound.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\audio\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Box2dPhysics.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\Box2dPhysics.cpp(22): warning C4305: 'initializing' : truncation from 'double' to 'Dodge::float32_t'
-     1>..\..\src\Box2dPhysics.cpp(23): warning C4305: 'initializing' : truncation from 'double' to 'Dodge::float32_t'
-     1>..\..\src\Box2dPhysics.cpp(29): warning C4305: 'argument' : truncation from 'double' to 'float32'
-     1>..\..\src\Box2dPhysics.cpp(257): warning C4244: '=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\Box2dPhysics.cpp(258): warning C4244: '=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-         EEvent.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Entity.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\Entity.cpp(505): warning C4244: 'argument' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-     1>..\..\src\Entity.cpp(551): warning C4244: 'argument' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-     1>..\..\src\Entity.cpp(697): warning C4244: 'argument' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-         EntityAnimations.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\EntityAnimations.cpp(236): warning C4244: 'argument' : conversion from 'const int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\EntityAnimations.cpp(284): warning C4244: 'initializing' : conversion from 'GLint' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\EntityAnimations.cpp(285): warning C4244: 'initializing' : conversion from 'GLint' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\EntityAnimations.cpp(287): warning C4244: 'argument' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\EntityAnimations.cpp(369): warning C4244: 'argument' : conversion from 'const int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\EntityAnimations.cpp(414): warning C4244: 'argument' : conversion from 'const int' to 'Dodge::float32_t', possible loss of data
-         EntityParallax.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         EntityTransformations.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         EventManager.cpp
-     1>D:\Code\projects\Dodge\Dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Exception.cpp
-         globals.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         KvpParser.cpp
-     1>..\..\src\KvpParser.cpp(76): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\KvpParser.cpp(84): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-         MapLoader.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\MapLoader.cpp(399): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
-         common.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\common.cpp(29): warning C4244: '=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\math\common.cpp(36): warning C4244: '=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-         fAreEqual.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         fContains.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\fContains.cpp(91): warning C4244: 'argument' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-         Generating Code...
-         Compiling...
-         fIntersect.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         fOverlap.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\fOverlap.cpp(100): warning C4244: '/=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\math\fOverlap.cpp(101): warning C4244: '/=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\math\fOverlap.cpp(111): warning C4244: '/=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\math\fOverlap.cpp(112): warning C4244: '/=' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-         Ellipse.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         LineSegment.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Polygon.cpp
-     1>D:\Code\projects\Dodge\Dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Quad.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Vec2f.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\Vec2f.cpp(22): warning C4244: 'initializing' : conversion from 'const int' to 'Dodge::float32_t', possible loss of data
-         Vec2i.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\Vec2i.cpp(22): warning C4244: 'initializing' : conversion from 'const Dodge::float32_t' to 'int', possible loss of data
-     1>..\..\src\math\Vec2i.cpp(49): warning C4244: 'initializing' : conversion from 'int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\math\Vec2i.cpp(50): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>..\..\src\math\Vec2i.cpp(51): warning C4244: '=' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-         Vec3f.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\Vec3f.cpp(22): warning C4244: 'initializing' : conversion from 'const int' to 'Dodge::float32_t', possible loss of data
-         Vec3i.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\math\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\math\Vec3i.cpp(22): warning C4244: 'initializing' : conversion from 'const Dodge::float32_t' to 'int', possible loss of data
-         ParallaxSprite.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Range.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Camera.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\renderer\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\renderer\Camera.cpp(46): warning C4244: 'argument' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>D:\Code\projects\Dodge\Dodge\include\cml/mathlib/matrix_projection.h(215): warning C4244: 'initializing' : conversion from 'int' to 'value_type', possible loss of data
-                 D:\Code\projects\Dodge\Dodge\include\cml/mathlib/matrix_projection.h(242) : see reference to function template instantiation 'void cml::matrix_orthographic<float,cml::fixed<Dim1,Dim2>,cml::col_basis,cml::col_major>(cml::matrix<Element,ArrayType,BasisOrient,Layout> &,E,E,E,E,E,E,cml::Handedness,cml::ZClip)' being compiled
-                 with
-                 [
-                     Dim1=4,
-                     Dim2=4,
-                     Element=float,
-                     ArrayType=cml::fixed<4,4>,
-                     BasisOrient=cml::col_basis,
-                     Layout=cml::col_major,
-                     E=float
-                 ]
-                 D:\Code\projects\Dodge\Dodge\include\cml/mathlib/matrix_projection.h(278) : see reference to function template instantiation 'void cml::matrix_orthographic<float,cml::fixed<Dim1,Dim2>,cml::col_basis,cml::col_major>(cml::matrix<Element,ArrayType,BasisOrient,Layout> &,E,E,E,E,cml::Handedness,cml::ZClip)' being compiled
-                 with
-                 [
-                     Dim1=4,
-                     Dim2=4,
-                     Element=float,
-                     ArrayType=cml::fixed<4,4>,
-                     BasisOrient=cml::col_basis,
-                     Layout=cml::col_major,
-                     E=float
-                 ]
-                 ..\..\src\renderer\Camera.cpp(15) : see reference to function template instantiation 'void cml::matrix_orthographic_RH<float,cml::fixed<Dim1,Dim2>,cml::col_basis,cml::col_major>(cml::matrix<Element,ArrayType,BasisOrient,Layout> &,E,E,E,E,cml::ZClip)' being compiled
-                 with
-                 [
-                     Dim1=4,
-                     Dim2=4,
-                     Element=float,
-                     ArrayType=cml::fixed<4,4>,
-                     BasisOrient=cml::col_basis,
-                     Layout=cml::col_major,
-                     E=float
-                 ]
-         Font.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\renderer\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\renderer\Font.cpp(40): warning C4244: '=' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-     1>..\..\src\renderer\Font.cpp(41): warning C4244: '=' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-         Colour.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         FixedFunctionMode.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         NonTexturedAlphaMode.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\renderer\ogl\NonTexturedAlphaMode.cpp(110): warning C4244: 'argument' : conversion from 'Dodge::Renderer::int_t' to 'GLfloat', possible loss of data
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /ZI /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D DEBUG /D GLEW /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\renderer\ogl\Renderer.cpp
          Renderer.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\renderer\ogl\Renderer.cpp(351): warning C4244: 'argument' : conversion from 'double' to 'long', possible loss of data
-         RenderMode.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Texture.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Generating Code...
-         Compiling...
-         TexturedAlphaMode.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\renderer\ogl\TexturedAlphaMode.cpp(264): warning C4244: 'argument' : conversion from 'GLint' to 'GLfloat', possible loss of data
-     1>..\..\src\renderer\ogl\TexturedAlphaMode.cpp(387): warning C4244: 'argument' : conversion from 'Dodge::Renderer::int_t' to 'GLfloat', possible loss of data
-         SceneGraph.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         ShapeFactory.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Sprite.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         StackAllocator.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         StringId.cpp
-         TextEntity.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\TextEntity.cpp(202): warning C4244: 'argument' : conversion from 'int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(203): warning C4244: 'argument' : conversion from 'int' to 'Dodge::Renderer::matrixElement_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(219): warning C4244: 'initializing' : conversion from 'GLint' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(220): warning C4244: 'initializing' : conversion from 'GLint' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(222): warning C4244: 'initializing' : conversion from 'int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(223): warning C4244: 'initializing' : conversion from 'int' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\TextEntity.cpp(225): warning C4244: 'initializing' : conversion from 'Dodge::float32_t' to 'int', possible loss of data
-         Transformation.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\Transformation.cpp(116): warning C4244: 'initializing' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\Transformation.cpp(118): warning C4244: '=' : conversion from 'Dodge::float32_t' to 'Dodge::uint_t', possible loss of data
-     1>..\..\src\Transformation.cpp(191): warning C4244: 'initializing' : conversion from 'double' to 'Dodge::float32_t', possible loss of data
-     1>..\..\src\Transformation.cpp(193): warning C4244: '+=' : conversion from 'Dodge::float32_t' to 'Dodge::uint_t', possible loss of data
-         TransPart.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         EntityUi.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         UiButton.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         Timer.cpp
-         WinIO.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\windows\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\windows\WinIO.cpp(197): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(198): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(199): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(200): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(201): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(202): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(203): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(204): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(205): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(206): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(207): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(208): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(209): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(210): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(211): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-     1>..\..\src\windows\WinIO.cpp(212): warning C4800: 'const GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-         WorldSpace.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-         XmlAttribute.cpp
-     1>..\..\src\xml\XmlAttribute.cpp(16): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlAttribute.cpp(30): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlAttribute.cpp(44): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlAttribute.cpp(58): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-         XmlDocument.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\xml\XmlDocument.cpp(29): warning C4244: 'initializing' : conversion from 'std::streamoff' to 'int', possible loss of data
-         XmlNode.cpp
-     1>d:\code\projects\dodge\dodge\include\dodge\xml\../definitions.hpp(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>..\..\src\xml\XmlNode.cpp(16): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlNode.cpp(30): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlNode.cpp(44): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>..\..\src\xml\XmlNode.cpp(58): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-         Generating Code...
        Lib:
-         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodge.lib" /NOLOGO Debug\Animation.obj
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodged.lib" /NOLOGO Debug\Animation.obj
          Debug\AnimFrame.obj
          Debug\AssetManager.obj
          Debug\Audio.obj
@@ -270,9 +38,11 @@
          Debug\Range.obj
          Debug\Camera.obj
          Debug\Font.obj
+         Debug\Model.obj
          Debug\Colour.obj
          Debug\FixedFunctionMode.obj
          Debug\NonTexturedAlphaMode.obj
+         Debug\OglWrapper.obj
          Debug\Renderer.obj
          Debug\RenderMode.obj
          Debug\Texture.obj
@@ -293,9 +63,9 @@
          Debug\XmlAttribute.obj
          Debug\XmlDocument.obj
          Debug\XmlNode.obj
-         Dodge.vcxproj -> D:\Code\projects\Dodge\Dodge\vcpp\Dodge\..\..\lib\Dodge.lib
-     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Rebuild target(s)).
+         Dodge.vcxproj -> D:\Code\projects\Dodge\Dodge\vcpp\Dodge\..\..\lib\Dodged.lib
+     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:02:29.02
+Time Elapsed 00:00:17.82

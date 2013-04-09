@@ -190,39 +190,6 @@ void WinIO::createGLContext() {
 }
 
 //===========================================
-// WinIO::isSupportedGLVersion
-//===========================================
-GLboolean WinIO::isSupportedGLVersion(glVersion_t version) const {
-   switch (version) {
-      case GL_1_1:     return GLEW_VERSION_1_1;      break;
-      case GL_1_2:     return GLEW_VERSION_1_2;      break;
-      case GL_1_2_1:   return GLEW_VERSION_1_2_1;    break;
-      case GL_1_3:     return GLEW_VERSION_1_3;      break;
-      case GL_1_4:     return GLEW_VERSION_1_4;      break;
-      case GL_1_5:     return GLEW_VERSION_1_5;      break;
-      case GL_2_0:     return GLEW_VERSION_2_0;      break;
-      case GL_2_1:     return GLEW_VERSION_2_1;      break;
-      case GL_3_0:     return GLEW_VERSION_3_0;      break;
-      case GL_3_1:     return GLEW_VERSION_3_1;      break;
-      case GL_3_2:     return GLEW_VERSION_3_2;      break;
-      case GL_3_3:     return GLEW_VERSION_3_3;      break;
-      case GL_4_0:     return GLEW_VERSION_4_0;      break;
-      case GL_4_1:     return GLEW_VERSION_4_1;      break;
-      case GL_4_2:     return GLEW_VERSION_4_2;      break;
-      case GL_4_3:     return GLEW_VERSION_4_3;      break;
-
-      default: return false;
-   };
-}
-
-//===========================================
-// WinIO::hasVboSupport
-//===========================================
-bool WinIO::hasVboSupport() const {
-   return GL_ARB_vertex_buffer_object;
-}
-
-//===========================================
 // WinIO::destroyWindow
 //===========================================
 void WinIO::destroyWindow() {

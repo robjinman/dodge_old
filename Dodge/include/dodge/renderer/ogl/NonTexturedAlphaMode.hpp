@@ -8,6 +8,7 @@
 
 
 #include "RenderMode.hpp"
+#include "OglWrapper.hpp"
 
 
 namespace Dodge {
@@ -33,6 +34,8 @@ class NonTexturedAlphaMode : public RenderMode {
       GLint m_locUniColour;
       GLint m_locMV;
       GLint m_locP;
+
+      OglWrapper m_gl;
 };
 
 

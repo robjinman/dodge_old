@@ -1,4 +1,5 @@
 OBJS+=$(BASE_DIR)/renderer/ogl/Colour.o \
+	$(BASE_DIR)/renderer/ogl/OglWrapper.o \
 	$(BASE_DIR)/renderer/ogl/Renderer.o \
 	$(BASE_DIR)/renderer/ogl/RenderMode.o \
 	$(BASE_DIR)/renderer/ogl/Texture.o
