@@ -22,12 +22,10 @@ namespace Dodge {
 //===========================================
 TexturedAlphaMode::TexturedAlphaMode() {
 
-   m_id = GL_CHECK(glCreateProgram());
+   m_id = GL_CHECK(m_gl.createProgram());
 
    const char* vertShader[1] = { NULL };
    vertShader[0] =
-      "precision mediump float;                          \n"
-
       "attribute vec4 av4position;                       \n"
       "attribute vec4 av4colour;                         \n"
       "attribute vec2 av2texcoord;                       \n"
@@ -56,8 +54,6 @@ TexturedAlphaMode::TexturedAlphaMode() {
 
    const char* fragShader[1] = { NULL };
    fragShader[0] =
-      "precision mediump float;                          \n"
-
       "varying vec4 vv4colour;                           \n"
       "varying vec2 vv2texcoord;                         \n"
 
@@ -70,27 +66,27 @@ TexturedAlphaMode::TexturedAlphaMode() {
 
    RenderMode::newShaderFromSource(fragShader, GL_FRAGMENT_SHADER, m_id);
 
-   GL_CHECK(glLinkProgram(m_id));
+   GL_CHECK(m_gl.linkProgram(m_id));
 }
 
 //===========================================
 // TexturedAlphaMode::setActive
 //===========================================
 void TexturedAlphaMode::setActive() {
-   GL_CHECK(glUseProgram(m_id));
+   GL_CHECK(m_gl.useProgram(m_id));
 
-   m_locPosition = GL_CHECK(glGetAttribLocation(m_id, "av4position"));
-   m_locColour = GL_CHECK(glGetAttribLocation(m_id, "av4colour"));
-   m_locTexCoord = GL_CHECK(glGetAttribLocation(m_id, "av2texcoord"));
+   m_locPosition = GL_CHECK(m_gl.getAttribLocation(m_id, "av4position"));
+   m_locColour = GL_CHECK(m_gl.getAttribLocation(m_id, "av4colour"));
+   m_locTexCoord = GL_CHECK(m_gl.getAttribLocation(m_id, "av2texcoord"));
 
-   m_locBUniColour = GL_CHECK(glGetUniformLocation(m_id, "bUniColour"));
-   m_locUniColour = GL_CHECK(glGetUniformLocation(m_id, "uniColour"));
-   m_locMV = GL_CHECK(glGetUniformLocation(m_id, "mv"));
-   m_locP = GL_CHECK(glGetUniformLocation(m_id, "p"));
+   m_locBUniColour = GL_CHECK(m_gl.getUniformLocation(m_id, "bUniColour"));
+   m_locUniColour = GL_CHECK(m_gl.getUniformLocation(m_id, "uniColour"));
+   m_locMV = GL_CHECK(m_gl.getUniformLocation(m_id, "mv"));
+   m_locP = GL_CHECK(m_gl.getUniformLocation(m_id, "p"));
 
-   GL_CHECK(glEnableVertexAttribArray(m_locPosition));
-   GL_CHECK(glEnableVertexAttribArray(m_locColour));
-   GL_CHECK(glEnableVertexAttribArray(m_locTexCoord));
+   GL_CHECK(m_gl.enableVertexAttribArray(m_locPosition));
+   GL_CHECK(m_gl.enableVertexAttribArray(m_locColour));
+   GL_CHECK(m_gl.enableVertexAttribArray(m_locTexCoord));
 
    GL_CHECK(glEnable(GL_BLEND));
    GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -120,8 +116,8 @@ void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat
 
    long vertLayout = model->getVertexLayout();
 
-   GL_CHECK(glUniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
-   GL_CHECK(glUniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));
+   GL_CHECK(m_gl.uniformMatrix4fv(m_locMV, 1, GL_FALSE, model_getMatrix(*model)));
+   GL_CHECK(m_gl.uniformMatrix4fv(m_locP, 1, GL_FALSE, projMat.data()));
 
    if (model->getPrimitiveType() == Renderer::LINES) {
       if (model->getLineWidth() != 0)
@@ -130,15 +126,15 @@ void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat
 
    // If model contains per-vertex colour data
    if (vertLayout == vvvttcccc) {
-      GL_CHECK(glUniform1i(m_locBUniColour, 0));
-      GL_CHECK(glEnableVertexAttribArray(m_locColour));
+      GL_CHECK(m_gl.uniform1i(m_locBUniColour, 0));
+      GL_CHECK(m_gl.enableVertexAttribArray(m_locColour));
    }
    else {
-      GL_CHECK(glDisableVertexAttribArray(m_locColour));
-      GL_CHECK(glUniform1i(m_locBUniColour, 1));
+      GL_CHECK(m_gl.disableVertexAttribArray(m_locColour));
+      GL_CHECK(m_gl.uniform1i(m_locBUniColour, 1));
 
       const Colour& colour = model->getColour();
-      GL_CHECK(glUniform4f(m_locUniColour, colour.r, colour.g, colour.b, colour.a));
+      GL_CHECK(m_gl.uniform4f(m_locUniColour, colour.r, colour.g, colour.b, colour.a));
    }
 
    GL_CHECK(glBindTexture(GL_TEXTURE_2D, model->getTextureHandle()));
@@ -147,27 +143,28 @@ void TexturedAlphaMode::sendData(const IModel* model, const matrix44f_c& projMat
    GLint stride = vertLayout == vvvttcccc ? sizeof(vvvttcccc_t) : sizeof(vvvtt_t);
 
    if (vbo == 0) {
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
+      if (m_gl.getSupportedFeatures().VBOs.available)
+         GL_CHECK(m_gl.bindBuffer(GL_ARRAY_BUFFER, 0));
 
-      GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
-      GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
+      GL_CHECK(m_gl.vertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, verts));
+      GL_CHECK(m_gl.vertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, &verts[0].t1));
 
       if (vertLayout == vvvttcccc)
-         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
+         GL_CHECK(m_gl.vertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, &verts[0].c1));
    }
    else {
-      GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+      GL_CHECK(m_gl.bindBuffer(GL_ARRAY_BUFFER, vbo));
 
       GLuint offset = 0;
 
-      GL_CHECK(glVertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+      GL_CHECK(m_gl.vertexAttribPointer(m_locPosition, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
       offset += 3 * sizeof(GLfloat);
 
-      GL_CHECK(glVertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+      GL_CHECK(m_gl.vertexAttribPointer(m_locTexCoord, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
       offset += 2 * sizeof(GLfloat);
 
       if (vertLayout == vvvttcccc)
-         GL_CHECK(glVertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
+         GL_CHECK(m_gl.vertexAttribPointer(m_locColour, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(offset)));
    }
 
    GL_CHECK(glDrawArrays(primitiveToGLType(model->getPrimitiveType()), 0, model->getNumVertices()));

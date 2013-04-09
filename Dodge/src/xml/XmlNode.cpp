@@ -14,7 +14,7 @@ int XmlNode::getInt() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    int i;
-   if (SSCANF(m_node->value(), "%d", &i) != 1)
+   if (sscanf(m_node->value(), "%d", &i) != 1)
       throw XmlException("Expected integer", __FILE__, __LINE__);
 
    return i;
@@ -28,7 +28,7 @@ long XmlNode::getLong() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    long i;
-   if (SSCANF(m_node->value(), "%ld", &i) != 1)
+   if (sscanf(m_node->value(), "%ld", &i) != 1)
       throw XmlException("Expected long integer", __FILE__, __LINE__);
 
    return i;
@@ -42,7 +42,7 @@ float XmlNode::getFloat() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    float f;
-   if (SSCANF(m_node->value(), "%f", &f) != 1)
+   if (sscanf(m_node->value(), "%f", &f) != 1)
       throw XmlException("Expected float", __FILE__, __LINE__);
 
    return f;
@@ -56,7 +56,7 @@ double XmlNode::getDouble() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    double d;
-   if (SSCANF(m_node->value(), "%lf", &d) != 1)
+   if (sscanf(m_node->value(), "%lf", &d) != 1)
       throw XmlException("Expected double", __FILE__, __LINE__);
 
    return d;

@@ -14,7 +14,7 @@ int XmlAttribute::getInt() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    int i;
-   if (SSCANF(m_attr->value(), "%d", &i) != 1)
+   if (sscanf(m_attr->value(), "%d", &i) != 1)
       throw XmlException("Expected integer", __FILE__, __LINE__);
 
    return i;
@@ -28,7 +28,7 @@ long XmlAttribute::getLong() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    long i;
-   if (SSCANF(m_attr->value(), "%ld", &i) != 1)
+   if (sscanf(m_attr->value(), "%ld", &i) != 1)
       throw XmlException("Expected long integer", __FILE__, __LINE__);
 
    return i;
@@ -42,7 +42,7 @@ float XmlAttribute::getFloat() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    float f;
-   if (SSCANF(m_attr->value(), "%f", &f) != 1)
+   if (sscanf(m_attr->value(), "%f", &f) != 1)
       throw XmlException("Expected float", __FILE__, __LINE__);
 
    return f;
@@ -56,7 +56,7 @@ double XmlAttribute::getDouble() const {
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
    double d;
-   if (SSCANF(m_attr->value(), "%lf", &d) != 1)
+   if (sscanf(m_attr->value(), "%lf", &d) != 1)
       throw XmlException("Expected double", __FILE__, __LINE__);
 
    return d;

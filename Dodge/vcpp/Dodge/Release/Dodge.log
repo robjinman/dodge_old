@@ -1,9 +1,151 @@
-﻿Build started 07/02/2013 11:18:39.
-     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Build target(s)).
-     1>Lib:
+﻿Build started 09/04/2013 02:40:37.
+     1>Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files\boost\boost_1_51" /ID:\Code\projects\Dodge\Dodge\include\SDL /ID:\Code\projects\Dodge\Dodge\include\dodge /ID:\Code\projects\Dodge\Dodge\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D GLEW /D _MBCS /Gm /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\Animation.cpp ..\..\src\AnimFrame.cpp ..\..\src\AssetManager.cpp ..\..\src\audio\Audio.cpp ..\..\src\audio\MusicTrack.cpp ..\..\src\audio\Sound.cpp ..\..\src\Box2dPhysics.cpp ..\..\src\EEvent.cpp ..\..\src\Entity.cpp ..\..\src\EntityAnimations.cpp ..\..\src\EntityParallax.cpp ..\..\src\EntityTransformations.cpp ..\..\src\EventManager.cpp ..\..\src\Exception.cpp ..\..\src\globals.cpp ..\..\src\KvpParser.cpp ..\..\src\MapLoader.cpp ..\..\src\math\common.cpp ..\..\src\math\fAreEqual.cpp ..\..\src\math\fContains.cpp ..\..\src\math\fIntersect.cpp ..\..\src\math\fOverlap.cpp ..\..\src\math\shapes\Ellipse.cpp ..\..\src\math\shapes\LineSegment.cpp ..\..\src\math\shapes\Polygon.cpp ..\..\src\math\shapes\Quad.cpp ..\..\src\math\Vec2f.cpp ..\..\src\math\Vec2i.cpp ..\..\src\math\Vec3f.cpp ..\..\src\math\Vec3i.cpp ..\..\src\ParallaxSprite.cpp ..\..\src\Range.cpp ..\..\src\renderer\Camera.cpp ..\..\src\renderer\Font.cpp ..\..\src\renderer\Model.cpp ..\..\src\renderer\ogl\Colour.cpp ..\..\src\renderer\ogl\FixedFunctionMode.cpp ..\..\src\renderer\ogl\NonTexturedAlphaMode.cpp ..\..\src\renderer\ogl\OglWrapper.cpp ..\..\src\renderer\ogl\Renderer.cpp ..\..\src\renderer\ogl\RenderMode.cpp ..\..\src\renderer\ogl\Texture.cpp ..\..\src\renderer\ogl\TexturedAlphaMode.cpp ..\..\src\renderer\SceneGraph.cpp ..\..\src\ShapeFactory.cpp ..\..\src\Sprite.cpp ..\..\src\StackAllocator.cpp ..\..\src\StringId.cpp ..\..\src\TextEntity.cpp ..\..\src\Transformation.cpp ..\..\src\TransPart.cpp ..\..\src\ui\EntityUi.cpp ..\..\src\ui\UiButton.cpp ..\..\src\windows\Timer.cpp ..\..\src\windows\WinIO.cpp ..\..\src\WorldSpace.cpp ..\..\src\xml\XmlAttribute.cpp ..\..\src\xml\XmlDocument.cpp ..\..\src\xml\XmlNode.cpp
+         XmlNode.cpp
+     1>..\..\src\xml\XmlNode.cpp(17): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlNode.cpp(31): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlNode.cpp(45): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlNode.cpp(59): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+         XmlDocument.cpp
+         XmlAttribute.cpp
+     1>..\..\src\xml\XmlAttribute.cpp(17): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlAttribute.cpp(31): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlAttribute.cpp(45): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\xml\XmlAttribute.cpp(59): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+         WorldSpace.cpp
+         WinIO.cpp
+         Timer.cpp
+         UiButton.cpp
+         EntityUi.cpp
+         TransPart.cpp
+         Transformation.cpp
+         TextEntity.cpp
+         StringId.cpp
+         StackAllocator.cpp
+         Sprite.cpp
+         ShapeFactory.cpp
+         SceneGraph.cpp
+         TexturedAlphaMode.cpp
+         Texture.cpp
+         RenderMode.cpp
+         Renderer.cpp
+         Compiling...
+         OglWrapper.cpp
+         NonTexturedAlphaMode.cpp
+         FixedFunctionMode.cpp
+         Colour.cpp
+         Model.cpp
+         Font.cpp
+         Camera.cpp
+         Range.cpp
+         ParallaxSprite.cpp
+         Vec3i.cpp
+         Vec3f.cpp
+         Vec2i.cpp
+         Vec2f.cpp
+         Quad.cpp
+         Polygon.cpp
+         LineSegment.cpp
+         Ellipse.cpp
+         fOverlap.cpp
+         fIntersect.cpp
+         fContains.cpp
+         Compiling...
+         fAreEqual.cpp
+         common.cpp
+         MapLoader.cpp
+         KvpParser.cpp
+     1>..\..\src\KvpParser.cpp(140): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>..\..\src\KvpParser.cpp(151): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+         globals.cpp
+         Exception.cpp
+         EventManager.cpp
+         EntityTransformations.cpp
+         EntityParallax.cpp
+         EntityAnimations.cpp
+         Entity.cpp
+         EEvent.cpp
+         Box2dPhysics.cpp
+         Sound.cpp
+         MusicTrack.cpp
+         Audio.cpp
+         AssetManager.cpp
+         AnimFrame.cpp
+         Animation.cpp
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"..\..\lib\Dodge.lib" /NOLOGO /LTCG Release\Animation.obj
+         Release\AnimFrame.obj
+         Release\AssetManager.obj
+         Release\Audio.obj
+         Release\MusicTrack.obj
+         Release\Sound.obj
+         Release\Box2dPhysics.obj
+         Release\EEvent.obj
+         Release\Entity.obj
+         Release\EntityAnimations.obj
+         Release\EntityParallax.obj
+         Release\EntityTransformations.obj
+         Release\EventManager.obj
+         Release\Exception.obj
+         Release\globals.obj
+         Release\KvpParser.obj
+         Release\MapLoader.obj
+         Release\common.obj
+         Release\fAreEqual.obj
+         Release\fContains.obj
+         Release\fIntersect.obj
+         Release\fOverlap.obj
+         Release\Ellipse.obj
+         Release\LineSegment.obj
+         Release\Polygon.obj
+         Release\Quad.obj
+         Release\Vec2f.obj
+         Release\Vec2i.obj
+         Release\Vec3f.obj
+         Release\Vec3i.obj
+         Release\ParallaxSprite.obj
+         Release\Range.obj
+         Release\Camera.obj
+         Release\Font.obj
+         Release\Model.obj
+         Release\Colour.obj
+         Release\FixedFunctionMode.obj
+         Release\NonTexturedAlphaMode.obj
+         Release\OglWrapper.obj
+         Release\Renderer.obj
+         Release\RenderMode.obj
+         Release\Texture.obj
+         Release\TexturedAlphaMode.obj
+         Release\SceneGraph.obj
+         Release\ShapeFactory.obj
+         Release\Sprite.obj
+         Release\StackAllocator.obj
+         Release\StringId.obj
+         Release\TextEntity.obj
+         Release\Transformation.obj
+         Release\TransPart.obj
+         Release\EntityUi.obj
+         Release\UiButton.obj
+         Release\Timer.obj
+         Release\WinIO.obj
+         Release\WorldSpace.obj
+         Release\XmlAttribute.obj
+         Release\XmlDocument.obj
+         Release\XmlNode.obj
          Dodge.vcxproj -> D:\Code\projects\Dodge\Dodge\vcpp\Dodge\..\..\lib\Dodge.lib
-     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Build target(s)).
+     1>Done Building Project "D:\Code\projects\Dodge\Dodge\vcpp\Dodge\Dodge.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.24
+Time Elapsed 00:02:40.96

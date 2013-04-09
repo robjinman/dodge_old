@@ -7,16 +7,13 @@
 #define __COLOUR_HPP__
 
 
-#ifdef WIN32
-   #include <windows.h>
-   #include <windowsx.h>
-   #include <GLEW/glew.h>
-#elif defined LINUX
+#ifdef GLEW
    #include <GLEW/glew.h>
 #else
-   #ifdef GL_FIXED_PIPELINE
+   #if defined GLES_1_1
       #include <GLES/gl.h>
-   #else
+      #define GL_FIXED_PIPELINE
+   #elif defined GLES_2_0
       #include <GLES2/gl2.h>
    #endif
 #endif

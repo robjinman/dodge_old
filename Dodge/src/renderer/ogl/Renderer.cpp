@@ -12,6 +12,7 @@
 #include <renderer/ogl/RenderMode.hpp>
 #include <renderer/GL_CHECK.hpp>
 #include <Timer.hpp>
+#include <KvpParser.hpp>
 
 
 using namespace cml;
@@ -48,7 +49,7 @@ Renderer::Renderer()
    m_state[1].sceneGraph = unique_ptr<SceneGraph>(new SceneGraph);
    m_state[2].sceneGraph = unique_ptr<SceneGraph>(new SceneGraph);
 
-   m_stateChangeMutex.lock();
+   lock_guard<mutex> lock(m_stateChangeMutex);
 
    m_state[0].status = renderState_t::IS_BEING_RENDERED;
    m_state[1].status = renderState_t::IS_IDLE;
@@ -57,8 +58,55 @@ Renderer::Renderer()
    m_idxRender = 0;
    m_idxLatest = 0;
    m_idxUpdate = 2;
+}
 
-   m_stateChangeMutex.unlock();
+//===========================================
+// Renderer::loadSettingsFromFile
+//===========================================
+void Renderer::loadSettingsFromFile(const string& file) {
+   try {
+      assert(!m_running);
+
+      KvpParser parser;
+
+      parser.parseFile(file);
+      string impl = parser.getMetaData(0);
+
+      if (impl != "OpenGL")
+         throw RendererException("Error loading renderer settings; File not for OpenGL implementation.", __FILE__, __LINE__);
+
+      string fixed = parser.getValue("fixed_pipeline");
+      if (fixed == "true") {
+         m_usrReqSettings.fixedPipeline = true;
+      }
+      else if (fixed == "false") {
+         m_usrReqSettings.fixedPipeline = false;
+      }
+      else if (fixed == "") {}
+      else
+         throw RendererException("Error loading renderer settings; Invalid value '"
+            + fixed + "' received for 'fixed_pipeline' option.", __FILE__, __LINE__);
+
+      string vbos = parser.getValue("VBOs");
+      if (vbos == "true") {
+         m_usrReqSettings.VBOs = true;
+      }
+      else if (vbos == "false") {
+         m_usrReqSettings.VBOs = false;
+      }
+      else if (vbos == "") {}
+      else
+         throw RendererException("Error loading renderer settings; Invalid value '"
+            + vbos + "' received for 'VBOs' option.", __FILE__, __LINE__);
+   }
+   catch (Exception& e) {
+      RendererException ex("Error loading renderer settings; Bad file; ", __FILE__, __LINE__);
+      ex.append(e.what());
+      throw ex;
+   }
+   catch (...) {
+      throw RendererException("Error loading renderer settings; Bad file", __FILE__, __LINE__);
+   }
 }
 
 //===========================================
@@ -86,14 +134,14 @@ void Renderer::stop() {
 //===========================================
 // Renderer::tick
 //
-// This is called by the main thread every frame, after all
-// draw calls, to notify the renderer that the next
+// This is called by the main thread every frame after all
+// draw calls to notify the renderer that the next
 // frame is complete and ready for rendering.
 //===========================================
 void Renderer::tick(const Colour& bgColour) {
    checkForErrors();
 
-   m_stateChangeMutex.lock();
+   lock_guard<mutex> lock(m_stateChangeMutex);
 
    // Any states that were pending render are now out of date, and will
    // not be rendered.
@@ -119,8 +167,6 @@ void Renderer::tick(const Colour& bgColour) {
    m_state[m_idxUpdate].sceneGraph->clear();
    m_state[m_idxUpdate].bgColour = bgColour;
    m_state[m_idxUpdate].status = renderState_t::IS_BEING_UPDATED;
-
-   m_stateChangeMutex.unlock();
 }
 
 //===========================================
@@ -156,9 +202,9 @@ void Renderer::draw(const IModel* model) {
 // Renderer::bufferModel
 //===========================================
 void Renderer::bufferModel(IModel* model) {
-   if (!m_vboSupport) return;
+   if (!m_oglSupport.VBOs.available) return;
 
-   m_msgQueueMutex.lock();
+   lock_guard<mutex> lock(m_msgQueueMutex);
 
    size_t totalSize = model->getTotalSize();
 
@@ -167,29 +213,26 @@ void Renderer::bufferModel(IModel* model) {
 
    msgConstructVbo_t data = { ptr };
    queueMsg(Message(MSG_CONSTRUCT_VBO, data));
-
-   m_msgQueueMutex.unlock();
 }
 
 //===========================================
 // Renderer::freeBufferedModel
 //===========================================
 void Renderer::freeBufferedModel(IModel* model) {
-   if (!m_vboSupport) return;
+   if (!m_oglSupport.VBOs.available) return;
 
-   m_msgQueueMutex.lock();
-   m_vboMapMutex.lock();
+   lock_guard<mutex> lock1(m_msgQueueMutex);
+   {
+      lock_guard<mutex> lock2(m_vboMapMutex);
 
-   auto i = m_vboMap.find(model->m_id);
-   if (i != m_vboMap.end() && i->second != 0) {
-      msgDestroyVbo_t data = { i->second };
-      queueMsg(Message(MSG_DESTROY_VBO, data));
+      auto i = m_vboMap.find(model->m_id);
+      if (i != m_vboMap.end() && i->second != 0) {
+         msgDestroyVbo_t data = { i->second };
+         queueMsg(Message(MSG_DESTROY_VBO, data));
 
-      i->second = 0;
+         i->second = 0;
+      }
    }
-
-   m_vboMapMutex.unlock();
-   m_msgQueueMutex.unlock();
 }
 
 //===========================================
@@ -206,9 +249,10 @@ void Renderer::queueMsg(Message msg) {
 void Renderer::loadTexture(const textureData_t* texture, int_t width, int_t height, textureHandle_t* handle) {
    msgTexHandleReq_t data = { texture, width, height, handle };
 
-   m_msgQueueMutex.lock();
-   queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
-   m_msgQueueMutex.unlock();
+   {
+      lock_guard<mutex> lock(m_msgQueueMutex);
+      queueMsg(Message(MSG_TEX_HANDLE_REQ, data));
+   }
 
    // Hang until message is processed
    while (!m_msgQueueEmpty) { if (m_errorPending) break; }
@@ -220,9 +264,8 @@ void Renderer::loadTexture(const textureData_t* texture, int_t width, int_t heig
 void Renderer::unloadTexture(textureHandle_t handle) {
    msgTexUnloadReq_t data = { handle };
 
-   m_msgQueueMutex.lock();
+   lock_guard<mutex> lock(m_msgQueueMutex);
    queueMsg(Message(MSG_TEX_UNLOAD_REQ, data));
-   m_msgQueueMutex.unlock();
 }
 
 //===========================================
@@ -231,9 +274,8 @@ void Renderer::unloadTexture(textureHandle_t handle) {
 void Renderer::onWindowResize(int_t x, int_t y) {
    msgVpResizeReq_t data = { x, y };
 
-   m_msgQueueMutex.lock();
+   lock_guard<mutex> lock(m_msgQueueMutex);
    queueMsg(Message(MSG_VP_RESIZE_REQ, data));
-   m_msgQueueMutex.unlock();
 }
 
 //===========================================
@@ -256,18 +298,57 @@ void Renderer::init() {
    WinIO win;
    win.createGLContext();
 
-#ifdef GL_FIXED_PIPELINE
-   m_fixedPipeline = true;
-#else
-   m_fixedPipeline = !win.isSupportedGLVersion(WinIO::GL_2_0);
+   glGetError();
+
+#if defined GLES_1_1
+   m_oglSupport.shaders = oglFeature_t(false);
+   m_oglSupport.VBOs = oglFeature_t(true, CORE);
+#elif defined GLES_2_0
+   m_oglSupport.shaders = oglFeature_t(true, CORE);
+   m_oglSupport.VBOs = oglFeature_t(true, CORE);
+#elif defined GLEW
+   if (!GLEW_VERSION_1_3)
+      throw RendererException("Program requires OpenGL 1.3 or later", __FILE__, __LINE__);
+
+   if (m_usrReqSettings.VBOs && GLEW_VERSION_1_5) {
+      m_oglSupport.VBOs = oglFeature_t(true, CORE);
+   }
+   else {
+      if (m_usrReqSettings.VBOs && GLEW_ARB_vertex_buffer_object)
+         m_oglSupport.VBOs = oglFeature_t(true, ARB);
+      else
+         m_oglSupport.VBOs = oglFeature_t(false);
+   }
+
+   if (!m_usrReqSettings.fixedPipeline && GLEW_VERSION_2_0) {
+      m_oglSupport.shaders = oglFeature_t(true, CORE);
+   }
+   else {
+      if (!m_usrReqSettings.fixedPipeline
+         && GLEW_ARB_fragment_program
+         && GLEW_ARB_fragment_shader
+         && GLEW_ARB_shader_objects
+         && GLEW_ARB_vertex_program
+         && GLEW_ARB_vertex_shader
+         && GLEW_ARB_shading_language_100) {
+
+         m_oglSupport.shaders = oglFeature_t(true, ARB);
+      }
+      else
+         m_oglSupport.shaders = oglFeature_t(false);
+   }
 #endif
 
-   m_vboSupport = win.hasVboSupport();
+#ifdef GL_FIXED_PIPELINE
+   m_oglSupport.shaders = oglFeature_t(false);
+#endif
 
    GL_CHECK(glEnable(GL_CULL_FACE));
    GL_CHECK(glFrontFace(GL_CCW));
 
-   if (m_fixedPipeline) {
+   m_gl.initialise(m_oglSupport);
+
+   if (!m_oglSupport.shaders.available) {
       m_activeRenderMode = RenderMode::create(FIXED_FUNCTION);
       m_activeRenderMode->setActive();
    }
@@ -281,7 +362,7 @@ void Renderer::init() {
 // Renderer::setMode
 //===========================================
 void Renderer::setMode(mode_t mode) {
-   if (m_fixedPipeline) return;
+   if (!m_oglSupport.shaders.available) return;
    if (mode == m_mode) return;
 
    map<mode_t, RenderMode*>::iterator it = m_renderModes.find(mode);
@@ -297,7 +378,7 @@ void Renderer::setMode(mode_t mode) {
 // Renderer::constructRenderModes
 //===========================================
 void Renderer::constructRenderModes() {
-   if (m_fixedPipeline) return;
+   if (!m_oglSupport.shaders.available) return;
 
    RenderMode* mode = RenderMode::create(NONTEXTURED_ALPHA);
    m_renderModes[NONTEXTURED_ALPHA] = mode;
@@ -319,9 +400,6 @@ Renderer::textureHandle_t Renderer::loadGLTexture(const textureData_t* texture, 
 
    GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture));
 
-   GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-   GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
@@ -332,7 +410,7 @@ Renderer::textureHandle_t Renderer::loadGLTexture(const textureData_t* texture, 
 // Renderer::constructVbo
 //===========================================
 void Renderer::constructVbo(IModel* model) {
-   m_vboMapMutex.lock();
+   lock_guard<mutex> lock(m_vboMapMutex);
 
    auto i = m_vboMap.find(model->m_id);
 
@@ -341,13 +419,11 @@ void Renderer::constructVbo(IModel* model) {
 
    GLuint handle;
 
-   GL_CHECK(gl_genBuffers(1, &handle));
-   GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, handle));
-   GL_CHECK(gl_bufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
+   GL_CHECK(m_gl.genBuffers(1, &handle));
+   GL_CHECK(m_gl.bindBuffer(GL_ARRAY_BUFFER, handle));
+   GL_CHECK(m_gl.bufferData(GL_ARRAY_BUFFER, model->vertexDataSize(), model->getVertexData(), GL_STATIC_DRAW));
 
    m_vboMap[model->m_id] = handle;
-
-   m_vboMapMutex.unlock();
 }
 
 //===========================================
@@ -355,7 +431,7 @@ void Renderer::constructVbo(IModel* model) {
 //===========================================
 void Renderer::destroyVbo(GLuint handle) {
    if (handle != 0)
-      GL_CHECK(gl_deleteBuffers(1, &handle));
+      GL_CHECK(m_gl.deleteBuffers(1, &handle));
 }
 
 //===========================================
@@ -418,7 +494,7 @@ void Renderer::computeFrameRate() {
 // Renderer::processMessages
 //===========================================
 void Renderer::processMessages() {
-   m_msgQueueMutex.lock();
+   lock_guard<mutex> lock(m_msgQueueMutex);
 
    for (auto i = m_msgQueue.begin(); i != m_msgQueue.end(); ++i) {
       processMessage(*i);
@@ -427,8 +503,6 @@ void Renderer::processMessages() {
    m_msgQueue.clear();
    m_scratchSpace.clear();
    m_msgQueueEmpty = true;
-
-   m_msgQueueMutex.unlock();
 }
 
 //===========================================
@@ -449,28 +523,31 @@ void Renderer::renderLoop() {
 
             if (model->getNumVertices() == 0) continue;
 
-            if (!m_fixedPipeline) {
+            if (m_oglSupport.shaders.available) {
                mode_t mode = model->getRenderMode();
                setMode(mode);
             }
 
-            m_vboMapMutex.lock();
-            auto j = m_vboMap.find(model->m_id);
-            GLuint vbo = j == m_vboMap.end() ? 0 : j->second;
-            m_vboMapMutex.unlock();
+            GLuint vbo = 0;
+            if (m_oglSupport.VBOs.available) {
+               lock_guard<mutex> lock(m_vboMapMutex);
+
+               auto j = m_vboMap.find(model->m_id);
+               if (j != m_vboMap.end()) vbo = j->second;
+            }
 
             m_activeRenderMode->sendData(model, m_state[m_idxRender].P, vbo);
          }
 
          win.swapBuffers();
 
-         m_stateChangeMutex.lock();
+         {
+            lock_guard<mutex> lock(m_stateChangeMutex);
 
-         m_state[m_idxRender].status = renderState_t::IS_IDLE;
-         m_idxRender = m_idxLatest;
-         m_state[m_idxRender].status = renderState_t::IS_BEING_RENDERED;
-
-         m_stateChangeMutex.unlock();
+            m_state[m_idxRender].status = renderState_t::IS_IDLE;
+            m_idxRender = m_idxLatest;
+            m_state[m_idxRender].status = renderState_t::IS_BEING_RENDERED;
+         }
 
          ++m_frameNumber;
 #ifdef DEBUG

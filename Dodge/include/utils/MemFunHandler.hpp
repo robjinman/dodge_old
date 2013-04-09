@@ -19,8 +19,8 @@ class MemFunHandler
 
       bool operator==(const FunctorImpl<typename ParentFunctor::ResultType, typename ParentFunctor::ParmList>& func) const {
          try {
-            const MemFunHandler& ref = dynamic_cast<const MemFunHandler&>(func);
-            return (m_pObj == ref.m_pObj) && (m_pMemFn == ref.m_pMemFn);
+            const MemFunHandler* ptr = dynamic_cast<const MemFunHandler*>(&func);
+            return ptr && (m_pObj == ptr->m_pObj) && (m_pMemFn == ptr->m_pMemFn);
          }
          catch (std::bad_cast&) { return false; }
       }

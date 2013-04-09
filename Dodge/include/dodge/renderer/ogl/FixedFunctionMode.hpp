@@ -8,6 +8,7 @@
 
 
 #include "RenderMode.hpp"
+#include "OglWrapper.hpp"
 
 
 namespace Dodge {
@@ -24,6 +25,7 @@ class FixedFunctionMode : public RenderMode {
 
    private:
       bool isSupported(const IModel* model) const;
+      OglWrapper m_gl;
 };
 
 

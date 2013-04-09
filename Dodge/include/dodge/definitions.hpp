@@ -21,12 +21,6 @@
       Dodge::sleepThread(lpEnd_wait); \
    }
 
-#ifdef WIN32
-   #define SSCANF sscanf
-#else
-   #define SSCANF sscanf
-#endif
-
 
 namespace Dodge {
 

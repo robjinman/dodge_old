@@ -7,14 +7,15 @@
 #define __TEXTURE_HPP__
 
 
-#ifdef WIN32
-   #include <windows.h>
-   #include <windowsx.h>
-   #include <GLEW/glew.h>
-#elif defined LINUX
+#ifdef GLEW
    #include <GLEW/glew.h>
 #else
-   #include <GLES2/gl2.h>
+   #if defined GLES_1_1
+      #include <GLES/gl.h>
+      #define GL_FIXED_PIPELINE
+   #elif defined GLES_2_0
+      #include <GLES2/gl2.h>
+   #endif
 #endif
 #include <boost/shared_ptr.hpp>
 #include "../../xml/xml.hpp"

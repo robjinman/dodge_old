@@ -154,7 +154,6 @@ class WinIO {
       void doEvents();
       void destroyWindow();
       void swapBuffers();
-      void createGLContext();
 
 #ifdef DEBUG
       static const byte_t DBG_NO_VSYNC = 1 << 0;
@@ -163,27 +162,7 @@ class WinIO {
 #endif
 
    private:
-      enum glVersion_t {
-         GL_1_1,
-         GL_1_2,
-         GL_1_2_1,
-         GL_1_3,
-         GL_1_4,
-         GL_1_5,
-         GL_2_0,
-         GL_2_1,
-         GL_3_0,
-         GL_3_1,
-         GL_3_2,
-         GL_3_3,
-         GL_4_0,
-         GL_4_1,
-         GL_4_2,
-         GL_4_3
-      };
-
-      bool isSupportedGLVersion(glVersion_t version) const;
-      bool hasVboSupport() const;
+      void createGLContext();
 
       static Bool waitForMap(Display* d, XEvent* e, char* win_ptr);
 

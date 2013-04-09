@@ -8,6 +8,7 @@
 
 
 #include "RenderMode.hpp"
+#include "OglWrapper.hpp"
 #include "../../definitions.hpp"
 
 
@@ -35,6 +36,8 @@ class TexturedAlphaMode : public RenderMode {
       GLint m_locTexCoord;
       GLint m_locMV;
       GLint m_locP;
+
+      OglWrapper m_gl;
 };
 
 

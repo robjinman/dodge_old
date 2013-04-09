@@ -130,9 +130,14 @@ void KvpParser::parseFile(const string& file) {
 
    char str[BUF_SIZE];
    string buf;
+   stringstream formatStr;
 
    buf = getLine(fin);
-   while (SSCANF(buf.data(), "!%s", str) == 1) {
+
+   formatStr.str("");
+   formatStr << "!%" << BUF_SIZE - 1 << "s";
+
+   while (sscanf(buf.data(), formatStr.str().data(), str) == 1) {
       m_metaData.push_back(string(str));
       buf = getLine(fin);
    }
@@ -140,7 +145,10 @@ void KvpParser::parseFile(const string& file) {
       if (buf.length() > 0) {
          char strKey[BUF_SIZE], strVal[BUF_SIZE];
 
-         if (SSCANF(buf.data(), "%s = %s", strKey, strVal) != 2)
+         formatStr.str("");
+         formatStr << "%" << BUF_SIZE - 1 << "s = %" << BUF_SIZE - 1 << "s";
+
+         if (sscanf(buf.data(), formatStr.str().data(), strKey, strVal) != 2)
             throw Exception("Error parsing file", __FILE__, __LINE__);
 
          m_data[string(strKey)] = strVal;

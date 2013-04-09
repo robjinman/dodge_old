@@ -108,7 +108,8 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
    const vvvttcccc_t* verts = reinterpret_cast<const vvvttcccc_t*>(model_getVertexData(*model));
 
    if (vbo == 0) {
-      GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, 0));
+      if (m_gl.getSupportedFeatures().VBOs.available)
+         GL_CHECK(m_gl.bindBuffer(GL_ARRAY_BUFFER, 0));
 
       GL_CHECK(glVertexPointer(3, GL_FLOAT, stride, verts));
 
@@ -119,7 +120,7 @@ void FixedFunctionMode::sendData(const IModel* model, const matrix44f_c& projMat
          GL_CHECK(glColorPointer(4, GL_FLOAT, stride, &verts[0].c1));
    }
    else {
-      GL_CHECK(gl_bindBuffer(GL_ARRAY_BUFFER, vbo));
+      GL_CHECK(m_gl.bindBuffer(GL_ARRAY_BUFFER, vbo));
 
       GLuint offset = 0;
 
