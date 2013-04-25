@@ -8,11 +8,26 @@
 
 
 #include <string>
-#include "Renderer.hpp"
 #include "../Exception.hpp"
 
 
 namespace Dodge {
+
+
+enum exceptionType_t {
+   UNKNOWN_EXCEPTION,
+   EXCEPTION,
+   RENDERER_EXCEPTION
+   // ...
+};
+
+struct exceptionWrapper_t {
+   exceptionWrapper_t(exceptionType_t t, void* d)
+      : type(t), data(d) {}
+
+   exceptionType_t type;
+   void* data;
+};
 
 
 class RendererException : public Exception {
@@ -20,8 +35,8 @@ class RendererException : public Exception {
       RendererException(const std::string& msg, const char* file, unsigned int line)
          : Exception(msg, file, line) {}
 
-      virtual Renderer::exceptionWrapper_t constructWrapper() const {
-         Renderer::exceptionWrapper_t ret(Renderer::RENDERER_EXCEPTION, new RendererException(*this));
+      virtual exceptionWrapper_t constructWrapper() const {
+         exceptionWrapper_t ret(RENDERER_EXCEPTION, new RendererException(*this));
          return ret;
       }
 

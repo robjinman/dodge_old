@@ -27,6 +27,7 @@
 #include <boost/variant.hpp>
 #include "Colour.hpp"
 #include "../Camera.hpp"
+#include "../RendererException.hpp"
 #include "../../WinIO.hpp"
 #include "../../StackAllocator.hpp"
 #include "../../definitions.hpp"
@@ -70,21 +71,6 @@ class Renderer {
          LINES,
          QUADS,
          TRIANGLE_STRIP
-      };
-
-      enum exceptionType_t {
-         UNKNOWN_EXCEPTION,
-         EXCEPTION,
-         RENDERER_EXCEPTION
-         // ...
-      };
-
-      struct exceptionWrapper_t {
-         exceptionWrapper_t(exceptionType_t t, void* d)
-            : type(t), data(d) {}
-
-         exceptionType_t type;
-         void* data;
       };
 
       //-----Main Thread-----

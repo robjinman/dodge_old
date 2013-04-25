@@ -15,6 +15,7 @@ namespace Dodge {
 class Camera {
    public:
       Camera(float32_t w, float32_t h) {
+         m_matrix = cml::identity_4x4();
          setProjection(w, h);
          setTranslation(0.f, 0.f);
       }
