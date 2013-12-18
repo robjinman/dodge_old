@@ -105,6 +105,9 @@ class IAuxData : virtual public Asset {
 
 
 class Entity : virtual public Asset, virtual public boost::enable_shared_from_this<Entity> {
+#ifdef DEBUG
+   friend class Test;
+#endif
    public:
       explicit Entity(const XmlNode data);
       explicit Entity(long type);
@@ -136,7 +139,8 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void attachAuxData(std::unique_ptr<IAuxData> data);
       inline IAuxData* getAuxDataPtr() const;
 
-      // TODO: setTranslation_abs ?
+      void setTranslation_abs(float32_t x, float32_t y);
+      inline void setTranslation_abs(const Vec2f& t);
       inline void setTranslation(float32_t x, float32_t y);
       inline void setTranslation(const Vec2f& t);
       inline void setTranslation_x(float32_t x);
@@ -147,6 +151,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       inline void translate_y(float32_t y);
       virtual void setZ(float32_t z);
       inline void setRotation(float32_t deg);
+      void setRotation_abs(float32_t deg);
       virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
       inline void setScale(float32_t s);
       inline void setScale(float32_t x, float32_t y);
@@ -195,6 +200,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       static EventManager m_eventManager;
 
    private:
+      void rotateShapes_r(float32_t deg);
       void recomputeBoundary();
       void deepCopy(const Entity& copy);
       void onAncestorTranslation(const Vec2f& ds);
@@ -288,6 +294,13 @@ inline void Entity::setTranslation(float32_t x, float32_t y) {
 //===========================================
 inline void Entity::setTranslation(const Vec2f& t) {
    setTranslation(t.x, t.y);
+}
+
+//===========================================
+// Entity::setTranslation_abs
+//===========================================
+inline void Entity::setTranslation_abs(const Vec2f& t) {
+   setTranslation_abs(t.x, t.y);
 }
 
 //===========================================

@@ -7,6 +7,7 @@ include $(BASE_DIR)/xml/Makefile.inc
 OBJS += $(BASE_DIR)/Animation.o \
 	$(BASE_DIR)/AnimFrame.o \
 	$(BASE_DIR)/AssetManager.o \
+	$(BASE_DIR)/Box2dContactListener.o \
 	$(BASE_DIR)/Box2dPhysics.o \
 	$(BASE_DIR)/EEvent.o \
 	$(BASE_DIR)/Entity.o \

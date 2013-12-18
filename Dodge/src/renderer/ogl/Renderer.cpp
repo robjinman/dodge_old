@@ -29,7 +29,9 @@ Renderer* Renderer::m_instance = NULL;
 // Renderer::Renderer
 //===========================================
 Renderer::Renderer()
-   : m_activeRenderMode(NULL),
+   : m_swapBuffers(dummySwapFunc),
+     m_makeGLContext(dummyMakeGLContextFunc),
+     m_activeRenderMode(NULL),
      m_mode(UNDEFINED),
      m_init(false),
      m_frameNumber(0),
@@ -112,8 +114,11 @@ void Renderer::loadSettingsFromFile(const string& file) {
 //===========================================
 // Renderer::start
 //===========================================
-void Renderer::start() {
+void Renderer::start(Functor<void, TYPELIST_0()> makeGLContextFunc, Functor<void, TYPELIST_0()> swapFunc) {
    if (!m_thread) {
+      m_makeGLContext = makeGLContextFunc;
+      m_swapBuffers = swapFunc;
+
       m_running = true;
       m_thread = new thread(&Renderer::renderLoop, this);
    }
@@ -295,8 +300,7 @@ GLint Renderer::primitiveToGLType(primitive_t primitiveType) const {
 // Renderer::init
 //===========================================
 void Renderer::init() {
-   WinIO win;
-   win.createGLContext();
+   m_makeGLContext();
 
    glGetError();
 
@@ -510,7 +514,6 @@ void Renderer::processMessages() {
 //===========================================
 void Renderer::renderLoop() {
    try {
-      WinIO win;
       init();
 
       while (m_running) {
@@ -539,7 +542,7 @@ void Renderer::renderLoop() {
             m_activeRenderMode->sendData(model, m_state[m_idxRender].P, vbo);
          }
 
-         win.swapBuffers();
+         m_swapBuffers();
 
          {
             lock_guard<mutex> lock(m_stateChangeMutex);

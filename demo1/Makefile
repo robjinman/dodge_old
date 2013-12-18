@@ -1,8 +1,8 @@
 NAME = demo
 CC = g++
-CFLAGS = -std=c++0x -Wall -g -DDEBUG
+CFLAGS = -std=c++0x -Wall -g -DDEBUG -DGLEW
 INCL = -I../Dodge/include -I../Dodge/include/SDL
-LIBS = -L../Dodge/lib -L/usr/lib -lDodge -lX11 -lGLESv2 -lEGL -lpnglite -lz
+LIBS = -L../Dodge/lib -L/usr/lib -lDodge -lX11 -lGL -lGLEW -lpnglite -lz
 OBJS = main.o
 
 all: $(OBJS)

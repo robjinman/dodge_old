@@ -28,9 +28,9 @@
 #include "Colour.hpp"
 #include "../Camera.hpp"
 #include "../RendererException.hpp"
-#include "../../WinIO.hpp"
 #include "../../StackAllocator.hpp"
 #include "../../definitions.hpp"
+#include "../../../utils/Functor.hpp"
 #include "OglWrapper.hpp"
 
 
@@ -90,12 +90,15 @@ class Renderer {
       inline long getFrameRate() const;
 #endif
       void loadSettingsFromFile(const std::string& file);
-      void start();
+      void start(Functor<void, TYPELIST_0()> makeGLContextFunc, Functor<void, TYPELIST_0()> swapFunc);
       void stop();
       void tick(const Colour& bgColour = Colour(0.f, 0.f, 0.f, 1.f));
       //---------------------
 
    private:
+      static void dummySwapFunc() {}
+      static void dummyMakeGLContextFunc() {}
+
       Renderer();
 
       typedef enum {
@@ -196,6 +199,9 @@ class Renderer {
       //---------------------
 
       GLint primitiveToGLType(primitive_t primitiveType) const;
+
+      Functor<void, TYPELIST_0()> m_swapBuffers;
+      Functor<void, TYPELIST_0()> m_makeGLContext;
 
       usrReqSettings_t m_usrReqSettings;
       oglSupport_t m_oglSupport;

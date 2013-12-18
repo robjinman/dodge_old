@@ -408,7 +408,12 @@ void Entity::assignData(const XmlNode data) {
 // Entity::draw
 //===========================================
 void Entity::draw() const {
-   if (m_shape) m_shape->draw();
+   if (m_shape) {
+      Vec2f pos = getTranslation_abs();
+      m_shape->setRenderTransform(pos.x, pos.y, m_z);
+
+      m_shape->draw();
+   }
 }
 
 //===========================================
@@ -422,6 +427,9 @@ void Entity::setParent(Entity* parent) {
    if (m_parent) m_parent->removeChild(shared_from_this());
    m_parent = parent;
    m_parent->m_children.insert(shared_from_this());
+
+   rotateShapes_r(m_parent->getRotation_abs());
+   rotate(0.f);
 
    Range bounds = m_boundary;
    recomputeBoundary();
@@ -448,10 +456,10 @@ void Entity::setParent(Entity* parent) {
 // Entity::onNewAncestor
 //===========================================
 void Entity::onNewAncestor(Entity* oldAncestor, Entity* newAncestor) {
-   if (!m_silent) {
-      Range bounds = m_boundary;
-      recomputeBoundary();
+   Range bounds = m_boundary;
+   recomputeBoundary();
 
+   if (!m_silent) {
       float32_t naRot = newAncestor ? newAncestor->getRotation_abs() : 0;
       float32_t oaRot = oldAncestor ? oldAncestor->getRotation_abs() : 0;
       Vec2f naTransl = newAncestor ? newAncestor->getTranslation_abs() : Vec2f(0, 0);
@@ -491,8 +499,14 @@ void Entity::addChild(pEntity_t child) {
 // Entity::removeChild
 //===========================================
 void Entity::removeChild(pEntity_t child) {
-   if (child->m_parent == this)
-      child->m_parent = NULL;
+   assert(child->m_parent == this);
+
+   child->rotate(0.f);
+   child->rotateShapes_r(-getRotation_abs());
+
+   child->m_parent = NULL;
+
+   child->onNewAncestor(this, NULL);
 
    m_children.erase(child);
 }
@@ -505,11 +519,6 @@ void Entity::setZ(float32_t z) {
 
    // So that no Z values are 'exactly' equal
    m_z += 0.1f * static_cast<float32_t>(rand()) / static_cast<float32_t>(RAND_MAX);
-
-   if (m_shape) {
-      Vec2f pos = getTranslation_abs();
-      m_shape->setRenderTransform(pos.x, pos.y, m_z);
-   }
 }
 
 //===========================================
@@ -550,12 +559,7 @@ void Entity::translate(float32_t x, float32_t y) {
    Range bounds = m_boundary;
 
    m_transl = m_transl + Vec2f(x, y);
-   m_boundary.setPosition(m_boundary.getPosition() + Vec2f(x, y));
-
-   if (m_shape) {
-      Vec2f pos = getTranslation_abs();
-      m_shape->setRenderTransform(pos.x, pos.y, m_z);
-   }
+   recomputeBoundary();
 
    if (!m_silent) {
       Vec2f t = getTranslation_abs();
@@ -572,6 +576,36 @@ void Entity::translate(float32_t x, float32_t y) {
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
       (*i)->onAncestorTranslation(Vec2f(x, y));
+}
+
+//===========================================
+// Entity::setTranslation_abs
+//===========================================
+void Entity::setTranslation_abs(float32_t x, float32_t y) {
+   if (m_parent) {
+      Vec2f r = Vec2f(x, y) - m_parent->getTranslation_abs();
+      Vec2f s;
+
+      s.x = r.x * cos(DEG_TO_RAD(-m_parent->getRotation_abs()))
+         - r.y * sin(DEG_TO_RAD(-m_parent->getRotation_abs()));
+
+      s.y = r.x * sin(DEG_TO_RAD(-m_parent->getRotation_abs()))
+         + r.y * cos(DEG_TO_RAD(-m_parent->getRotation_abs()));
+
+      setTranslation(s);
+   }
+   else {
+      setTranslation(x, y);
+   }
+}
+
+//===========================================
+// Entity::setRotation_abs
+//
+// Pivot is in model space
+//===========================================
+void Entity::setRotation_abs(float32_t deg) {
+   rotate(deg - getRotation_abs());
 }
 
 //===========================================
@@ -608,9 +642,7 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 
    m_rot += deg;
 
-   if (m_shape) m_shape->rotate(deg);
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      if ((*i)->m_shape) (*i)->m_shape->rotate(deg);
+   rotateShapes_r(deg);
 
    Range bounds = m_boundary;
    recomputeBoundary();
@@ -634,13 +666,22 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
 }
 
 //===========================================
+// Entity::rotateShapes_r
+//===========================================
+void Entity::rotateShapes_r(float32_t deg) {
+   if (m_shape) m_shape->rotate(deg);
+   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+      (*i)->rotateShapes_r(deg);
+}
+
+//===========================================
 // Entity::onAncestorRotation
 //===========================================
 void Entity::onAncestorRotation(float32_t da, const Vec2f& ds) {
-   if (!m_silent) {
-      Range bounds = m_boundary;
-      recomputeBoundary();
+   Range bounds = m_boundary;
+   recomputeBoundary();
 
+   if (!m_silent) {
       float32_t rot_abs = getRotation_abs();
       Vec2f transl_abs = getTranslation_abs();
 
@@ -665,10 +706,10 @@ void Entity::onAncestorRotation(float32_t da, const Vec2f& ds) {
 // Entity::onAncestorTranslation
 //===========================================
 void Entity::onAncestorTranslation(const Vec2f& ds) {
-   if (!m_silent) {
-      Range bounds = m_boundary;
-      recomputeBoundary();
+   Range bounds = m_boundary;
+   recomputeBoundary();
 
+   if (!m_silent) {
       Vec2f transl_abs = getTranslation_abs();
 
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
@@ -698,9 +739,6 @@ void Entity::setShape(std::unique_ptr<Shape> shape) {
    if (m_shape) {
       m_shape->rotate(m_rot);
       m_shape->scale(m_scale);
-
-      Vec2f pos = getTranslation_abs();
-      m_shape->setRenderTransform(pos.x, pos.y, m_z);
 
       m_shape->setLineWidth(m_lineWidth);
       m_shape->setFillColour(m_fillColour);

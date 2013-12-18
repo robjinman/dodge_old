@@ -23,7 +23,7 @@ namespace Dodge {
 
 
 class WinIO {
-   friend class Renderer;
+//   friend class Renderer;
 
    public:
       enum keyCode_t {
@@ -147,6 +147,7 @@ class WinIO {
       > callback_t;
 
       void init(const std::string& winTitle, int w, int h, bool fullscreen = false);
+      void createGLContext();
       inline int getWindowWidth() const;
       inline int getWindowHeight() const;
       void registerCallback(winEvent_t event, callback_t func);
@@ -162,8 +163,6 @@ class WinIO {
 #endif
 
    private:
-      void createGLContext();
-
       typedef std::vector<callback_t> callbackList_t;
       typedef std::map<winEvent_t, callbackList_t> callbackMap_t;
       static callbackMap_t m_callbacks;

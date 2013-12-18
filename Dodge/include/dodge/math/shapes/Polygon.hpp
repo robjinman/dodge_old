@@ -44,7 +44,7 @@ class Polygon : public Shape {
 
       virtual Vec2f getMinimum() const;
       virtual Vec2f getMaximum() const;
-      virtual void rotate(float32_t deg, const Vec2f& pivot);
+      virtual void rotate(float32_t deg, const Vec2f& pivot = Vec2f(0.f, 0.f));
       virtual void scale(const Vec2f& sv);
 #ifdef DEBUG
       virtual void dbg_print(std::ostream& out, int tab = 0) const;

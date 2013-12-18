@@ -10,6 +10,7 @@
 #include "../Box2D/Box2D.h"
 #include "definitions.hpp"
 #include "EntityPhysics.hpp"
+#include "Box2dContactListener.hpp"
 
 
 namespace Dodge {
@@ -22,24 +23,9 @@ class EEntityMoved;
 class Box2dPhysics : public EntityPhysics {
    public:
       Box2dPhysics(Entity* entity, const XmlNode data);
-
-      Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
-         : EntityPhysics(copy, entity),
-           m_entity(entity),
-           m_body(NULL),
-           m_opts(copy.m_opts) {}
-
-      Box2dPhysics(Entity* entity)
-         : EntityPhysics(entity),
-           m_entity(entity),
-           m_body(NULL),
-           m_opts(false, false, 1.f, 0.3f) {}
-
-      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
-         : EntityPhysics(entity, options),
-           m_entity(entity),
-           m_body(NULL),
-           m_opts(options) {}
+      Box2dPhysics(const Box2dPhysics& copy, Entity* entity);
+      Box2dPhysics(Entity* entity);
+      Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options);
 
       virtual size_t getSize() const;
       virtual void assignData(const XmlNode data);
@@ -50,6 +36,9 @@ class Box2dPhysics : public EntityPhysics {
       virtual void addToWorld();
       virtual void removeFromWorld();
 
+      virtual void update();
+      virtual void onEvent(const EEvent* event);
+
       virtual void applyLinearImpulse(const Vec2f& impulse, const Vec2f& p);
       virtual void applyForce(const Vec2f& force, const Vec2f& p);
       virtual void applyLinearImpulse(const Vec2f& impulse);
@@ -57,10 +46,11 @@ class Box2dPhysics : public EntityPhysics {
       virtual void makeDynamic();
       virtual void makeStatic();
 
+      virtual void setLinearVelocity(const Vec2f& v);
       virtual Vec2f getLinearVelocity() const;
 
       static void loadSettings(const std::string& file);
-      static void update();
+      static void step();
 
       virtual ~Box2dPhysics() {}
 
@@ -69,22 +59,25 @@ class Box2dPhysics : public EntityPhysics {
 
       void constructBody();
       void shapeToBox2dBody(const Shape& shape, const EntityPhysics::options_t& opts, b2Body* body, uint_t* nFixtures) const;
-      void updatePos(EEvent* event);
+      void updatePos(const EEvent* event);
       void deepCopy(const Box2dPhysics& copy);
 
+      static void init();
       static void entityMovedHandler(EEvent* ev);
 
       static EventManager m_eventManager;
-      static std::set<EEvent*> m_ignore;
+      static std::set<const EEvent*> m_ignore;
 
       static float32_t m_timeStep;
       static float32_t m_worldUnitsPerMetre;
       static int m_v_iterations;
       static int m_p_iterations;
 
-      static std::map<Entity*, Box2dPhysics*> m_physEnts;
       static b2World m_world;
       static b2Vec2 m_gravity;
+
+      static Box2dContactListener m_contactListener;
+      static bool m_isInitialised;
 
       bool m_init;
 

@@ -23,21 +23,55 @@ float32_t Box2dPhysics::m_timeStep = 1.f / 60.f;
 float32_t Box2dPhysics::m_worldUnitsPerMetre = 0.01f;
 int Box2dPhysics::m_v_iterations = 6;
 int Box2dPhysics::m_p_iterations = 4;
-EventManager Box2dPhysics::m_eventManager = EventManager();
-set<EEvent*> Box2dPhysics::m_ignore = set<EEvent*>();
-map<Entity*, Box2dPhysics*> Box2dPhysics::m_physEnts = map<Entity*, Box2dPhysics*>();
+EventManager Box2dPhysics::m_eventManager;
+set<const EEvent*> Box2dPhysics::m_ignore;
 b2Vec2 Box2dPhysics::m_gravity = b2Vec2(0.f, -9.8f);
 b2World Box2dPhysics::m_world = b2World(m_gravity);
+Box2dContactListener Box2dPhysics::m_contactListener;
+bool Box2dPhysics::m_isInitialised = false;
 
+
+//===========================================
+// Box2dPhysics::Box2dPhysics
+//===========================================
+Box2dPhysics::Box2dPhysics(const Box2dPhysics& copy, Entity* entity)
+   : EntityPhysics(copy, entity),
+     m_init(false),
+     m_entity(entity),
+     m_body(NULL),
+     m_opts(copy.m_opts) { init(); }
+
+//===========================================
+// Box2dPhysics::Box2dPhysics
+//===========================================
+Box2dPhysics::Box2dPhysics(Entity* entity)
+   : EntityPhysics(entity),
+     m_init(false),
+     m_entity(entity),
+     m_body(NULL),
+     m_opts(false, false, 1.f, 0.3f) { init(); }
+
+//===========================================
+// Box2dPhysics::Box2dPhysics
+//===========================================
+Box2dPhysics::Box2dPhysics(Entity* entity, const EntityPhysics::options_t& options)
+   : EntityPhysics(entity, options),
+     m_init(false),
+     m_entity(entity),
+     m_body(NULL),
+     m_opts(options) { init(); }
 
 //===========================================
 // Box2dPhysics::Box2dPhysics
 //===========================================
 Box2dPhysics::Box2dPhysics(Entity* entity, const XmlNode data)
    : EntityPhysics(entity, data),
+     m_init(false),
      m_entity(entity),
      m_body(NULL),
      m_opts(false, false, 1.f, 0.3f) {
+
+   init();
 
    try {
       XML_NODE_CHECK(data, Box2dPhysics);
@@ -61,6 +95,17 @@ Box2dPhysics::Box2dPhysics(Entity* entity, const XmlNode data)
    catch (XmlException& e) {
       e.prepend("Error parsing XML for instance of class Box2dPhysics; ");
       throw;
+   }
+}
+
+//===========================================
+// Box2dPhysics::init
+//===========================================
+void Box2dPhysics::init() {
+   if (!m_isInitialised) {
+      m_world.SetContactListener(&m_contactListener);
+
+      m_isInitialised = true;
    }
 }
 
@@ -125,7 +170,6 @@ void Box2dPhysics::setEntity(Entity* entity) {
 //===========================================
 void Box2dPhysics::addToWorld() {
    constructBody();
-   m_physEnts[m_entity] = this;
    m_init = true;
 }
 
@@ -134,7 +178,6 @@ void Box2dPhysics::addToWorld() {
 //===========================================
 void Box2dPhysics::removeFromWorld() {
    if (m_init) {
-      m_physEnts.erase(m_entity);
       if (m_body) m_world.DestroyBody(m_body);
 
       m_body = NULL;
@@ -204,16 +247,27 @@ void Box2dPhysics::constructBody() {
 
    b2BodyDef bdef;
 
+   bdef.awake = false;
    if (m_opts.dynamic) bdef.type = b2_dynamicBody;
    bdef.fixedRotation = m_opts.fixedAngle;
 
-   Vec2f pos = m_entity->getTranslation_abs() / m_worldUnitsPerMetre;
-   bdef.position.Set(pos.x, pos.y);
-
    m_body = m_world.CreateBody(&bdef);
+   m_body->SetUserData(m_entity);
 
-   const Shape& entShape = m_entity->getShape();
-   shapeToBox2dBody(entShape, m_opts, m_body, &m_numFixtures);
+   float32_t rot = m_entity->getRotation_abs();
+   Vec2f pos = m_entity->getTranslation_abs();
+
+   // Contruct the body with the unrotated shape, then set the body's angle to the entity's rotation.
+   unique_ptr<Shape> shape(dynamic_cast<Shape*>(m_entity->getShape().clone()));
+   assert(shape);
+   shape->rotate(-rot);
+
+   shapeToBox2dBody(*shape, m_opts, m_body, &m_numFixtures);
+
+   m_body->SetTransform(b2Vec2(pos.x / m_worldUnitsPerMetre, pos.y / m_worldUnitsPerMetre), rot);
+   m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(rot));
+
+   m_body->SetAwake(true);
 }
 
 //===========================================
@@ -269,31 +323,24 @@ void Box2dPhysics::loadSettings(const string& file) {
    val = parser.getValue("pIterations");
    if (val.empty()) throw PhysicsException("Error loading settings; Expected 'pIterations' value", __FILE__, __LINE__);
    m_p_iterations = atoi(val.data());
-
-   Functor<void, TYPELIST_1(EEvent*)> fEntMovedHandler(&Box2dPhysics::entityMovedHandler);
-   m_eventManager.registerCallback(internString("entityTranslation"), fEntMovedHandler);
-   m_eventManager.registerCallback(internString("entityRotation"), fEntMovedHandler);
-   m_eventManager.registerCallback(internString("entityShape"), fEntMovedHandler);
 }
 
 //===========================================
-// Box2dPhysics::entityMovedHandler
+// Box2dPhysics::onEvent
 //===========================================
-void Box2dPhysics::entityMovedHandler(EEvent* event) {
+void Box2dPhysics::onEvent(const EEvent* event) {
    static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
 
-   Entity* entity;
+   if (!m_init) return;
 
-   if (event->getType() == entityRotationStr) entity = static_cast<EEntityRotation*>(event)->entity.get();
-   else if (event->getType() == entityShapeStr) entity = static_cast<EEntityShape*>(event)->entity.get();
-   else if (event->getType() == entityTranslationStr) entity = static_cast<EEntityTranslation*>(event)->entity.get();
+   if (event->getType() != entityRotationStr
+      && event->getType() != entityShapeStr
+      && event->getType() != entityTranslationStr) return;
 
-   if (m_ignore.find(event) == m_ignore.end()) {
-      map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.find(entity);
-      if (it != m_physEnts.end()) it->second->updatePos(event);
-   }
+   if (m_ignore.find(event) == m_ignore.end())
+      updatePos(event);
    else
       m_ignore.erase(event);
 }
@@ -301,7 +348,7 @@ void Box2dPhysics::entityMovedHandler(EEvent* event) {
 //===========================================
 // Box2dPhysics::updatePos
 //===========================================
-void Box2dPhysics::updatePos(EEvent* ev) {
+void Box2dPhysics::updatePos(const EEvent* ev) {
    static long entityRotationStr = internString("entityRotation");
    static long entityShapeStr = internString("entityShape");
    static long entityTranslationStr = internString("entityTranslation");
@@ -310,7 +357,7 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       throw PhysicsException("Instance of Box2dPhysics is not initialised", __FILE__, __LINE__);
 
    if (ev->getType() == entityTranslationStr) {
-      EEntityTranslation* event = static_cast<EEntityTranslation*>(ev);
+      const EEntityTranslation* event = static_cast<const EEntityTranslation*>(ev);
 
       // Update position
       float32_t x = event->newTransl_abs.x;
@@ -319,11 +366,11 @@ void Box2dPhysics::updatePos(EEvent* ev) {
       m_body->SetTransform(b2Vec2(x / m_worldUnitsPerMetre, y / m_worldUnitsPerMetre), m_body->GetAngle());
    }
    else if (ev->getType() == entityRotationStr) {
-      EEntityRotation* event = static_cast<EEntityRotation*>(ev);
+      const EEntityRotation* event = static_cast<const EEntityRotation*>(ev);
       m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(event->newRotation_abs));
    }
    else if (ev->getType() == entityShapeStr) {
-      EEntityShape* event = static_cast<EEntityShape*>(ev);
+      const EEntityShape* event = static_cast<const EEntityShape*>(ev);
 
       unique_ptr<Shape> oldShape(dynamic_cast<Shape*>(event->oldShape.get()->clone()));
       unique_ptr<Shape> newShape(dynamic_cast<Shape*>(event->newShape.get()->clone()));
@@ -340,65 +387,72 @@ void Box2dPhysics::updatePos(EEvent* ev) {
    }
 
    // Wake bodies
-   for (map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it)
-      it->second->m_body->SetAwake(true);
+   b2Body* body = m_world.GetBodyList();
+   while (body != NULL) {
+      body->SetAwake(true);
+      body = body->GetNext();
+   }
 }
 
 //===========================================
 // Box2dPhysics::update
 //===========================================
 void Box2dPhysics::update() {
-   if (m_physEnts.empty()) return;
+   if (!m_opts.dynamic) return;
 
+   Vec2f pos(m_body->GetPosition()(0) * m_worldUnitsPerMetre,
+      m_body->GetPosition()(1) * m_worldUnitsPerMetre);
 
-   // Update b2Body positions
+   float32_t a = RAD_TO_DEG(m_body->GetAngle());
+
+   if (pos != m_entity->getTranslation_abs() || a != m_entity->getRotation_abs()) {
+      Range oldBounds = m_entity->getBoundary();
+      Vec2f oldTransl = m_entity->getTranslation();
+      Vec2f oldTransl_abs = m_entity->getTranslation_abs();
+      float32_t oldRot = m_entity->getRotation();
+      float32_t oldRot_abs = m_entity->getRotation_abs();
+
+      m_entity->setSilent(true);
+      m_entity->setTranslation_abs(pos);
+      m_entity->setRotation_abs(a);
+      m_entity->setSilent(false);
+
+      EEvent* event1 = new EEntityBoundingBox(m_entity->getSharedPtr(), oldBounds, m_entity->getBoundary());
+      EEvent* event2 = new EEntityTranslation(m_entity->getSharedPtr(), oldTransl, oldTransl_abs, m_entity->getTranslation(), m_entity->getTranslation_abs());
+      EEvent* event3 = new EEntityRotation(m_entity->getSharedPtr(), oldRot, oldRot_abs, m_entity->getRotation(), m_entity->getRotation_abs());
+
+      m_entity->onEvent(event1);
+      m_entity->onEvent(event2);
+      m_entity->onEvent(event3);
+
+      m_eventManager.queueEvent(event1);
+      m_eventManager.queueEvent(event2);
+      m_eventManager.queueEvent(event3);
+
+      m_ignore.insert(event1);
+      m_ignore.insert(event2);
+      m_ignore.insert(event3);
+   }
+}
+
+//===========================================
+// Box2dPhysics::update
+//
+// Update b2Body positions
+//===========================================
+void Box2dPhysics::step() {
    m_world.Step(m_timeStep, m_v_iterations, m_p_iterations);
    m_world.ClearForces();
+}
 
+//===========================================
+// Box2dPhysics::setLinearVelocity
+//===========================================
+void Box2dPhysics::setLinearVelocity(const Vec2f& v) {
+   if (!m_init)
+      throw PhysicsException("Instance of Box2dPhysics is not initialised", __FILE__, __LINE__);
 
-   // Match Entity to b2Body position
-   for (map<Entity*, Box2dPhysics*>::iterator it = m_physEnts.begin(); it != m_physEnts.end(); ++it) {
-      if (!it->second->m_opts.dynamic) continue;
-
-      Entity* ent = it->first;
-
-      Vec2f pos(it->second->m_body->GetPosition()(0) * m_worldUnitsPerMetre,
-         it->second->m_body->GetPosition()(1) * m_worldUnitsPerMetre);
-
-      float32_t a = RAD_TO_DEG(it->second->m_body->GetAngle());
-
-      if (pos != ent->getTranslation_abs() || a != ent->getRotation_abs()) {
-         Range oldBounds = ent->getBoundary();
-         Vec2f oldTransl = ent->getTranslation();
-         Vec2f oldTransl_abs = ent->getTranslation_abs();
-         float32_t oldRot = ent->getRotation();
-         float32_t oldRot_abs = ent->getRotation_abs();
-
-         Vec2f relTrans = ent->getTranslation();
-         Vec2f absTrans = ent->getTranslation_abs();
-
-         ent->setSilent(true);
-         ent->setTranslation(relTrans + (pos - absTrans));
-         ent->setRotation(a);
-         ent->setSilent(false);
-
-         EEvent* event1 = new EEntityBoundingBox(ent->getSharedPtr(), oldBounds, ent->getBoundary());
-         EEvent* event2 = new EEntityTranslation(ent->getSharedPtr(), oldTransl, oldTransl_abs, ent->getTranslation(), ent->getTranslation_abs());
-         EEvent* event3 = new EEntityRotation(ent->getSharedPtr(), oldRot, oldRot_abs, ent->getRotation(), ent->getRotation_abs());
-
-         ent->onEvent(event1);
-         ent->onEvent(event2);
-         ent->onEvent(event3);
-
-         m_eventManager.queueEvent(event1);
-         m_eventManager.queueEvent(event2);
-         m_eventManager.queueEvent(event3);
-
-         m_ignore.insert(event1);
-         m_ignore.insert(event2);
-         m_ignore.insert(event3);
-      }
-   }
+   m_body->SetLinearVelocity(b2Vec2(v.x, v.y));
 }
 
 //===========================================

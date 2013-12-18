@@ -45,6 +45,8 @@ class EntityPhysics {
       virtual void addToWorld() = 0;
       virtual void removeFromWorld() = 0;
 
+      virtual void update() = 0;
+      virtual void onEvent(const EEvent* event) = 0;
       virtual size_t getSize() const = 0;
       virtual Asset* clone() const = 0;
       virtual void assignData(const XmlNode data) = 0;
@@ -57,6 +59,7 @@ class EntityPhysics {
       virtual void applyForce(const Vec2f& force) = 0;
       virtual void makeDynamic() = 0;
       virtual void makeStatic() = 0;
+      virtual void setLinearVelocity(const Vec2f& v) = 0;
       virtual Vec2f getLinearVelocity() const = 0;
 
 //    Derived class must implement:

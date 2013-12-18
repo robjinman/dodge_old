@@ -129,6 +129,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::onEvent
       //===========================================
       virtual void onEvent(const EEvent* event) {
+         T_PHYSICS::onEvent(event);
          Entity::onEvent(event);
       }
 
@@ -164,6 +165,7 @@ class PhysicalEntity : virtual public Entity, public T_PHYSICS {
       // PhysicalEntity::update
       //===========================================
       virtual void update() {
+         T_PHYSICS::update();
          Entity::update();
       }
 

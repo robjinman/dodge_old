@@ -133,6 +133,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::onEvent
       //===========================================
       virtual void onEvent(const EEvent* event) {
+         T_PHYSICS::onEvent(event);
          Sprite::onEvent(event);
       }
 
@@ -168,6 +169,7 @@ class PhysicalSprite : public Sprite, public T_PHYSICS {
       // PhysicalSprite::update
       //===========================================
       virtual void update() {
+         T_PHYSICS::update();
          Sprite::update();
       }
 
