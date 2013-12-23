@@ -88,16 +88,15 @@ class EEntityRotation : public EEvent {
 };
 
 
-class IAuxData : virtual public Asset {
+class IAuxData {
    public:
-      IAuxData()
-         : Asset(internString("IAuxData")) {}
+      IAuxData() {}
 
       virtual size_t getSize() const = 0;
-      virtual Asset* clone() const = 0;
+      virtual IAuxData* clone() const = 0;
       virtual void assignData(const XmlNode data) = 0;
 #ifdef DEBUG
-      virtual void dbg_print(std::ostream& out, int tab = 0) const = 0;
+      virtual void dbg_print(std::ostream& out, int tab = 0) const {}
 #endif
 
       virtual ~IAuxData() {}
@@ -203,9 +202,7 @@ class Entity : virtual public Asset, virtual public boost::enable_shared_from_th
       void rotateShapes_r(float32_t deg);
       void recomputeBoundary();
       void deepCopy(const Entity& copy);
-      void onAncestorTranslation(const Vec2f& ds);
-      void onAncestorRotation(float32_t da, const Vec2f& ds);
-      void onNewAncestor(Entity* oldAncestor, Entity* newAncestor);
+      void onParentTransformation(float32_t oldRot, const Vec2f& oldTransl);
 
       std::unique_ptr<IAuxData> m_auxData;
 

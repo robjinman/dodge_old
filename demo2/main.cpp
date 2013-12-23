@@ -129,7 +129,10 @@ int main(int argc, char** argv) {
    pCamera_t camera(new Camera(240.0 / 240.0, 1.f));
    renderer.attachCamera(camera);
 
-   renderer.start();
+   Functor<void, TYPELIST_0()> fMakeContext(&win, &WinIO::createGLContext);
+   Functor<void, TYPELIST_0()> fSwap(&win, &WinIO::swapBuffers);
+
+   renderer.start(fMakeContext, fSwap);
 
    pTexture_t tex0(new Texture("data/textures/man.png"));
    pTexture_t texFont1(new Texture("data/textures/font2.png"));
@@ -234,8 +237,6 @@ int main(int argc, char** argv) {
 
       renderer.tick(Colour(0.5, 0.6, 0.8, 1.0));
       eventManager.doEvents();
-
-      win.swapBuffers();
 
       LOOP_END;
    }

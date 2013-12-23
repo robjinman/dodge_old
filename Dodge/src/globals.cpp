@@ -18,6 +18,7 @@ bool init = false;
 unique_ptr<StackAllocator> memStack;
 float32_t targetFrameRate;
 projectSettings_t settings;
+int gFlag = 0; // TODO
 
 
 //===========================================

@@ -22,6 +22,6 @@
    </using>
    <assets>
       <asset id="111"><Texture path="data/textures/cave01.png"/></asset>
-      <asset id="99" proto="10" addToWorld="true"><Player><Item solid="true"><Entity name="player" x="0.0" y="0.0" z="8"/></Item></Player></asset>
+      <asset id="99" proto="10" addToWorld="true"><Player><PhysicalSprite><Sprite><Entity name="player" x="0.0" y="0.0" z="8"/></Sprite></PhysicalSprite></Player></asset>
    </assets>
 </MAPFILE>

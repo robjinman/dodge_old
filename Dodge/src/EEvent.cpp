@@ -13,6 +13,7 @@ using namespace std;
 namespace Dodge {
 
 
+long EEvent::m_nextId = 0;
 StackAllocator EEvent::m_stack = StackAllocator(EEvent::STACK_SIZE);
 
 

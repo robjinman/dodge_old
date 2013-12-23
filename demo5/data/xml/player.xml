@@ -3,312 +3,312 @@
    <assets>
       <asset id="9"><Texture path="data/textures/ss8x8squares128x128g.png"/></asset>
       <asset id="10" addToWorld="false">
-         <Player>
-            <Item solid="true">
-               <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
-                  <shape>
-                     <Polygon>
-                        <Vec2f x="0" y="0.025"/>
-                        <Vec2f x="0.021875" y="0.00625"/>
-                        <Vec2f x="0.04375" y="0"/>
-                        <Vec2f x="0.05625" y="0"/>
-                        <Vec2f x="0.078125" y="0.00625"/>
-                        <Vec2f x="0.1" y="0.025"/>
-                        <Vec2f x="0.1" y="0.1"/>
-                        <Vec2f x="0" y="0.1"/>
-                     </Polygon>
-                  </shape>
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
-                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                  <lineWidth>0</lineWidth>
-                  <children/>
-               </Entity>
-            </Item>
-            <PhysicalSprite>
-               <Sprite>
-                  <Entity/>
-                  <EntityAnimations>
-                     <texture ptr="9"/>
-                     <textureSection>
-                        <Range>
-                           <pos><Vec2f x="0" y="0"/></pos>
-                           <size><Vec2f x="16" y="16"/></size>
-                        </Range>
-                     </textureSection>
-                     <onScreenSize>
-                        <Vec2f x="0.1" y="0.1"/>
-                     </onScreenSize>
-                     <animation>
-                        <Animation name="moveDown" duration="0.16667">
-                           <AnimFrame>
-                              <pos><Vec2i x="0" y="0"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="16" y="0"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="32" y="0"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="48" y="0"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                        </Animation>
-                     </animation>
-                     <animation>
-                        <Animation name="moveLeft" duration="0.16667">
-                           <AnimFrame>
-                              <pos><Vec2i x="0" y="16"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="16" y="16"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="32" y="16"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="48" y="16"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                        </Animation>
-                     </animation>
-                     <animation>
-                        <Animation name="moveUp" duration="0.16667">
-                           <AnimFrame>
-                              <pos><Vec2i x="0" y="32"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="16" y="32"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="32" y="32"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="48" y="32"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                        </Animation>
-                     </animation>
-                     <animation>
-                        <Animation name="moveRight" duration="0.16667">
-                           <AnimFrame>
-                              <pos><Vec2i x="0" y="48"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="16" y="48"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="32" y="48"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="48" y="48"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                        </Animation>
-                     </animation>
-                     <animation>
-                        <Animation name="jump" duration="0.16667">
-                           <AnimFrame>
-                              <pos><Vec2i x="0" y="64"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="16" y="64"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="32" y="64"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                           <AnimFrame>
-                              <pos><Vec2i x="48" y="64"/></pos>
-                              <dim><Vec2i x="16" y="16"/></dim>
-                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                           </AnimFrame>
-                        </Animation>
-                     </animation>
-                  </EntityAnimations>
-                  <EntityTransformations>
-                     <transformation>
-                        <Transformation name="moveDown">
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="-0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                        </Transformation>
-                     </transformation>
-                     <transformation>
-                        <Transformation name="moveLeft">
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="-0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                        </Transformation>
-                     </transformation>
-                     <transformation>
-                        <Transformation name="moveUp">
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.0" y="0.025"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                        </Transformation>
-                     </transformation>
-                     <transformation>
-                        <Transformation name="moveRight">
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                           <TransPart duration="0.05">
-                              <transl><Vec2f x="0.025" y="0.0"/></transl>
-                              <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
-                              <scale><Vec2f x="1.0" y="1.0"/></scale>
-                           </TransPart>
-                        </Transformation>
-                     </transformation>
-                  </EntityTransformations>
-               </Sprite>
-               <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
-            </PhysicalSprite>
-            <speed>1.8</speed>
-            <acceleration>0.6</acceleration>
-            <gridSize>
-               <Vec2f x="0.1" y="0.1"/>
-            </gridSize>
-            <footSensor>
-               <Quad>
-                  <Vec2f x="0.00625" y="-0.025"/>
-                  <Vec2f x="0.09375" y="-0.025"/>
-                  <Vec2f x="0.09375" y="-0.00625"/>
-                  <Vec2f x="0.00625" y="-0.00625"/>
-               </Quad>
-            </footSensor>
-            <headSensor>
-               <Quad>
-                  <Vec2f x="0.00625" y="0.1"/>
-                  <Vec2f x="0.09375" y="0.1"/>
-                  <Vec2f x="0.09375" y="0.125"/>
-                  <Vec2f x="0.00625" y="0.125"/>
-               </Quad>
-            </headSensor>
-            <leftSensor>
-               <Quad>
-                  <Vec2f x="-0.025" y="0.00625"/>
-                  <Vec2f x="-0.0" y="0.00625"/>
-                  <Vec2f x="-0.0" y="0.09375"/>
-                  <Vec2f x="-0.025" y="0.09375"/>
-               </Quad>
-            </leftSensor>
-            <rightSensor>
-               <Quad>
-                  <Vec2f x="0.1" y="0.00625"/>
-                  <Vec2f x="0.125" y="0.00625"/>
-                  <Vec2f x="0.125" y="0.09375"/>
-                  <Vec2f x="0.1" y="0.09375"/>
-               </Quad>
-            </rightSensor>
-            <midSensor>
-               <Quad>
-                  <Vec2f x="0.00625" y="0.00625"/>
-                  <Vec2f x="0.09375" y="0.00625"/>
-                  <Vec2f x="0.09375" y="0.09375"/>
-                  <Vec2f x="0.00625" y="0.09375"/>
-               </Quad>
-            </midSensor>
-         </Player>
+         <ExtEntity>
+            <Player>
+               <PhysicalSprite>
+                  <Sprite>
+                     <Entity type="player" name="playerProto" x="0.0" y="0.0" z="3" rot="0.0">
+                        <shape>
+                           <Polygon>
+                              <Vec2f x="0" y="0.025"/>
+                              <Vec2f x="0.021875" y="0.00625"/>
+                              <Vec2f x="0.04375" y="0"/>
+                              <Vec2f x="0.05625" y="0"/>
+                              <Vec2f x="0.078125" y="0.00625"/>
+                              <Vec2f x="0.1" y="0.025"/>
+                              <Vec2f x="0.1" y="0.1"/>
+                              <Vec2f x="0" y="0.1"/>
+                           </Polygon>
+                        </shape>
+                        <scale>
+                           <Vec2f x="1.0" y="1.0"/>
+                        </scale>
+                        <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                        <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                        <lineWidth>0</lineWidth>
+                        <children/>
+                     </Entity>
+                     <EntityAnimations>
+                        <texture ptr="9"/>
+                        <textureSection>
+                           <Range>
+                              <pos><Vec2f x="0" y="0"/></pos>
+                              <size><Vec2f x="16" y="16"/></size>
+                           </Range>
+                        </textureSection>
+                        <onScreenSize>
+                           <Vec2f x="0.1" y="0.1"/>
+                        </onScreenSize>
+                        <animation>
+                           <Animation name="moveDown" duration="0.16667">
+                              <AnimFrame>
+                                 <pos><Vec2i x="0" y="0"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="16" y="0"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="32" y="0"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="48" y="0"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                           </Animation>
+                        </animation>
+                        <animation>
+                           <Animation name="moveLeft" duration="0.16667">
+                              <AnimFrame>
+                                 <pos><Vec2i x="0" y="16"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="16" y="16"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="32" y="16"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="48" y="16"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                           </Animation>
+                        </animation>
+                        <animation>
+                           <Animation name="moveUp" duration="0.16667">
+                              <AnimFrame>
+                                 <pos><Vec2i x="0" y="32"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="16" y="32"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="32" y="32"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="48" y="32"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                           </Animation>
+                        </animation>
+                        <animation>
+                           <Animation name="moveRight" duration="0.16667">
+                              <AnimFrame>
+                                 <pos><Vec2i x="0" y="48"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="16" y="48"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="32" y="48"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="48" y="48"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                           </Animation>
+                        </animation>
+                        <animation>
+                           <Animation name="jump" duration="0.16667">
+                              <AnimFrame>
+                                 <pos><Vec2i x="0" y="64"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="16" y="64"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="32" y="64"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                              <AnimFrame>
+                                 <pos><Vec2i x="48" y="64"/></pos>
+                                 <dim><Vec2i x="16" y="16"/></dim>
+                                 <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                              </AnimFrame>
+                           </Animation>
+                        </animation>
+                     </EntityAnimations>
+                     <EntityTransformations>
+                        <transformation>
+                           <Transformation name="moveDown">
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="-0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                           </Transformation>
+                        </transformation>
+                        <transformation>
+                           <Transformation name="moveLeft">
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="-0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                           </Transformation>
+                        </transformation>
+                        <transformation>
+                           <Transformation name="moveUp">
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.0" y="0.025"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                           </Transformation>
+                        </transformation>
+                        <transformation>
+                           <Transformation name="moveRight">
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                              <TransPart duration="0.05">
+                                 <transl><Vec2f x="0.025" y="0.0"/></transl>
+                                 <rot><angle>0.0</angle><pivot><Vec2f x="0" y="0"/></pivot></rot>
+                                 <scale><Vec2f x="1.0" y="1.0"/></scale>
+                              </TransPart>
+                           </Transformation>
+                        </transformation>
+                     </EntityTransformations>
+                  </Sprite>
+                  <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
+               </PhysicalSprite>
+               <speed>1.8</speed>
+               <acceleration>0.6</acceleration>
+               <gridSize>
+                  <Vec2f x="0.1" y="0.1"/>
+               </gridSize>
+               <footSensor>
+                  <Quad>
+                     <Vec2f x="0.00625" y="-0.025"/>
+                     <Vec2f x="0.09375" y="-0.025"/>
+                     <Vec2f x="0.09375" y="-0.00625"/>
+                     <Vec2f x="0.00625" y="-0.00625"/>
+                  </Quad>
+               </footSensor>
+               <headSensor>
+                  <Quad>
+                     <Vec2f x="0.00625" y="0.1"/>
+                     <Vec2f x="0.09375" y="0.1"/>
+                     <Vec2f x="0.09375" y="0.125"/>
+                     <Vec2f x="0.00625" y="0.125"/>
+                  </Quad>
+               </headSensor>
+               <leftSensor>
+                  <Quad>
+                     <Vec2f x="-0.025" y="0.00625"/>
+                     <Vec2f x="-0.0" y="0.00625"/>
+                     <Vec2f x="-0.0" y="0.09375"/>
+                     <Vec2f x="-0.025" y="0.09375"/>
+                  </Quad>
+               </leftSensor>
+               <rightSensor>
+                  <Quad>
+                     <Vec2f x="0.1" y="0.00625"/>
+                     <Vec2f x="0.125" y="0.00625"/>
+                     <Vec2f x="0.125" y="0.09375"/>
+                     <Vec2f x="0.1" y="0.09375"/>
+                  </Quad>
+               </rightSensor>
+               <midSensor>
+                  <Quad>
+                     <Vec2f x="0.00625" y="0.00625"/>
+                     <Vec2f x="0.09375" y="0.00625"/>
+                     <Vec2f x="0.09375" y="0.09375"/>
+                     <Vec2f x="0.00625" y="0.09375"/>
+                  </Quad>
+               </midSensor>
+            </Player>
+            <Item solid="true"/>
+         </ExtEntity>
       </asset>
    </assets>
 </ASSETFILE>

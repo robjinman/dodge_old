@@ -291,7 +291,10 @@ void Game::init() {
    m_win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(this, &Game::keyDown));
    m_win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(this, &Game::keyUp));
 
-   m_renderer.start();
+   Functor<void, TYPELIST_0()> fMakeContext(&m_win, &WinIO::createGLContext);
+   Functor<void, TYPELIST_0()> fSwap(&m_win, &WinIO::swapBuffers);
+
+   m_renderer.start(fMakeContext, fSwap);
 
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    m_renderer.attachCamera(camera);
@@ -333,7 +336,6 @@ void Game::launch() {
       m_eventManager.doEvents();
 
       m_renderer.tick(Colour(0.5, 0.6, 0.8, 1.0));
-      m_win.swapBuffers();
 
       LOOP_END;
    }

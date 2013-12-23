@@ -3,29 +3,26 @@
    <assets>
       <asset id="932"><Texture path="data/textures/platform1.png"/></asset>
       <asset id="1000" addToWorld="false">
-         <CPhysicalSprite>
-            <Item solid="true">
-               <Entity type="stationaryPlatform" name="stationaryPlatformProto" x="0.0" y="0.0" z="4" rot="0.0">
-                  <shape>
-                     <Polygon>
-                        <Vec2f x="0.0" y="0.0"/>
-                        <Vec2f x="0.4" y="0.0"/>
-                        <Vec2f x="0.4" y="0.05"/>
-                        <Vec2f x="0.0" y="0.05"/>
-                     </Polygon>
-                  </shape>
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
-                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                  <lineWidth>0</lineWidth>
-                  <children/>
-               </Entity>
-            </Item>
+         <ExtEntity>
             <PhysicalSprite>
                <Sprite>
-                  <Entity/>
+                  <Entity type="stationaryPlatform" name="stationaryPlatformProto" x="0.0" y="0.0" z="4" rot="0.0">
+                     <shape>
+                        <Polygon>
+                           <Vec2f x="0.0" y="0.0"/>
+                           <Vec2f x="0.4" y="0.0"/>
+                           <Vec2f x="0.4" y="0.05"/>
+                           <Vec2f x="0.0" y="0.05"/>
+                        </Polygon>
+                     </shape>
+                     <scale>
+                        <Vec2f x="1.0" y="1.0"/>
+                     </scale>
+                     <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                     <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                     <lineWidth>0</lineWidth>
+                     <children/>
+                  </Entity>
                   <EntityAnimations>
                      <texture ptr="932"/>
                      <textureSection>
@@ -42,7 +39,8 @@
                </Sprite>
                <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
             </PhysicalSprite>
-         </CPhysicalSprite>
+            <Item solid="true"/>
+         </ExtEntity>
       </asset>
    </assets>
 </ASSETFILE>

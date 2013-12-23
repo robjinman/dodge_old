@@ -157,7 +157,10 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_BTN1PRESS, Functor<void, TYPELIST_2(int, int)>(btn1Click));
    win.registerCallback(WinIO::EVENT_WINRESIZE, Functor<void, TYPELIST_2(int, int)>(onWindowResize));
 
-   renderer.start();
+   Functor<void, TYPELIST_0()> fMakeContext(&win, &WinIO::createGLContext);
+   Functor<void, TYPELIST_0()> fSwap(&win, &WinIO::swapBuffers);
+
+   renderer.start(fMakeContext, fSwap);
 
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    renderer.attachCamera(camera);
@@ -196,13 +199,12 @@ int main(int argc, char** argv) {
 
       win.doEvents();
       eventManager.doEvents();
-      Box2dPhysics::update();
+      Box2dPhysics::step();
       keyboard();
       updateEntities();
       drawEntities();
       computeFrameRate();
       renderer.tick(Colour(0.5f, 0.5f, 0.5f, 1.f));
-      win.swapBuffers();
 
       LOOP_END;
    }

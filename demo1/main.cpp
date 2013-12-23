@@ -78,7 +78,10 @@ int main(int argc, char** argv) {
    win.registerCallback(WinIO::EVENT_KEYDOWN, Functor<void, TYPELIST_1(int)>(keyDown));
    win.registerCallback(WinIO::EVENT_KEYUP, Functor<void, TYPELIST_1(int)>(keyUp));
 
-   renderer.start();
+   Functor<void, TYPELIST_0()> fMakeContext(&win, &WinIO::createGLContext);
+   Functor<void, TYPELIST_0()> fSwap(&win, &WinIO::swapBuffers);
+
+   renderer.start(fMakeContext, fSwap);
 
    pCamera_t camera(new Camera(640.0 / 480.0, 1.f));
    renderer.attachCamera(camera);
@@ -139,7 +142,6 @@ int main(int argc, char** argv) {
       }
 
       renderer.tick(Colour(0.5f, 0.6f, 0.8f, 1.f));
-      win.swapBuffers();
 
       LOOP_END;
    }

@@ -2,8 +2,8 @@
 <ASSETFILE>
    <assets>
       <asset id="150" addToWorld="false">
-         <CPhysicalEntity>
-            <Item solid="true">
+         <ExtEntity>
+            <PhysicalEntity>
                <Entity type="stopBlock" name="stopBlockProto" x="0.0" y="0.0" z="2" rot="0.0">
                   <shape>
                      <Polygon>
@@ -21,12 +21,10 @@
                   <lineWidth>0</lineWidth>
                   <children/>
                </Entity>
-            </Item>
-            <PhysicalEntity>
-               <Entity/>
                <Box2dPhysics dynamic="false" fixedAngle="true" density="1.0" friction="0.3"/>
             </PhysicalEntity>
-         </CPhysicalEntity>
+            <Item solid="true"/>
+         </ExtEntity>
       </asset>
    </assets>
 </ASSETFILE>

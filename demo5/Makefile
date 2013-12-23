@@ -1,17 +1,16 @@
+DODGE_LOCATION = ..
+
 NAME = demo
 CC = g++
-CFLAGS = -std=c++0x -Wall -g -DDEBUG
-INCL = -I../Dodge/include -I../Dodge/include/SDL
-LIBS = -L../Dodge/lib -L/usr/lib -lDodge -lX11 -lGLESv2 -lEGL -lpnglite -lz -lBox2D
-OBJS = Application.o \
-	CParallaxSprite.o \
-	CPhysicalEntity.o \
-	CPhysicalSprite.o \
-	CSprite.o \
-	Item.o \
-	main.o \
-	Player.o \
-	Soil.o
+CFLAGS = -std=c++0x -Wall `sdl-config --cflags` -DLINUX -DGLEW -g -DDEBUG
+INCL = -I$(DODGE_LOCATION)/Dodge/include
+LIBS = -L$(DODGE_LOCATION)/Dodge/lib -L/usr/lib -lDodge -lX11 -lGL -lGLEW -lpnglite -lBox2D -lz `sdl-config --libs` -lSDLmain -lSDL -lSDL_mixer
+SRC = src
+OBJS = $(SRC)/Application.o \
+	$(SRC)/Item.o \
+	$(SRC)/main.o \
+	$(SRC)/Player.o \
+	$(SRC)/Soil.o
 
 all: $(OBJS)
 	$(CC) $(OBJS) -o $(NAME) $(LIBS)
@@ -20,5 +19,4 @@ $(OBJS): %.o: %.cpp
 	$(CC) -c $(CFLAGS) $(INCL) $< -o $@
 
 clean:
-	rm -f $(NAME)
-	rm -f *.o
+	rm -f $(SRC)/*.o

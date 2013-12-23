@@ -9,7 +9,8 @@ OBJS = main.o \
 	TestCase1.o \
 	TestCase2.o \
 	TestCase3.o \
-	TestCase4.o
+	TestCase4.o \
+	TestCase5.o
 
 all: $(OBJS)
 	$(CC) $(OBJS) -o $(NAME) $(LIBS)

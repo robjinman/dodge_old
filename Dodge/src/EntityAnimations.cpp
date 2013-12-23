@@ -323,7 +323,7 @@ void EntityAnimations::updateModel() {
 //===========================================
 // EntityAnimations::onEvent
 //===========================================
-void EntityAnimations::onEvent(const EEvent* event) {
+void EntityAnimations::onEvent(const EEvent* event) {/*
    static long entityRotationStr = internString("entityRotation");
    static long entityTranslationStr = internString("entityTranslation");
    static long entityShapeStr = internString("entityShape");
@@ -350,7 +350,7 @@ void EntityAnimations::onEvent(const EEvent* event) {
       matrix_translation(translation, x, y, 0.f);
       mv = translation * rotation;
       m_model.setMatrix(mv.data());
-   }
+   }*/
 }
 
 //===========================================
@@ -364,6 +364,8 @@ void EntityAnimations::addToWorld() {
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
+   updateModel(); // TODO
+
    if (m_activeAnim) {
       bool justFinished = false;
       m_activeAnim->update(&justFinished);
@@ -391,7 +393,7 @@ void EntityAnimations::update() {
          updateModel();
       }
 
-      if (justFinished) {
+      if (justFinished && !m_entity->isSilent()) {
          try {
             EventManager eventManager;
 
@@ -439,7 +441,7 @@ void EntityAnimations::stepAnimation() {
          updateModel();
       }
 
-      if (justFinished) {
+      if (justFinished && !m_entity->isSilent()) {
          try {
             EventManager eventManager;
 

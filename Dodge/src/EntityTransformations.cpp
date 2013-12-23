@@ -175,7 +175,7 @@ void EntityTransformations::updateTransformation(pTransformation_t t) {
    uint_t part = t->getCurrentPartIdx();
    const Transformation::delta_t* delta = t->update();
 
-   if (part != t->getCurrentPartIdx()) {
+   if (part != t->getCurrentPartIdx() && !m_entity->isSilent()) {
       ETransPartFinished* event = new ETransPartFinished(m_entity->getSharedPtr(), t);
       m_entity->onEvent(event);
       eventManager.queueEvent(event);
@@ -187,7 +187,7 @@ void EntityTransformations::updateTransformation(pTransformation_t t) {
       if (delta->rot != 0.f) m_entity->rotate(delta->rot, delta->pivot);
       if (delta->scale != Vec2f(1.f, 1.f)) m_entity->scale(delta->scale);
 
-      if (t->getCurrentFrameNumber() == t->getNumFrames()) {
+      if (t->getCurrentFrameNumber() == t->getNumFrames() && !m_entity->isSilent()) {
          ETransFinished* event = new ETransFinished(m_entity->getSharedPtr(), t);
          m_entity->onEvent(event);
          eventManager.queueEvent(event);

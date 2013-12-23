@@ -2,7 +2,7 @@
 <ASSETFILE>
    <assets>
       <asset id="98" addToWorld="true">
-         <Item solid="false">
+         <ExtEntity>
             <Entity type="gravityRegion" name="gravityRegion0" x="0.5" y="0.2" z="2" rot="0.0">
                <shape>
                   <Polygon>
@@ -20,33 +20,31 @@
                <lineWidth>0</lineWidth>
                <children/>
             </Entity>
-         </Item>
+            <Item solid="false"/>
+            </ExtEntity>
       </asset>
 
       <asset id="97" addToWorld="true">
-         <CParallaxSprite>
-            <Item solid="false">
-               <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
-                  <shape>
-                     <Polygon>
-                        <Vec2f x="0.0" y="0.0"/>
-                        <Vec2f x="1.5" y="0.0"/>
-                        <Vec2f x="1.5" y="0.9"/>
-                        <Vec2f x="0.0" y="0.9"/>
-                     </Polygon>
-                  </shape>
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
-                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                  <lineWidth>0</lineWidth>
-                  <children/>
-               </Entity>
-            </Item>
+         <ExtEntity>
             <ParallaxSprite>
                <Sprite>
-                  <Entity/>
+                  <Entity type="cave" name="cave01" x="0.5" y="0.2" z="3" rot="0.0">
+                     <shape>
+                        <Polygon>
+                           <Vec2f x="0.0" y="0.0"/>
+                           <Vec2f x="1.5" y="0.0"/>
+                           <Vec2f x="1.5" y="0.9"/>
+                           <Vec2f x="0.0" y="0.9"/>
+                        </Polygon>
+                     </shape>
+                     <scale>
+                        <Vec2f x="1.0" y="1.0"/>
+                     </scale>
+                     <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                     <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                     <lineWidth>0</lineWidth>
+                     <children/>
+                  </Entity>
                   <EntityAnimations>
                      <texture ptr="111"/>
                      <textureSection>
@@ -65,395 +63,397 @@
                   <range><Vec2f x="0.25" y="0.25"/></range>
                </EntityParallax>
             </ParallaxSprite>
-         </CParallaxSprite>
+            <Item solid="false"/>
+         </ExtEntity>
       </asset>
 
-      <asset id="400" proto="1000" addToWorld="true"><CPhysicalSprite><Item solid="true"><Entity name="platform1" x="0.7" y="0.35" rot="10"/></Item></CPhysicalSprite></asset>
-      <asset id="401" proto="1000" addToWorld="true"><CPhysicalSprite><Item solid="true"><Entity name="platform2" x="1.1" y="0.5" rot="-5"><scale><Vec2f x="1.9" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
-      <asset id="402" proto="1000" addToWorld="true"><CPhysicalSprite><Item solid="true"><Entity name="platform3" x="1.4" y="0.68"><scale><Vec2f x="1.1" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
-      <asset id="403" proto="1000" addToWorld="true"><CPhysicalSprite><Item solid="true"><Entity name="platform4" x="0.7" y="0.8"><scale><Vec2f x="1.3" y="1.0"/></scale></Entity></Item></CPhysicalSprite></asset>
+      <asset id="400" proto="1000" addToWorld="true"><PhysicalSprite><Sprite><Entity name="platform1" x="0.7" y="0.35" rot="10"/></Sprite></PhysicalSprite></asset>
+      <asset id="401" proto="1000" addToWorld="true"><PhysicalSprite><Sprite><Entity name="platform2" x="1.1" y="0.5" rot="-5"><scale><Vec2f x="1.9" y="1.0"/></scale></Entity></Sprite></PhysicalSprite></asset>
+      <asset id="402" proto="1000" addToWorld="true"><PhysicalSprite><Sprite><Entity name="platform3" x="1.4" y="0.68"><scale><Vec2f x="1.1" y="1.0"/></scale></Entity></Sprite></PhysicalSprite></asset>
+      <asset id="403" proto="1000" addToWorld="true"><PhysicalSprite><Sprite><Entity name="platform4" x="0.7" y="0.8"><scale><Vec2f x="1.3" y="1.0"/></scale></Entity></Sprite></PhysicalSprite></asset>
 
-      <asset id="300" proto="150" addToWorld="true"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock0" x="0.5" y="0.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="301" proto="150" addToWorld="true"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock1" x="0.4" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="302" proto="150" addToWorld="true"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock2" x="2.0" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></Item></CPhysicalEntity></asset>
-      <asset id="304" proto="150" addToWorld="true"><CPhysicalEntity><Item solid="true"><Entity name="stopBlock3" x="0.5" y="1.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></Item></CPhysicalEntity></asset>
+      <asset id="300" proto="150" addToWorld="true"><PhysicalEntity><Entity name="stopBlock0" x="0.5" y="0.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></PhysicalEntity></asset>
+      <asset id="301" proto="150" addToWorld="true"><PhysicalEntity><Entity name="stopBlock1" x="0.4" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></PhysicalEntity></asset>
+      <asset id="302" proto="150" addToWorld="true"><PhysicalEntity><Entity name="stopBlock2" x="2.0" y="0.1"><scale><Vec2f x="1.0" y="9.0"/></scale></Entity></PhysicalEntity></asset>
+      <asset id="304" proto="150" addToWorld="true"><PhysicalEntity><Entity name="stopBlock3" x="0.5" y="1.1"><scale><Vec2f x="15.0" y="1.0"/></scale></Entity></PhysicalEntity></asset>
+
 <!--
-      <asset id="3000" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,0" x="0.0" y="0.0"/></Item></Soil></asset>-->
-      <asset id="3001" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,0" x="0.1" y="0.0"/></Item></Soil></asset>
-      <asset id="3002" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,0" x="0.2" y="0.0"/></Item></Soil></asset>
-      <asset id="3003" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,0" x="0.3" y="0.0"/></Item></Soil></asset>
-      <asset id="3004" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,0" x="0.4" y="0.0"/></Item></Soil></asset>
-      <asset id="3005" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,0" x="0.5" y="0.0"/></Item></Soil></asset>
-      <asset id="3006" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,0" x="0.6" y="0.0"/></Item></Soil></asset>
-      <asset id="3007" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,0" x="0.7" y="0.0"/></Item></Soil></asset>
-      <asset id="3008" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,0" x="0.8" y="0.0"/></Item></Soil></asset>
-      <asset id="3009" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,0" x="0.9" y="0.0"/></Item></Soil></asset>
-      <asset id="3010" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,0" x="1.0" y="0.0"/></Item></Soil></asset>
-      <asset id="3011" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,0" x="1.1" y="0.0"/></Item></Soil></asset>
-      <asset id="3012" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,0" x="1.2" y="0.0"/></Item></Soil></asset>
-      <asset id="3013" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,0" x="1.3" y="0.0"/></Item></Soil></asset>
-      <asset id="3014" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,0" x="1.4" y="0.0"/></Item></Soil></asset>
-      <asset id="3015" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,0" x="1.5" y="0.0"/></Item></Soil></asset>
-      <asset id="3016" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,0" x="1.6" y="0.0"/></Item></Soil></asset>
-      <asset id="3017" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,0" x="1.7" y="0.0"/></Item></Soil></asset>
-      <asset id="3018" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,0" x="1.8" y="0.0"/></Item></Soil></asset>
-      <asset id="3019" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,0" x="1.9" y="0.0"/></Item></Soil></asset>
-      <asset id="3020" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,0" x="2.0" y="0.0"/></Item></Soil></asset>
-      <asset id="3021" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,0" x="2.1" y="0.0"/></Item></Soil></asset>
-      <asset id="3022" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,0" x="2.2" y="0.0"/></Item></Soil></asset>
-      <asset id="3023" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,0" x="2.3" y="0.0"/></Item></Soil></asset>
-      <asset id="3024" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,0" x="2.4" y="0.0"/></Item></Soil></asset>
-      <asset id="3025" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,0" x="2.5" y="0.0"/></Item></Soil></asset>
+      <asset id="3000" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,0" x="0.0" y="0.0"/></Sprite></Soil></asset>-->
+      <asset id="3001" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,0" x="0.1" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3002" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,0" x="0.2" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3003" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,0" x="0.3" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3004" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,0" x="0.4" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3005" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,0" x="0.5" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3006" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,0" x="0.6" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3007" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,0" x="0.7" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3008" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,0" x="0.8" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3009" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,0" x="0.9" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3010" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,0" x="1.0" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3011" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,0" x="1.1" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3012" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,0" x="1.2" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3013" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,0" x="1.3" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3014" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,0" x="1.4" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3015" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,0" x="1.5" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3016" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,0" x="1.6" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3017" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,0" x="1.7" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3018" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,0" x="1.8" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3019" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,0" x="1.9" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3020" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,0" x="2.0" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3021" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,0" x="2.1" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3022" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,0" x="2.2" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3023" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,0" x="2.3" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3024" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,0" x="2.4" y="0.0"/></Sprite></Soil></asset>
+      <asset id="3025" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,0" x="2.5" y="0.0"/></Sprite></Soil></asset>
 
-      <asset id="3100" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,1" x="0.0" y="0.1"/></Item></Soil></asset>
-      <asset id="3101" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,1" x="0.1" y="0.1"/></Item></Soil></asset>
-      <asset id="3102" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,1" x="0.2" y="0.1"/></Item></Soil></asset>
-      <asset id="3103" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,1" x="0.3" y="0.1"/></Item></Soil></asset>
-      <asset id="3104" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,1" x="0.4" y="0.1"/></Item></Soil></asset>
-      <asset id="3105" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,1" x="0.5" y="0.1"/></Item></Soil></asset>
-      <asset id="3106" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,1" x="0.6" y="0.1"/></Item></Soil></asset>
-      <asset id="3107" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,1" x="0.7" y="0.1"/></Item></Soil></asset>
-      <asset id="3108" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,1" x="0.8" y="0.1"/></Item></Soil></asset>
-      <asset id="3109" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,1" x="0.9" y="0.1"/></Item></Soil></asset>
-      <asset id="3110" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,1" x="1.0" y="0.1"/></Item></Soil></asset>
-      <asset id="3111" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,1" x="1.1" y="0.1"/></Item></Soil></asset>
-      <asset id="3112" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,1" x="1.2" y="0.1"/></Item></Soil></asset>
-      <asset id="3113" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,1" x="1.3" y="0.1"/></Item></Soil></asset>
-      <asset id="3114" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,1" x="1.4" y="0.1"/></Item></Soil></asset>
-      <asset id="3115" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,1" x="1.5" y="0.1"/></Item></Soil></asset>
-      <asset id="3116" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,1" x="1.6" y="0.1"/></Item></Soil></asset>
-      <asset id="3117" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,1" x="1.7" y="0.1"/></Item></Soil></asset>
-      <asset id="3118" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,1" x="1.8" y="0.1"/></Item></Soil></asset>
-      <asset id="3119" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,1" x="1.9" y="0.1"/></Item></Soil></asset>
-      <asset id="3120" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,1" x="2.0" y="0.1"/></Item></Soil></asset>
-      <asset id="3121" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,1" x="2.1" y="0.1"/></Item></Soil></asset>
-      <asset id="3122" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,1" x="2.2" y="0.1"/></Item></Soil></asset>
-      <asset id="3123" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,1" x="2.3" y="0.1"/></Item></Soil></asset>
-      <asset id="3124" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,1" x="2.4" y="0.1"/></Item></Soil></asset>
-      <asset id="3125" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,1" x="2.5" y="0.1"/></Item></Soil></asset>
+      <asset id="3100" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,1" x="0.0" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3101" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,1" x="0.1" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3102" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,1" x="0.2" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3103" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,1" x="0.3" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3104" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,1" x="0.4" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3105" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,1" x="0.5" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3106" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,1" x="0.6" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3107" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,1" x="0.7" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3108" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,1" x="0.8" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3109" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,1" x="0.9" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3110" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,1" x="1.0" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3111" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,1" x="1.1" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3112" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,1" x="1.2" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3113" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,1" x="1.3" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3114" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,1" x="1.4" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3115" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,1" x="1.5" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3116" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,1" x="1.6" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3117" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,1" x="1.7" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3118" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,1" x="1.8" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3119" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,1" x="1.9" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3120" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,1" x="2.0" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3121" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,1" x="2.1" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3122" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,1" x="2.2" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3123" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,1" x="2.3" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3124" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,1" x="2.4" y="0.1"/></Sprite></Soil></asset>
+      <asset id="3125" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,1" x="2.5" y="0.1"/></Sprite></Soil></asset>
 
-      <asset id="3200" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,2" x="0.0" y="0.2"/></Item></Soil></asset>
-      <asset id="3201" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,2" x="0.1" y="0.2"/></Item></Soil></asset>
-      <asset id="3202" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,2" x="0.2" y="0.2"/></Item></Soil></asset>
-      <asset id="3203" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,2" x="0.3" y="0.2"/></Item></Soil></asset>
-      <asset id="3204" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,2" x="0.4" y="0.2"/></Item></Soil></asset><!--
-      <asset id="3205" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,2" x="0.5" y="0.2"/></Item></Soil></asset>
-      <asset id="3206" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,2" x="0.6" y="0.2"/></Item></Soil></asset>
-      <asset id="3207" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,2" x="0.7" y="0.2"/></Item></Soil></asset>
-      <asset id="3208" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,2" x="0.8" y="0.2"/></Item></Soil></asset>
-      <asset id="3209" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,2" x="0.9" y="0.2"/></Item></Soil></asset>
-      <asset id="3210" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,2" x="1.0" y="0.2"/></Item></Soil></asset>
-      <asset id="3211" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,2" x="1.1" y="0.2"/></Item></Soil></asset>
-      <asset id="3212" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,2" x="1.2" y="0.2"/></Item></Soil></asset>
-      <asset id="3213" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,2" x="1.3" y="0.2"/></Item></Soil></asset>
-      <asset id="3214" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,2" x="1.4" y="0.2"/></Item></Soil></asset>
-      <asset id="3215" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,2" x="1.5" y="0.2"/></Item></Soil></asset>
-      <asset id="3216" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,2" x="1.6" y="0.2"/></Item></Soil></asset>
-      <asset id="3217" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,2" x="1.7" y="0.2"/></Item></Soil></asset>
-      <asset id="3218" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,2" x="1.8" y="0.2"/></Item></Soil></asset>
-      <asset id="3219" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,2" x="1.9" y="0.2"/></Item></Soil></asset>-->
-      <asset id="3220" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,2" x="2.0" y="0.2"/></Item></Soil></asset>
-      <asset id="3221" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,2" x="2.1" y="0.2"/></Item></Soil></asset>
-      <asset id="3222" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,2" x="2.2" y="0.2"/></Item></Soil></asset>
-      <asset id="3223" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,2" x="2.3" y="0.2"/></Item></Soil></asset>
-      <asset id="3224" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,2" x="2.4" y="0.2"/></Item></Soil></asset>
-      <asset id="3225" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,2" x="2.5" y="0.2"/></Item></Soil></asset>
+      <asset id="3200" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,2" x="0.0" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3201" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,2" x="0.1" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3202" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,2" x="0.2" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3203" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,2" x="0.3" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3204" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,2" x="0.4" y="0.2"/></Sprite></Soil></asset><!--
+      <asset id="3205" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,2" x="0.5" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3206" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,2" x="0.6" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3207" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,2" x="0.7" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3208" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,2" x="0.8" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3209" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,2" x="0.9" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3210" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,2" x="1.0" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3211" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,2" x="1.1" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3212" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,2" x="1.2" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3213" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,2" x="1.3" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3214" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,2" x="1.4" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3215" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,2" x="1.5" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3216" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,2" x="1.6" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3217" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,2" x="1.7" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3218" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,2" x="1.8" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3219" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,2" x="1.9" y="0.2"/></Sprite></Soil></asset>-->
+      <asset id="3220" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,2" x="2.0" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3221" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,2" x="2.1" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3222" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,2" x="2.2" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3223" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,2" x="2.3" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3224" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,2" x="2.4" y="0.2"/></Sprite></Soil></asset>
+      <asset id="3225" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,2" x="2.5" y="0.2"/></Sprite></Soil></asset>
 
-      <asset id="3300" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,3" x="0.0" y="0.3"/></Item></Soil></asset>
-      <asset id="3301" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,3" x="0.1" y="0.3"/></Item></Soil></asset>
-      <asset id="3302" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,3" x="0.2" y="0.3"/></Item></Soil></asset>
-      <asset id="3303" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,3" x="0.3" y="0.3"/></Item></Soil></asset>
-      <asset id="3304" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,3" x="0.4" y="0.3"/></Item></Soil></asset><!--
-      <asset id="3305" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,3" x="0.5" y="0.3"/></Item></Soil></asset>
-      <asset id="3306" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,3" x="0.6" y="0.3"/></Item></Soil></asset>
-      <asset id="3307" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,3" x="0.7" y="0.3"/></Item></Soil></asset>
-      <asset id="3308" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,3" x="0.8" y="0.3"/></Item></Soil></asset>
-      <asset id="3309" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,3" x="0.9" y="0.3"/></Item></Soil></asset>
-      <asset id="3310" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,3" x="1.0" y="0.3"/></Item></Soil></asset>
-      <asset id="3311" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,3" x="1.1" y="0.3"/></Item></Soil></asset>
-      <asset id="3312" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,3" x="1.2" y="0.3"/></Item></Soil></asset>
-      <asset id="3313" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,3" x="1.3" y="0.3"/></Item></Soil></asset>
-      <asset id="3314" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,3" x="1.4" y="0.3"/></Item></Soil></asset>
-      <asset id="3315" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,3" x="1.5" y="0.3"/></Item></Soil></asset>
-      <asset id="3316" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,3" x="1.6" y="0.3"/></Item></Soil></asset>
-      <asset id="3317" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,3" x="1.7" y="0.3"/></Item></Soil></asset>
-      <asset id="3318" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,3" x="1.8" y="0.3"/></Item></Soil></asset>
-      <asset id="3319" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,3" x="1.9" y="0.3"/></Item></Soil></asset>-->
-      <asset id="3320" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,3" x="2.0" y="0.3"/></Item></Soil></asset>
-      <asset id="3321" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,3" x="2.1" y="0.3"/></Item></Soil></asset>
-      <asset id="3322" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,3" x="2.2" y="0.3"/></Item></Soil></asset>
-      <asset id="3323" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,3" x="2.3" y="0.3"/></Item></Soil></asset>
-      <asset id="3324" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,3" x="2.4" y="0.3"/></Item></Soil></asset>
-      <asset id="3325" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,3" x="2.5" y="0.3"/></Item></Soil></asset>
+      <asset id="3300" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,3" x="0.0" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3301" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,3" x="0.1" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3302" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,3" x="0.2" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3303" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,3" x="0.3" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3304" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,3" x="0.4" y="0.3"/></Sprite></Soil></asset><!--
+      <asset id="3305" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,3" x="0.5" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3306" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,3" x="0.6" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3307" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,3" x="0.7" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3308" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,3" x="0.8" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3309" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,3" x="0.9" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3310" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,3" x="1.0" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3311" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,3" x="1.1" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3312" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,3" x="1.2" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3313" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,3" x="1.3" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3314" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,3" x="1.4" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3315" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,3" x="1.5" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3316" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,3" x="1.6" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3317" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,3" x="1.7" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3318" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,3" x="1.8" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3319" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,3" x="1.9" y="0.3"/></Sprite></Soil></asset>-->
+      <asset id="3320" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,3" x="2.0" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3321" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,3" x="2.1" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3322" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,3" x="2.2" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3323" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,3" x="2.3" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3324" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,3" x="2.4" y="0.3"/></Sprite></Soil></asset>
+      <asset id="3325" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,3" x="2.5" y="0.3"/></Sprite></Soil></asset>
 
-      <asset id="3400" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,4" x="0.0" y="0.4"/></Item></Soil></asset>
-      <asset id="3401" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,4" x="0.1" y="0.4"/></Item></Soil></asset>
-      <asset id="3402" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,4" x="0.2" y="0.4"/></Item></Soil></asset>
-      <asset id="3403" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,4" x="0.3" y="0.4"/></Item></Soil></asset>
-      <asset id="3404" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,4" x="0.4" y="0.4"/></Item></Soil></asset><!--
-      <asset id="3405" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,4" x="0.5" y="0.4"/></Item></Soil></asset>
-      <asset id="3406" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,4" x="0.6" y="0.4"/></Item></Soil></asset>
-      <asset id="3407" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,4" x="0.7" y="0.4"/></Item></Soil></asset>
-      <asset id="3408" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,4" x="0.8" y="0.4"/></Item></Soil></asset>
-      <asset id="3409" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,4" x="0.9" y="0.4"/></Item></Soil></asset>
-      <asset id="3410" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,4" x="1.0" y="0.4"/></Item></Soil></asset>
-      <asset id="3411" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,4" x="1.1" y="0.4"/></Item></Soil></asset>
-      <asset id="3412" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,4" x="1.2" y="0.4"/></Item></Soil></asset>
-      <asset id="3413" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,4" x="1.3" y="0.4"/></Item></Soil></asset>
-      <asset id="3414" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,4" x="1.4" y="0.4"/></Item></Soil></asset>
-      <asset id="3415" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,4" x="1.5" y="0.4"/></Item></Soil></asset>
-      <asset id="3416" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,4" x="1.6" y="0.4"/></Item></Soil></asset>
-      <asset id="3417" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,4" x="1.7" y="0.4"/></Item></Soil></asset>
-      <asset id="3418" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,4" x="1.8" y="0.4"/></Item></Soil></asset>
-      <asset id="3419" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,4" x="1.9" y="0.4"/></Item></Soil></asset>-->
-      <asset id="3420" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,4" x="2.0" y="0.4"/></Item></Soil></asset>
-      <asset id="3421" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,4" x="2.1" y="0.4"/></Item></Soil></asset>
-      <asset id="3422" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,4" x="2.2" y="0.4"/></Item></Soil></asset>
-      <asset id="3423" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,4" x="2.3" y="0.4"/></Item></Soil></asset>
-      <asset id="3424" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,4" x="2.4" y="0.4"/></Item></Soil></asset>
-      <asset id="3425" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,4" x="2.5" y="0.4"/></Item></Soil></asset>
+      <asset id="3400" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,4" x="0.0" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3401" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,4" x="0.1" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3402" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,4" x="0.2" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3403" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,4" x="0.3" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3404" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,4" x="0.4" y="0.4"/></Sprite></Soil></asset><!--
+      <asset id="3405" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,4" x="0.5" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3406" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,4" x="0.6" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3407" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,4" x="0.7" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3408" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,4" x="0.8" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3409" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,4" x="0.9" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3410" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,4" x="1.0" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3411" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,4" x="1.1" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3412" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,4" x="1.2" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3413" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,4" x="1.3" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3414" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,4" x="1.4" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3415" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,4" x="1.5" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3416" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,4" x="1.6" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3417" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,4" x="1.7" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3418" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,4" x="1.8" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3419" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,4" x="1.9" y="0.4"/></Sprite></Soil></asset>-->
+      <asset id="3420" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,4" x="2.0" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3421" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,4" x="2.1" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3422" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,4" x="2.2" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3423" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,4" x="2.3" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3424" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,4" x="2.4" y="0.4"/></Sprite></Soil></asset>
+      <asset id="3425" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,4" x="2.5" y="0.4"/></Sprite></Soil></asset>
 
-      <asset id="3500" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,5" x="0.0" y="0.5"/></Item></Soil></asset>
-      <asset id="3501" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,5" x="0.1" y="0.5"/></Item></Soil></asset>
-      <asset id="3502" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,5" x="0.2" y="0.5"/></Item></Soil></asset>
-      <asset id="3503" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,5" x="0.3" y="0.5"/></Item></Soil></asset>
-      <asset id="3504" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,5" x="0.4" y="0.5"/></Item></Soil></asset><!--
-      <asset id="3505" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,5" x="0.5" y="0.5"/></Item></Soil></asset>
-      <asset id="3506" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,5" x="0.6" y="0.5"/></Item></Soil></asset>
-      <asset id="3507" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,5" x="0.7" y="0.5"/></Item></Soil></asset>
-      <asset id="3508" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,5" x="0.8" y="0.5"/></Item></Soil></asset>
-      <asset id="3509" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,5" x="0.9" y="0.5"/></Item></Soil></asset>
-      <asset id="3510" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,5" x="1.0" y="0.5"/></Item></Soil></asset>
-      <asset id="3511" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,5" x="1.1" y="0.5"/></Item></Soil></asset>
-      <asset id="3512" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,5" x="1.2" y="0.5"/></Item></Soil></asset>
-      <asset id="3513" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,5" x="1.3" y="0.5"/></Item></Soil></asset>
-      <asset id="3514" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,5" x="1.4" y="0.5"/></Item></Soil></asset>
-      <asset id="3515" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,5" x="1.5" y="0.5"/></Item></Soil></asset>
-      <asset id="3516" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,5" x="1.6" y="0.5"/></Item></Soil></asset>
-      <asset id="3517" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,5" x="1.7" y="0.5"/></Item></Soil></asset>
-      <asset id="3518" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,5" x="1.8" y="0.5"/></Item></Soil></asset>
-      <asset id="3519" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,5" x="1.9" y="0.5"/></Item></Soil></asset>-->
-      <asset id="3520" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,5" x="2.0" y="0.5"/></Item></Soil></asset>
-      <asset id="3521" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,5" x="2.1" y="0.5"/></Item></Soil></asset>
-      <asset id="3522" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,5" x="2.2" y="0.5"/></Item></Soil></asset>
-      <asset id="3523" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,5" x="2.3" y="0.5"/></Item></Soil></asset>
-      <asset id="3524" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,5" x="2.4" y="0.5"/></Item></Soil></asset>
-      <asset id="3525" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,5" x="2.5" y="0.5"/></Item></Soil></asset>
+      <asset id="3500" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,5" x="0.0" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3501" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,5" x="0.1" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3502" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,5" x="0.2" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3503" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,5" x="0.3" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3504" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,5" x="0.4" y="0.5"/></Sprite></Soil></asset><!--
+      <asset id="3505" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,5" x="0.5" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3506" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,5" x="0.6" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3507" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,5" x="0.7" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3508" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,5" x="0.8" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3509" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,5" x="0.9" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3510" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,5" x="1.0" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3511" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,5" x="1.1" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3512" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,5" x="1.2" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3513" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,5" x="1.3" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3514" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,5" x="1.4" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3515" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,5" x="1.5" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3516" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,5" x="1.6" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3517" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,5" x="1.7" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3518" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,5" x="1.8" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3519" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,5" x="1.9" y="0.5"/></Sprite></Soil></asset>-->
+      <asset id="3520" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,5" x="2.0" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3521" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,5" x="2.1" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3522" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,5" x="2.2" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3523" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,5" x="2.3" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3524" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,5" x="2.4" y="0.5"/></Sprite></Soil></asset>
+      <asset id="3525" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,5" x="2.5" y="0.5"/></Sprite></Soil></asset>
 
-      <asset id="3600" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,6" x="0.0" y="0.6"/></Item></Soil></asset>
-      <asset id="3601" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,6" x="0.1" y="0.6"/></Item></Soil></asset>
-      <asset id="3602" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,6" x="0.2" y="0.6"/></Item></Soil></asset>
-      <asset id="3603" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,6" x="0.3" y="0.6"/></Item></Soil></asset>
-      <asset id="3604" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,6" x="0.4" y="0.6"/></Item></Soil></asset><!--
-      <asset id="3605" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,6" x="0.5" y="0.6"/></Item></Soil></asset>
-      <asset id="3606" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,6" x="0.6" y="0.6"/></Item></Soil></asset>
-      <asset id="3607" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,6" x="0.7" y="0.6"/></Item></Soil></asset>
-      <asset id="3608" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,6" x="0.8" y="0.6"/></Item></Soil></asset>
-      <asset id="3609" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,6" x="0.9" y="0.6"/></Item></Soil></asset>
-      <asset id="3610" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,6" x="1.0" y="0.6"/></Item></Soil></asset>
-      <asset id="3611" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,6" x="1.1" y="0.6"/></Item></Soil></asset>
-      <asset id="3612" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,6" x="1.2" y="0.6"/></Item></Soil></asset>
-      <asset id="3613" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,6" x="1.3" y="0.6"/></Item></Soil></asset>
-      <asset id="3614" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,6" x="1.4" y="0.6"/></Item></Soil></asset>
-      <asset id="3615" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,6" x="1.5" y="0.6"/></Item></Soil></asset>
-      <asset id="3616" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,6" x="1.6" y="0.6"/></Item></Soil></asset>
-      <asset id="3617" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,6" x="1.7" y="0.6"/></Item></Soil></asset>
-      <asset id="3618" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,6" x="1.8" y="0.6"/></Item></Soil></asset>
-      <asset id="3619" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,6" x="1.9" y="0.6"/></Item></Soil></asset>-->
-      <asset id="3620" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,6" x="2.0" y="0.6"/></Item></Soil></asset>
-      <asset id="3621" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,6" x="2.1" y="0.6"/></Item></Soil></asset>
-      <asset id="3622" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,6" x="2.2" y="0.6"/></Item></Soil></asset>
-      <asset id="3623" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,6" x="2.3" y="0.6"/></Item></Soil></asset>
-      <asset id="3624" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,6" x="2.4" y="0.6"/></Item></Soil></asset>
-      <asset id="3625" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,6" x="2.5" y="0.6"/></Item></Soil></asset>
+      <asset id="3600" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,6" x="0.0" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3601" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,6" x="0.1" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3602" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,6" x="0.2" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3603" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,6" x="0.3" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3604" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,6" x="0.4" y="0.6"/></Sprite></Soil></asset><!--
+      <asset id="3605" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,6" x="0.5" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3606" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,6" x="0.6" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3607" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,6" x="0.7" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3608" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,6" x="0.8" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3609" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,6" x="0.9" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3610" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,6" x="1.0" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3611" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,6" x="1.1" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3612" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,6" x="1.2" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3613" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,6" x="1.3" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3614" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,6" x="1.4" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3615" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,6" x="1.5" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3616" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,6" x="1.6" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3617" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,6" x="1.7" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3618" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,6" x="1.8" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3619" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,6" x="1.9" y="0.6"/></Sprite></Soil></asset>-->
+      <asset id="3620" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,6" x="2.0" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3621" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,6" x="2.1" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3622" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,6" x="2.2" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3623" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,6" x="2.3" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3624" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,6" x="2.4" y="0.6"/></Sprite></Soil></asset>
+      <asset id="3625" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,6" x="2.5" y="0.6"/></Sprite></Soil></asset>
 
-      <asset id="3700" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,7" x="0.0" y="0.7"/></Item></Soil></asset>
-      <asset id="3701" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,7" x="0.1" y="0.7"/></Item></Soil></asset>
-      <asset id="3702" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,7" x="0.2" y="0.7"/></Item></Soil></asset>
-      <asset id="3703" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,7" x="0.3" y="0.7"/></Item></Soil></asset>
-      <asset id="3704" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,7" x="0.4" y="0.7"/></Item></Soil></asset><!--
-      <asset id="3705" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,7" x="0.5" y="0.7"/></Item></Soil></asset>
-      <asset id="3706" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,7" x="0.6" y="0.7"/></Item></Soil></asset>
-      <asset id="3707" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,7" x="0.7" y="0.7"/></Item></Soil></asset>
-      <asset id="3708" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,7" x="0.8" y="0.7"/></Item></Soil></asset>
-      <asset id="3709" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,7" x="0.9" y="0.7"/></Item></Soil></asset>
-      <asset id="3710" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,7" x="1.0" y="0.7"/></Item></Soil></asset>
-      <asset id="3711" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,7" x="1.1" y="0.7"/></Item></Soil></asset>
-      <asset id="3712" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,7" x="1.2" y="0.7"/></Item></Soil></asset>
-      <asset id="3713" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,7" x="1.3" y="0.7"/></Item></Soil></asset>
-      <asset id="3714" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,7" x="1.4" y="0.7"/></Item></Soil></asset>
-      <asset id="3715" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,7" x="1.5" y="0.7"/></Item></Soil></asset>
-      <asset id="3716" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,7" x="1.6" y="0.7"/></Item></Soil></asset>
-      <asset id="3717" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,7" x="1.7" y="0.7"/></Item></Soil></asset>
-      <asset id="3718" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,7" x="1.8" y="0.7"/></Item></Soil></asset>
-      <asset id="3719" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,7" x="1.9" y="0.7"/></Item></Soil></asset>-->
-      <asset id="3720" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,7" x="2.0" y="0.7"/></Item></Soil></asset>
-      <asset id="3721" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,7" x="2.1" y="0.7"/></Item></Soil></asset>
-      <asset id="3722" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,7" x="2.2" y="0.7"/></Item></Soil></asset>
-      <asset id="3723" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,7" x="2.3" y="0.7"/></Item></Soil></asset>
-      <asset id="3724" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,7" x="2.4" y="0.7"/></Item></Soil></asset>
-      <asset id="3725" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,7" x="2.5" y="0.7"/></Item></Soil></asset>
+      <asset id="3700" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,7" x="0.0" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3701" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,7" x="0.1" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3702" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,7" x="0.2" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3703" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,7" x="0.3" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3704" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,7" x="0.4" y="0.7"/></Sprite></Soil></asset><!--
+      <asset id="3705" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,7" x="0.5" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3706" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,7" x="0.6" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3707" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,7" x="0.7" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3708" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,7" x="0.8" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3709" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,7" x="0.9" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3710" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,7" x="1.0" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3711" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,7" x="1.1" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3712" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,7" x="1.2" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3713" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,7" x="1.3" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3714" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,7" x="1.4" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3715" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,7" x="1.5" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3716" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,7" x="1.6" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3717" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,7" x="1.7" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3718" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,7" x="1.8" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3719" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,7" x="1.9" y="0.7"/></Sprite></Soil></asset>-->
+      <asset id="3720" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,7" x="2.0" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3721" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,7" x="2.1" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3722" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,7" x="2.2" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3723" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,7" x="2.3" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3724" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,7" x="2.4" y="0.7"/></Sprite></Soil></asset>
+      <asset id="3725" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,7" x="2.5" y="0.7"/></Sprite></Soil></asset>
 
-      <asset id="3800" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,8" x="0.0" y="0.8"/></Item></Soil></asset>
-      <asset id="3801" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,8" x="0.1" y="0.8"/></Item></Soil></asset>
-      <asset id="3802" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,8" x="0.2" y="0.8"/></Item></Soil></asset>
-      <asset id="3803" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,8" x="0.3" y="0.8"/></Item></Soil></asset>
-      <asset id="3804" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,8" x="0.4" y="0.8"/></Item></Soil></asset><!--
-      <asset id="3805" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,8" x="0.5" y="0.8"/></Item></Soil></asset>
-      <asset id="3806" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,8" x="0.6" y="0.8"/></Item></Soil></asset>
-      <asset id="3807" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,8" x="0.7" y="0.8"/></Item></Soil></asset>
-      <asset id="3808" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,8" x="0.8" y="0.8"/></Item></Soil></asset>
-      <asset id="3809" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,8" x="0.9" y="0.8"/></Item></Soil></asset>
-      <asset id="3810" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,8" x="1.0" y="0.8"/></Item></Soil></asset>
-      <asset id="3811" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,8" x="1.1" y="0.8"/></Item></Soil></asset>
-      <asset id="3812" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,8" x="1.2" y="0.8"/></Item></Soil></asset>
-      <asset id="3813" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,8" x="1.3" y="0.8"/></Item></Soil></asset>
-      <asset id="3814" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,8" x="1.4" y="0.8"/></Item></Soil></asset>
-      <asset id="3815" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,8" x="1.5" y="0.8"/></Item></Soil></asset>
-      <asset id="3816" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,8" x="1.6" y="0.8"/></Item></Soil></asset>
-      <asset id="3817" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,8" x="1.7" y="0.8"/></Item></Soil></asset>
-      <asset id="3818" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,8" x="1.8" y="0.8"/></Item></Soil></asset>
-      <asset id="3819" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,8" x="1.9" y="0.8"/></Item></Soil></asset>-->
-      <asset id="3820" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,8" x="2.0" y="0.8"/></Item></Soil></asset>
-      <asset id="3821" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,8" x="2.1" y="0.8"/></Item></Soil></asset>
-      <asset id="3822" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,8" x="2.2" y="0.8"/></Item></Soil></asset>
-      <asset id="3823" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,8" x="2.3" y="0.8"/></Item></Soil></asset>
-      <asset id="3824" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,8" x="2.4" y="0.8"/></Item></Soil></asset>
-      <asset id="3825" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,8" x="2.5" y="0.8"/></Item></Soil></asset>
+      <asset id="3800" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,8" x="0.0" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3801" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,8" x="0.1" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3802" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,8" x="0.2" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3803" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,8" x="0.3" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3804" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,8" x="0.4" y="0.8"/></Sprite></Soil></asset><!--
+      <asset id="3805" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,8" x="0.5" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3806" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,8" x="0.6" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3807" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,8" x="0.7" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3808" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,8" x="0.8" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3809" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,8" x="0.9" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3810" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,8" x="1.0" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3811" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,8" x="1.1" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3812" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,8" x="1.2" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3813" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,8" x="1.3" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3814" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,8" x="1.4" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3815" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,8" x="1.5" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3816" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,8" x="1.6" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3817" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,8" x="1.7" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3818" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,8" x="1.8" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3819" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,8" x="1.9" y="0.8"/></Sprite></Soil></asset>-->
+      <asset id="3820" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,8" x="2.0" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3821" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,8" x="2.1" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3822" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,8" x="2.2" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3823" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,8" x="2.3" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3824" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,8" x="2.4" y="0.8"/></Sprite></Soil></asset>
+      <asset id="3825" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,8" x="2.5" y="0.8"/></Sprite></Soil></asset>
 
-      <asset id="3900" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,9" x="0.0" y="0.9"/></Item></Soil></asset>
-      <asset id="3901" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,9" x="0.1" y="0.9"/></Item></Soil></asset>
-      <asset id="3902" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,9" x="0.2" y="0.9"/></Item></Soil></asset>
-      <asset id="3903" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,9" x="0.3" y="0.9"/></Item></Soil></asset>
-      <asset id="3904" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,9" x="0.4" y="0.9"/></Item></Soil></asset><!--
-      <asset id="3905" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,9" x="0.5" y="0.9"/></Item></Soil></asset>
-      <asset id="3906" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,9" x="0.6" y="0.9"/></Item></Soil></asset>
-      <asset id="3907" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,9" x="0.7" y="0.9"/></Item></Soil></asset>
-      <asset id="3908" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,9" x="0.8" y="0.9"/></Item></Soil></asset>
-      <asset id="3909" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,9" x="0.9" y="0.9"/></Item></Soil></asset>
-      <asset id="3910" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,9" x="1.0" y="0.9"/></Item></Soil></asset>
-      <asset id="3911" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,9" x="1.1" y="0.9"/></Item></Soil></asset>
-      <asset id="3912" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,9" x="1.2" y="0.9"/></Item></Soil></asset>
-      <asset id="3913" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,9" x="1.3" y="0.9"/></Item></Soil></asset>
-      <asset id="3914" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,9" x="1.4" y="0.9"/></Item></Soil></asset>
-      <asset id="3915" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,9" x="1.5" y="0.9"/></Item></Soil></asset>
-      <asset id="3916" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,9" x="1.6" y="0.9"/></Item></Soil></asset>
-      <asset id="3917" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,9" x="1.7" y="0.9"/></Item></Soil></asset>
-      <asset id="3918" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,9" x="1.8" y="0.9"/></Item></Soil></asset>
-      <asset id="3919" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,9" x="1.9" y="0.9"/></Item></Soil></asset>-->
-      <asset id="3920" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,9" x="2.0" y="0.9"/></Item></Soil></asset>
-      <asset id="3921" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,9" x="2.1" y="0.9"/></Item></Soil></asset>
-      <asset id="3922" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,9" x="2.2" y="0.9"/></Item></Soil></asset>
-      <asset id="3923" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,9" x="2.3" y="0.9"/></Item></Soil></asset>
-      <asset id="3924" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,9" x="2.4" y="0.9"/></Item></Soil></asset>
-      <asset id="3925" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,9" x="2.5" y="0.9"/></Item></Soil></asset>
+      <asset id="3900" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,9" x="0.0" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3901" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,9" x="0.1" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3902" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,9" x="0.2" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3903" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,9" x="0.3" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3904" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,9" x="0.4" y="0.9"/></Sprite></Soil></asset><!--
+      <asset id="3905" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,9" x="0.5" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3906" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,9" x="0.6" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3907" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,9" x="0.7" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3908" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,9" x="0.8" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3909" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,9" x="0.9" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3910" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,9" x="1.0" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3911" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,9" x="1.1" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3912" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,9" x="1.2" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3913" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,9" x="1.3" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3914" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,9" x="1.4" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3915" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,9" x="1.5" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3916" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,9" x="1.6" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3917" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,9" x="1.7" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3918" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,9" x="1.8" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3919" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,9" x="1.9" y="0.9"/></Sprite></Soil></asset>-->
+      <asset id="3920" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,9" x="2.0" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3921" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,9" x="2.1" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3922" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,9" x="2.2" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3923" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,9" x="2.3" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3924" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,9" x="2.4" y="0.9"/></Sprite></Soil></asset>
+      <asset id="3925" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,9" x="2.5" y="0.9"/></Sprite></Soil></asset>
 
-      <asset id="4000" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,10" x="0.0" y="1.0"/></Item></Soil></asset>
-      <asset id="4001" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,10" x="0.1" y="1.0"/></Item></Soil></asset>
-      <asset id="4002" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,10" x="0.2" y="1.0"/></Item></Soil></asset>
-      <asset id="4003" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,10" x="0.3" y="1.0"/></Item></Soil></asset>
-      <asset id="4004" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,10" x="0.4" y="1.0"/></Item></Soil></asset><!--
-      <asset id="4005" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,10" x="0.5" y="1.0"/></Item></Soil></asset>
-      <asset id="4006" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,10" x="0.6" y="1.0"/></Item></Soil></asset>
-      <asset id="4007" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,10" x="0.7" y="1.0"/></Item></Soil></asset>
-      <asset id="4008" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,10" x="0.8" y="1.0"/></Item></Soil></asset>
-      <asset id="4009" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,10" x="0.9" y="1.0"/></Item></Soil></asset>
-      <asset id="4010" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,10" x="1.0" y="1.0"/></Item></Soil></asset>
-      <asset id="4011" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,10" x="1.1" y="1.0"/></Item></Soil></asset>
-      <asset id="4012" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,10" x="1.2" y="1.0"/></Item></Soil></asset>
-      <asset id="4013" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,10" x="1.3" y="1.0"/></Item></Soil></asset>
-      <asset id="4014" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,10" x="1.4" y="1.0"/></Item></Soil></asset>
-      <asset id="4015" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,10" x="1.5" y="1.0"/></Item></Soil></asset>
-      <asset id="4016" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,10" x="1.6" y="1.0"/></Item></Soil></asset>
-      <asset id="4017" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,10" x="1.7" y="1.0"/></Item></Soil></asset>
-      <asset id="4018" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,10" x="1.8" y="1.0"/></Item></Soil></asset>
-      <asset id="4019" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,10" x="1.9" y="1.0"/></Item></Soil></asset>-->
-      <asset id="4020" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,10" x="2.0" y="1.0"/></Item></Soil></asset>
-      <asset id="4021" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,10" x="2.1" y="1.0"/></Item></Soil></asset>
-      <asset id="4022" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,10" x="2.2" y="1.0"/></Item></Soil></asset>
-      <asset id="4023" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,10" x="2.3" y="1.0"/></Item></Soil></asset>
-      <asset id="4024" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,10" x="2.4" y="1.0"/></Item></Soil></asset>
-      <asset id="4025" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,10" x="2.5" y="1.0"/></Item></Soil></asset>
+      <asset id="4000" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,10" x="0.0" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4001" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,10" x="0.1" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4002" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,10" x="0.2" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4003" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,10" x="0.3" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4004" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,10" x="0.4" y="1.0"/></Sprite></Soil></asset><!--
+      <asset id="4005" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,10" x="0.5" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4006" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,10" x="0.6" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4007" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,10" x="0.7" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4008" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,10" x="0.8" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4009" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,10" x="0.9" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4010" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,10" x="1.0" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4011" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,10" x="1.1" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4012" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,10" x="1.2" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4013" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,10" x="1.3" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4014" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,10" x="1.4" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4015" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,10" x="1.5" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4016" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,10" x="1.6" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4017" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,10" x="1.7" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4018" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,10" x="1.8" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4019" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,10" x="1.9" y="1.0"/></Sprite></Soil></asset>-->
+      <asset id="4020" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,10" x="2.0" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4021" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,10" x="2.1" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4022" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,10" x="2.2" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4023" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,10" x="2.3" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4024" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,10" x="2.4" y="1.0"/></Sprite></Soil></asset>
+      <asset id="4025" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,10" x="2.5" y="1.0"/></Sprite></Soil></asset>
 
-      <asset id="4100" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,11" x="0.0" y="1.1"/></Item></Soil></asset>
-      <asset id="4101" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,11" x="0.1" y="1.1"/></Item></Soil></asset>
-      <asset id="4102" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,11" x="0.2" y="1.1"/></Item></Soil></asset>
-      <asset id="4103" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,11" x="0.3" y="1.1"/></Item></Soil></asset>
-      <asset id="4104" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,11" x="0.4" y="1.1"/></Item></Soil></asset>
-      <asset id="4105" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,11" x="0.5" y="1.1"/></Item></Soil></asset>
-      <asset id="4106" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,11" x="0.6" y="1.1"/></Item></Soil></asset>
-      <asset id="4107" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,11" x="0.7" y="1.1"/></Item></Soil></asset>
-      <asset id="4108" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,11" x="0.8" y="1.1"/></Item></Soil></asset>
-      <asset id="4109" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,11" x="0.9" y="1.1"/></Item></Soil></asset>
-      <asset id="4110" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,11" x="1.0" y="1.1"/></Item></Soil></asset>
-      <asset id="4111" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,11" x="1.1" y="1.1"/></Item></Soil></asset>
-      <asset id="4112" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,11" x="1.2" y="1.1"/></Item></Soil></asset>
-      <asset id="4113" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,11" x="1.3" y="1.1"/></Item></Soil></asset>
-      <asset id="4114" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,11" x="1.4" y="1.1"/></Item></Soil></asset>
-      <asset id="4115" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,11" x="1.5" y="1.1"/></Item></Soil></asset>
-      <asset id="4116" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,11" x="1.6" y="1.1"/></Item></Soil></asset>
-      <asset id="4117" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,11" x="1.7" y="1.1"/></Item></Soil></asset>
-      <asset id="4118" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,11" x="1.8" y="1.1"/></Item></Soil></asset>
-      <asset id="4119" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,11" x="1.9" y="1.1"/></Item></Soil></asset>
-      <asset id="4120" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,11" x="2.0" y="1.1"/></Item></Soil></asset>
-      <asset id="4121" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,11" x="2.1" y="1.1"/></Item></Soil></asset>
-      <asset id="4122" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,11" x="2.2" y="1.1"/></Item></Soil></asset>
-      <asset id="4123" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,11" x="2.3" y="1.1"/></Item></Soil></asset>
-      <asset id="4124" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,11" x="2.4" y="1.1"/></Item></Soil></asset>
-      <asset id="4125" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,11" x="2.5" y="1.1"/></Item></Soil></asset>
+      <asset id="4100" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,11" x="0.0" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4101" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,11" x="0.1" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4102" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,11" x="0.2" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4103" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,11" x="0.3" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4104" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,11" x="0.4" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4105" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,11" x="0.5" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4106" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,11" x="0.6" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4107" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,11" x="0.7" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4108" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,11" x="0.8" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4109" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,11" x="0.9" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4110" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,11" x="1.0" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4111" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,11" x="1.1" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4112" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,11" x="1.2" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4113" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,11" x="1.3" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4114" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,11" x="1.4" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4115" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,11" x="1.5" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4116" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,11" x="1.6" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4117" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,11" x="1.7" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4118" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,11" x="1.8" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4119" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,11" x="1.9" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4120" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,11" x="2.0" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4121" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,11" x="2.1" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4122" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,11" x="2.2" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4123" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,11" x="2.3" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4124" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,11" x="2.4" y="1.1"/></Sprite></Soil></asset>
+      <asset id="4125" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,11" x="2.5" y="1.1"/></Sprite></Soil></asset>
 
-      <asset id="4200" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,12" x="0.0" y="1.2"/></Item></Soil></asset>
-      <asset id="4201" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,12" x="0.1" y="1.2"/></Item></Soil></asset>
-      <asset id="4202" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,12" x="0.2" y="1.2"/></Item></Soil></asset>
-      <asset id="4203" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,12" x="0.3" y="1.2"/></Item></Soil></asset>
-      <asset id="4204" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,12" x="0.4" y="1.2"/></Item></Soil></asset>
-      <asset id="4205" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,12" x="0.5" y="1.2"/></Item></Soil></asset>
-      <asset id="4206" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,12" x="0.6" y="1.2"/></Item></Soil></asset>
-      <asset id="4207" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,12" x="0.7" y="1.2"/></Item></Soil></asset>
-      <asset id="4208" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,12" x="0.8" y="1.2"/></Item></Soil></asset>
-      <asset id="4209" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,12" x="0.9" y="1.2"/></Item></Soil></asset>
-      <asset id="4210" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,12" x="1.0" y="1.2"/></Item></Soil></asset>
-      <asset id="4211" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,12" x="1.1" y="1.2"/></Item></Soil></asset>
-      <asset id="4212" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,12" x="1.2" y="1.2"/></Item></Soil></asset>
-      <asset id="4213" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,12" x="1.3" y="1.2"/></Item></Soil></asset>
-      <asset id="4214" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,12" x="1.4" y="1.2"/></Item></Soil></asset>
-      <asset id="4215" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,12" x="1.5" y="1.2"/></Item></Soil></asset>
-      <asset id="4216" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,12" x="1.6" y="1.2"/></Item></Soil></asset>
-      <asset id="4217" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,12" x="1.7" y="1.2"/></Item></Soil></asset>
-      <asset id="4218" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,12" x="1.8" y="1.2"/></Item></Soil></asset>
-      <asset id="4219" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,12" x="1.9" y="1.2"/></Item></Soil></asset>
-      <asset id="4220" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,12" x="2.0" y="1.2"/></Item></Soil></asset>
-      <asset id="4221" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,12" x="2.1" y="1.2"/></Item></Soil></asset>
-      <asset id="4222" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,12" x="2.2" y="1.2"/></Item></Soil></asset>
-      <asset id="4223" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,12" x="2.3" y="1.2"/></Item></Soil></asset>
-      <asset id="4224" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,12" x="2.4" y="1.2"/></Item></Soil></asset>
-      <asset id="4225" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,12" x="2.5" y="1.2"/></Item></Soil></asset>
+      <asset id="4200" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,12" x="0.0" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4201" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,12" x="0.1" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4202" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,12" x="0.2" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4203" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,12" x="0.3" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4204" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,12" x="0.4" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4205" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,12" x="0.5" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4206" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,12" x="0.6" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4207" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,12" x="0.7" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4208" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,12" x="0.8" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4209" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,12" x="0.9" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4210" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,12" x="1.0" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4211" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,12" x="1.1" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4212" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,12" x="1.2" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4213" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,12" x="1.3" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4214" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,12" x="1.4" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4215" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,12" x="1.5" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4216" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,12" x="1.6" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4217" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,12" x="1.7" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4218" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,12" x="1.8" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4219" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,12" x="1.9" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4220" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,12" x="2.0" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4221" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,12" x="2.1" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4222" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,12" x="2.2" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4223" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,12" x="2.3" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4224" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,12" x="2.4" y="1.2"/></Sprite></Soil></asset>
+      <asset id="4225" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,12" x="2.5" y="1.2"/></Sprite></Soil></asset>
 
-      <asset id="4300" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil0,13" x="0.0" y="1.3"/></Item></Soil></asset>
-      <asset id="4301" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil1,13" x="0.1" y="1.3"/></Item></Soil></asset>
-      <asset id="4302" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil2,13" x="0.2" y="1.3"/></Item></Soil></asset>
-      <asset id="4303" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil3,13" x="0.3" y="1.3"/></Item></Soil></asset>
-      <asset id="4304" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil4,13" x="0.4" y="1.3"/></Item></Soil></asset>
-      <asset id="4305" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil5,13" x="0.5" y="1.3"/></Item></Soil></asset>
-      <asset id="4306" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil6,13" x="0.6" y="1.3"/></Item></Soil></asset>
-      <asset id="4307" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil7,13" x="0.7" y="1.3"/></Item></Soil></asset>
-      <asset id="4308" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil8,13" x="0.8" y="1.3"/></Item></Soil></asset>
-      <asset id="4309" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil9,13" x="0.9" y="1.3"/></Item></Soil></asset>
-      <asset id="4310" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil10,13" x="1.0" y="1.3"/></Item></Soil></asset>
-      <asset id="4311" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil11,13" x="1.1" y="1.3"/></Item></Soil></asset>
-      <asset id="4312" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil12,13" x="1.2" y="1.3"/></Item></Soil></asset>
-      <asset id="4313" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil13,13" x="1.3" y="1.3"/></Item></Soil></asset>
-      <asset id="4314" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil14,13" x="1.4" y="1.3"/></Item></Soil></asset>
-      <asset id="4315" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil15,13" x="1.5" y="1.3"/></Item></Soil></asset>
-      <asset id="4316" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil16,13" x="1.6" y="1.3"/></Item></Soil></asset>
-      <asset id="4317" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil17,13" x="1.7" y="1.3"/></Item></Soil></asset>
-      <asset id="4318" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil18,13" x="1.8" y="1.3"/></Item></Soil></asset>
-      <asset id="4319" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil19,13" x="1.9" y="1.3"/></Item></Soil></asset>
-      <asset id="4320" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil20,13" x="2.0" y="1.3"/></Item></Soil></asset>
-      <asset id="4321" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil21,13" x="2.1" y="1.3"/></Item></Soil></asset>
-      <asset id="4322" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil22,13" x="2.2" y="1.3"/></Item></Soil></asset>
-      <asset id="4323" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil23,13" x="2.3" y="1.3"/></Item></Soil></asset>
-      <asset id="4324" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil24,13" x="2.4" y="1.3"/></Item></Soil></asset>
-      <asset id="4325" proto="50" addToWorld="true"><Soil><Item solid="true"><Entity name="soil25,13" x="2.5" y="1.3"/></Item></Soil></asset>
+      <asset id="4300" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil0,13" x="0.0" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4301" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil1,13" x="0.1" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4302" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil2,13" x="0.2" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4303" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil3,13" x="0.3" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4304" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil4,13" x="0.4" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4305" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil5,13" x="0.5" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4306" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil6,13" x="0.6" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4307" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil7,13" x="0.7" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4308" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil8,13" x="0.8" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4309" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil9,13" x="0.9" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4310" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil10,13" x="1.0" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4311" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil11,13" x="1.1" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4312" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil12,13" x="1.2" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4313" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil13,13" x="1.3" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4314" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil14,13" x="1.4" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4315" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil15,13" x="1.5" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4316" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil16,13" x="1.6" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4317" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil17,13" x="1.7" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4318" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil18,13" x="1.8" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4319" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil19,13" x="1.9" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4320" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil20,13" x="2.0" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4321" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil21,13" x="2.1" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4322" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil22,13" x="2.2" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4323" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil23,13" x="2.3" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4324" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil24,13" x="2.4" y="1.3"/></Sprite></Soil></asset>
+      <asset id="4325" proto="50" addToWorld="true"><Soil><Sprite><Entity name="soil25,13" x="2.5" y="1.3"/></Sprite></Soil></asset>
    </assets>
 </ASSETFILE>

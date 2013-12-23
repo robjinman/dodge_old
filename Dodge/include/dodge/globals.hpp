@@ -33,6 +33,7 @@ extern float32_t gGetTargetFrameRate();
 extern StackAllocator& gGetMemStack();
 extern Vec2f gGetPixelSize();
 extern const std::string& gGetWorkingDir();
+extern int gFlag; // TODO
 
 
 };

@@ -3,87 +3,87 @@
    <assets>
       <asset id="49"><Texture path="data/textures/soil64.png"/></asset>
       <asset id="50" addToWorld="false">
-         <Soil>
-            <Item solid="true">
-               <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="4" rot="0.0">
-                  <shape>
-                     <Polygon>
-                        <Vec2f x="0" y="0"/>
-                        <Vec2f x="0.1" y="0"/>
+         <ExtEntity>
+            <Soil>
+               <Sprite>
+                  <Entity type="soil" name="soilProto" x="0.0" y="0.0" z="4" rot="0.0">
+                     <shape>
+                        <Polygon>
+                           <Vec2f x="0" y="0"/>
+                           <Vec2f x="0.1" y="0"/>
+                           <Vec2f x="0.1" y="0.1"/>
+                           <Vec2f x="0" y="0.1"/>
+                        </Polygon>
+                     </shape>
+                     <scale>
+                        <Vec2f x="1.0" y="1.0"/>
+                     </scale>
+                     <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
+                     <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
+                     <lineWidth>0</lineWidth>
+                     <children/>
+                  </Entity>
+                  <EntityAnimations>
+                     <texture ptr="49"/>
+                     <textureSection>
+                        <Range>
+                           <pos><Vec2f x="0" y="0"/></pos>
+                           <size><Vec2f x="64" y="64"/></size>
+                        </Range>
+                     </textureSection>
+                     <onScreenSize>
                         <Vec2f x="0.1" y="0.1"/>
-                        <Vec2f x="0" y="0.1"/>
-                     </Polygon>
-                  </shape>
-                  <scale>
-                     <Vec2f x="1.0" y="1.0"/>
-                  </scale>
-                  <fillColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></fillColour>
-                  <lineColour><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></lineColour>
-                  <lineWidth>0</lineWidth>
-                  <children/>
-               </Entity>
-            </Item>
-            <Sprite>
-               <Entity/>
-               <EntityAnimations>
-                  <texture ptr="49"/>
-                  <textureSection>
-                     <Range>
-                        <pos><Vec2f x="0" y="0"/></pos>
-                        <size><Vec2f x="64" y="64"/></size>
-                     </Range>
-                  </textureSection>
-                  <onScreenSize>
-                     <Vec2f x="0.1" y="0.1"/>
-                  </onScreenSize>
-                  <animation>
-                     <Animation name="dissolve" duration="0.25">
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.875"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.75"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.625"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.5"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.375"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.25"/></col>
-                        </AnimFrame>
-                        <AnimFrame>
-                           <pos><Vec2i x="0" y="0"/></pos>
-                           <dim><Vec2i x="64" y="64"/></dim>
-                           <col><Colour r="1.0" g="1.0" b="1.0" a="0.125"/></col>
-                        </AnimFrame>
-                     </Animation>
-                  </animation>
-               </EntityAnimations>
-               <EntityTransformations/>
-            </Sprite>
-         </Soil>
+                     </onScreenSize>
+                     <animation>
+                        <Animation name="dissolve" duration="0.25">
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="1.0"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.875"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.75"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.625"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.5"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.375"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.25"/></col>
+                           </AnimFrame>
+                           <AnimFrame>
+                              <pos><Vec2i x="0" y="0"/></pos>
+                              <dim><Vec2i x="64" y="64"/></dim>
+                              <col><Colour r="1.0" g="1.0" b="1.0" a="0.125"/></col>
+                           </AnimFrame>
+                        </Animation>
+                     </animation>
+                  </EntityAnimations>
+                  <EntityTransformations/>
+               </Sprite>
+            </Soil>
+            <Item solid="true"/>
+         </ExtEntity>
       </asset>
    </assets>
 </ASSETFILE>

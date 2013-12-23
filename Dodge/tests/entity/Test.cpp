@@ -5,6 +5,7 @@
 #include "TestCase2.hpp"
 #include "TestCase3.hpp"
 #include "TestCase4.hpp"
+#include "TestCase5.hpp"
 
 
 using namespace std;
@@ -91,6 +92,7 @@ void Test::run() {
    m_tests.push_back(pTestCase_t(new TestCase2));
    m_tests.push_back(pTestCase_t(new TestCase3));
    m_tests.push_back(pTestCase_t(new TestCase4));
+   m_tests.push_back(pTestCase_t(new TestCase5));
 
    m_active = 0;
    m_tests[m_active]->setup();

@@ -24,7 +24,7 @@ float32_t Box2dPhysics::m_worldUnitsPerMetre = 0.01f;
 int Box2dPhysics::m_v_iterations = 6;
 int Box2dPhysics::m_p_iterations = 4;
 EventManager Box2dPhysics::m_eventManager;
-set<const EEvent*> Box2dPhysics::m_ignore;
+set<long> Box2dPhysics::m_ignore;
 b2Vec2 Box2dPhysics::m_gravity = b2Vec2(0.f, -9.8f);
 b2World Box2dPhysics::m_world = b2World(m_gravity);
 Box2dContactListener Box2dPhysics::m_contactListener;
@@ -264,8 +264,7 @@ void Box2dPhysics::constructBody() {
 
    shapeToBox2dBody(*shape, m_opts, m_body, &m_numFixtures);
 
-   m_body->SetTransform(b2Vec2(pos.x / m_worldUnitsPerMetre, pos.y / m_worldUnitsPerMetre), rot);
-   m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(rot));
+   m_body->SetTransform(b2Vec2(pos.x / m_worldUnitsPerMetre, pos.y / m_worldUnitsPerMetre), DEG_TO_RAD(rot));
 
    m_body->SetAwake(true);
 }
@@ -339,10 +338,12 @@ void Box2dPhysics::onEvent(const EEvent* event) {
       && event->getType() != entityShapeStr
       && event->getType() != entityTranslationStr) return;
 
-   if (m_ignore.find(event) == m_ignore.end())
+   if (m_ignore.find(event->getId()) == m_ignore.end()) {
       updatePos(event);
-   else
-      m_ignore.erase(event);
+   }
+   else {
+      m_ignore.erase(event->getId());
+   }
 }
 
 //===========================================
@@ -359,15 +360,21 @@ void Box2dPhysics::updatePos(const EEvent* ev) {
    if (ev->getType() == entityTranslationStr) {
       const EEntityTranslation* event = static_cast<const EEntityTranslation*>(ev);
 
-      // Update position
-      float32_t x = event->newTransl_abs.x;
-      float32_t y = event->newTransl_abs.y;
+      b2Vec2 p = m_body->GetPosition();
 
-      m_body->SetTransform(b2Vec2(x / m_worldUnitsPerMetre, y / m_worldUnitsPerMetre), m_body->GetAngle());
+      // Update position
+      float32_t x = event->newTransl_abs.x - event->oldTransl_abs.x;
+      float32_t y = event->newTransl_abs.y - event->oldTransl_abs.y;
+
+      m_body->SetTransform(b2Vec2(p.x + x / m_worldUnitsPerMetre, p.y + y / m_worldUnitsPerMetre), m_body->GetAngle());
    }
    else if (ev->getType() == entityRotationStr) {
       const EEntityRotation* event = static_cast<const EEntityRotation*>(ev);
-      m_body->SetTransform(m_body->GetPosition(), DEG_TO_RAD(event->newRotation_abs));
+
+      float32_t a = m_body->GetAngle();
+      float32_t r = DEG_TO_RAD(event->newRotation_abs - event->oldRotation_abs);
+
+      m_body->SetTransform(m_body->GetPosition(), a + r);
    }
    else if (ev->getType() == entityShapeStr) {
       const EEntityShape* event = static_cast<const EEntityShape*>(ev);
@@ -421,6 +428,10 @@ void Box2dPhysics::update() {
       EEvent* event2 = new EEntityTranslation(m_entity->getSharedPtr(), oldTransl, oldTransl_abs, m_entity->getTranslation(), m_entity->getTranslation_abs());
       EEvent* event3 = new EEntityRotation(m_entity->getSharedPtr(), oldRot, oldRot_abs, m_entity->getRotation(), m_entity->getRotation_abs());
 
+      m_ignore.insert(event1->getId());
+      m_ignore.insert(event2->getId());
+      m_ignore.insert(event3->getId());
+
       m_entity->onEvent(event1);
       m_entity->onEvent(event2);
       m_entity->onEvent(event3);
@@ -428,15 +439,11 @@ void Box2dPhysics::update() {
       m_eventManager.queueEvent(event1);
       m_eventManager.queueEvent(event2);
       m_eventManager.queueEvent(event3);
-
-      m_ignore.insert(event1);
-      m_ignore.insert(event2);
-      m_ignore.insert(event3);
    }
 }
 
 //===========================================
-// Box2dPhysics::update
+// Box2dPhysics::step
 //
 // Update b2Body positions
 //===========================================

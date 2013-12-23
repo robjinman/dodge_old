@@ -66,7 +66,7 @@ class Box2dPhysics : public EntityPhysics {
       static void entityMovedHandler(EEvent* ev);
 
       static EventManager m_eventManager;
-      static std::set<const EEvent*> m_ignore;
+      static std::set<long> m_ignore;
 
       static float32_t m_timeStep;
       static float32_t m_worldUnitsPerMetre;

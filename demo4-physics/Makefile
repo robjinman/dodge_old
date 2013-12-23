@@ -2,9 +2,9 @@ DODGE_LOCATION = ..
 
 NAME = demo
 CC = g++
-CFLAGS = -std=c++0x -O3 -Wall `sdl-config --cflags` -DLINUX -g -DDEBUG
+CFLAGS = -std=c++0x -O3 -Wall `sdl-config --cflags` -DLINUX -g -DDEBUG -DGLEW
 INCL = -I$(DODGE_LOCATION)/Dodge/include
-LIBS = -L$(DODGE_LOCATION)/Dodge/lib -L/usr/lib -lDodge -lX11 -lGLESv2 -lEGL -lpnglite -lz -lBox2D `sdl-config --libs` -lSDLmain -lSDL -lSDL_mixer
+LIBS = -L$(DODGE_LOCATION)/Dodge/lib -L/usr/lib -lDodge -lX11 -lGL -lGLEW -lpnglite -lz -lBox2D `sdl-config --libs` -lSDLmain -lSDL -lSDL_mixer
 SRC = .
 OBJS = $(SRC)/main.o
 

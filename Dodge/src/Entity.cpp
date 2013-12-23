@@ -274,7 +274,7 @@ void Entity::deepCopy(const Entity& copy) {
    m_boundary = copy.m_boundary;
 
    if (copy.m_auxData)
-      m_auxData = unique_ptr<IAuxData>(dynamic_cast<IAuxData*>(copy.m_auxData->clone()));
+      m_auxData = unique_ptr<IAuxData>(copy.m_auxData->clone());
 }
 
 //===========================================
@@ -420,8 +420,6 @@ void Entity::draw() const {
 // Entity::setParent
 //===========================================
 void Entity::setParent(Entity* parent) {
-   Vec2f oldTransl_abs = getTranslation_abs();
-   float32_t oldRot_abs = getRotation_abs();
    Entity* oldParent = m_parent;
 
    if (m_parent) m_parent->removeChild(shared_from_this());
@@ -429,63 +427,20 @@ void Entity::setParent(Entity* parent) {
    m_parent->m_children.insert(shared_from_this());
 
    rotateShapes_r(m_parent->getRotation_abs());
-   rotate(0.f);
+
+   onParentTransformation(oldParent ? oldParent->getRotation_abs() : 0.f,
+      oldParent ? oldParent->getTranslation_abs() : Vec2f(0.f, 0.f));
 
    Range bounds = m_boundary;
    recomputeBoundary();
 
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityRotation(shared_from_this(), m_rot, oldRot_abs, m_rot, getRotation_abs());
-      EEvent* event3 = new EEntityTranslation(shared_from_this(), m_transl, oldTransl_abs, m_transl, getTranslation_abs());
 
       onEvent(event1);
-      onEvent(event2);
-      onEvent(event3);
 
       m_eventManager.queueEvent(event1);
-      m_eventManager.queueEvent(event2);
-      m_eventManager.queueEvent(event3);
    }
-
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onNewAncestor(oldParent, parent);
-}
-
-//===========================================
-// Entity::onNewAncestor
-//===========================================
-void Entity::onNewAncestor(Entity* oldAncestor, Entity* newAncestor) {
-   Range bounds = m_boundary;
-   recomputeBoundary();
-
-   if (!m_silent) {
-      float32_t naRot = newAncestor ? newAncestor->getRotation_abs() : 0;
-      float32_t oaRot = oldAncestor ? oldAncestor->getRotation_abs() : 0;
-      Vec2f naTransl = newAncestor ? newAncestor->getTranslation_abs() : Vec2f(0, 0);
-      Vec2f oaTransl = oldAncestor ? oldAncestor->getTranslation_abs() : Vec2f(0, 0);
-
-      float32_t da = naRot - oaRot;
-      Vec2f ds = naTransl - oaTransl;
-
-      float32_t rot_abs = getRotation_abs();
-      Vec2f transl_abs = getTranslation_abs();
-
-      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityRotation(shared_from_this(), m_rot, rot_abs - da, m_rot, rot_abs);
-      EEvent* event3 = new EEntityTranslation(shared_from_this(), m_transl, transl_abs - ds, m_transl, getTranslation_abs());
-
-      onEvent(event1);
-      onEvent(event2);
-      onEvent(event3);
-
-      m_eventManager.queueEvent(event1);
-      m_eventManager.queueEvent(event2);
-      m_eventManager.queueEvent(event3);
-   }
-
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onNewAncestor(oldAncestor, newAncestor);
 }
 
 //===========================================
@@ -501,12 +456,11 @@ void Entity::addChild(pEntity_t child) {
 void Entity::removeChild(pEntity_t child) {
    assert(child->m_parent == this);
 
-   child->rotate(0.f);
    child->rotateShapes_r(-getRotation_abs());
 
    child->m_parent = NULL;
 
-   child->onNewAncestor(this, NULL);
+   child->onParentTransformation(getRotation_abs(), getTranslation_abs());
 
    m_children.erase(child);
 }
@@ -558,6 +512,9 @@ void Entity::recomputeBoundary() {
 void Entity::translate(float32_t x, float32_t y) {
    Range bounds = m_boundary;
 
+   float32_t oldRot = getRotation_abs();
+   Vec2f oldTransl = getTranslation_abs();
+
    m_transl = m_transl + Vec2f(x, y);
    recomputeBoundary();
 
@@ -565,7 +522,7 @@ void Entity::translate(float32_t x, float32_t y) {
       Vec2f t = getTranslation_abs();
 
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityTranslation(shared_from_this(), m_transl - Vec2f(x, y), t - Vec2f(x, y), m_transl, t);
+      EEvent* event2 = new EEntityTranslation(shared_from_this(), m_transl - Vec2f(x, y), oldTransl, m_transl, t);
 
       onEvent(event1);
       onEvent(event2);
@@ -575,7 +532,7 @@ void Entity::translate(float32_t x, float32_t y) {
    }
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onAncestorTranslation(Vec2f(x, y));
+      (*i)->onParentTransformation(oldRot, oldTransl);
 }
 
 //===========================================
@@ -647,10 +604,12 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    Range bounds = m_boundary;
    recomputeBoundary();
 
+   Vec2f ds = m_transl - oldTransl;
+
    if (!m_silent) {
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
       EEvent* event2 = new EEntityRotation(shared_from_this(), oldRot, oldRot_abs, m_rot, getRotation_abs());
-      EEvent* event3 = new EEntityTranslation(shared_from_this(), oldTransl, oldTransl_abs, m_transl, getTranslation_abs());
+      EEvent* event3 = new EEntityTranslation(shared_from_this(), oldTransl, oldTransl_abs, m_transl, oldTransl_abs + ds);
 
       onEvent(event1);
       onEvent(event2);
@@ -662,7 +621,7 @@ void Entity::rotate(float32_t deg, const Vec2f& pivot) {
    }
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onAncestorRotation(deg, m_transl - oldTransl);
+      (*i)->onParentTransformation(oldRot_abs, oldTransl_abs);
 }
 
 //===========================================
@@ -675,19 +634,30 @@ void Entity::rotateShapes_r(float32_t deg) {
 }
 
 //===========================================
-// Entity::onAncestorRotation
+// Entity::onParentTransformation
 //===========================================
-void Entity::onAncestorRotation(float32_t da, const Vec2f& ds) {
+void Entity::onParentTransformation(float32_t a, const Vec2f& s) {
    Range bounds = m_boundary;
    recomputeBoundary();
+
+   float32_t x = m_transl.x * cos(DEG_TO_RAD(a))
+      - m_transl.y * sin(DEG_TO_RAD(a));
+
+   float32_t y = m_transl.x * sin(DEG_TO_RAD(a))
+      + m_transl.y * cos(DEG_TO_RAD(a));
+
+   Vec2f oldTransl(x, y);
+   Vec2f oldTransl_abs = s + oldTransl;
+
+   float32_t oldRot_abs = a + m_rot;
 
    if (!m_silent) {
       float32_t rot_abs = getRotation_abs();
       Vec2f transl_abs = getTranslation_abs();
 
       EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityRotation(shared_from_this(), m_rot, rot_abs - da, m_rot, rot_abs);
-      EEvent* event3 = new EEntityTranslation(shared_from_this(), m_transl, transl_abs - ds, m_transl, getTranslation_abs());
+      EEvent* event2 = new EEntityRotation(shared_from_this(), m_rot, oldRot_abs, m_rot, rot_abs);
+      EEvent* event3 = new EEntityTranslation(shared_from_this(), m_transl, oldTransl_abs, m_transl, transl_abs);
 
       onEvent(event1);
       onEvent(event2);
@@ -699,31 +669,7 @@ void Entity::onAncestorRotation(float32_t da, const Vec2f& ds) {
    }
 
    for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onAncestorRotation(da, ds);
-}
-
-//===========================================
-// Entity::onAncestorTranslation
-//===========================================
-void Entity::onAncestorTranslation(const Vec2f& ds) {
-   Range bounds = m_boundary;
-   recomputeBoundary();
-
-   if (!m_silent) {
-      Vec2f transl_abs = getTranslation_abs();
-
-      EEvent* event1 = new EEntityBoundingBox(shared_from_this(), bounds, m_boundary);
-      EEvent* event2 = new EEntityTranslation(shared_from_this(), m_transl, transl_abs - ds, m_transl, getTranslation_abs());
-
-      onEvent(event1);
-      onEvent(event2);
-
-      m_eventManager.queueEvent(event1);
-      m_eventManager.queueEvent(event2);
-   }
-
-   for (set<pEntity_t>::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      (*i)->onAncestorTranslation(ds);
+      (*i)->onParentTransformation(oldRot_abs, oldTransl_abs);
 }
 
 //===========================================
