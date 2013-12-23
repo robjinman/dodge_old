@@ -122,8 +122,7 @@ void WorldSpace::getEntities(const Range& region, std::vector<pEntity_t>& entiti
    if (!m_init)
       throw Exception("Error retrieving entities; WorldSpace not initialised", __FILE__, __LINE__);
 
-//   m_container->getEntries(region, entities);
-   m_container->getEntries(Range(Vec2f(-10.0, -10.0), Vec2f(20.0, 20.0)), entities);
+   m_container->getEntries(region, entities);
 }
 
 #ifdef DEBUG

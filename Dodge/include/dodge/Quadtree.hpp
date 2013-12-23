@@ -187,7 +187,7 @@ class Quadtree : public SpatialContainer<T> {
       //===========================================
       // Quadtree::getIndex
       //===========================================
-      int getIndex(const Range& range) const {
+      __attribute__ ((noinline)) int getIndex(const Range& range) const { // TODO
          Vec2f halfSz = m_boundary.getSize() / 2.f;
          if (Range(m_boundary.getPosition(), halfSz).contains(range)) return 0;
          if (Range(m_boundary.getPosition() + Vec2f(halfSz.x, 0.f), halfSz).contains(range)) return 1;

@@ -4,7 +4,6 @@
  */
 
 #include <cstring>
-#include <cml/cml.h>
 #include <Exception.hpp>
 #include <math/shapes/LineSegment.hpp>
 #include <StringId.hpp>

@@ -4,7 +4,9 @@
 
 #include <mutex>
 #include <boost/shared_ptr.hpp>
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include <cml/cml.h>
+#pragma GCC diagnostic pop
 #include "../definitions.hpp"
 #include "../math/Vec2f.hpp"
 

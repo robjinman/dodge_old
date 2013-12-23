@@ -394,11 +394,11 @@ void Box2dPhysics::updatePos(const EEvent* ev) {
    }
 
    // Wake bodies
-   b2Body* body = m_world.GetBodyList();
+/*   b2Body* body = m_world.GetBodyList();
    while (body != NULL) {
       body->SetAwake(true);
       body = body->GetNext();
-   }
+   }*/
 }
 
 //===========================================

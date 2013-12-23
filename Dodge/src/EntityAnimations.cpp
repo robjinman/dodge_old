@@ -4,7 +4,9 @@
  */
 
 #include <cstring>
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include <cml/cml.h>
+#pragma GCC diagnostic pop
 #include "renderer/Renderer.hpp"
 #include "EntityAnimations.hpp"
 #include "StringId.hpp"
@@ -323,7 +325,7 @@ void EntityAnimations::updateModel() {
 //===========================================
 // EntityAnimations::onEvent
 //===========================================
-void EntityAnimations::onEvent(const EEvent* event) {/*
+void EntityAnimations::onEvent(const EEvent* event) {
    static long entityRotationStr = internString("entityRotation");
    static long entityTranslationStr = internString("entityTranslation");
    static long entityShapeStr = internString("entityShape");
@@ -350,7 +352,7 @@ void EntityAnimations::onEvent(const EEvent* event) {/*
       matrix_translation(translation, x, y, 0.f);
       mv = translation * rotation;
       m_model.setMatrix(mv.data());
-   }*/
+   }
 }
 
 //===========================================
@@ -364,7 +366,7 @@ void EntityAnimations::addToWorld() {
 // EntityAnimations::update
 //===========================================
 void EntityAnimations::update() {
-   updateModel(); // TODO
+//   updateModel(); // TODO
 
    if (m_activeAnim) {
       bool justFinished = false;

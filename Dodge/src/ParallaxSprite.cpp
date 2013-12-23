@@ -73,7 +73,7 @@ size_t ParallaxSprite::getSize() const {
    return sizeof(ParallaxSprite)
       - sizeof(Sprite)
       - sizeof(EntityParallax)
-      + Sprite::getSize(),
+      + Sprite::getSize()
       + EntityParallax::getSize();
 }
 

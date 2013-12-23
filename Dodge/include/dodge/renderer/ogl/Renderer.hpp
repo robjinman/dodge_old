@@ -17,7 +17,9 @@
       #include <GLES2/gl2.h>
    #endif
 #endif
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include <cml/cml.h>
+#pragma GCC diagnostic pop
 #include <map>
 #include <queue>
 #include <cstring>
