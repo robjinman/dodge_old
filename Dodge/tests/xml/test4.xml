@@ -1,0 +1,7 @@
+<nodeA>
+   <nodeB a="1" b="two" c="3.4"/>
+   <nodeC d="true">
+      <nodeD>Hello World!</nodeD>
+      <nodeE>Goodbye World!</nodeE>
+   </nodeC>
+</nodeA>

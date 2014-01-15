@@ -8,6 +8,7 @@
 
 
 #include <string>
+#include <memory>
 #include "../../rapidxml/rapidxml.hpp"
 #include "XmlException.hpp"
 
@@ -19,8 +20,8 @@ class XmlAttribute {
    public:
       XmlAttribute() : m_attr(NULL) {}
 
-      XmlAttribute(const rapidxml::xml_attribute<>* attr, const std::string& file)
-         : m_attr(attr), m_file(file) {}
+      XmlAttribute(std::weak_ptr<rapidxml::xml_document<> > doc, rapidxml::xml_attribute<>* attr, const std::string& file)
+         : m_doc(doc), m_attr(attr), m_file(file) {}
 
       inline std::string name() const;
       inline std::string file() const;
@@ -32,11 +33,14 @@ class XmlAttribute {
       double getDouble() const;
       bool getBool() const;
 
-      inline const XmlAttribute nextAttribute() const;
+      void setValue(const std::string& val);
+
+      inline XmlAttribute nextAttribute() const;
       inline bool isNull() const;
 
    private:
-      const rapidxml::xml_attribute<>* m_attr;
+      std::weak_ptr<rapidxml::xml_document<> > m_doc;
+      rapidxml::xml_attribute<>* m_attr;
       std::string m_file;
 };
 
@@ -45,7 +49,7 @@ class XmlAttribute {
 //===========================================
 inline std::string XmlAttribute::name() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
-   return std::string(m_attr->name());
+   return std::string(m_attr->name(), m_attr->name_size());
 }
 
 //===========================================
@@ -55,15 +59,15 @@ inline std::string XmlAttribute::getString() const {
    if (isNull())
       throw XmlException("Attribute is NULL", __FILE__, __LINE__);
 
-   return std::string(m_attr->value());
+   return std::string(m_attr->value(), m_attr->value_size());
 }
 
 //===========================================
 // XmlAttribute::nextAttribute
 //===========================================
-inline const XmlAttribute XmlAttribute::nextAttribute() const {
+inline XmlAttribute XmlAttribute::nextAttribute() const {
    if (isNull()) throw XmlException("Attribute is NULL", __FILE__, __LINE__);
-   return XmlAttribute(m_attr->next_attribute(), m_file);
+   return XmlAttribute(m_doc, m_attr->next_attribute(), m_file);
 }
 
 //===========================================

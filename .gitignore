@@ -2,3 +2,4 @@
 *.obj
 demo
 libDodge.a
+EPT/*

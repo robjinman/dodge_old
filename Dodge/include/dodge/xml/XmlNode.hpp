@@ -7,6 +7,7 @@
 #define __XML_NODE_HPP__
 
 
+#include <memory>
 #include "../../rapidxml/rapidxml.hpp"
 #include "../definitions.hpp"
 #include "XmlException.hpp"
@@ -16,12 +17,16 @@
 namespace Dodge {
 
 
+class XmlDocument;
+
 class XmlNode {
+   friend class XmlDocument;
+
    public:
       XmlNode() : m_node(NULL) {}
+      XmlNode(XmlDocument& doc, const std::string& name);
 
-      XmlNode(const rapidxml::xml_node<>* node, const std::string& file)
-         : m_node(node), m_file(file) {}
+      XmlNode copy(XmlDocument& doc) const;
 
       inline std::string name() const;
       inline std::string file() const;
@@ -33,15 +38,27 @@ class XmlNode {
       double getDouble() const;
       bool getBool() const;
 
-      inline const XmlNode firstChild() const;
-      const XmlNode nthChild(uint_t n) const;
-      inline const XmlNode nextSibling() const;
-      inline const XmlAttribute firstAttribute() const;
+      void setValue(const std::string& val);
+
+      inline XmlNode firstChild() const;
+      XmlNode nthChild(uint_t n) const;
+      inline XmlNode nextSibling() const;
+      inline XmlAttribute firstAttribute() const;
+
+      XmlNode addNode(const std::string& name);
+      XmlNode addNode(const XmlNode& node);
+      XmlAttribute addAttribute(const std::string& name, const std::string& value);
 
       inline bool isNull() const;
 
    private:
-      const rapidxml::xml_node<>* m_node;
+      XmlNode(std::weak_ptr<rapidxml::xml_document<> > doc, rapidxml::xml_node<>* node, const std::string& file)
+         : m_doc(doc), m_node(node), m_file(file) {}
+
+      static rapidxml::xml_node<>* copy_r(rapidxml::xml_node<>* node, rapidxml::xml_document<char>* doc);
+
+      std::weak_ptr<rapidxml::xml_document<> > m_doc;
+      rapidxml::xml_node<>* m_node;
       std::string m_file;
 };
 
@@ -50,7 +67,7 @@ class XmlNode {
 //===========================================
 inline std::string XmlNode::name() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return std::string(m_node->name());
+   return std::string(m_node->name(), m_node->name_size());
 }
 
 //===========================================
@@ -60,31 +77,31 @@ inline std::string XmlNode::getString() const {
    if (isNull())
       throw XmlException("Node is NULL", __FILE__, __LINE__);
 
-   return std::string(m_node->value());
+   return std::string(m_node->value(), m_node->value_size());
 }
 
 //===========================================
 // XmlNode::firstChild
 //===========================================
-inline const XmlNode XmlNode::firstChild() const {
+inline XmlNode XmlNode::firstChild() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlNode(m_node->first_node(), m_file);
+   return XmlNode(m_doc, m_node->first_node(), m_file);
 }
 
 //===========================================
 // XmlNode::nextSibling
 //===========================================
-inline const XmlNode XmlNode::nextSibling() const {
+inline XmlNode XmlNode::nextSibling() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlNode(m_node->next_sibling(), m_file);
+   return XmlNode(m_doc, m_node->next_sibling(), m_file);
 }
 
 //===========================================
 // XmlNode::firstAttribute
 //===========================================
-inline const XmlAttribute XmlNode::firstAttribute() const {
+inline XmlAttribute XmlNode::firstAttribute() const {
    if (isNull()) throw XmlException("Node is NULL", __FILE__, __LINE__);
-   return XmlAttribute(m_node->first_attribute(), m_file);
+   return XmlAttribute(m_doc, m_node->first_attribute(), m_file);
 }
 
 //===========================================

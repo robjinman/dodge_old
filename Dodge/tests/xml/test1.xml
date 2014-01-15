@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<element1 a="1" b="2">
+   <element2 c="3" d="true"/>
+   <element3>Hello World!</element3>
+   <element4 a="123">
+      <element5 yes="no">
+         <element6 str="This is a string" num="4.5"/>
+         <element7>99.8</element7>
+      </element5>
+   </element4>
+</element1>
