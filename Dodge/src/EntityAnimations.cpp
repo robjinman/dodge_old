@@ -101,7 +101,7 @@ EntityAnimations::EntityAnimations(Entity* entity, const XmlNode data)
       XML_NODE_CHECK(node, texture);
 
       XmlAttribute attr = node.firstAttribute();
-      XML_ATTR_CHECK(attr, ptr);
+      XML_ATTR_CHECK(attr, assetId);
 
       long id = attr.getLong();
       m_texture = boost::dynamic_pointer_cast<Texture>(assetManager.getAssetPointer(id));

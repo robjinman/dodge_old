@@ -61,7 +61,7 @@ void MapLoader::loadAssets(const XmlNode data, mapSegment_t* segment) {
       XmlNode node = data.firstChild();
       while (!node.isNull() && node.name() == "asset") {
          XmlAttribute attr = node.firstAttribute();
-         XML_ATTR_CHECK(attr, id);
+         XML_ATTR_CHECK(attr, assetId);
          long id = attr.getLong();
 
          // If asset is not already loaded
