@@ -118,7 +118,7 @@ void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
       XmlNode node_ = node.firstChild();
       while (!node_.isNull() && node_.name() == "file") {
          stringstream ss;
-         ss << gGetWorkingDir() << "/" << node_.getString();
+         ss << m_dataRoot << "/" << node_.getString();
 
          parseAssetsFile_r(ss.str(), segment);
          node_ = node_.nextSibling();
@@ -136,7 +136,7 @@ void MapLoader::parseAssetsFile_r(const string& path, mapSegment_t* segment) {
       XmlNode node_ = node.firstChild();
       while (!node_.isNull() && node_.name() == "file") {
          stringstream ss;
-         ss << gGetWorkingDir() << "/" << node_.getString();
+         ss << m_dataRoot << "/" << node_.getString();
 
          parseAssetsFile_r(ss.str(), segment);
          node_ = node_.nextSibling();
@@ -164,7 +164,7 @@ void MapLoader::loadMapSettings(const XmlNode data) {
       m_segmentSize = Vec2f(node.firstChild());
 
       node = node.nextSibling();
-      XML_NODE_CHECK(node, segmentsDir);
+      XML_NODE_CHECK(node, segmentsPath);
       string dir = node.getString();
 
       for (int i = 0; i < nSegs.x; ++i) {
@@ -174,12 +174,16 @@ void MapLoader::loadMapSettings(const XmlNode data) {
             mapSegment_t seg;
 
             stringstream path;
-            path << gGetWorkingDir() << "/" << dir << "/" << i << j << ".xml";
+            path << m_dataRoot << "/" << dir << "/" << i << j << ".xml";
             seg.filePath = path.str();
 
             m_segments[i].push_back(seg);
          }
       }
+
+      node = node.nextSibling();
+      XML_NODE_CHECK(node, customSettings);
+      m_setMapSettingsFunc(node);
    }
    catch (XmlException& e) {
       e.prepend("Error loading map settings; ");
@@ -190,9 +194,11 @@ void MapLoader::loadMapSettings(const XmlNode data) {
 //===========================================
 // MapLoader::parseMapFile
 //===========================================
-void MapLoader::parseMapFile(const string& file) {
+void MapLoader::parseMapFile(const string& directory, const string& name) {
    if (!m_init)
       throw Dodge::Exception("Error parsing map file; MapLoader not initialised", __FILE__, __LINE__);
+
+   m_dataRoot = directory;
 
    m_segments.clear();
    m_centreSegment = Vec2i(-1, -1);
@@ -200,7 +206,7 @@ void MapLoader::parseMapFile(const string& file) {
    try {
       XmlDocument doc;
 
-      XmlNode decl = doc.parse(gGetWorkingDir() + "/" + file);
+      XmlNode decl = doc.parse(m_dataRoot + "/" + name);
       if (decl.isNull())
          throw XmlException("Expected XML declaration", __FILE__, __LINE__);
 
@@ -211,17 +217,12 @@ void MapLoader::parseMapFile(const string& file) {
       loadMapSettings(node);
       node = node.nextSibling();
 
-      if (!node.isNull() && node.name() == "customSettings") {
-         m_setMapSettingsFunc(node);
-         node = node.nextSibling();
-      }
-
       if (!node.isNull() && node.name() == "using") {
 
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
             stringstream ss;
-            ss << gGetWorkingDir() << "/" << node_.getString();
+            ss << m_dataRoot << "/" << node_.getString();
 
             parseAssetsFile_r(ss.str(), NULL);
             node_ = node_.nextSibling();
@@ -240,7 +241,7 @@ void MapLoader::parseMapFile(const string& file) {
          XmlNode node_ = node.firstChild();
          while (!node_.isNull() && node_.name() == "file") {
             stringstream ss;
-            ss << gGetWorkingDir() << "/" << node_.getString();
+            ss << m_dataRoot << "/" << node_.getString();
 
             parseAssetsFile_r(ss.str(), NULL);
             node_ = node_.nextSibling();

@@ -13,5 +13,5 @@ int main(int argc, char** argv) {
    Test test;
    test.run(verbose);
 
-   return 0;
+   return EXIT_SUCCESS;
 }

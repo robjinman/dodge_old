@@ -38,7 +38,7 @@ class MapLoader {
          Functor<void, TYPELIST_1(pAsset_t)> deleteAssetFunc,
          size_t targetMemoryUsage);
 
-      void parseMapFile(const std::string& file);
+      void parseMapFile(const std::string& directory, const std::string& name);
       void update(const Vec2f& cameraPos);
       void freeAllAssets();
 
@@ -80,6 +80,8 @@ class MapLoader {
       };
 
       bool m_init;
+
+      std::string m_dataRoot;
 
       refCountTable_t m_refCountTable;
 
